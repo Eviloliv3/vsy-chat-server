@@ -1,0 +1,8 @@
+# Ignore compilation results
+/target
+
+# Ignore idea variables
+.idea
+
+# Ignore temporary maven build related files
+.attach_pid*
