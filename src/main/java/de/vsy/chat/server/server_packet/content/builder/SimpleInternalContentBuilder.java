@@ -1,0 +1,48 @@
+package de.vsy.chat.server.server_packet.content.builder;
+
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import de.vsy.chat.server.server_packet.content.SimpleInternalContentWrapper;
+import de.vsy.chat.shared_transmission.packet.content.PacketContent;
+
+/**
+ * The Class SimpleInternalContentBuilder.
+ *
+ * @author Frederic Heath
+ */
+@JsonPOJOBuilder
+public
+class SimpleInternalContentBuilder
+        extends ServerPacketContentBuilder<SimpleInternalContentBuilder> {
+
+    private PacketContent wrappedContent;
+
+    public
+    PacketContent getWrappedContent () {
+        return this.wrappedContent;
+    }
+
+    @Override
+    public
+    SimpleInternalContentBuilder getInstanciable () {
+        return this;
+    }
+
+    @Override
+    public
+    SimpleInternalContentWrapper build () {
+        return new SimpleInternalContentWrapper(this);
+    }
+
+    /**
+     * With.
+     *
+     * @param wrappedContent the wrapped content
+     *
+     * @return the simple internal content builder
+     */
+    public
+    SimpleInternalContentBuilder withContent (final PacketContent wrappedContent) {
+        this.wrappedContent = wrappedContent;
+        return getInstanciable();
+    }
+}

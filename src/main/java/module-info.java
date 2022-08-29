@@ -1,0 +1,26 @@
+module de.vsy.chat.server{
+    requires de.vsy.chat.shared_utility;
+    requires de.vsy.chat.shared_transmission;
+    requires de.vsy.chat.shared_module;
+    requires org.apache.logging.log4j;
+    requires com.fasterxml.jackson.annotation;
+    requires com.fasterxml.jackson.databind;
+    opens de.vsy.chat.server.persistent_data.data_bean;
+    opens de.vsy.chat.server.server.client_management;
+    exports de.vsy.chat.server.server;
+    exports de.vsy.chat.server.server.client_management;
+    exports de.vsy.chat.server.server_packet.content.builder;
+    exports de.vsy.chat.server.persistent_data;
+    exports de.vsy.chat.server.persistent_data.client_data;
+    exports de.vsy.chat.server.persistent_data.server_data;
+    exports de.vsy.chat.server.persistent_data.data_bean;
+    exports de.vsy.chat.server.persistent_data.server_data.temporal;
+    exports de.vsy.chat.server.server.data;
+    exports de.vsy.chat.server.server_packet.packet_creation;
+    exports de.vsy.chat.server.server.server_connection;
+    exports de.vsy.chat.server.server.data.access;
+    exports de.vsy.chat.server.service;
+    exports de.vsy.chat.server.service.inter_server;
+    exports de.vsy.chat.server.service.request;
+    exports de.vsy.chat.server.service.status_synchronization;
+}
