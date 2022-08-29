@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: de.vsy.chat.server.testing_grounds.TestContactListPersistence
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.311 s <<< FAILURE! - in de.vsy.chat.server.testing_grounds.TestContactListPersistence
+addContact  Time elapsed: 0.015 s  <<< ERROR!
+java.lang.IllegalStateException: Kein Datei-Lock angelegt für Deskriptor: CONTACT_LIST
+	at de.vsy.chat.server.testing_grounds.TestContactListPersistence.initContactListAccess(TestContactListPersistence.java:18)
+

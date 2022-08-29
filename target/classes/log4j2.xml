@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="isThreadContextMapInheritable">true</Property>
+        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [%X{threadName}:%tid] - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="${stdPattern}"/>
+        </Console>
+        <Routing name="Routing">
+            <Routes pattern="$${ctx:logFilename}">
+
+                <!-- This route is chosen if ThreadContext has no value for keys subRouteDir and filename. -->
+                <Route key="$${ctx:logFilename}">
+                    <RollingFile name="Rolling-default" filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
+                                 filePattern="./logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
+                        <PatternLayout pattern="${stdPattern}"/>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                        </Policies>
+                    </RollingFile>
+                </Route>
+                <!-- This route is chosen if ThreadContext has a value for routeDir, subRouteDir and filename
+            The value dynamically determines the name of the log file. -->
+                <Route>
+                    <RollingFile name="Rolling-${ctx:logFilename}"
+                                 filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
+                                 filePattern="./logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
+                        <PatternLayout pattern="${stdPattern}"/>
+                        <Policies>
+                            <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                        </Policies>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
+    </Appenders>
+    <Loggers>
+        <Logger name="de.vsy.chat.server.app" level="info">
+            <AppenderRef ref="Routing"/>
+        </Logger>
+        <Root level="all">
+            <AppenderRef ref="STDOUT" level="debug"/>
+        </Root>
+    </Loggers>
+</Configuration>
