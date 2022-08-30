@@ -7,18 +7,18 @@ package de.vsy.chat.server.raw_server_test.authentication;
 
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
-import de.vsy.chat.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.chat.shared_transmission.packet.content.authentication.LogoutRequestDTO;
-import de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
+import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutRequestDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.FRANK_1_AUTH;
-import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 /** @author fredward */
 public
@@ -37,8 +37,8 @@ class TestLogoutBehaviour extends ServerTestBase {
         final var clientOne = super.getUnusedClientConnection();
         final var logoutContent = new LogoutRequestDTO(clientOne.getCommunicatorData());
 
-        checkErrorResponse(clientOne, CommunicationEndpoint.getServerEntity(STANDARD_SERVER_ID),
-                           logoutContent, "Anfrage nicht bearbeitet. Sie sind noch nicht authentifiziert.");
+        TestResponseSingleClient.checkErrorResponse(clientOne, CommunicationEndpoint.getServerEntity(STANDARD_SERVER_ID),
+                                                    logoutContent, "Anfrage nicht bearbeitet. Sie sind noch nicht authentifiziert.");
         LOGGER.info("Test: Logout fehlgeschlagen -> nicht eingeloggt -- beendet");
     }
 
@@ -48,7 +48,7 @@ class TestLogoutBehaviour extends ServerTestBase {
         LOGGER.info("Test: Logout erfolgreich");
         boolean authSuccess;
         final var clientOne = super.getUnusedClientConnection();
-        clientOne.setClientData(FRANK_1_AUTH, null);
+        clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
         authSuccess = clientOne.tryClientLogin();
         Assertions.assertTrue((authSuccess));
 

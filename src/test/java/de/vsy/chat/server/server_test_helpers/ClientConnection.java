@@ -1,33 +1,33 @@
 package de.vsy.chat.server.server_test_helpers;
 
-import de.vsy.chat.shared_module.packet_creation.NonStaticPacketCompiler;
-import de.vsy.chat.shared_module.packet_creation.OriginatingEntityProvider;
-import de.vsy.chat.shared_module.packet_management.PacketBuffer;
-import de.vsy.chat.shared_module.packet_management.ThreadPacketBufferLabel;
-import de.vsy.chat.shared_module.packet_management.ThreadPacketBufferManager;
-import de.vsy.chat.shared_module.packet_transmission.ConnectionThreadControl;
-import de.vsy.chat.server.server.data.ConnectionSpecifications;
-import de.vsy.chat.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
-import de.vsy.chat.shared_transmission.dto.CommunicatorDTO;
-import de.vsy.chat.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.chat.shared_transmission.packet.Packet;
-import de.vsy.chat.shared_transmission.packet.content.PacketContent;
-import de.vsy.chat.shared_transmission.packet.content.authentication.LoginRequestDTO;
-import de.vsy.chat.shared_transmission.packet.content.authentication.LoginResponseDTO;
-import de.vsy.chat.shared_transmission.packet.content.authentication.LogoutRequestDTO;
-import de.vsy.chat.shared_transmission.packet.content.authentication.LogoutResponseDTO;
-import de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_module.shared_module.packet_creation.NonStaticPacketCompiler;
+import de.vsy.shared_module.shared_module.packet_creation.OriginatingEntityProvider;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
+import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;
+import de.vsy.server.server.data.ConnectionSpecifications;
+import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
+import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginRequestDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginResponseDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutRequestDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutResponseDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
 
-import static de.vsy.chat.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_AUTHENTICATION;
-import static de.vsy.chat.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
-import static de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
-import static de.vsy.chat.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
+import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_AUTHENTICATION;
+import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
 
 public
 class ClientConnection {

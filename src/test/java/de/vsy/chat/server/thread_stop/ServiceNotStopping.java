@@ -1,21 +1,21 @@
 package de.vsy.chat.server.thread_stop;
 
-import de.vsy.chat.shared_module.packet_creation.ContentIdentificationProviderImpl;
-import de.vsy.chat.shared_module.packet_creation.PacketCompiler;
-import de.vsy.chat.shared_module.packet_management.ThreadPacketBufferLabel;
-import de.vsy.chat.shared_module.packet_management.ThreadPacketBufferManager;
-import de.vsy.chat.shared_module.packet_transmission.ConnectionThreadControl;
-import de.vsy.chat.server.server.data.ServerDataManager;
-import de.vsy.chat.server.server.data.ServerPersistentDataManager;
-import de.vsy.chat.server.server.data.access.ServiceDataAccessManager;
-import de.vsy.chat.server.server.server_connection.LocalServerConnectionData;
-import de.vsy.chat.server.server.server_connection.RemoteServerConnectionData;
-import de.vsy.chat.server.service.ServiceControl;
-import de.vsy.chat.server.service.inter_server.InterServerCommunicationService;
-import de.vsy.chat.server.service.inter_server.InterServerSocketConnectionEstablisher;
-import de.vsy.chat.server.service.inter_server.ServerFollowerConnectionEstablisher;
-import de.vsy.chat.server.service.request.PacketAssignmentService;
-import de.vsy.chat.server.service.status_synchronization.ClientStatusSynchronizingService;
+import de.vsy.shared_module.shared_module.packet_creation.ContentIdentificationProviderImpl;
+import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
+import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;
+import de.vsy.server.server.data.ServerDataManager;
+import de.vsy.server.server.data.ServerPersistentDataManager;
+import de.vsy.server.server.data.access.ServiceDataAccessManager;
+import de.vsy.server.server.server_connection.LocalServerConnectionData;
+import de.vsy.server.server.server_connection.RemoteServerConnectionData;
+import de.vsy.server.service.ServiceControl;
+import de.vsy.server.service.inter_server.InterServerCommunicationService;
+import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
+import de.vsy.server.service.inter_server.ServerFollowerConnectionEstablisher;
+import de.vsy.server.service.request.PacketAssignmentService;
+import de.vsy.server.service.status_synchronization.ClientStatusSynchronizingService;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,8 +26,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 
-import static de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 class TestServiceNotStopping {

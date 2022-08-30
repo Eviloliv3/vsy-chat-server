@@ -3,13 +3,13 @@ package de.vsy.chat.server.raw_server_test.chat;
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
-import de.vsy.chat.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.chat.shared_transmission.packet.Packet;
-import de.vsy.chat.shared_transmission.packet.content.PacketContent;
-import de.vsy.chat.shared_transmission.packet.content.chat.TextMessageDTO;
-import de.vsy.chat.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.chat.shared_transmission.packet.content.status.ClientStatusChangeDTO;
-import de.vsy.chat.shared_transmission.packet.content.status.MessengerSetupDTO;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.shared_transmission.packet.content.chat.TextMessageDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.shared_transmission.packet.content.status.ClientStatusChangeDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.status.MessengerSetupDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -19,10 +19,10 @@ import java.util.List;
 import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.*;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
-import static de.vsy.chat.shared_transmission.packet.content.status.ClientService.MESSENGER;
-import static de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
-import static de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_transmission.shared_transmission.packet.content.status.ClientService.MESSENGER;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 public
 class TestClientMessage extends ServerTestBase {
@@ -39,7 +39,7 @@ class TestClientMessage extends ServerTestBase {
         final ClientConnection clientOne, clientTwo;
 
         clientOne = super.loginNextClient();
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientTwo = super.loginNextClient();
 
         changeStatus(clientOne, true);
@@ -70,7 +70,7 @@ class TestClientMessage extends ServerTestBase {
         final ClientConnection clientOne, clientTwo;
         final int noContactId;
 
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientOne = loginSpecificClient(FRANK_1_AUTH);
         clientTwo = loginSpecificClient(PETER_1_AUTH);
 
@@ -112,7 +112,7 @@ class TestClientMessage extends ServerTestBase {
         final ClientConnection clientOne, clientTwo;
         final int contactId;
 
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientOne = loginSpecificClient(FRANK_1_AUTH);
         clientTwo = loginSpecificClient(MARKUS_1_AUTH);
 

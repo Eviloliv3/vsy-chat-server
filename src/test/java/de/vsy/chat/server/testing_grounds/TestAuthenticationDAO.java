@@ -1,8 +1,8 @@
 /**  */
 package de.vsy.chat.server.testing_grounds;
 
-import de.vsy.chat.server.persistent_data.data_bean.AuthenticationData;
-import de.vsy.chat.server.persistent_data.server_data.ClientAuthPersistenceDAO;
+import de.vsy.server.persistent_data.data_bean.AuthenticationData;
+import de.vsy.server.persistent_data.server_data.ClientAuthPersistenceDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

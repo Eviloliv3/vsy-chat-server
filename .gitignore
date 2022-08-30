@@ -1,14 +1,11 @@
-# Ignore compilation results
-target/
+# Compiled class files
+*.class
 
-# Ignore idea variables
-.idea
+# Log files
+*.log
 
-# Ignore temporary maven build related files
+# Package Files
+*.jar
+*.zip
+*.tar.gz
 .attach_pid*
-
-# Ignore class path 
-.classpath
-
-# Ignore project
-.project

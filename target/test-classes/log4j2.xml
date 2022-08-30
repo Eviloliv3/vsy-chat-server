@@ -39,7 +39,7 @@
         </Routing>
     </Appenders>
     <Loggers>
-        <Logger name="de.vsy.chat.server.app" level="info">
+        <Logger name="de.vsy.server.app" level="info">
             <AppenderRef ref="Routing"/>
         </Logger>
         <Root level="all">

@@ -1,7 +1,0 @@
--------------------------------------------------------------------------------
-Test set: de.vsy.chat.server.raw_server_test.status.TestStatusChange
--------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0 s <<< FAILURE! - in de.vsy.chat.server.raw_server_test.status.TestStatusChange
-de.vsy.chat.server.raw_server_test.status.TestStatusChange  Time elapsed: 0 s  <<< ERROR!
-org.junit.jupiter.api.extension.ParameterResolutionException: No ParameterResolver registered for parameter [de.vsy.chat.server.raw_server_test.ServerPortProvider arg0] in constructor [public de.vsy.chat.server.raw_server_test.status.TestStatusChange(de.vsy.chat.server.raw_server_test.ServerPortProvider,java.util.List<de.vsy.chat.transmission.dto.authentication.AuthenticationDTO>)].
-

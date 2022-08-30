@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 public
 class ClientConnectionManager {

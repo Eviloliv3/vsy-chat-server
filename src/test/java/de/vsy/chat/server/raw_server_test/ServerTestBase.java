@@ -1,7 +1,7 @@
 package de.vsy.chat.server.raw_server_test;
 
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
-import de.vsy.chat.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -39,7 +39,7 @@ class ServerTestBase {
     @BeforeEach
     void createSingleConnection ()
     throws IOException {
-        this.addConnectionSameServer();
+        this.addConnectionNextServer();
     }
 
     /**
@@ -74,7 +74,7 @@ class ServerTestBase {
     void addConnectionNextServer ()
     throws IOException {
         final var clientConnection = new ClientConnection(
-                portProvider.getCurrentServerPort());
+                portProvider.getNextServerPort());
         addClientConnection(clientConnection);
     }
 

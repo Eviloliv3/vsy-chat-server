@@ -34,7 +34,7 @@ class ServerPortProvider {
 
     public
     int getNextServerPort () {
-        if (this.serverPortIndex < this.usablePorts.size()) {
+        if (this.serverPortIndex < this.usablePorts.size() - 1) {
             this.serverPortIndex++;
         } else {
             this.serverPortIndex = 0;

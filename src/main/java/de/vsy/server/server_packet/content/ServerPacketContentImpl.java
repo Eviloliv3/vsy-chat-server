@@ -1,0 +1,135 @@
+/*
+ *
+ */
+package de.vsy.server.server_packet.content;
+
+import de.vsy.server.server_packet.content.builder.ServerPacketContentBuilder;
+import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+
+import java.io.Serial;
+import java.util.HashSet;
+import java.util.Set;
+
+import static java.util.Collections.unmodifiableSet;
+
+/**
+ * Interne Erweiterung des PacketContent, u.a. zur Feststellung von Ursprung (Server)
+ * bzw. Synchronisation von Paketen.
+ */
+public abstract
+class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
+
+    @Serial
+    private static final long serialVersionUID = -8048355680528188537L;
+    private final Set<Integer> synchronizedServers;
+    private final int originatingServerId;
+    private int readByConnectionThread;
+
+    /**
+     * Instantiates a new server internal PacketDataManagement.
+     *
+     * @param builder the builder
+     */
+    protected
+    ServerPacketContentImpl (ServerPacketContentBuilder<?> builder) {
+        this(new HashSet<>(builder.getSyncedServers()),
+             builder.getOriginatingServerId(), builder.getReadByConnectionThread());
+    }
+
+    protected
+    ServerPacketContentImpl (final Set<Integer> synchronizedServers,
+                             final int originatingServerId,
+                             final int readByConnectionThread) {
+        this.synchronizedServers = synchronizedServers;
+        this.originatingServerId = originatingServerId;
+        this.readByConnectionThread = readByConnectionThread;
+    }
+
+    @Override
+    public
+    String toString () {
+        final var serverInternalString = new StringBuilder();
+
+        serverInternalString.append("\"serverInternalData\": {")
+                            .append("\"synchronizedServers\": ");
+
+        if (!this.synchronizedServers.isEmpty()) {
+            final var synchronizedListBuilder = new StringBuilder();
+
+            for (final int serverId : this.synchronizedServers) {
+                synchronizedListBuilder.append(serverId).append(", ");
+            }
+
+            if (synchronizedListBuilder.length() >= 3) {
+                synchronizedListBuilder.delete(synchronizedListBuilder.length() - 2,
+                                               synchronizedListBuilder.length() - 1);
+            }
+            serverInternalString.append("[")
+                                .append(synchronizedListBuilder)
+                                .append("]");
+        } else {
+            serverInternalString.append("none");
+        }
+        serverInternalString.append("}");
+        return serverInternalString.toString();
+    }
+
+    @Override
+    public
+    void addSyncedServerId (final int serverId) {
+
+        if (serverId > 0) {
+            this.synchronizedServers.add(serverId);
+        }
+    }
+
+    @Override
+    public
+    boolean checkServerSyncCount (final int checkCount) {
+        return this.synchronizedServers.size() == checkCount;
+    }
+
+    @Override
+    public
+    boolean checkServerSyncState (final int serverId) {
+        return this.synchronizedServers.contains(serverId);
+    }
+
+    @Override
+    public
+    int getOriginatingServerId () {
+        return this.originatingServerId;
+    }
+
+    /**
+     * Gets the reading connection thread.
+     *
+     * @return the reading connection thread
+     */
+    public
+    int getReadingConnectionThread () {
+        return this.readByConnectionThread;
+    }
+
+    /**
+     * Sets the reading connection thread.
+     *
+     * @param readingConnectionThread the new reading connection thread
+     */
+    public
+    void setReadingConnectionThread (final int readingConnectionThread) {
+        if (this.readByConnectionThread == -1) {
+            this.readByConnectionThread = readingConnectionThread;
+        }
+    }
+
+    /**
+     * Gets the synchronized servers.
+     *
+     * @return the synchronized servers
+     */
+    public
+    Set<Integer> getSyncedServers () {
+        return unmodifiableSet(this.synchronizedServers);
+    }
+}

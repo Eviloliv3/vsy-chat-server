@@ -8,6 +8,9 @@
         <option value="$PROJECT_DIR$/../utility/pom.xml" />
         <option value="$PROJECT_DIR$/../transmission/pom.xml" />
         <option value="$PROJECT_DIR$/../module/pom.xml" />
+        <option value="$PROJECT_DIR$/../shared-module/pom.xml" />
+        <option value="$PROJECT_DIR$/../shared-utility/pom.xml" />
+        <option value="$PROJECT_DIR$/../shared-transmission/pom.xml" />
       </list>
     </option>
   </component>

@@ -6,10 +6,10 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="shared-module" />
         <module name="server" />
-        <module name="transmission" />
         <module name="shared-utility" />
-        <module name="module" />
+        <module name="shared-transmission" />
       </profile>
     </annotationProcessing>
   </component>

@@ -1,12 +1,12 @@
 package de.vsy.chat.server.testing_grounds;
 
-import de.vsy.chat.server.persistent_data.client_data.ContactListDAO;
+import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static de.vsy.chat.shared_transmission.packet.content.relation.EligibleContactEntity.CLIENT;
+import static de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity.CLIENT;
 
 class TestContactListPersistence {
 

@@ -2,21 +2,21 @@ package de.vsy.chat.server.raw_server_test.authentication;
 
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
+import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
-import de.vsy.chat.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.chat.shared_transmission.packet.content.PacketContent;
-import de.vsy.chat.shared_transmission.packet.content.authentication.LoginRequestDTO;
+import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginRequestDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.FRANK_1_AUTH;
-import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
-import static de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
-import static de.vsy.chat.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
 
 /** @author fredward */
 public
@@ -40,14 +40,14 @@ class TestLoginBehaviour extends ServerTestBase {
         clientOne = super.loginNextClient();
         clientOneAuth = clientOne.getAuthenticationData();
 
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientTwo = super.getUnusedClientConnection();
 
         content = new LoginRequestDTO(clientOneAuth.getLogin(),
                                       clientOneAuth.getPassword());
 
-        checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Sie sind bereits von einem anderen Gerät aus angemeldet.");
+        TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Sie sind bereits von einem anderen Gerät aus angemeldet.");
         LOGGER.info(
                 "Test: Login eingeloggt -> bereits von anderem Gerät aus eingeloggt. --beendet");
     }
@@ -59,8 +59,8 @@ class TestLoginBehaviour extends ServerTestBase {
         final var clientOne = super.getUnusedClientConnection();
 
         content = new LoginRequestDTO(STANDARD_EMPTY_STRING, STANDARD_EMPTY_STRING);
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Fehlerhafte Klientendaten:");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Fehlerhafte Klientendaten:");
         LOGGER.info("Test: Login falsch -> fehlerhafte Daten -- beendet");
     }
 
@@ -71,8 +71,8 @@ class TestLoginBehaviour extends ServerTestBase {
         final var clientOne = super.getUnusedClientConnection();
 
         content = new LoginRequestDTO("frank1", "falsch");
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.");
         LOGGER.info("Test: Login falsch -> Kein Konto --beendet");
     }
 
@@ -88,8 +88,8 @@ class TestLoginBehaviour extends ServerTestBase {
         content = new LoginRequestDTO(clientOneAuthenticationData.getLogin(),
                                       clientOneAuthenticationData.getPassword());
 
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
         LOGGER.info("Test: Login richtig -> schon eingeloggt --beendet");
     }
 
@@ -98,7 +98,7 @@ class TestLoginBehaviour extends ServerTestBase {
         LOGGER.info("Test: Login erfolgreich");
         boolean loginSuccess;
         final var clientOne = super.getUnusedClientConnection();
-        clientOne.setClientData(FRANK_1_AUTH, null);
+        clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
 
         loginSuccess = clientOne.tryClientLogin();
         Assertions.assertTrue((loginSuccess), "Login fehlgeschlagen.");

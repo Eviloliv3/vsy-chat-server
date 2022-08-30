@@ -3,9 +3,9 @@
  */
 package de.vsy.chat.server.server_test_helpers;
 
-import de.vsy.chat.shared_module.packet_management.OutputBuffer;
-import de.vsy.chat.shared_transmission.dto.CommunicatorDTO;
-import de.vsy.chat.shared_transmission.packet.Packet;
+import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
+import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 
 import java.util.HashMap;
 import java.util.List;

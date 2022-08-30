@@ -1,12 +1,12 @@
 package de.vsy.chat.server.testing_grounds;
 
-import de.vsy.chat.server.server.client_management.ClientState;
-import de.vsy.chat.server.server_packet.content.builder.SimpleStatusSyncBuilder;
+import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static de.vsy.chat.shared_transmission.dto.CommunicatorDTO.valueOf;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
+import static de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO.valueOf;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestServerStatusBuilder {

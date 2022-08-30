@@ -1,13 +1,13 @@
 package de.vsy.chat.server.testing_grounds;
 
-import de.vsy.chat.shared_module.packet_creation.ContentIdentificationProviderImpl;
-import de.vsy.chat.shared_module.packet_creation.PacketCompiler;
-import de.vsy.chat.server.persistent_data.client_data.PendingPacketDAO;
-import de.vsy.chat.server.persistent_data.client_data.PendingType;
-import de.vsy.chat.shared_transmission.dto.CommunicatorDTO;
-import de.vsy.chat.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.chat.shared_transmission.packet.content.status.ContactMessengerStatusDTO;
-import de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_module.shared_module.packet_creation.ContentIdentificationProviderImpl;
+import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
+import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
+import de.vsy.server.persistent_data.client_data.PendingType;
+import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.shared_transmission.packet.content.status.ContactMessengerStatusDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

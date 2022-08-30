@@ -7,22 +7,21 @@ package de.vsy.chat.server.raw_server_test.authentication;
 
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
+import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
-import de.vsy.chat.shared_transmission.dto.CommunicatorDTO;
-import de.vsy.chat.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.chat.shared_transmission.packet.content.PacketContent;
-import de.vsy.chat.shared_transmission.packet.content.authentication.ReconnectRequestDTO;
-import de.vsy.chat.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
+import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
+import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectRequestDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.FRANK_1_COMM;
-import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
-import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
-import static de.vsy.chat.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.chat.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 /** @author fredward */
 public
@@ -40,8 +39,8 @@ class TestReconnectionBehaviour extends ServerTestBase {
         PacketContent content;
         final var clientOne = super.loginNextClient();
         content = new ReconnectRequestDTO(clientOne.getCommunicatorData());
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
         LOGGER.info(
                 "Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt -- beendet");
     }
@@ -58,7 +57,7 @@ class TestReconnectionBehaviour extends ServerTestBase {
         clientOne = super.loginNextClient();
         clientOneCommunicatorData = clientOne.getCommunicatorData();
 
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientTwo = super.getUnusedClientConnection();
 
         clientOne.resetConnection();
@@ -68,8 +67,8 @@ class TestReconnectionBehaviour extends ServerTestBase {
         request = new ReconnectRequestDTO(clientOneCommunicatorData);
         reconnectPendingClient(clientTwo, request);
         Thread.sleep(500);
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), request,
-                           "Sie sind entweder von einem anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch von einem anderen Gerät aus unternommen.");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), request,
+                                                    "Sie sind entweder von einem anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch von einem anderen Gerät aus unternommen.");
 
         LOGGER.info(
                 "Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen -- beendet");
@@ -79,8 +78,8 @@ class TestReconnectionBehaviour extends ServerTestBase {
     void reconnectPendingClient (ClientConnection connection,
                                  ReconnectRequestDTO request) {
         connection.setClientData(null, request.getClientData());
-        checkResponse(connection, getServerEntity(STANDARD_SERVER_ID), request,
-                      ReconnectResponseDTO.class);
+        TestResponseSingleClient.checkResponse(connection, getServerEntity(STANDARD_SERVER_ID), request,
+                                               ReconnectResponseDTO.class);
     }
 
     @Test
@@ -95,12 +94,12 @@ class TestReconnectionBehaviour extends ServerTestBase {
         clientOne = super.loginNextClient();
         clientOneCommunicatorData = clientOne.getCommunicatorData();
 
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientTwo = super.getUnusedClientConnection();
 
         content = new ReconnectRequestDTO(clientOneCommunicatorData);
-        checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Sie sind entweder von einem anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch von einem anderen Gerät aus unternommen.");
+        TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Sie sind entweder von einem anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch von einem anderen Gerät aus unternommen.");
         LOGGER.info(
                 "Test: Wiederverbindung fehlgeschlagen -> noch von anderem Gerät eingeloggt -- beendet");
     }
@@ -112,9 +111,9 @@ class TestReconnectionBehaviour extends ServerTestBase {
         PacketContent content;
         final var clientOne = super.getUnusedClientConnection();
 
-        content = new ReconnectRequestDTO(FRANK_1_COMM);
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Sie sind nicht als authentifiziert registriert.");
+        content = new ReconnectRequestDTO(TestClientDataProvider.FRANK_1_COMM);
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Sie sind nicht als authentifiziert registriert.");
         LOGGER.info(
                 "Test: Wiederverbindung fehlgeschlagen -> nicht im schwebenden Zustand -- beendet");
     }
@@ -127,8 +126,8 @@ class TestReconnectionBehaviour extends ServerTestBase {
 
         content = new ReconnectRequestDTO(
                 CommunicatorDTO.valueOf(-4567, "°°1 Franke"));
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                           "Fehlerhafte Kommunikatordaten:");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+                                                    "Fehlerhafte Kommunikatordaten:");
         LOGGER.info(
                 "Test: Wiederverbindung fehlgeschlagen -> ungültige Daten -- beendet");
     }
@@ -141,9 +140,9 @@ class TestReconnectionBehaviour extends ServerTestBase {
 
         erroneousRequest = new ReconnectRequestDTO(
                 CommunicatorDTO.valueOf(123560, "Frank Falsch"));
-        checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
-                           erroneousRequest,
-                           "Es existiert kein Account mit den von Ihnen angegebenen Daten.");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
+                                                    erroneousRequest,
+                                                    "Es existiert kein Account mit den von Ihnen angegebenen Daten.");
         LOGGER.info(
                 "Test: Wiederverbindung fehlgeschlagen -> fehlerhafte Daten -- beendet");
     }
@@ -157,7 +156,7 @@ class TestReconnectionBehaviour extends ServerTestBase {
         final CommunicatorDTO clientOneCommunicatorData;
 
         clientOne = super.loginNextClient();
-        super.addConnectionSameServer();
+        super.addConnectionNextServer();
         clientTwo = super.getUnusedClientConnection();
         clientOneCommunicatorData = clientOne.getCommunicatorData();
 
