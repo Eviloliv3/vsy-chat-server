@@ -18,7 +18,7 @@ public
 class ExtendedStatusSyncBuilder<T extends ExtendedStatusSyncBuilder<T>>
         extends SimpleStatusSyncBuilder<T> {
 
-    private Set<Integer> contactIdSet = new HashSet<>();
+    private final Set<Integer> contactIdSet = new HashSet<>();
 
     public
     Set<Integer> getContactIdList () {
@@ -36,7 +36,7 @@ class ExtendedStatusSyncBuilder<T extends ExtendedStatusSyncBuilder<T>>
     ExtendedStatusSyncBuilder<T> withContactSet (final Set<Integer> contactIds) {
 
         if (contactIds != null) {
-            this.contactIdSet = copyOf(contactIds);
+            this.contactIdSet.addAll(contactIds);
         }
         return getInstanciable();
     }
@@ -50,10 +50,6 @@ class ExtendedStatusSyncBuilder<T extends ExtendedStatusSyncBuilder<T>>
     @Override
     public
     ExtendedStatusSyncDTO build () {
-
-        if (this.contactIdSet == null) {
-            this.contactIdSet = new HashSet<>();
-        }
         return new ExtendedStatusSyncDTO(this);
     }
 }

@@ -1,9 +1,8 @@
 package de.vsy.server.service.error;
 
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
+import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.ErrorHandlingServiceDataProvider;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceBase;
@@ -13,6 +12,7 @@ import de.vsy.server.service.ServiceData.ServiceResponseDirection;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.ErrorPacketProcessorFactory;
 import de.vsy.server.service.packet_logic.processor.ServicePacketProcessor;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +54,8 @@ class ErrorMessageHandlingService extends ServiceBase {
     ErrorMessageHandlingService (
             final ErrorHandlingServiceDataProvider serviceDataModel) {
         super(SERVICE_SPECIFICATIONS,
-              serviceDataModel.getServicePacketBufferManager());
+              serviceDataModel.getServicePacketBufferManager(),
+              serviceDataModel.getLocalServerConnectionData());
         this.serverBuffers = serviceDataModel.getServicePacketBufferManager();
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
         this.processor = new ServicePacketProcessor(
@@ -136,17 +137,17 @@ class ErrorMessageHandlingService extends ServiceBase {
     }
 
     /**
+     * @param toPersist the error packet to persist
      *
-     * @param toPersist     the error packet to persist
-     *
-     * @throws IllegalStateException    the illegal state exception
+     * @throws IllegalStateException the illegal state exception
      */
     private
     void saveClientBoundError (final Packet toPersist) {
         final var clientDAO = new PendingPacketDAO();
         try {
-            clientDAO.createFileAccess(
-                    toPersist.getPacketProperties().getRecipientEntity().getEntityId());
+            clientDAO.createFileAccess(toPersist.getPacketProperties()
+                                                .getRecipientEntity()
+                                                .getEntityId());
         } catch (InterruptedException ie) {
             throw new IllegalStateException(ie);
         }

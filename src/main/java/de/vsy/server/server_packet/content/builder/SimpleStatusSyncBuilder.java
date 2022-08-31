@@ -2,8 +2,8 @@ package de.vsy.server.server_packet.content.builder;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import de.vsy.server.server.client_management.ClientState;
-import de.vsy.shared_module.shared_module.data_element_validation.BeanChecker;
 import de.vsy.server.server_packet.content.SimpleStatusSyncDTO;
+import de.vsy.shared_module.shared_module.data_element_validation.BeanChecker;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 
 /**
@@ -88,8 +88,8 @@ class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>>
             final CommunicatorDTO communicatorData) {
         var communicatorDataCheck = BeanChecker.checkBean(communicatorData);
 
-        if (communicatorDataCheck != null) {
-            throw new IllegalArgumentException(communicatorDataCheck);
+        if (communicatorDataCheck.isPresent()) {
+            throw new IllegalArgumentException(communicatorDataCheck.get());
         }
         this.communicatorData = communicatorData;
         return getInstanciable();

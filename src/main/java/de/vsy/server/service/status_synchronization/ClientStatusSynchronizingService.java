@@ -33,7 +33,8 @@ class ClientStatusSynchronizingService extends ServiceBase {
         SERVICE_SPECIFICATIONS = ServiceData.ServiceDataBuilder.create()
                                                                .withType(
                                                                        Service.TYPE.CHAT_STATUS_UPDATE)
-                                                               .withName("ClientSyncService")
+                                                               .withName(
+                                                                       "ClientSyncService")
                                                                .withDirection(
                                                                        ServiceData.ServiceResponseDirection.INBOUND,
                                                                        Service.TYPE.REQUEST_ROUTER)
@@ -52,7 +53,8 @@ class ClientStatusSynchronizingService extends ServiceBase {
     ClientStatusSynchronizingService (
             final ClientStatusRegistrationServiceDataProvider serviceDataModel) {
         super(SERVICE_SPECIFICATIONS,
-              serviceDataModel.getServicePacketBufferManager());
+              serviceDataModel.getServicePacketBufferManager(),
+              serviceDataModel.getLocalServerConnectionData());
         this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
         this.processor = new ServicePacketProcessor(

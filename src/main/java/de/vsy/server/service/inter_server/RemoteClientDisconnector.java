@@ -59,12 +59,13 @@ class RemoteClientDisconnector {
 
     private
     void disconnectClient (int clientId, ClientState currentState) {
-        try{
+        try {
             publishState(clientId, currentState);
-        }catch(InterruptedException ie){
-            LogManager.getLogger().error("Kein Kontaktlistenzugriff fuer " +
-                                     "Klienten {}. Klientenstatus wurde Kontakten " +
-                                     "nicht mitgeteilt.", clientId);
+        } catch (InterruptedException ie) {
+            LogManager.getLogger()
+                      .error("Kein Kontaktlistenzugriff fuer " +
+                             "Klienten {}. Klientenstatus wurde Kontakten " +
+                             "nicht mitgeteilt.", clientId);
         }
         unsubscribeClient(clientId);
         this.clientStateProvider.removeClientState(clientId);

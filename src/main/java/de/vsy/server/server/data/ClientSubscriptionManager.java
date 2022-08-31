@@ -1,10 +1,10 @@
 package de.vsy.server.server.data;
 
+import de.vsy.server.service.RemotePacketBuffer;
+import de.vsy.server.service.request.CategoryIdSubscriber;
 import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
 import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.server.service.RemotePacketBuffer;
-import de.vsy.server.service.request.CategoryIdSubscriber;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 
@@ -43,7 +43,7 @@ class ClientSubscriptionManager extends AbstractPacketCategorySubscriptionManage
                     var subscriber = threadSubscription.getValue();
                     var idCheckString = IdCheck.checkData(threadId);
 
-                    if (idCheckString == null && subscriber != null) {
+                    if (idCheckString.isPresent() && subscriber != null) {
                         continue;
                     }
                     threadSubscriptions.remove(threadId);

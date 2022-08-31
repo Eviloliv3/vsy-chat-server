@@ -1,7 +1,7 @@
 package de.vsy.server.server.data;
 
-import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
 import de.vsy.server.service.request.CategoryIdSubscriber;
+import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 

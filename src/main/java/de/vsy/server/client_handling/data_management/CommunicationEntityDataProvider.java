@@ -3,9 +3,9 @@
  */
 package de.vsy.server.client_handling.data_management;
 
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
+import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.CommunicatorDataManipulator;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 

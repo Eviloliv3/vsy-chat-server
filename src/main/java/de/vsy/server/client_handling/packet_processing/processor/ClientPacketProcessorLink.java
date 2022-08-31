@@ -6,6 +6,7 @@ import de.vsy.shared_module.shared_module.packet_exception.PacketValidationExcep
 import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.shared_transmission.packet.property.packet_identifier.ContentIdentifier;
 
 public
 class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
@@ -24,6 +25,7 @@ class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
     throws PacketValidationException, PacketProcessingException {
         PacketProcessor processor;
         final var inputContent = input.getPacketContent();
+        final ContentIdentifier identifier;
         final Class<? extends PacketContent> contentType;
 
         if (inputContent instanceof final SimpleInternalContentWrapper inputServerContent) {
@@ -31,18 +33,16 @@ class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
         } else {
             contentType = inputContent.getClass();
         }
+        identifier = input.getPacketProperties().getContentIdentifier();
 
-        processor = this.processingLogic.getProcessor(
-                input.getPacketProperties().getContentIdentifier(), contentType);
-
-        if (processor != null) {
-            processor.processPacket(input);
-        } else {
-            throw new PacketProcessingException("Es wurde keine Verarbeitungslogik" +
-                                                "für die folgende Kennzeichnung " +
-                                                "gefunden" +
-                                                input.getPacketProperties()
-                                                     .getContentIdentifier());
-        }
+        processor = this.processingLogic.getProcessor(identifier, contentType)
+                                        .orElseThrow(
+                                                () -> new PacketProcessingException(
+                                                        "Es wurde keine Verarbeitungslogik" +
+                                                        "für die folgende Kennzeichnung " +
+                                                        "gefunden" +
+                                                        input.getPacketProperties()
+                                                             .getContentIdentifier()));
+        processor.processPacket(input);
     }
 }

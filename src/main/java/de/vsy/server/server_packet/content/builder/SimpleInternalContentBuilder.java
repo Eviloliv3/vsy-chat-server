@@ -21,18 +21,6 @@ class SimpleInternalContentBuilder
         return this.wrappedContent;
     }
 
-    @Override
-    public
-    SimpleInternalContentBuilder getInstanciable () {
-        return this;
-    }
-
-    @Override
-    public
-    SimpleInternalContentWrapper build () {
-        return new SimpleInternalContentWrapper(this);
-    }
-
     /**
      * With.
      *
@@ -44,5 +32,17 @@ class SimpleInternalContentBuilder
     SimpleInternalContentBuilder withContent (final PacketContent wrappedContent) {
         this.wrappedContent = wrappedContent;
         return getInstanciable();
+    }
+
+    @Override
+    public
+    SimpleInternalContentBuilder getInstanciable () {
+        return this;
+    }
+
+    @Override
+    public
+    SimpleInternalContentWrapper build () {
+        return new SimpleInternalContentWrapper(this);
     }
 }

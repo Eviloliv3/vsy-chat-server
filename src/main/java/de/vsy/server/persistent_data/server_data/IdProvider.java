@@ -4,9 +4,9 @@
 package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -69,8 +69,9 @@ class IdProvider implements ServerDataAccess {
         idMap = readIdMap();
         newId = idMap.get("client");
 
-        if (IdCheck.checkData(newId) != null) {
+        if (IdCheck.checkData(newId).isPresent()) {
             newId = 15000;
+            LOGGER.warn("IDs zurückgesetzt.");
         }
         idMap.put("client", newId + 1);
         this.dataProvider.writeData(idMap);

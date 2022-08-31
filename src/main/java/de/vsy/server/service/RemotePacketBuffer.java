@@ -1,9 +1,9 @@
 package de.vsy.server.service;
 
-import de.vsy.server.server_packet.content.ServerPacketContentImpl;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server.server_connection.RemoteServerConnectionData;
+import de.vsy.server.server_packet.content.ServerPacketContentImpl;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 
 /**
@@ -38,6 +38,9 @@ class RemotePacketBuffer extends PacketBuffer {
             }
         } else if (content == null) {
             return super.appendPacket(input);
+        } else {
+            throw new IllegalArgumentException(
+                    "Ungesicherter Paketinhalt. Paket nicht verfolgbar, wird nicht gesandt.");
         }
         return true;
     }
@@ -56,6 +59,9 @@ class RemotePacketBuffer extends PacketBuffer {
             }
         } else if (content == null) {
             return super.appendPacket(input);
+        } else {
+            throw new IllegalArgumentException(
+                    "Ungesicherter Paketinhalt. Paket nicht verfolgbar, wird nicht gesandt.");
         }
         return true;
     }

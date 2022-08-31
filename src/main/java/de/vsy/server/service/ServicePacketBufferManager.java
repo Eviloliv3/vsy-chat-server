@@ -65,8 +65,9 @@ class ServicePacketBufferManager {
 
             if (bufferMap != null) {
                 bufferDeregistered = bufferMap.remove(bufferLabel, packetBuffer);
-            }else{
-                LOGGER.info("Keine Buffer gefunden fuer Servicetyp: {}", serviceType);
+            } else {
+                LOGGER.info("Keine Buffer gefunden fuer Servicetyp: {}",
+                            serviceType);
             }
         } finally {
             this.lock.writeLock().unlock();
@@ -166,7 +167,8 @@ class ServicePacketBufferManager {
      * @return the PacketBuffer
      */
     public
-    PacketBuffer registerBuffer (final Service.TYPE serviceType, final int serviceId) {
+    PacketBuffer registerBuffer (final Service.TYPE serviceType,
+                                 final int serviceId) {
         return registerBuffer(serviceType, serviceId, new PacketBuffer());
     }
 
@@ -191,13 +193,16 @@ class ServicePacketBufferManager {
                 this.lock.writeLock().lock();
                 var serviceBufferMap = this.registeredBuffers.computeIfAbsent(
                         serviceType, service -> new HashMap<>());
-                final var previousValue = serviceBufferMap.putIfAbsent(bufferLabel, packetBuffer);
+                final var previousValue = serviceBufferMap.putIfAbsent(bufferLabel,
+                                                                       packetBuffer);
 
                 if (previousValue == null) {
                     this.registeredBuffers.put(serviceType, serviceBufferMap);
                     bufferRegistered = packetBuffer;
-                }else{
-                    LOGGER.info("Buffer bereits registriert Servicetyp/Hash: {} / {}", serviceType, packetBuffer.toString());
+                } else {
+                    LOGGER.info(
+                            "Buffer bereits registriert Servicetyp/Hash: {} / {}",
+                            serviceType, packetBuffer.toString());
                 }
             } finally {
                 this.lock.writeLock().unlock();

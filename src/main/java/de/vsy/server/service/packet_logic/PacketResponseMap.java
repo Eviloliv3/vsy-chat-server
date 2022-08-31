@@ -71,13 +71,7 @@ class PacketResponseMap {
      */
     private
     Packet getPacket (final EligibleCommunicationEntity direction) {
-        Packet response;
-
-        if (this.responseMap == null) {
-            setFreshMap(null, null);
-        }
-        response = this.responseMap.get(direction);
-        return response;
+        return this.responseMap.get(direction);
     }
 
     /**

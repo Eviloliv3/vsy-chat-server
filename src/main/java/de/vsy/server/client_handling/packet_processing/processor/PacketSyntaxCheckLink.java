@@ -28,10 +28,11 @@ class PacketSyntaxCheckLink extends AbstractPacketProcessorLink {
     throws PacketValidationException, PacketProcessingException {
         var syntaxCheckString = this.packetValidator.checkPacket(input);
 
-        if (syntaxCheckString != null) {
+        if (syntaxCheckString.isPresent()) {
             throw new PacketValidationException(
                     SYNTAX_ERROR_STRING + syntaxCheckString);
+        } else {
+            super.nextLink.processPacket(input);
         }
-        super.nextLink.processPacket(input);
     }
 }

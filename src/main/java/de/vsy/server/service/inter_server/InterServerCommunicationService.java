@@ -3,17 +3,6 @@
  */
 package de.vsy.server.service.inter_server;
 
-import de.vsy.shared_module.shared_module.exception_processing.PacketHandlingExceptionProcessor;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
-import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;
-import de.vsy.shared_module.shared_module.packet_transmission.cache.UnconfirmedPacketTransmissionCache;
-import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
-import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
-import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.server.server_connection.RemoteServerConnectionData;
@@ -30,6 +19,17 @@ import de.vsy.server.service.ServiceBase;
 import de.vsy.server.service.ServiceData;
 import de.vsy.server.service.ServiceData.ServiceDataBuilder;
 import de.vsy.server.service.ServiceData.ServiceResponseDirection;
+import de.vsy.shared_module.shared_module.exception_processing.PacketHandlingExceptionProcessor;
+import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
+import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;
+import de.vsy.shared_module.shared_module.packet_transmission.cache.UnconfirmedPacketTransmissionCache;
+import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
+import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
+import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 import org.apache.logging.log4j.LogManager;
@@ -85,7 +85,8 @@ class InterServerCommunicationService extends ServiceBase {
     InterServerCommunicationService (
             final ServerCommunicationServiceDataProvider serviceDataAccess) {
         super(SERVICE_SPECIFICATIONS,
-              serviceDataAccess.getServicePacketBufferManager());
+              serviceDataAccess.getServicePacketBufferManager(),
+              serviceDataAccess.getLocalServerConnectionData());
         this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
         this.serviceDataAccess = serviceDataAccess;
         this.threadBuffers = new ThreadPacketBufferManager();
@@ -186,7 +187,7 @@ class InterServerCommunicationService extends ServiceBase {
                         synchronizationPacket);
                 final var content = synchronizationPacket.getPacketContent();
 
-                if (validatorString != null) {
+                if (validatorString.isPresent()) {
                     LOGGER.error("Paketfehler: {}", validatorString);
                     continue;
                 }
@@ -261,20 +262,16 @@ class InterServerCommunicationService extends ServiceBase {
             if (input != null) {
                 final var validationString = this.validator.checkPacket(input);
 
-                try {
-
-                    if (validationString == null) {
-                        final var serverPacketContent = (ServerPacketContentImpl) input.getPacketContent();
-                        serverPacketContent.setReadingConnectionThread(
-                                getServiceId());
-                        output = input;
-                    } else {
-                        final var errorMessage = "Das Paket wurde nicht zugestellt.";
-                        throw new PacketProcessingException(
-                                errorMessage + validationString);
-                    }
-                } catch (final PacketProcessingException phe) {
-                    output = this.pheProcessor.processException(phe, input);
+                if (validationString.isEmpty()) {
+                    final var serverPacketContent = (ServerPacketContentImpl) input.getPacketContent();
+                    serverPacketContent.setReadingConnectionThread(getServiceId());
+                    output = input;
+                } else {
+                    final var errorMessage = "Das Paket wurde nicht zugestellt.";
+                    final var processingException = new PacketProcessingException(
+                            errorMessage + validationString);
+                    output = this.pheProcessor.processException(processingException,
+                                                                input);
                 }
                 this.packetDispatcher.dispatchPacket(output);
             }

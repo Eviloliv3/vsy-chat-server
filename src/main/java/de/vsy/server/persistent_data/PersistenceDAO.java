@@ -54,8 +54,9 @@ class PersistenceDAO {
      * @param dataFormat the dataManagement format
      */
     public
-    PersistenceDAO (final PersistentDataFileCreator.DataFileDescriptor fileDescriptor,
-                    final JavaType dataFormat) {
+    PersistenceDAO (
+            final PersistentDataFileCreator.DataFileDescriptor fileDescriptor,
+            final JavaType dataFormat) {
         this.fileDescriptor = fileDescriptor;
         this.dataFormat = dataFormat;
         this.mapper = new ObjectMapper();
@@ -290,9 +291,9 @@ class PersistenceDAO {
             String readJsonString = Files.readString(lastChangedFile);
             readObject = mapper.readValue(readJsonString, dataFormat);
         } catch (JsonParseException | JsonMappingException je) {
-            LOGGER.info(
-                    "Es wurden keine gueltigen Daten gelesen: {}\n{}: {}",
-                    lastChangedFile, je.getClass().getSimpleName(), je.getMessage());
+            LOGGER.info("Es wurden keine gueltigen Daten gelesen: {}\n{}: {}",
+                        lastChangedFile, je.getClass().getSimpleName(),
+                        je.getMessage());
         } catch (final FileNotFoundException ex) {
             Thread.currentThread().interrupt();
             LOGGER.info("Datei nicht gefunden: {}\n{}", lastChangedFile,

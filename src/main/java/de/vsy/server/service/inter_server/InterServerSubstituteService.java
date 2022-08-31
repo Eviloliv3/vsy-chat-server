@@ -3,11 +3,6 @@
  */
 package de.vsy.server.service.inter_server;
 
-import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
-import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
-import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import de.vsy.server.client_handling.packet_processing.processor.PacketSyntaxCheckLink;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
@@ -18,6 +13,11 @@ import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationC
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.processor.InterServerSubstitutePacketProcessorLink;
+import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
+import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import org.apache.logging.log4j.LogManager;
@@ -198,8 +198,10 @@ class InterServerSubstituteService extends ThreadContextRunnable
                 pendingPacketAccessor.createFileAccess(currentClientId);
                 this.clientPersistenceAccessManagers.put(currentClientId,
                                                          pendingPacketAccessor);
-            }catch(InterruptedException ie){
-                LOGGER.error("Kein Zugriff auf schwebende Pakete für Klienten: {}. Klient wird vollständig entfernt.", currentClientId);
+            } catch (InterruptedException ie) {
+                LOGGER.error(
+                        "Kein Zugriff auf schwebende Pakete für Klienten: {}. Klient wird vollständig entfernt.",
+                        currentClientId);
                 this.clientStateProvider.removeClientState(currentClientId);
             }
         }

@@ -3,7 +3,13 @@
  */
 package de.vsy.server.service.request;
 
+import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.server.data.access.PacketAssignmentServiceDataProvider;
+import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
+import de.vsy.server.service.*;
+import de.vsy.server.service.ServiceData.ServiceDataBuilder;
+import de.vsy.server.service.ServiceData.ServiceResponseDirection;
 import de.vsy.shared_module.shared_module.exception_processing.PacketHandlingExceptionProcessor;
 import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
@@ -12,17 +18,12 @@ import de.vsy.shared_module.shared_module.packet_exception.PacketValidationExcep
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
 import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
-import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
-import de.vsy.server.server.data.access.PacketAssignmentServiceDataProvider;
-import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
-import de.vsy.server.service.*;
-import de.vsy.server.service.ServiceData.ServiceDataBuilder;
-import de.vsy.server.service.ServiceData.ServiceResponseDirection;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
@@ -63,7 +64,8 @@ class PacketAssignmentService extends ServiceBase {
     PacketAssignmentService (
             final PacketAssignmentServiceDataProvider serviceDataModel) {
         super(SERVICE_SPECIFICATIONS,
-              serviceDataModel.getServicePacketBufferManager());
+              serviceDataModel.getServicePacketBufferManager(),
+              serviceDataModel.getLocalServerConnectionData());
         this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
         setupPacketNetworkManager(serviceDataModel.getServiceSubscriptionManager(),
                                   serviceDataModel.getClientSubscriptionManager());
@@ -100,9 +102,10 @@ class PacketAssignmentService extends ServiceBase {
 
         this.requestBuffer = this.serviceBuffers.registerBuffer(
                 super.getServiceType(), serviceId);
-        this.preProcessor = new ContentPreProcessor(
-                this.packetNetworkManager.getSubscriptionsManager(CLIENT),
-                this.requestBuffer);
+        this.preProcessor = new ContentPreProcessor(super.serverConnectionData,
+                                                    this.packetNetworkManager.getSubscriptionsManager(
+                                                            CLIENT),
+                                                    this.requestBuffer);
         this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
         super.setReadyState();
     }
@@ -117,7 +120,7 @@ class PacketAssignmentService extends ServiceBase {
     public
     void work () {
         Packet request;
-        String validationString;
+        Optional<String> validationString;
 
         try {
             request = this.requestBuffer.getPacket();
@@ -131,7 +134,7 @@ class PacketAssignmentService extends ServiceBase {
 
             validationString = validator.checkPacket(request);
 
-            if (validationString == null) {
+            if (validationString.isEmpty()) {
                 try {
                     publishPacket(request);
                 } catch (PacketHandlingException phe) {
@@ -142,7 +145,7 @@ class PacketAssignmentService extends ServiceBase {
                     this.requestBuffer.prependPacket(errorResponse);
                 }
             } else {
-                this.getServiceLogger().error(validationString);
+                this.getServiceLogger().error(validationString.get());
             }
         }
     }
@@ -150,7 +153,7 @@ class PacketAssignmentService extends ServiceBase {
     private
     void publishPacket (Packet toPublish)
     throws PacketProcessingException, PacketValidationException {
-        final var publishablePacket = this.preProcessor.createPublishablePacket(
+        final var publishablePacket = this.preProcessor.handleDistributableContent(
                 toPublish);
 
         if (publishablePacket != null) {

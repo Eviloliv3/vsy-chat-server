@@ -3,8 +3,8 @@
  */
 package de.vsy.server.server.data.access;
 
-import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.service.ServicePacketBufferManager;
 
 public
 interface ClientStatusRegistrationServiceDataProvider

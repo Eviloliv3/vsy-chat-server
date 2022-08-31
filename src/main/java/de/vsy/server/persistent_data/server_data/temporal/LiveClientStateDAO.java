@@ -1,11 +1,11 @@
 package de.vsy.server.persistent_data.server_data.temporal;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server.client_management.CurrentClientState;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.server.persistent_data.server_data.ServerDataAccess;
+import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.server.client_management.CurrentClientState;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 /**
  * Bietet Lese-/Schreibzugriff auf redundant gesicherte Klientenzustände in
@@ -91,6 +92,10 @@ class LiveClientStateDAO implements ServerDataAccess {
         }
         clientStateMap = getAllActiveClientStates();
         currentClientState = clientStateMap.get(clientId);
+
+        if (currentClientState == null) {
+            currentClientState = new CurrentClientState(STANDARD_SERVER_ID);
+        }
 
         if (!lockAlreadyAcquired) {
             this.dataProvider.releaseAccess();
@@ -302,10 +307,6 @@ class LiveClientStateDAO implements ServerDataAccess {
                 clientStateMap.put(clientId, clientState);
                 reconnectionAllowed = this.dataProvider.writeData(clientStateMap);
             }
-        } else {
-            LOGGER.info(
-                    "{} - Zustand wird nicht verwaltet: ReconnectionState wurde nicht geändert.",
-                    clientId);
         }
 
         if (!lockAlreadyAcquired) {

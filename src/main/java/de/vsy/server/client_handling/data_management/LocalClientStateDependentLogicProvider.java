@@ -2,9 +2,9 @@ package de.vsy.server.client_handling.data_management;
 
 import de.vsy.server.client_handling.data_management.logic.ClientStatePublisher;
 import de.vsy.server.client_handling.data_management.logic.ClientSubscriptionHandler;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
+import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 
 public
 class LocalClientStateDependentLogicProvider {

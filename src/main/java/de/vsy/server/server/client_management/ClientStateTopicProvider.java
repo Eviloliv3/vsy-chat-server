@@ -27,9 +27,9 @@ class ClientStateTopicProvider {
         MESSENGER = new ClientStateTopicProvider(
                 of(ClientState.AUTHENTICATED, ClientState.ACTIVE_MESSENGER),
                 Set.of(ClientState.ACTIVE_MESSENGER));
-        AUTHENTICATION = new ClientStateTopicProvider(Set.of(ClientState.AUTHENTICATED),
-                                                      of(ClientState.ACTIVE_MESSENGER,
-                                                         ClientState.AUTHENTICATED));
+        AUTHENTICATION = new ClientStateTopicProvider(
+                Set.of(ClientState.AUTHENTICATED),
+                of(ClientState.ACTIVE_MESSENGER, ClientState.AUTHENTICATED));
 
         stateTopicAssignment = new EnumMap<>(ClientState.class);
         stateTopicAssignment.put(ClientState.ACTIVE_MESSENGER, MESSENGER);

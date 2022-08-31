@@ -3,13 +3,14 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
+import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
+import de.vsy.server.server.client_management.ClientState;
 import de.vsy.server.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.server.data.access.HandlerAccessManager;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectRequestDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
 import de.vsy.shared_utility.async_value_acquisition.TimeBasedValueFetcher;
@@ -85,7 +86,7 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                                        "erneut authentifizieren.";
                     }
                 } else {
-                    if (persistedState != null) {
+                    if (persistedState != ClientState.OFFLINE) {
                         LOGGER.info("Gefundener Zustand: {}", persistedState);
                         causeMessage =
                                 "Sie sind entweder von einem anderen Gerät aus verbunden " +

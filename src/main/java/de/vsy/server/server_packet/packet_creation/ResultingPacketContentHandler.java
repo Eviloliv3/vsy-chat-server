@@ -20,7 +20,8 @@ class ResultingPacketContentHandler {
 
     public
     void addResponse (final PacketContent responseContent) {
-        final var response = this.standardResultCreator.createResponse( responseContent);
+        final var response = this.standardResultCreator.createResponse(
+                responseContent);
         this.packetCache.addPacket(response);
     }
 

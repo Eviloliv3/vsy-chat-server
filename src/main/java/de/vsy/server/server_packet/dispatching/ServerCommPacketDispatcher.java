@@ -3,10 +3,10 @@
  */
 package de.vsy.server.server_packet.dispatching;
 
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceData.ServiceResponseDirection;
 import de.vsy.server.service.ServicePacketBufferManager;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 
 import java.util.Map;

@@ -3,12 +3,12 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
+import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.server.client_management.ClientState;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutRequestDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutResponseDTO;
 import org.apache.logging.log4j.LogManager;

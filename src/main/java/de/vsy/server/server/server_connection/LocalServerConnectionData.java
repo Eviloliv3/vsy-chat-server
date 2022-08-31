@@ -25,7 +25,7 @@ class LocalServerConnectionData implements ServerConnectionDataProvider {
     LocalServerConnectionData valueOf (final int serverId,
                                        final ServerSocket serverSocket) {
         if (serverSocket == null) {
-            throw new NullPointerException("Kein ServerSocket angeben.");
+            throw new IllegalArgumentException("Kein ServerSocket");
         }
         return new LocalServerConnectionData(serverId, serverSocket);
     }

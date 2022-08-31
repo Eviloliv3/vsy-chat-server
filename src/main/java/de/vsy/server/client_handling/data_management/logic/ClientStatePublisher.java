@@ -1,6 +1,5 @@
 package de.vsy.server.client_handling.data_management.logic;
 
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
@@ -9,9 +8,9 @@ import de.vsy.server.server.server_connection.ServerConnectionDataManager;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
+import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
-import org.apache.logging.log4j.LogManager;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
@@ -59,8 +58,6 @@ class ClientStatePublisher implements ClientStateListener {
                     statePacket = buildSimpleStatusPacket(clientState, changeTo);
             case ACTIVE_MESSENGER -> {
                 statePacket = buildExtendedStatusPacket(clientState, changeTo);
-                LogManager.getLogger()
-                          .info("ExtendedStatusSync erzeugt:\n{}", statePacket);
             }
             default -> statePacket = null;
         }
@@ -86,23 +83,16 @@ class ClientStatePublisher implements ClientStateListener {
 
     private
     Packet buildExtendedStatusPacket (ClientState clientState, boolean changeTo) {
-        int recipientId;
         final var extendedStatusDTO = new ExtendedStatusSyncBuilder<>();
         final var clientData = this.clientDataManager.getCommunicatorData();
         final var contactSet = this.contactListAccess.readContacts(
                 EligibleContactEntity.CLIENT);
         final var groupSet = this.contactListAccess.readContacts(
                 EligibleContactEntity.GROUP);
-        final var remoteServerId = getRemoteServerIdIfExistent();
+        final var recipientId = serverConnectionNodes.getLocalServerConnectionData()
+                                                     .getServerId();
 
         contactSet.addAll(groupSet);
-
-        if (remoteServerId != STANDARD_SERVER_ID) {
-            recipientId = remoteServerId;
-        } else {
-            recipientId = serverConnectionNodes.getLocalServerConnectionData()
-                                               .getServerId();
-        }
 
         extendedStatusDTO.withContactSet(contactSet)
                          .withClientState(clientState)

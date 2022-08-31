@@ -60,7 +60,7 @@ class ClientPersistentDataAccessProvider
                 try {
                     initiateClientDataAccess(this.localClientData.getClientId());
                     this.dataAccessible = true;
-                }catch(InterruptedException ie){
+                } catch (InterruptedException ie) {
                     this.dataAccessible = false;
                     cutClientDataAccess();
                     throw new IllegalStateException(ie);

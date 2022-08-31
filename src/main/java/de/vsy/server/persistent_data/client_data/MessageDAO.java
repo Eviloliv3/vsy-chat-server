@@ -4,7 +4,6 @@
 package de.vsy.server.persistent_data.client_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.shared_transmission.shared_transmission.packet.content.chat.TextMessageDTO;
@@ -128,20 +127,18 @@ class MessageDAO implements ClientDataAccess {
     void removeMessages (final int contactId) {
         Map<Integer, List<TextMessageDTO>> oldMessages;
 
-        if (IdCheck.checkData(contactId) == null) {
-            final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(true);
-            }
+        if (!lockAlreadyAcquired) {
+            this.dataProvider.acquireAccess(true);
+        }
 
-            oldMessages = this.readAllClientMessages();
-            oldMessages.remove(contactId);
-            this.dataProvider.writeData(oldMessages);
+        oldMessages = this.readAllClientMessages();
+        oldMessages.remove(contactId);
+        this.dataProvider.writeData(oldMessages);
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+        if (!lockAlreadyAcquired) {
+            this.dataProvider.releaseAccess();
         }
     }
 

@@ -31,15 +31,6 @@ class ResultingPacketCreator {
         this.currentRequest = currentRequest;
     }
 
-    private
-    void checkCurrentRequest ()
-    throws IllegalStateException {
-        if (this.currentRequest == null) {
-            throw new IllegalStateException(
-                    "Kein zu beantwortendes Paket angegeben.");
-        }
-    }
-
     public
     Packet createRequest (PacketContent processedContent) {
         checkCurrentRequest();
@@ -54,18 +45,23 @@ class ResultingPacketCreator {
                                                     this.currentRequest);
     }
 
-    public Packet createResponse(PacketContent processedContent){
-        final var resultingContent = adjustWrapping(processedContent, false);
-        return PacketCompiler.createResponse(resultingContent, this.currentRequest);
+    private
+    void checkCurrentRequest ()
+    throws IllegalStateException {
+        if (this.currentRequest == null) {
+            throw new IllegalStateException(
+                    "Kein zu beantwortendes Paket angegeben.");
+        }
     }
 
     private
-    PacketContent adjustWrapping (final PacketContent contentToWrap, final boolean isRequest) {
+    PacketContent adjustWrapping (final PacketContent contentToWrap,
+                                  final boolean isRequest) {
         PacketContent finalContent;
 
         final var clientIsSender = checkClientSender();
-        final var toWrap = (!isRequest && !clientIsSender) ||
-                              (isRequest && clientIsSender);
+        final var toWrap =
+                (!isRequest && !clientIsSender) || (isRequest && clientIsSender);
 
         if (toWrap) {
             finalContent = wrapContent(contentToWrap);
@@ -92,11 +88,18 @@ class ResultingPacketCreator {
                                                  .getServerId();
         var initialContent = processedContent;
 
-        if(processedContent instanceof final SimpleInternalContentWrapper wrappedContent){
+        if (processedContent instanceof final SimpleInternalContentWrapper wrappedContent) {
             initialContent = wrappedContent.getWrappedContent();
             newWrapper.withSyncedServers(wrappedContent.getSyncedServers());
         }
         newWrapper.withContent(initialContent).withOriginatingServerId(serverId);
         return newWrapper.build();
+    }
+
+    public
+    Packet createResponse (PacketContent processedContent) {
+        checkCurrentRequest();
+        final var resultingContent = adjustWrapping(processedContent, false);
+        return PacketCompiler.createResponse(resultingContent, this.currentRequest);
     }
 }

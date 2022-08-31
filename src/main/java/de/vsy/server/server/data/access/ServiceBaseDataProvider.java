@@ -1,6 +1,7 @@
 package de.vsy.server.server.data.access;
 
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.server.server_connection.LocalServerConnectionData;
 
 public
 interface ServiceBaseDataProvider {
@@ -24,4 +25,6 @@ interface ServiceBaseDataProvider {
      * @return the server subscription manager
      */
     AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager ();
+
+    LocalServerConnectionData getLocalServerConnectionData ();
 }

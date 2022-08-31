@@ -117,10 +117,10 @@ class PersistentDataFileCreator {
                                      "werden, existierte aber schon.",
                                      fileReference);
                     }
-                }else{
+                } else {
                     LOGGER.warn("Datei existiert bereits: {}", fileReference);
                 }
-            }else{
+            } else {
                 LOGGER.error("Pfad ist kein gueltiges Verzeichnis: {}", directory);
             }
         } catch (final SecurityException se) {

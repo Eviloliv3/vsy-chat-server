@@ -58,9 +58,6 @@ class PacketTransmissionCache {
      */
     public
     void transmitPackets (PacketDispatcher dispatcher) {
-        if (dispatcher == null) {
-            throw new IllegalArgumentException("Kein Dispatcher uebergeben.");
-        }
 
         if (!this.transmissionCache.isEmpty()) {
             for (final var currentPacket : this.transmissionCache) {

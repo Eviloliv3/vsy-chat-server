@@ -28,7 +28,7 @@ class CurrentClientState {
      */
     public
     CurrentClientState (final int serverId) {
-        this(ClientState.AUTHENTICATED, new PendingState(), serverId,
+        this(ClientState.OFFLINE, new PendingState(), serverId,
              new EnumMap<>(PacketCategory.class));
     }
 

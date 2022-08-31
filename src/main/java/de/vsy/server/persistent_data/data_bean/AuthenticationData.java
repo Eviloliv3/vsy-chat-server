@@ -10,6 +10,7 @@ import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Optional;
 
 /** The Class Account. Frederic Heath */
 @JsonTypeName("communicatorData")
@@ -51,19 +52,20 @@ class AuthenticationData implements Serializable {
     AuthenticationData valueOf (@JsonProperty("login") final String login,
                                 @JsonProperty("password") final String password,
                                 @JsonProperty("clientId") final int clientId) {
-        String checkString;
+        Optional<String> checkString;
 
         if (login == null) {
-            throw new NullPointerException("Kein Anzeigename (null).");
+            throw new IllegalArgumentException("Kein Anzeigename (null).");
         }
 
         if (password == null) {
-            throw new NullPointerException("Kein Passwort (null).");
+            throw new IllegalArgumentException("Kein Passwort (null).");
         }
 
-        if ((checkString = IdCheck.checkData(clientId)) != null) {
+        checkString = IdCheck.checkData(clientId);
+        if (checkString.isPresent()) {
             throw new IllegalArgumentException(
-                    "Ungültige Klienten-Id: " + checkString);
+                    "Ungültige Klienten-Id: " + checkString.get());
         }
 
         return new AuthenticationData(login, password, clientId);

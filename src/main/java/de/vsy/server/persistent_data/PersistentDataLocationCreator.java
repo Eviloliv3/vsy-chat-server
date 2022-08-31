@@ -58,27 +58,17 @@ class PersistentDataLocationCreator {
      */
     public static
     String[] createDirectoryPaths (DataOwnershipDescriptor owner,
-                                  final String pathExtension)
+                                   final String pathExtension)
     throws InterruptedException {
         String[] clientDataPaths = new String[2];
-        clientDataPaths[0] = createStandardDirectoryPath(
-                owner, pathExtension);
-        clientDataPaths[1] = createBackUpDirectoryPath(
-                owner, pathExtension);
+        clientDataPaths[0] = createStandardDirectoryPath(owner, pathExtension);
+        clientDataPaths[1] = createBackUpDirectoryPath(owner, pathExtension);
 
         if (createDirectoryPaths(clientDataPaths)) {
             return clientDataPaths;
         } else {
             return null;
         }
-    }
-
-    public static
-    String createDirectoryPath(DataOwnershipDescriptor owner, final String pathExtension)
-    throws InterruptedException {
-        String standardDataPath = createStandardDirectoryPath(owner, pathExtension);
-        createDirectoryPath(standardDataPath);
-        return standardDataPath;
     }
 
     private static
@@ -114,33 +104,6 @@ class PersistentDataLocationCreator {
     }
 
     private static
-    boolean createDirectoryPath(final String dataPath)
-    throws InterruptedException {
-        boolean directoryCreated = false;
-        final var directoryPath = new File(dataPath);
-        try {
-
-            if (!directoryPath.isDirectory()) {
-
-                if (!directoryPath.mkdirs()) {
-                    LOGGER.error("Verzeichnis wurde nicht neu erstellt: {}",
-                                 directoryPath);
-                }else{
-                    directoryCreated = true;
-                }
-            }else{
-                LOGGER.info("Verzeichnis existiert bereits: {}",
-                            directoryPath);
-                directoryCreated = true;
-            }
-        } catch (final SecurityException se) {
-            final var errorMessage ="Verzeichnis durfte nicht erstellt werden " + directoryPath + "\n" + se.getMessage();
-            throw new InterruptedException(errorMessage);
-        }
-        return directoryCreated;
-    }
-
-    private static
     StringBuilder createBasePath (final DataOwnershipDescriptor owner,
                                   final String pathExtension,
                                   final boolean isBackUpPath) {
@@ -165,5 +128,42 @@ class PersistentDataLocationCreator {
     private static
     String finalizeDirectoryPath (StringBuilder pathname) {
         return BASE_LOCATION + pathname.toString();
+    }
+
+    private static
+    boolean createDirectoryPath (final String dataPath)
+    throws InterruptedException {
+        boolean directoryCreated = false;
+        final var directoryPath = new File(dataPath);
+        try {
+
+            if (!directoryPath.isDirectory()) {
+
+                if (!directoryPath.mkdirs()) {
+                    LOGGER.error("Verzeichnis wurde nicht neu erstellt: {}",
+                                 directoryPath);
+                } else {
+                    directoryCreated = true;
+                }
+            } else {
+                LOGGER.info("Verzeichnis existiert bereits: {}", directoryPath);
+                directoryCreated = true;
+            }
+        } catch (final SecurityException se) {
+            final var errorMessage =
+                    "Verzeichnis durfte nicht erstellt werden " + directoryPath +
+                    "\n" + se.getMessage();
+            throw new InterruptedException(errorMessage);
+        }
+        return directoryCreated;
+    }
+
+    public static
+    String createDirectoryPath (DataOwnershipDescriptor owner,
+                                final String pathExtension)
+    throws InterruptedException {
+        String standardDataPath = createStandardDirectoryPath(owner, pathExtension);
+        createDirectoryPath(standardDataPath);
+        return standardDataPath;
     }
 }

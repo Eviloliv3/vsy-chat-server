@@ -81,14 +81,14 @@ class CommunicatorData implements Serializable {
             @JsonProperty("ownerId") final int ownerId,
             @JsonProperty("displayName") final String displayName) {
 
-        if (IdCheck.checkData(communicatorId) != null ||
-            IdCheck.checkData(ownerId) != null) {
+        if (IdCheck.checkData(communicatorId).isPresent() ||
+            IdCheck.checkData(ownerId).isPresent()) {
             throw new IllegalArgumentException(
                     "Ungültige Id: " + communicatorId + " oder " + ownerId);
         }
 
         if (displayName == null) {
-            throw new NullPointerException("Kein Anzeigename (null)");
+            throw new IllegalArgumentException("Kein Anzeigename (null)");
         }
         return new CommunicatorData(communicatorId, ownerId, displayName);
     }

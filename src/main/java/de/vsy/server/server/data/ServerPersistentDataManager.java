@@ -57,7 +57,7 @@ class ServerPersistentDataManager {
         for (final var currentProvider : this.accessController) {
             try {
                 currentProvider.createFileAccess();
-            }catch(InterruptedException ie){
+            } catch (InterruptedException ie) {
                 removePersistentAccess();
                 throw new IllegalStateException(ie);
             }

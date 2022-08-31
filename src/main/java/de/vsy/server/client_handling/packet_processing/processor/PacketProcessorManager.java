@@ -10,6 +10,8 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.PacketConte
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_identifier.ContentIdentifier;
 
+import java.util.Optional;
+
 public
 class PacketProcessorManager {
 
@@ -34,12 +36,13 @@ class PacketProcessorManager {
     }
 
     public
-    PacketProcessor getProcessor (ContentIdentifier identifier,
-                                  Class<? extends PacketContent> contentType) {
-        var categoryProcessing = contentHandlerProvider.getProcessor(
+    Optional<PacketProcessor> getProcessor (ContentIdentifier identifier,
+                                            Class<? extends PacketContent> contentType) {
+        Optional<PacketProcessor> categoryProcessing;
+        categoryProcessing = contentHandlerProvider.getProcessor(
                 identifier.getPacketCategory(), contentType);
 
-        if (categoryProcessing == null) {
+        if (categoryProcessing.isEmpty()) {
             var factory = new ContentBasedPacketProcessorProvider(
                     this.handlerProvider.getCategoryHandlerFactory(
                             identifier.getPacketCategory(), this.threadDataAccess));

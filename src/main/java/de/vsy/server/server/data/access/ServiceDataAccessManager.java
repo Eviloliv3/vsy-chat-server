@@ -5,9 +5,9 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
-import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.service.ServicePacketBufferManager;
 
 /** The Class ServiceDataAccessManager. */
 public
@@ -78,5 +78,11 @@ class ServiceDataAccessManager
     public
     AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager () {
         return this.serverSubscriptionManager;
+    }
+
+    @Override
+    public
+    LocalServerConnectionData getLocalServerConnectionData () {
+        return this.serverConnectionDataManager.getLocalServerConnectionData();
     }
 }

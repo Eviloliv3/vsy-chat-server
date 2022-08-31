@@ -1,5 +1,6 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
+import de.vsy.server.client_handling.data_management.access_limiter.RelationHandlingDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -7,7 +8,6 @@ import de.vsy.server.persistent_data.manipulation_utility.RelationManipulator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.server.client_handling.data_management.access_limiter.RelationHandlingDataProvider;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
@@ -44,27 +44,21 @@ class RelationResponseProcessor
     throws PacketProcessingException {
         final var contactId = this.extractContactId(extractedContent);
 
-        final var errorMessage = checkResponseLegitimacy(extractedContent,
-                                                         contactId);
-        if (errorMessage == null) {
+        checkResponseLegitimacy(extractedContent, contactId);
+        final var isFriendshipRequest = extractedContent.getDesiredState();
+        final var iAmOriginator = this.checkClientOriginator(extractedContent);
 
-            final var isFriendshipRequest = extractedContent.getDesiredState();
-            final var iAmOriginator = this.checkClientOriginator(extractedContent);
-
-            if (isFriendshipRequest && extractedContent.getDecision()) {
-                RelationManipulator.addContact(extractedContent.getContactType(),
-                                               contactId, this.contactListAccess);
-                this.appendStatusMessage(contactId, true);
-            } else if (iAmOriginator && !isFriendshipRequest) {
-                RelationManipulator.removeContact(extractedContent.getContactType(),
-                                                  contactId, this.contactListAccess,
-                                                  this.messageHistoryAccess);
-                this.appendStatusMessage(contactId, false);
-            }
-            this.contentHandler.addResponse(extractedContent);
-        } else {
-            throw new PacketProcessingException(errorMessage);
+        if (isFriendshipRequest && extractedContent.getDecision()) {
+            RelationManipulator.addContact(extractedContent.getContactType(),
+                                           contactId, this.contactListAccess);
+            this.appendStatusMessage(contactId, true);
+        } else if (iAmOriginator && !isFriendshipRequest) {
+            RelationManipulator.removeContact(extractedContent.getContactType(),
+                                              contactId, this.contactListAccess,
+                                              this.messageHistoryAccess);
+            this.appendStatusMessage(contactId, false);
         }
+        this.contentHandler.addResponse(extractedContent);
     }
 
     private
@@ -83,9 +77,9 @@ class RelationResponseProcessor
      * @param contactRequest the contact request
      */
     private
-    String checkResponseLegitimacy (final ContactRelationResponseDTO contactRequest,
-                                    final int contactId) {
-        String errorMessage = null;
+    void checkResponseLegitimacy (final ContactRelationResponseDTO contactRequest,
+                                  final int contactId)
+    throws PacketProcessingException {
         final var recipientId = contactRequest.getRecipientId();
         final var desiredState = contactRequest.getDesiredState();
         final var contactsAlready = this.contactListAccess.checkAcquaintance(
@@ -94,11 +88,12 @@ class RelationResponseProcessor
         if (desiredState && contactsAlready) {
             final var contactData = this.threadDataAccess.getContactToActiveClientMapper()
                                                          .getContactData(contactId);
-            errorMessage = "Freundschaftsanfrage wurde nicht verarbeitet. Sie " +
-                           "sind bereits mit " + contactData.getDisplayName() +
-                           " befreundet.";
+            throw new PacketProcessingException("Freundschaftsanfrage wurde nicht " +
+                                                "verarbeitet. Sie sind bereits " +
+                                                "mit " +
+                                                contactData.getDisplayName() +
+                                                " befreundet.");
         }
-        return errorMessage;
     }
 
     private

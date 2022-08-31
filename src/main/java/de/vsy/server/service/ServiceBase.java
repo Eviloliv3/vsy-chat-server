@@ -1,5 +1,6 @@
 package de.vsy.server.service;
 
+import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
 import de.vsy.server.server_packet.dispatching.ServerCommPacketDispatcher;
 import de.vsy.server.service.packet_logic.PacketResponseMap;
@@ -18,6 +19,7 @@ class ServiceBase implements Service {
 
     private static final AtomicInteger SERVICE_ID_PROVIDER;
     private static final Logger LOGGER = LogManager.getLogger();
+    protected final LocalServerConnectionData serverConnectionData;
     private final PacketDispatcher dispatcher;
     private final ServiceData serviceSpecifications;
     /**
@@ -37,11 +39,13 @@ class ServiceBase implements Service {
      */
     protected
     ServiceBase (final ServiceData serviceSpecifications,
-                 final ServicePacketBufferManager serviceBuffers) {
+                 final ServicePacketBufferManager serviceBuffers,
+                 final LocalServerConnectionData serverConnectionData) {
 
         this.serviceSpecifications = serviceSpecifications;
         this.dispatcher = new ServerCommPacketDispatcher(serviceBuffers,
                                                          serviceSpecifications.getResponseDirections());
+        this.serverConnectionData = serverConnectionData;
 
         serviceSpecifications.setServiceId(SERVICE_ID_PROVIDER.getAndIncrement());
         serviceSpecifications.setServiceName(

@@ -95,10 +95,7 @@ class ClientStateRecorder implements AuthenticationStateControl {
     public
     ClientState getPersistentClientState () {
         final var clientId = this.localClientDataManager.getClientId();
-        final var currentClientState = persistentClientStates.getClientState(
-                clientId);
-        return currentClientState !=
-               null ? currentClientState.getCurrentState() : null;
+        return persistentClientStates.getClientState(clientId).getCurrentState();
     }
 
     @Override

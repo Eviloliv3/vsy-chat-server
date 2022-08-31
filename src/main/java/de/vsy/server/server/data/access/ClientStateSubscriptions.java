@@ -2,7 +2,6 @@
 package de.vsy.server.server.data.access;
 
 import de.vsy.server.server.client_management.ClientState;
-import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -38,24 +37,21 @@ class ClientStateSubscriptions {
     Set<Integer> getClientSubscriptions (final ClientState state,
                                          final int clientId) {
         final Set<Integer> subscribedClients = new HashSet<>();
+        Map<ClientState, Set<Integer>> subsPerState;
 
-        if (state != null && IdCheck.checkData(clientId) == null) {
-            Map<ClientState, Set<Integer>> subsPerState;
+        try {
+            this.lock.readLock().lock();
+            subsPerState = this.clientSubscriptions.get(clientId);
 
-            try {
-                this.lock.readLock().lock();
-                subsPerState = this.clientSubscriptions.get(clientId);
+            if (subsPerState != null) {
+                final var subList = subsPerState.get(state);
 
-                if (subsPerState != null) {
-                    final var subList = subsPerState.get(state);
-
-                    if (subList != null) {
-                        subscribedClients.addAll(subList);
-                    }
+                if (subList != null) {
+                    subscribedClients.addAll(subList);
                 }
-            } finally {
-                this.lock.readLock().unlock();
             }
+        } finally {
+            this.lock.readLock().unlock();
         }
         return subscribedClients;
     }
@@ -73,33 +69,29 @@ class ClientStateSubscriptions {
     boolean subscribe (final ClientState state, final int clientId,
                        final int contactId) {
         var subSuccessful = false;
+        Map<ClientState, Set<Integer>> subsPerState;
+        Set<Integer> subscribedClients;
 
-        if (state != null && IdCheck.checkData(clientId) == null &&
-            IdCheck.checkData(contactId) == null) {
-            Map<ClientState, Set<Integer>> subsPerState;
-            Set<Integer> subscribedClients;
+        try {
+            this.lock.writeLock().lock();
+            subsPerState = this.clientSubscriptions.get(contactId);
 
-            try {
-                this.lock.writeLock().lock();
-                subsPerState = this.clientSubscriptions.get(contactId);
-
-                if (subsPerState == null) {
-                    subsPerState = new EnumMap<>(ClientState.class);
-                }
-                subscribedClients = subsPerState.get(state);
-
-                if (subscribedClients == null) {
-                    subscribedClients = new HashSet<>();
-                }
-
-                subSuccessful = subscribedClients.add(clientId);
-                if (subSuccessful) {
-                    subsPerState.put(state, subscribedClients);
-                }
-                this.clientSubscriptions.put(contactId, subsPerState);
-            } finally {
-                this.lock.writeLock().unlock();
+            if (subsPerState == null) {
+                subsPerState = new EnumMap<>(ClientState.class);
             }
+            subscribedClients = subsPerState.get(state);
+
+            if (subscribedClients == null) {
+                subscribedClients = new HashSet<>();
+            }
+
+            subSuccessful = subscribedClients.add(clientId);
+            if (subSuccessful) {
+                subsPerState.put(state, subscribedClients);
+            }
+            this.clientSubscriptions.put(contactId, subsPerState);
+        } finally {
+            this.lock.writeLock().unlock();
         }
         return subSuccessful;
     }
@@ -117,32 +109,28 @@ class ClientStateSubscriptions {
     boolean unsubscribe (final ClientState state, final int clientId,
                          final int contactId) {
         var unsubSuccessful = false;
+        Map<ClientState, Set<Integer>> subsPerState;
 
-        if (state != null && IdCheck.checkData(clientId) == null &&
-            IdCheck.checkData(contactId) == null) {
-            Map<ClientState, Set<Integer>> subsPerState;
+        try {
+            this.lock.writeLock().lock();
+            subsPerState = this.clientSubscriptions.get(contactId);
 
-            try {
-                this.lock.writeLock().lock();
-                subsPerState = this.clientSubscriptions.get(contactId);
+            if (subsPerState != null) {
+                final var subscribedClients = subsPerState.get(state);
 
-                if (subsPerState != null) {
-                    final var subscribedClients = subsPerState.get(state);
+                if (subscribedClients != null) {
+                    unsubSuccessful = subscribedClients.remove(clientId);
 
-                    if (subscribedClients != null) {
-                        unsubSuccessful = subscribedClients.remove(clientId);
-
-                        if (!subscribedClients.isEmpty()) {
-                            subsPerState.put(state, subscribedClients);
-                            this.clientSubscriptions.put(contactId, subsPerState);
-                        } else {
-                            this.clientSubscriptions.remove(contactId);
-                        }
+                    if (!subscribedClients.isEmpty()) {
+                        subsPerState.put(state, subscribedClients);
+                        this.clientSubscriptions.put(contactId, subsPerState);
+                    } else {
+                        this.clientSubscriptions.remove(contactId);
                     }
                 }
-            } finally {
-                this.lock.writeLock().unlock();
             }
+        } finally {
+            this.lock.writeLock().unlock();
         }
         return unsubSuccessful;
     }

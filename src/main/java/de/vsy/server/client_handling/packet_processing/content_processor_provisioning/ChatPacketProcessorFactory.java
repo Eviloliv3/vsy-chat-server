@@ -4,12 +4,12 @@
 package de.vsy.server.client_handling.packet_processing.content_processor_provisioning;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
+import de.vsy.server.client_handling.packet_processing.ClientHandlerPacketProcessor;
+import de.vsy.server.client_handling.packet_processing.content_processing.TextMessageProcessor;
 import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_module.shared_module.packet_processing.ProcessingConditionType;
 import de.vsy.shared_module.shared_module.packet_processing.processor_provision.ContentBasedProcessorFactory;
 import de.vsy.shared_module.shared_module.packet_validation.content_validation.chat.TextMessageValidator;
-import de.vsy.server.client_handling.packet_processing.ClientHandlerPacketProcessor;
-import de.vsy.server.client_handling.packet_processing.content_processing.TextMessageProcessor;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.shared_transmission.packet.content.chat.ChatContent;
 
