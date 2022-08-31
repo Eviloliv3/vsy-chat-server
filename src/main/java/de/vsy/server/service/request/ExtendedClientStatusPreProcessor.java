@@ -34,8 +34,8 @@ class ExtendedClientStatusPreProcessor {
         Set<Integer> eligibleRecipients = new HashSet<>(
                 toProcess.getContactIdList());
 
-        eligibleRecipients = clientSubscriptions.validateThreadIds(CHAT,
-                                                                   eligibleRecipients);
+        eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT,
+                                                                 eligibleRecipients);
         updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess,
                                                               eligibleRecipients);
 

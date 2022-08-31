@@ -49,17 +49,11 @@ class ServicePacketProcessor {
         try {
             final var identifier = input.getPacketProperties()
                                         .getContentIdentifier();
+            final var packetType = identifier.getPacketType();
+            final var ph = this.sphf.getPacketProcessor(packetType);
 
-            if (identifier != null) {
-                final var packetType = identifier.getPacketType();
-
-                if (packetType != null) {
-                    final var ph = this.sphf.getPacketProcessor(packetType);
-
-                    if (ph != null) {
-                        return ph.processPacket(input);
-                    }
-                }
+            if (ph != null) {
+                return ph.processPacket(input);
             }
             final var errorMessage = "Paket wurde nicht verarbeitet.";
             final var errorCause = "Paket-Identifier oder -Typ nicht gefunden.";

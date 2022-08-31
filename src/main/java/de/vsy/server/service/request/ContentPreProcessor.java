@@ -9,6 +9,8 @@ import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
+
 public
 class ContentPreProcessor implements PublishablePacketCreator {
 
@@ -29,16 +31,10 @@ class ContentPreProcessor implements PublishablePacketCreator {
     Packet handleDistributableContent (Packet input)
     throws PacketProcessingException {
         Packet processedPacket = null;
-        if (localServerRecipient(input) &&
-            input.getPacketContent() instanceof ExtendedStatusSyncDTO statusContent) {
-            final PacketContent newContent = extendedStatusProcessor.processContent(
-                    statusContent);
 
-            if (newContent != null) {
-                processedPacket = PacketCompiler.createRequest(
-                        input.getPacketProperties().getRecipientEntity(),
-                        newContent);
-            }
+        if (isLocalBroadcast(input) &&
+            input.getPacketContent() instanceof ExtendedStatusSyncDTO statusContent) {
+            extendedStatusProcessor.processContent(statusContent);
         } else {
             processedPacket = input;
         }
@@ -46,8 +42,7 @@ class ContentPreProcessor implements PublishablePacketCreator {
     }
 
     private
-    boolean localServerRecipient (final Packet input) {
-        return input.getPacketProperties().getRecipientEntity().getEntityId() ==
-               this.localServerData.getServerId();
+    boolean isLocalBroadcast (final Packet input) {
+        return input.getPacketProperties().getRecipientEntity().getEntityId() == STANDARD_CLIENT_BROADCAST_ID;
     }
 }

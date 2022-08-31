@@ -23,7 +23,10 @@ import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 /** Handles status synchronization Packet sent by other servers. */
 public
@@ -89,9 +92,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
             }
 
             if (inputData instanceof ExtendedStatusSyncDTO) {
-                final var clientBroadcast = getServerEntity(
-                        this.serverConnectionDataManager.getLocalServerConnectionData()
-                                                        .getServerId());
+                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
                 final var clientNotification = PacketCompiler.createRequest(
                         clientBroadcast, inputData);
                 responses.setClientBoundPacket(clientNotification);

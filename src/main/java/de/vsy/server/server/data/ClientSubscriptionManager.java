@@ -98,7 +98,7 @@ class ClientSubscriptionManager extends AbstractPacketCategorySubscriptionManage
     }
 
     public
-    Set<Integer> validateThreadIds (PacketCategory topic, Set<Integer> idsToCheck) {
+    Set<Integer> getLocalThreads (PacketCategory topic, Set<Integer> idsToCheck) {
         Set<Integer> validatedThreadIds = super.checkThreadIds(topic, idsToCheck);
         validatedThreadIds.removeAll(this.remoteClients);
         return validatedThreadIds;

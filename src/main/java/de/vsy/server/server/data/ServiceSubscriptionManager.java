@@ -60,7 +60,7 @@ class ServiceSubscriptionManager extends AbstractPacketCategorySubscriptionManag
 
     @Override
     public
-    Set<Integer> validateThreadIds (PacketCategory topic, Set<Integer> idsToCheck) {
+    Set<Integer> getLocalThreads (PacketCategory topic, Set<Integer> idsToCheck) {
         return super.checkThreadIds(topic, idsToCheck);
     }
 

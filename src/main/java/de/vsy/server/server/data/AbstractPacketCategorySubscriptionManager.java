@@ -243,6 +243,6 @@ class AbstractPacketCategorySubscriptionManager {
     }
 
     public abstract
-    Set<Integer> validateThreadIds (final PacketCategory topic,
-                                    final Set<Integer> idsToCheck);
+    Set<Integer> getLocalThreads (final PacketCategory topic,
+                                  final Set<Integer> idsToCheck);
 }
