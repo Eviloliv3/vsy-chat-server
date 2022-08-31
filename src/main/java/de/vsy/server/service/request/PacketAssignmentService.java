@@ -169,8 +169,7 @@ class PacketAssignmentService extends ServiceBase {
                         properties.getRecipientEntity().toString());
             }
         } else {
-            throw new PacketTransmissionException(
-                    "Paket nicht zu senden. " + toPublish);
+            throw new PacketTransmissionException("Paket nicht zu senden.");
         }
     }
 
