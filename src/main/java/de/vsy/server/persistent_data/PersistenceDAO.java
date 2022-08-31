@@ -18,6 +18,8 @@ import java.nio.channels.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 import static java.lang.Integer.MAX_VALUE;
@@ -36,9 +38,10 @@ class PersistenceDAO {
     private static final Logger LOGGER;
     private final JavaType dataFormat;
     private final PersistentDataFileCreator.DataFileDescriptor fileDescriptor;
+    private final ReadWriteLock localLock;
     private final ObjectMapper mapper;
     private Path lockFilePath;
-    private FileLock lock;
+    private FileLock globalLock;
     private Path[] filePaths;
 
     static {
@@ -61,7 +64,8 @@ class PersistenceDAO {
         this.dataFormat = dataFormat;
         this.mapper = new ObjectMapper();
         this.lockFilePath = null;
-        this.lock = null;
+        this.globalLock = null;
+        this.localLock = new ReentrantReadWriteLock();
         this.filePaths = null;
         this.mapper.configure(INDENT_OUTPUT, true);
         this.mapper.findAndRegisterModules();
@@ -117,11 +121,20 @@ class PersistenceDAO {
     private
     void acquireFileLock (final FileChannel toLock, final boolean sharedAccess)
     throws ClosedChannelException, FileLockInterruptionException {
+        try{
+            if (sharedAccess) {
+                this.localLock.readLock().lockInterruptibly();
+            } else {
+                this.localLock.writeLock().lockInterruptibly();
+            }
+        }catch(InterruptedException ie){
+            Thread.currentThread().interrupt();
+            LOGGER.error("Beim holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
+        }
 
-        do {
-
+        while (globalLock == null && !Thread.currentThread().isInterrupted()) {
             try {
-                this.lock = toLock.tryLock(0L, MAX_VALUE, sharedAccess);
+                this.globalLock = toLock.tryLock(0L, MAX_VALUE, sharedAccess);
             } catch (ClosedChannelException |
                      FileLockInterruptionException killException) {
                 throw killException;
@@ -130,7 +143,7 @@ class PersistenceDAO {
                         "Datei noch gesperrt. Neuer Versuch wird gestartet. {}: {}",
                         ex.getClass().getSimpleName(), ex.getMessage());
             }
-        } while (lock == null && !Thread.currentThread().isInterrupted());
+        }
     }
 
     /**
@@ -140,7 +153,7 @@ class PersistenceDAO {
      */
     public
     boolean checkForActiveLock () {
-        return (this.lock != null) && (this.lock.isValid());
+        return (this.globalLock != null) && (this.globalLock.isValid());
     }
 
     /**
@@ -280,7 +293,7 @@ class PersistenceDAO {
     public
     Object readData () {
 
-        if (this.lock == null) {
+        if (this.globalLock == null) {
             throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
         }
 
@@ -335,17 +348,28 @@ class PersistenceDAO {
      */
     public
     void releaseAccess () {
-        if (this.lock != null) {
+        try {
+            this.localLock.readLock().unlock();
+        }catch(IllegalMonitorStateException imse){
+            LOGGER.info("ReadLock nicht lokal gehalten.");
+        }
+        try {
+            this.localLock.writeLock().unlock();
+        }catch(IllegalMonitorStateException imse){
+            LOGGER.info("WriteLock nicht lokal gehalten");
+        }
+
+        if (this.globalLock != null) {
             try {
-                final var channel = this.lock.channel();
-                this.lock.release();
+                final var channel = this.globalLock.channel();
+                this.globalLock.release();
                 channel.close();
             } catch (IOException e) {
                 LOGGER.info("Dateischloss konnte nicht geöffnet werden. {}\n{}",
                             e.getClass().getSimpleName(), asList(e.getStackTrace()));
             }
         }
-        this.lock = null;
+        this.globalLock = null;
     }
 
     /**
@@ -360,7 +384,7 @@ class PersistenceDAO {
      */
     public
     boolean writeData (final Object toWrite) {
-        if (this.lock == null) {
+        if (this.globalLock == null) {
             throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
         }
 
