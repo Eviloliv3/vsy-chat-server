@@ -4,6 +4,8 @@
 package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
+import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
+import de.vsy.server.server.client_management.ClientState;
 import de.vsy.server.server.client_management.ClientStateTranslator;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
@@ -20,13 +22,17 @@ import de.vsy.server.service.packet_logic.ServicePacketProcessor;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
-import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 /** Handles status synchronization Packet sent by other servers. */
 public
@@ -37,6 +43,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     private final LocalServerConnectionData serverNode;
     private final ServicePacketBufferManager serviceBufferManager;
     private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+    private final LiveClientStateDAO persistentClientStates;
 
     /**
      * Instantiates a new client status sync PacketHandler.
@@ -50,6 +57,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
         this.serverNode = this.serverConnectionDataManager.getLocalServerConnectionData();
         this.serviceBufferManager = serviceDataAccess.getServicePacketBufferManager();
         this.clientSubscriptionManager = serviceDataAccess.getClientSubscriptionManager();
+        this.persistentClientStates = serviceDataAccess.getLiveClientStateDAO();
     }
 
     /**
@@ -77,6 +85,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
 
             if (originatingServerId != this.serverNode.getServerId() &&
                 inputData instanceof final SimpleStatusSyncDTO simpleStatus) {
+                LogManager.getLogger().debug("SimpleStatusSyncDTO gelesen: {}", simpleStatus);
                 translateState(simpleStatus, originatingServerId);
             }
             inputData.addSyncedServerId(this.serverNode.getServerId());
@@ -108,19 +117,15 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     /**
      * Translate state.
      *
-     * @param messengerStatus the messenger status
+     * @param clientStatusData the messenger status
      */
     private
-    void translateState (final SimpleStatusSyncDTO messengerStatus,
+    void translateState (final SimpleStatusSyncDTO clientStatusData,
                          final int serviceId) {
-        final var clientState = messengerStatus.getClientState();
-        final var clientData = messengerStatus.getContactData();
         final var remoteClientBuffer = this.serviceBufferManager.getSpecificBuffer(
                 Service.TYPE.SERVER_TRANSFER, serviceId);
-        final var subscriptions = ClientStateTranslator.prepareClientSubscriptionMap(
-                clientState, messengerStatus.isToAdd(),
-                clientData.getCommunicatorId());
-        SubscriptionHandler subscriptionLogic = messengerStatus.isToAdd() ? this.clientSubscriptionManager::subscribe : this.clientSubscriptionManager::unsubscribe;
+        final var subscriptions = createSubscriptionMap(clientStatusData);
+        SubscriptionHandler subscriptionLogic = clientStatusData.isToAdd() ? this.clientSubscriptionManager::subscribe : this.clientSubscriptionManager::unsubscribe;
 
         for (final var currentSubscriptionSet : subscriptions.entrySet()) {
             final var currentTopic = currentSubscriptionSet.getKey();
@@ -131,5 +136,18 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
                                          remoteClientBuffer);
             }
         }
+    }
+
+    private
+    Map<PacketCategory, Set<Integer>> createSubscriptionMap(final SimpleStatusSyncDTO statusSync){
+        final var clientState = statusSync.getClientState();
+        final var clientId = statusSync.getContactData().getCommunicatorId();
+        final var subscriptions = ClientStateTranslator.prepareClientSubscriptionMap(
+                clientState, statusSync.isToAdd(),
+                clientId);
+        final var persistedClientState= this.persistentClientStates.getClientState(clientId);
+
+        subscriptions.putAll(persistedClientState.getExtraSubscriptions());
+        return subscriptions;
     }
 }

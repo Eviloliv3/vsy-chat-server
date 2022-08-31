@@ -20,7 +20,7 @@ interface ServerCommunicationServiceDataProvider extends ServiceBaseDataProvider
      *
      * @return the client state PersistenceDAO provider
      */
-    LiveClientStateDAO getClientStateDAO ();
+    LiveClientStateDAO getLiveClientStateDAO ();
 
     /**
      * Gets the server connection dataManagement.

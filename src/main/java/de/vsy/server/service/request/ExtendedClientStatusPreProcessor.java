@@ -7,6 +7,7 @@ import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingExcep
 import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,6 +37,8 @@ class ExtendedClientStatusPreProcessor {
 
         eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT,
                                                                  eligibleRecipients);
+
+        LogManager.getLogger().debug("Benachrichtigt werden: {}\n Von: {}", toProcess.getContactIdList(), eligibleRecipients);
         updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess,
                                                               eligibleRecipients);
 

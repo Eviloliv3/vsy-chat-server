@@ -91,7 +91,7 @@ class TestConnectionThreads {
         final var packet = bufferManagerOne.getPacketBuffer(
                 ThreadPacketBufferLabel.OUTSIDE_BOUND).getPacket();
         readThread.interrupt();
-        LogManager.getLogger().info(packet);
+        LogManager.getLogger().debug(packet);
         Assertions.assertNotNull(packet.getPacketContent());
     }
 
@@ -118,7 +118,7 @@ class TestConnectionThreads {
         objectOut.writeObject(builder.build());
         Object ack = objectIn.readObject();
         if (ack instanceof Packet pack) {
-            LogManager.getLogger().info(pack);
+            LogManager.getLogger().debug(pack);
             Assertions.assertNull(pack.getPacketContent());
         } else {
             Assertions.assertFalse((false));
@@ -157,7 +157,7 @@ class TestConnectionThreads {
         Packet pack = bufferManagerOne.getPacketBuffer(
                 ThreadPacketBufferLabel.HANDLER_BOUND).getPacket();
 
-        LogManager.getLogger().info(pack);
+        LogManager.getLogger().debug(pack);
         Assertions.assertNotNull(pack.getPacketContent());
 
         serverConnectionControl.closeConnection();

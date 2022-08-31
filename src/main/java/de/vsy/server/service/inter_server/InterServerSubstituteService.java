@@ -71,7 +71,7 @@ class InterServerSubstituteService extends ThreadContextRunnable
         this.clientPersistenceAccessManagers = new HashMap<>();
         this.remoteServerConnection = remoteServerConnection;
         this.serviceBuffers = serviceDataAccess.getServicePacketBufferManager();
-        this.clientStateProvider = serviceDataAccess.getClientStateDAO();
+        this.clientStateProvider = serviceDataAccess.getLiveClientStateDAO();
         this.interServerBuffer = interServerBuffer;
         this.clientDisconnector = new RemoteClientDisconnector(
                 this.interServerBuffer, this.serviceBuffers,

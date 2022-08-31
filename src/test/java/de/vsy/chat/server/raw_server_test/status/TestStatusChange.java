@@ -111,7 +111,7 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status für einzelnen Klienten aufgehoben -> erfolgreich -- beendet");
     }
-*/
+
     @Test
     public
     void changeToMessengerStateSingleClientSuccess () {
@@ -127,7 +127,7 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status für einzelnen Klienten gesetzt -> erfolgreich -- beendet");
     }
-/*
+
     @Test
     public
     void changeMessengerNoStateFailed () {
@@ -143,7 +143,7 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status nicht erreichbar -> kein Status angegeben -- beendet");
     }
-
+*/
     @Test
     public
     void changeToMessengerStateTwoClientSuccess ()
@@ -183,5 +183,4 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status für mehrere Klienten gesetzt -> erfolgreich -- beendet");
     }
- */
 }

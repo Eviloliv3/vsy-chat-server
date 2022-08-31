@@ -8,6 +8,7 @@ import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
 import de.vsy.shared_transmission.shared_transmission.packet.content.status.ContactMessengerStatusDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -23,6 +24,7 @@ class TestPendingPacketDAO {
                 new ContentIdentificationProviderImpl());
         var dao = new PendingPacketDAO();
         dao.createFileAccess(15001);
+        dao.setPendingPackets(PendingType.PROCESSOR_BOUND, Collections.emptyMap());
         dao.appendPendingPacket(PendingType.PROCESSOR_BOUND,
                                 PacketCompiler.createRequest(
                                         CommunicationEndpoint.getClientEntity(15003),
@@ -30,6 +32,10 @@ class TestPendingPacketDAO {
                                                 EligibleContactEntity.CLIENT, true,
                                                 CommunicatorDTO.valueOf(-1, ""),
                                                 Collections.emptyList())));
+        var pendingProcessorBound = dao.readPendingPackets(PendingType.PROCESSOR_BOUND);
+        for(var pendingPacket : pendingProcessorBound.values()){
+            LogManager.getLogger().debug(pendingPacket);
+        }
     }
 
     CommunicationEndpoint getOriginator () {

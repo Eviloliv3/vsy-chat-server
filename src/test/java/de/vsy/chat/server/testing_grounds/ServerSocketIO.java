@@ -13,7 +13,7 @@ class TestServerSocketIO {
     void TestServerSocketCloseIOException ()
     throws IOException {
         ServerSocket s = new ServerSocket();
-        LogManager.getLogger().info("erste Schließung");
+        LogManager.getLogger().debug("erste Schließung");
         s.close();
         Assertions.assertThrows(IOException.class, s::close);
     }
