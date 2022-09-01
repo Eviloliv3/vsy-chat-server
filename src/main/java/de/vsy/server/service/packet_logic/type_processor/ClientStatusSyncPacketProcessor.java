@@ -88,11 +88,11 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
                 LogManager.getLogger().debug("SimpleStatusSyncDTO gelesen: {}", simpleStatus);
                 translateState(simpleStatus, originatingServerId);
             }
-            inputData.addSyncedServerId(this.serverNode.getServerId());
             notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
                     inputData.getSyncedServers());
 
             if (notSynchronizedServerData != null) {
+                LogManager.getLogger().debug("ExtendedStatusSync fuer anderen Server erstellt.");
                 final var recipient = getServerEntity(
                         notSynchronizedServerData.getServerId());
                 final var serverNotification = PacketCompiler.createRequest(
