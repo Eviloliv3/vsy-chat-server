@@ -9,8 +9,8 @@
         <Console name="STDOUT" target="SYSTEM_OUT">
             <PatternLayout pattern="${stdPattern}"/>
         </Console>
-        <RollingRandomAccessFile name="Rolling-default" filename="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
-                                         filePattern="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
+        <RollingRandomAccessFile name="Rolling-default" filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
+                                         filePattern="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
             <PatternLayout pattern="${stdPattern}"/>
             <Policies>
                 <OnStartUpTriggeringPolicy minSize="10"/>
@@ -29,8 +29,8 @@
             The value dynamically determines the name of the log file. -->
                 <Route>
                     <RollingRandomAccessFile name="Rolling-${ctx:logFilename}"
-                                                     filename="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
-                                                     filePattern="${logBasePath}/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
+                                                     filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
+                                                     filePattern="logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
                             <OnStartUpTriggeringPolicy minSize="10"/>
