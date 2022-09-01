@@ -2,7 +2,7 @@
 <Configuration status="trace">
     <Properties>
         <Property name="isThreadContextMapInheritable">true</Property>
-        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [$${ctx:threadName}:%tid] - %msg%n</Property>
+        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [${ctx:threadName}:%tid] - %msg%n</Property>
         <Property name="logBasePath">${log4j:configParentLocation}/logs/</Property>
     </Properties>
     <Appenders>
