@@ -43,7 +43,7 @@ class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>>
      * @return the simple status sync builder
      */
     public
-    SimpleStatusSyncBuilder<T> withIsToAdd (final boolean idToAdd) {
+    SimpleStatusSyncBuilder<T> withToAdd (final boolean idToAdd) {
         this.idToAdd = idToAdd;
         return getInstanciable();
     }
@@ -84,7 +84,7 @@ class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>>
      * @return the simple status sync builder
      */
     public
-    SimpleStatusSyncBuilder<T> withCommunicatorData (
+    SimpleStatusSyncBuilder<T> withContactData (
             final CommunicatorDTO communicatorData) {
         var communicatorDataCheck = BeanChecker.checkBean(communicatorData);
 

@@ -159,14 +159,14 @@ class PacketAssignmentService extends ServiceBase {
         if (publishablePacket != null) {
             final var properties = publishablePacket.getPacketProperties();
             final var subscriptionNetwork = this.packetNetworkManager.getSubscriptionsManager(
-                    properties.getRecipientEntity().getEntity());
+                    properties.getRecipient().getEntity());
 
             if (subscriptionNetwork != null) {
                 subscriptionNetwork.publish(publishablePacket);
             } else {
                 throw new PacketTransmissionException(
                         "Kein Abonnenten-Netz gefunden für: " +
-                        properties.getRecipientEntity().toString());
+                        properties.getRecipient().toString());
             }
         } else {
             throw new PacketTransmissionException("Paket nicht zu senden.");

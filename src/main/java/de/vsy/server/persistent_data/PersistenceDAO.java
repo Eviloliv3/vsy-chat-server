@@ -304,7 +304,7 @@ class PersistenceDAO {
             String readJsonString = Files.readString(lastChangedFile);
             readObject = mapper.readValue(readJsonString, dataFormat);
         } catch (JsonParseException | JsonMappingException je) {
-            LOGGER.info("Es wurden keine gueltigen Daten gelesen: {}\n{}: {}",
+            LOGGER.info("Gelesene Daten nicht instanziierbar: {}\n{}: {}",
                         lastChangedFile, je.getClass().getSimpleName(),
                         je.getMessage());
         } catch (final FileNotFoundException ex) {
@@ -313,7 +313,7 @@ class PersistenceDAO {
                         asList(ex.getStackTrace()));
         } catch (final IOException ex) {
             Thread.currentThread().interrupt();
-            LOGGER.info("Aus Datei konnte nicht gelesen werden: {}\n{}",
+            LOGGER.info("Lesen aus Datei fehlgeschlagen: {}\n{}",
                         lastChangedFile, asList(ex.getStackTrace()));
         }
         return readObject;
@@ -413,7 +413,7 @@ class PersistenceDAO {
         //TODO das hier sollte in einem eigenen Objekt (statische Methode) erstellt werden
         // TODO am besten komplett verschlüsselt
         try {
-            return this.mapper.writeValueAsString(toWrite);
+            return this.mapper.writerFor(this.dataFormat).writeValueAsString(toWrite);
         } catch (JsonProcessingException je) {
             LOGGER.info("{}: {}", je.getClass().getSimpleName(), je.getMessage());
         }

@@ -51,7 +51,7 @@ class ClientPacketDispatcher implements MultiplePacketDispatcher {
     @Override
     public
     void dispatchPacket (final Packet toAppend) {
-        final var recipient = toAppend.getPacketProperties().getRecipientEntity();
+        final var recipient = toAppend.getPacketProperties().getRecipient();
         final var recipientId = recipient.getEntityId();
 
         if (this.isClientBound(recipientId)) {

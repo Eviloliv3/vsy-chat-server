@@ -40,7 +40,7 @@ class ResultingPacketCreator {
         }
         final var resultingContent = adjustWrapping(processedContent, true);
         final var recipient = this.currentRequest.getPacketProperties()
-                                                 .getRecipientEntity();
+                                                 .getRecipient();
         return PacketCompiler.createFollowUpRequest(recipient, resultingContent,
                                                     this.currentRequest);
     }
@@ -75,7 +75,7 @@ class ResultingPacketCreator {
     private
     boolean checkClientSender () {
         final var senderId = this.currentRequest.getPacketProperties()
-                                                .getSenderEntity()
+                                                .getSender()
                                                 .getEntityId();
         return senderId == this.clientDataProvider.getClientId() ||
                senderId == StandardIdProvider.STANDARD_CLIENT_ID;
@@ -90,7 +90,7 @@ class ResultingPacketCreator {
 
         if (processedContent instanceof final SimpleInternalContentWrapper wrappedContent) {
             initialContent = wrappedContent.getWrappedContent();
-            newWrapper.withSyncedServers(wrappedContent.getSyncedServers());
+            newWrapper.withSynchronizedServers(wrappedContent.getSynchronizedServers());
         }
         newWrapper.withContent(initialContent).withOriginatingServerId(serverId);
         return newWrapper.build();

@@ -3,6 +3,8 @@
  */
 package de.vsy.server.server_packet.content;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import de.vsy.server.server_packet.content.builder.ServerPacketContentBuilder;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 
@@ -32,14 +34,15 @@ class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
      */
     protected
     ServerPacketContentImpl (ServerPacketContentBuilder<?> builder) {
-        this(new HashSet<>(builder.getSyncedServers()),
+        this(new HashSet<>(builder.getSynchronizedServers()),
              builder.getOriginatingServerId(), builder.getReadByConnectionThread());
     }
 
+    @JsonCreator
     protected
-    ServerPacketContentImpl (final Set<Integer> synchronizedServers,
-                             final int originatingServerId,
-                             final int readByConnectionThread) {
+    ServerPacketContentImpl (@JsonProperty("synchronizedServers") final Set<Integer> synchronizedServers,
+                             @JsonProperty("originatingServerId") final int originatingServerId,
+                             @JsonProperty("readByConnectionThread") final int readByConnectionThread) {
         this.synchronizedServers = synchronizedServers;
         this.originatingServerId = originatingServerId;
         this.readByConnectionThread = readByConnectionThread;
@@ -107,7 +110,7 @@ class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
      * @return the reading connection thread
      */
     public
-    int getReadingConnectionThread () {
+    int getReadByConnectionThread () {
         return this.readByConnectionThread;
     }
 
@@ -129,7 +132,7 @@ class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
      * @return the synchronized servers
      */
     public
-    Set<Integer> getSyncedServers () {
+    Set<Integer> getSynchronizedServers () {
         return unmodifiableSet(this.synchronizedServers);
     }
 }

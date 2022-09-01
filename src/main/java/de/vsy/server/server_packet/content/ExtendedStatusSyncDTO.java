@@ -19,7 +19,7 @@ class ExtendedStatusSyncDTO extends SimpleStatusSyncDTO
 
     @Serial
     private static final long serialVersionUID = -2447318735172645953L;
-    private Set<Integer> contactIdList;
+    private Set<Integer> contactIdSet;
 
     /**
      * Instantiates a new extended status sync dataManagement.
@@ -29,19 +29,19 @@ class ExtendedStatusSyncDTO extends SimpleStatusSyncDTO
     public
     ExtendedStatusSyncDTO (final ExtendedStatusSyncBuilder<?> builder) {
         super(builder);
-        this.contactIdList = builder.getContactIdList();
+        this.contactIdSet = builder.getContactIdSet();
     }
 
     @Override
     public
-    Set<Integer> getContactIdList () {
-        return copyOf(this.contactIdList);
+    Set<Integer> getContactIdSet () {
+        return copyOf(this.contactIdSet);
     }
 
     @Override
     public
     void setRemainingContactIds (final Set<Integer> remainingContacts) {
-        this.contactIdList = copyOf(remainingContacts);
+        this.contactIdSet = copyOf(remainingContacts);
     }
 
     @Override
@@ -50,9 +50,9 @@ class ExtendedStatusSyncDTO extends SimpleStatusSyncDTO
         final var objectString = new StringBuilder();
         final var contactIListString = new StringBuilder();
 
-        if (this.contactIdList != null) {
+        if (this.contactIdSet != null) {
 
-            for (final var contactId : this.contactIdList) {
+            for (final var contactId : this.contactIdSet) {
                 contactIListString.append(contactId).append(", ");
             }
         }

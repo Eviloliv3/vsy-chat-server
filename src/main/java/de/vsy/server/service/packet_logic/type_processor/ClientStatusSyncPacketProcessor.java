@@ -5,7 +5,6 @@ package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server.client_management.ClientState;
 import de.vsy.server.server.client_management.ClientStateTranslator;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
@@ -26,7 +25,6 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_cat
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,7 +87,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
                 translateState(simpleStatus, originatingServerId);
             }
             notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
-                    inputData.getSyncedServers());
+                    inputData.getSynchronizedServers());
 
             if (notSynchronizedServerData != null) {
                 LogManager.getLogger().debug("ExtendedStatusSync fuer anderen Server erstellt.");

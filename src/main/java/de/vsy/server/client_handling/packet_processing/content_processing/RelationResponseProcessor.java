@@ -45,15 +45,16 @@ class RelationResponseProcessor
         final var contactId = this.extractContactId(extractedContent);
 
         checkResponseLegitimacy(extractedContent, contactId);
-        final var isFriendshipRequest = extractedContent.getDesiredState();
+        final var requestData = extractedContent.getRequestData();
+        final var isFriendshipRequest = requestData.getDesiredState();
         final var iAmOriginator = this.checkClientOriginator(extractedContent);
 
         if (isFriendshipRequest && extractedContent.getDecision()) {
-            RelationManipulator.addContact(extractedContent.getContactType(),
+            RelationManipulator.addContact(requestData.getContactType(),
                                            contactId, this.contactListAccess);
             this.appendStatusMessage(contactId, true);
         } else if (iAmOriginator && !isFriendshipRequest) {
-            RelationManipulator.removeContact(extractedContent.getContactType(),
+            RelationManipulator.removeContact(requestData.getContactType(),
                                               contactId, this.contactListAccess,
                                               this.messageHistoryAccess);
             this.appendStatusMessage(contactId, false);
@@ -63,8 +64,9 @@ class RelationResponseProcessor
 
     private
     int extractContactId (final ContactRelationResponseDTO responseData) {
-        final var originatorId = responseData.getOriginatorId();
-        final var recipientId = responseData.getRecipientId();
+        final var requestData = responseData.getRequestData();
+        final var originatorId = requestData.getOriginatorId();
+        final var recipientId = requestData.getRecipientId();
         final var clientId = this.threadDataAccess.getLocalClientDataProvider()
                                                   .getClientId();
 
@@ -74,16 +76,17 @@ class RelationResponseProcessor
     /**
      * Check request legitimacy.
      *
-     * @param contactRequest the contact request
+     * @param contactResponse the contact request
      */
     private
-    void checkResponseLegitimacy (final ContactRelationResponseDTO contactRequest,
+    void checkResponseLegitimacy (final ContactRelationResponseDTO contactResponse,
                                   final int contactId)
     throws PacketProcessingException {
-        final var recipientId = contactRequest.getRecipientId();
-        final var desiredState = contactRequest.getDesiredState();
+        final var requestData = contactResponse.getRequestData();
+        final var recipientId = requestData.getRecipientId();
+        final var desiredState = requestData.getDesiredState();
         final var contactsAlready = this.contactListAccess.checkAcquaintance(
-                contactRequest.getContactType(), recipientId);
+                requestData.getContactType(), recipientId);
 
         if (desiredState && contactsAlready) {
             final var contactData = this.threadDataAccess.getContactToActiveClientMapper()
@@ -100,7 +103,7 @@ class RelationResponseProcessor
     boolean checkClientOriginator (final ContactRelationResponseDTO responseData) {
         final var clientId = this.threadDataAccess.getLocalClientDataProvider()
                                                   .getClientId();
-        final var originatorId = responseData.getOriginatorId();
+        final var originatorId = responseData.getRequestData().getOriginatorId();
         return clientId == originatorId;
     }
 

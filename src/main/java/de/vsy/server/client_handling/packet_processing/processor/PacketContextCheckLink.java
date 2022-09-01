@@ -23,7 +23,7 @@ class PacketContextCheckLink extends AbstractPacketProcessorLink {
     void processPacket (Packet input)
     throws PacketValidationException, PacketProcessingException {
         var inputCategory = input.getPacketProperties()
-                                 .getContentIdentifier()
+                                 .getPacketIdentificationProvider()
                                  .getPacketCategory();
 
         if (!this.packetCategoryCheck.checkPacketCategory(inputCategory)) {

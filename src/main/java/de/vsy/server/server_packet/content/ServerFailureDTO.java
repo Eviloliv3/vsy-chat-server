@@ -3,6 +3,7 @@
  */
 package de.vsy.server.server_packet.content;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
 
 import java.io.Serial;
@@ -10,6 +11,7 @@ import java.io.Serial;
 /**
  * Enthaelt Informationen über Serverfehler, die intern verarbeitet werden müssen.
  */
+@JsonDeserialize(builder = ServerFailureContentBuilder.class)
 public
 class ServerFailureDTO extends ServerPacketContentImpl {
 

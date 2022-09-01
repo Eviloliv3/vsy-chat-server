@@ -73,8 +73,8 @@ class ClientStatePublisher implements ClientStateListener {
 
         if (remoteServerId != STANDARD_SERVER_ID) {
             simpleStatusDTO.withClientState(clientState)
-                           .withCommunicatorData(clientData)
-                           .withIsToAdd(changeTo);
+                           .withContactData(clientData)
+                           .withToAdd(changeTo);
             statusPacket = PacketCompiler.createRequest(
                     getServerEntity(remoteServerId), simpleStatusDTO.build());
         }
@@ -94,10 +94,10 @@ class ClientStatePublisher implements ClientStateListener {
 
         contactSet.addAll(groupSet);
 
-        extendedStatusDTO.withContactSet(contactSet)
+        extendedStatusDTO.withContactIdSet(contactSet)
                          .withClientState(clientState)
-                         .withIsToAdd(changeTo)
-                         .withCommunicatorData(clientData);
+                         .withToAdd(changeTo)
+                         .withContactData(clientData);
         return PacketCompiler.createRequest(getServerEntity(recipientId),
                                             extendedStatusDTO.build());
     }

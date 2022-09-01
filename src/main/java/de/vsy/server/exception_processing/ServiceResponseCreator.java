@@ -19,7 +19,7 @@ class ServiceResponseCreator extends BasicErrorResponseCreator {
         final var contentWrapper = new SimpleInternalContentBuilder();
         final var errorData = super.createSimpleErrorData(phe, toProcess);
         final var content = contentWrapper.withContent(errorData)
-                                          .withSyncedServers(new HashSet<>(
+                                          .withSynchronizedServers(new HashSet<>(
                                                   HandlerAccessManager.getLocalServerConnectionData()
                                                                       .getServerId()))
                                           .build();

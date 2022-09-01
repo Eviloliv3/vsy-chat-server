@@ -48,7 +48,7 @@ class ServicePacketProcessor {
 
         try {
             final var identifier = input.getPacketProperties()
-                                        .getContentIdentifier();
+                                        .getPacketIdentificationProvider();
             final var packetType = identifier.getPacketType();
             final var ph = this.sphf.getPacketProcessor(packetType);
 

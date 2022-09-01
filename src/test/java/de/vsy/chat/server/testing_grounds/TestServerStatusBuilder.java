@@ -15,7 +15,7 @@ class TestServerStatusBuilder {
     public
     void createSimpleInternalContent () {
         var builder = new SimpleStatusSyncBuilder<>();
-        var content = builder.withCommunicatorData(
+        var content = builder.withContactData(
                                      valueOf(STANDARD_CLIENT_ID, "testtest"))
                              .withClientState(ClientState.AUTHENTICATED)
                              .build();

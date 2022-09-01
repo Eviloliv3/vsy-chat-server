@@ -21,7 +21,7 @@ class ExtendedStatusSyncBuilder<T extends ExtendedStatusSyncBuilder<T>>
     private final Set<Integer> contactIdSet = new HashSet<>();
 
     public
-    Set<Integer> getContactIdList () {
+    Set<Integer> getContactIdSet () {
         return copyOf(this.contactIdSet);
     }
 
@@ -33,7 +33,7 @@ class ExtendedStatusSyncBuilder<T extends ExtendedStatusSyncBuilder<T>>
      * @return the extended status sync builder
      */
     public
-    ExtendedStatusSyncBuilder<T> withContactSet (final Set<Integer> contactIds) {
+    ExtendedStatusSyncBuilder<T> withContactIdSet (final Set<Integer> contactIds) {
 
         if (contactIds != null) {
             this.contactIdSet.addAll(contactIds);

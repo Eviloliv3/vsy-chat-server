@@ -63,7 +63,7 @@ class TestResponseSingleClient {
 
             if (content instanceof ErrorDTO errorContent) {
                 Assertions.assertTrue(
-                        errorContent.getMessage().contains(expectedErrorString),
+                        errorContent.getErrorMessage().contains(expectedErrorString),
                         "Fehlermeldung enthaelt unerwartete Nachricht.\n" +
                         errorContent);
             } else {

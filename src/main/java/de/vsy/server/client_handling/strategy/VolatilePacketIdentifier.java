@@ -17,7 +17,7 @@ class VolatilePacketIdentifier {
     public static
     boolean checkPacketVolatiliy (final Packet toCheck) {
         return volatileCategories.contains(toCheck.getPacketProperties()
-                                                  .getContentIdentifier()
+                                                  .getPacketIdentificationProvider()
                                                   .getPacketCategory());
     }
 }

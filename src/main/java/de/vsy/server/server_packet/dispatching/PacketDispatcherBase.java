@@ -43,7 +43,7 @@ class PacketDispatcherBase implements PacketDispatcher {
     EligibleCommunicationEntity getRecipientEntity (Packet output) {
         EligibleCommunicationEntity recipientEntity;
         if (output != null) {
-            final var recipient = output.getPacketProperties().getRecipientEntity();
+            final var recipient = output.getPacketProperties().getRecipient();
 
             if (recipient != null) {
                 recipientEntity = recipient.getEntity();

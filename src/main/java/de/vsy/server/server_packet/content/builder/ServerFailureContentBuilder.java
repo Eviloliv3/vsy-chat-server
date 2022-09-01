@@ -1,8 +1,10 @@
 package de.vsy.server.server_packet.content.builder;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import de.vsy.server.server_packet.content.ServerFailureDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 
+@JsonPOJOBuilder
 public
 class ServerFailureContentBuilder
         extends ServerPacketContentBuilder<ServerFailureContentBuilder> {

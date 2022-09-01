@@ -33,7 +33,7 @@ class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
         } else {
             contentType = inputContent.getClass();
         }
-        identifier = input.getPacketProperties().getContentIdentifier();
+        identifier = input.getPacketProperties().getPacketIdentificationProvider();
 
         processor = this.processingLogic.getProcessor(identifier, contentType)
                                         .orElseThrow(
@@ -42,7 +42,7 @@ class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
                                                         "für die folgende Kennzeichnung " +
                                                         "gefunden" +
                                                         input.getPacketProperties()
-                                                             .getContentIdentifier()));
+                                                             .getPacketIdentificationProvider()));
         processor.processPacket(input);
     }
 }

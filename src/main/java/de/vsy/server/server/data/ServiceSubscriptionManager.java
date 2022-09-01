@@ -40,7 +40,7 @@ class ServiceSubscriptionManager extends AbstractPacketCategorySubscriptionManag
         var packetProperties = publishedPacket.getPacketProperties();
 
         topicSubscriptions = super.getTopicSubscriptions(
-                packetProperties.getContentIdentifier().getPacketCategory());
+                packetProperties.getPacketIdentificationProvider().getPacketCategory());
 
         subscriptionBuffers = getRandomServiceSubscription(topicSubscriptions);
 

@@ -146,7 +146,7 @@ class ErrorMessageHandlingService extends ServiceBase {
         final var clientDAO = new PendingPacketDAO();
         try {
             clientDAO.createFileAccess(toPersist.getPacketProperties()
-                                                .getRecipientEntity()
+                                                .getRecipient()
                                                 .getEntityId());
         } catch (InterruptedException ie) {
             throw new IllegalStateException(ie);

@@ -27,7 +27,7 @@ class InterServerSubstitutePacketProcessorLink extends AbstractPacketProcessorLi
     public
     void processPacket (Packet input) {
         final var recipientId = input.getPacketProperties()
-                                     .getRecipientEntity()
+                                     .getRecipient()
                                      .getEntityId();
         final var clientPersistence = this.clientPersistenceAccessManagers.get(
                 recipientId);

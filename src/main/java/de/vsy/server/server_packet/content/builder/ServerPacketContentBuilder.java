@@ -20,7 +20,7 @@ class ServerPacketContentBuilder<T extends ServerPacketContentBuilder<T>> {
     }
 
     public
-    Set<Integer> getSyncedServers () {
+    Set<Integer> getSynchronizedServers () {
         return copyOf(this.synchronizedServers);
     }
 
@@ -60,7 +60,7 @@ class ServerPacketContentBuilder<T extends ServerPacketContentBuilder<T>> {
      * @return the t
      */
     public
-    ServerPacketContentBuilder<T> withSyncedServers (
+    ServerPacketContentBuilder<T> withSynchronizedServers (
             final Set<Integer> copiedSyncSet) {
         if (copiedSyncSet != null && !copiedSyncSet.isEmpty()) {
             this.synchronizedServers.addAll(copiedSyncSet);

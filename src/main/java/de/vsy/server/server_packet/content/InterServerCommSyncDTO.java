@@ -3,8 +3,12 @@
  */
 package de.vsy.server.server_packet.content;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serial;
 import java.util.HashSet;
+import java.util.Set;
 
 /** Paketdaten zur erstmaligen Synchronisation eines zweiten Servers. */
 public
@@ -21,7 +25,16 @@ class InterServerCommSyncDTO extends ServerPacketContentImpl {
      */
     public
     InterServerCommSyncDTO (final int serverId) {
-        super(new HashSet<>(), serverId, -1);
+        this(new HashSet<>(), serverId, -1, serverId);
+    }
+
+    @JsonCreator
+    public
+    InterServerCommSyncDTO(@JsonProperty("synchronizedServers")final Set<Integer> synchronizedServers,
+            @JsonProperty("originatingServerId") final int originatingServerId,
+            @JsonProperty("readByConnectionThread") final int readByConnectionThread,
+            @JsonProperty("serverId") final int serverId){
+        super(synchronizedServers, originatingServerId, readByConnectionThread);
         this.serverId = serverId;
     }
 

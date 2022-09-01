@@ -90,12 +90,12 @@ class RemoteClientDisconnector {
                 final var communicatorData = this.communicatorDataProvider.getCommunicatorData(
                         clientId);
 
-                statusSyncBuilder.withContactSet(contactIdList)
-                                 .withCommunicatorData(
+                statusSyncBuilder.withContactIdSet(contactIdList)
+                                 .withContactData(
                                          ConvertCommDataToDTO.convertFrom(
                                                  communicatorData))
                                  .withClientState(currentState)
-                                 .withIsToAdd(false);
+                                 .withToAdd(false);
 
                 requestAssignmentBuffer.appendPacket(PacketCompiler.createRequest(
                         getServerEntity(STANDARD_SERVER_ID),

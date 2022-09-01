@@ -81,8 +81,8 @@ class PacketDemultiplexer {
         if (clientStatusData != null) {
             final var serverContentWrapperBuilder = new SimpleInternalContentBuilder();
             serverContentWrapperBuilder.withContent(clientStatusData)
-                                       .withSyncedServers(
-                                               clientNotification.getSyncedServers());
+                                       .withSynchronizedServers(
+                                               clientNotification.getSynchronizedServers());
             notificationContent = serverContentWrapperBuilder.build();
         }
         return notificationContent;

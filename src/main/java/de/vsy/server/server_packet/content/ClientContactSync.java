@@ -14,7 +14,7 @@ interface ClientContactSync {
      *
      * @return the contact id list
      */
-    Set<Integer> getContactIdList ();
+    Set<Integer> getContactIdSet ();
 
     /**
      * Sets the remaining contact idlist.

@@ -33,12 +33,12 @@ class ExtendedClientStatusPreProcessor {
     throws PacketProcessingException {
         Set<Packet> updatePackets;
         Set<Integer> eligibleRecipients = new HashSet<>(
-                toProcess.getContactIdList());
+                toProcess.getContactIdSet());
 
         eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT,
                                                                  eligibleRecipients);
 
-        LogManager.getLogger().debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients, toProcess.getContactIdList());
+        LogManager.getLogger().debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients, toProcess.getContactIdSet());
         updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess,
                                                               eligibleRecipients);
 
@@ -46,10 +46,10 @@ class ExtendedClientStatusPreProcessor {
             for (final Packet updatePacket : updatePackets) {
                 assignmentBuffer.prependPacket(updatePacket);
                 eligibleRecipients.remove(updatePacket.getPacketProperties()
-                                                      .getRecipientEntity()
+                                                      .getRecipient()
                                                       .getEntityId());
             }
         }
-        return toProcess.getContactIdList().isEmpty() ? null : toProcess;
+        return toProcess.getContactIdSet().isEmpty() ? null : toProcess;
     }
 }
