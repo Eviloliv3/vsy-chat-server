@@ -222,11 +222,9 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
      *
      * @param classification the classification
      * @param toRemove the to remove
-     *
-     * @return true, if successful
      */
     public
-    boolean removePendingPacket (final PendingType classification,
+    void removePendingPacket (final PendingType classification,
                                  final Packet toRemove) {
         var packetRemoved = false;
         Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
@@ -243,14 +241,12 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
 
         if (packetRemoved) {
             allPendingPackets.put(classification, pendingMap);
-            packetRemoved = this.dataProvider.writeData(allPendingPackets);
+            this.dataProvider.writeData(allPendingPackets);
         }
 
         if (!lockAlreadyAcquired) {
             this.dataProvider.releaseAccess();
         }
-
-        return packetRemoved;
     }
 
     @Override

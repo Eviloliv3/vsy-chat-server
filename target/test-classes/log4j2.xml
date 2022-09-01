@@ -13,34 +13,33 @@
 
                 <!-- This route is chosen if ThreadContext has no value for keys subRouteDir and filename. -->
                 <Route key="$${ctx:logFilename}">
-                    <RollingFile name="Rolling-default" filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
-                                 filePattern="./logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
+                    <RollingRandomAccessFileAppender name="Rolling-default" filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
+                                                     filePattern="./logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
-                            <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
-                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                            <OnStartUpTriggeringPolicy minSize="10 MB"/>
                         </Policies>
-                    </RollingFile>
+                    </RollingRandomAccessFileAppender>
                 </Route>
                 <!-- This route is chosen if ThreadContext has a value for routeDir, subRouteDir and filename
             The value dynamically determines the name of the log file. -->
                 <Route>
-                    <RollingFile name="Rolling-${ctx:logFilename}"
-                                 filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
-                                 filePattern="./logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
+                    <RollingRandomAccessFileAppender name="Rolling-${ctx:logFilename}"
+                                                     filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
+                                                     filePattern="./logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
-                            <TimeBasedTriggeringPolicy interval="6" modulate="true"/>
-                            <SizeBasedTriggeringPolicy size="10 MB"/>
+                            <OnStartUpTriggeringPolicy minSize="10 MB"/>
                         </Policies>
-                    </RollingFile>
+                    </RollingRandomAccessFileAppender>
                 </Route>
             </Routes>
         </Routing>
     </Appenders>
     <Loggers>
-        <Logger name="de.vsy.server.app" level="info">
+        <Logger name="de.vsy.server" level="info">
             <AppenderRef ref="Routing"/>
+            <AppenderRef ref="STDOUT" level="debug"/>
         </Logger>
         <Root level="all">
             <AppenderRef ref="STDOUT" level="debug"/>
