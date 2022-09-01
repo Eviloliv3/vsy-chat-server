@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="trace">
+<Configuration status="WARN">
     <Properties>
         <Property name="isThreadContextMapInheritable">true</Property>
-        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [$${ctx:threadName}:%tid] - %msg%n</Property>
-        <Property name="logBasePath">${log4j:configParentLocation}/logs/</Property>
+        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [%X{threadName}:%tid] - %msg%n</Property>
     </Properties>
     <Appenders>
         <Console name="STDOUT" target="SYSTEM_OUT">
@@ -14,8 +13,8 @@
 
                 <!-- This route is chosen if ThreadContext has no value for keys subRouteDir and filename. -->
                 <Route key="$${ctx:logFilename}">
-                    <RollingRandomAccessFileAppender name="Rolling-default" filename="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
-                                 filePattern="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
+                    <RollingRandomAccessFileAppender name="Rolling-default" filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
+                                 filePattern="./logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
                             <OnStartUpTriggeringPolicy minSize="10 MB"/>
@@ -26,8 +25,8 @@
             The value dynamically determines the name of the log file. -->
                 <Route>
                     <RollingRandomAccessFileAppender name="Rolling-${ctx:logFilename}"
-                                 filename="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
-                                 filePattern="${logBasePath}/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
+                                 filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
+                                 filePattern="./logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
                             <OnStartUpTriggeringPolicy minSize="10 MB"/>
