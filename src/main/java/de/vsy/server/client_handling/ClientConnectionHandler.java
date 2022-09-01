@@ -92,7 +92,9 @@ class ClientConnectionHandler implements Runnable {
         var threadName = String.format("ClientHandler_" + localDate.format(
                 DateTimeFormatter.ISO_LOCAL_DATE) + "_" + localDate.getNano());
 
+        ThreadContext.clearAll();
         ThreadContext.put("routeDir", "clientLog");
+        ThreadContext.put("logFilename", threadName);
         Thread.currentThread().setName(threadName);
 
         this.connectionControl = new ConnectionThreadControl(this.clientConnection,
