@@ -2,7 +2,7 @@
 <Configuration status="trace">
     <Properties>
         <Property name="isThreadContextMapInheritable">true</Property>
-        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [${ctx:threadName}:%tid] - %msg%n</Property>
+        <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [%t:%tid] - %msg%n</Property>
         <Property name="logBasePath">${log4j:configParentLocation}/logs/</Property>
     </Properties>
     <Appenders>
@@ -13,7 +13,7 @@
                                          filePattern="${logBasePath}/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
             <PatternLayout pattern="${stdPattern}"/>
             <Policies>
-                <OnStartUpTriggeringPolicy minSize="10 MB"/>
+                <OnStartUpTriggeringPolicy minSize="10"/>
             </Policies>
         </RollingRandomAccessFile>
         <Routing name="Routing">
@@ -33,7 +33,7 @@
                                                      filePattern="${logBasePath}/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
-                            <OnStartUpTriggeringPolicy minSize="10 MB"/>
+                            <OnStartUpTriggeringPolicy minSize="10"/>
                         </Policies>
                     </RollingRandomAccessFile>
                 </Route>
