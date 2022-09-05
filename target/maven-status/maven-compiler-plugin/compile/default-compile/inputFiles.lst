@@ -31,7 +31,6 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/data_bean/ConvertCommDataToDTO.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/access_limiter/BaseHandlingDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/packet_logic/PacketResponseMap.java
-/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/status_synchronization/ClientStatusSynchronizingService.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/server_connection/ServerConnectionDataManager.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processor_provisioning/CategoryBasedProcessorFactoryProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/HandlerLocalDataManager.java
@@ -101,6 +100,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/server_connection/RemoteServerConnectionData.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/strategy/PacketHandlingStrategy.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/inter_server/InterServerSocketConnectionEstablisher.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/status_synchronization/ClientStatusSynchronizationService.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/CommunicationEntityDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/content/builder/ExtendedStatusSyncBuilder.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/ClientServer.java

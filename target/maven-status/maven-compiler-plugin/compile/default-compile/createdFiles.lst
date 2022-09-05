@@ -12,7 +12,6 @@ de/vsy/server/client_handling/data_management/logic/SubscriptionHandler.class
 de/vsy/server/service/Service$TYPE.class
 de/vsy/server/server/client_management/CurrentClientState.class
 de/vsy/server/server_packet/packet_properties/packet_type/ServerSetupType.class
-de/vsy/server/service/status_synchronization/ClientStatusSynchronizingService.class
 de/vsy/server/service/request/PacketAssignmentService.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/StatusPacketProcessorFactory$1.class
 de/vsy/server/server/client_management/ClientStateTranslator.class
@@ -154,6 +153,7 @@ de/vsy/server/server_packet/content/SimpleStatusSyncDTO.class
 de/vsy/server/service/ServiceData$ServiceDataBuilder.class
 de/vsy/server/persistent_data/PersistentDataFileCreator$DataFileDescriptor.class
 de/vsy/server/service/request/CategoryIdSubscriber.class
+de/vsy/server/service/status_synchronization/ClientStatusSynchronizationService.class
 de/vsy/server/client_handling/packet_processing/content_processing/ReconnectRequestProcessor.class
 de/vsy/server/exception_processing/ServiceResponseCreator.class
 de/vsy/server/service/inter_server/ClientReconnectionStateWatcher.class

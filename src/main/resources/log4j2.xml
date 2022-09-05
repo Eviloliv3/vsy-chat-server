@@ -13,7 +13,7 @@
                                          filePattern="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
             <PatternLayout pattern="${stdPattern}"/>
             <Policies>
-                <SizeBaseTriggeringPolicy size="10 MB"/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
         </RollingRandomAccessFile>
         <Routing name="Routing">
@@ -33,7 +33,7 @@
                                                      filePattern="logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
-                            <SizeBaseTriggeringPolicy size="10 MB"/>
+                            <SizeBasedTriggeringPolicy size="10 MB"/>
                         </Policies>
                     </RollingRandomAccessFile>
                 </Route>
