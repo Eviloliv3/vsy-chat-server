@@ -67,9 +67,8 @@ class ClientSubscriptionHandler implements ClientStateListener {
         }
 
         if (!handleSubscribing(threadIdMap, subscriptionLogic)) {
-            LOGGER.error("Es kam zu einem/mehreren Fehlern beim (De-)Abonnieren. " +
-                         "Siehe TraceLog fuer vollstaendigen Ablauf. Siehe WarnLog " +
-                         "fuer Fehlerschlaege.");
+            LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren. Siehe TraceLog" +
+                        " fuer vollstaendigen Ablauf|WarnLog fuer Fehlerschlaege.");
         }
 
         if (!extraSubscriptionMap.isEmpty()) {
@@ -77,10 +76,9 @@ class ClientSubscriptionHandler implements ClientStateListener {
 
             if (!handleExtraSubscribing(clientId, extraSubscriptionMap,
                                         extraSubscriptionLogic)) {
-                LOGGER.error("Es kam zu einem/mehreren Fehlern beim (De-)" +
-                             "Abonnieren der Zusatzabos. Siehe TraceLog fuer " +
-                             "vollstaendigen Ablauf. Siehe WarnLog fuer " +
-                             "Fehlerschlaege.");
+                LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren der " +
+                             "Zusatzabos. Siehe TraceLog fuer vollstaendigen Ablauf." +
+                             " Siehe WarnLog fuer Fehlerschlaege.");
             }
         }
     }

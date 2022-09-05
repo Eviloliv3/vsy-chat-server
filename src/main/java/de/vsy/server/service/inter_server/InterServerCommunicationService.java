@@ -227,7 +227,7 @@ class InterServerCommunicationService extends ServiceBase {
     void waitForServerSynchronization () {
         LOGGER.info("Warte auf Serversynchronisation.");
         while (this.serverConnectionDataManager.pendingConnectionStatus()) {
-            LOGGER.info("Es wird noch auf Serversynchronisation gewartet.");
+            LOGGER.trace("Es wird noch auf Serversynchronisation gewartet.");
             Thread.yield();
         }
     }

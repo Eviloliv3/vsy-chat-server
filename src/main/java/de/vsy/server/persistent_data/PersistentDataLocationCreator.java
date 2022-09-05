@@ -146,7 +146,7 @@ class PersistentDataLocationCreator {
                     directoryCreated = true;
                 }
             } else {
-                LOGGER.info("Verzeichnis existiert bereits: {}", directoryPath);
+                LOGGER.trace("Verzeichnis existiert bereits: {}", directoryPath);
                 directoryCreated = true;
             }
         } catch (final SecurityException se) {

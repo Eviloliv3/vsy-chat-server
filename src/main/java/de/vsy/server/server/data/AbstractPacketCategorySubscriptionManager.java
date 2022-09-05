@@ -130,8 +130,8 @@ class AbstractPacketCategorySubscriptionManager {
                 topicSubscriptions.put(topicId, subscriber);
                 this.subscriptions.put(topic, topicSubscriptions);
             }else{
-                LOGGER.warn("Abonnement fehlgeschlagen. Topic/Thread {} " +
-                            "/ {} bereits abonniert", topic, topicId);
+                LOGGER.warn("Abonnement fehlgeschlagen. Topic/Thread {}/{}" +
+                            " bereits abonniert", topic, topicId);
             }
         } finally {
             this.lock.writeLock().unlock();

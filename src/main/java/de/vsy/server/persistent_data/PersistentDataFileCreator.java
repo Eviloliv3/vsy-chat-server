@@ -118,7 +118,7 @@ class PersistentDataFileCreator {
                                      fileReference);
                     }
                 } else {
-                    LOGGER.warn("Datei existiert bereits: {}", fileReference);
+                    LOGGER.trace("Datei existiert bereits: {}", fileReference);
                 }
             } else {
                 LOGGER.error("Pfad ist kein gueltiges Verzeichnis: {}", directory);

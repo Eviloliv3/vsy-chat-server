@@ -41,12 +41,9 @@
         </Routing>
     </Appenders>
     <Loggers>
-        <Logger name="de.vsy.server" level="info">
-            <AppenderRef ref="Routing"/>
-            <AppenderRef ref="STDOUT" level="debug"/>
-        </Logger>
         <Root level="all">
-            <AppenderRef ref="STDOUT" level="debug"/>
+            <AppenderRef ref="Routing"/>
+            <AppenderRef ref="STDOUT" level="error"/>
         </Root>
     </Loggers>
 </Configuration>
