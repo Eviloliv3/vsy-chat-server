@@ -120,33 +120,36 @@ class PacketAssignmentService extends ServiceBase {
     public
     void work () {
         Packet request;
-        Optional<String> validationString;
 
         try {
             request = this.requestBuffer.getPacket();
+            if(request != null){
+                processPacket(request);
+            }
         } catch (InterruptedException ie) {
-            this.getServiceLogger().info("");
+            ServiceBase.LOGGER.error("Beim Holen des naechsten Pakets " +
+                                          "unterbrochen.");
             Thread.currentThread().interrupt();
             return;
         }
+    }
 
-        if (request != null) {
+    private
+    void processPacket(final Packet nextPacket){
+        final var validationString = validator.checkPacket(nextPacket);
 
-            validationString = validator.checkPacket(request);
-
-            if (validationString.isEmpty()) {
-                try {
-                    publishPacket(request);
-                } catch (PacketHandlingException phe) {
-                    final var errorMessage =
-                            "Das Paket wurde nicht zugestellt. " + phe.getMessage();
-                    final var errorResponse = this.pheProcessor.processException(
-                            new PacketTransmissionException(errorMessage), request);
-                    this.requestBuffer.prependPacket(errorResponse);
-                }
-            } else {
-                this.getServiceLogger().error(validationString.get());
+        if (validationString.isEmpty()) {
+            try {
+                publishPacket(nextPacket);
+            } catch (PacketHandlingException phe) {
+                final var errorMessage =
+                        "Das Paket wurde nicht zugestellt. " + phe.getMessage();
+                final var errorResponse = this.pheProcessor.processException(
+                        new PacketTransmissionException(errorMessage), nextPacket);
+                this.requestBuffer.prependPacket(errorResponse);
             }
+        } else {
+            ServiceBase.LOGGER.error(validationString.get());
         }
     }
 

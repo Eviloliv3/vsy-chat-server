@@ -19,10 +19,10 @@ public abstract
 class ServiceBase implements Service {
 
     private static final AtomicInteger SERVICE_ID_PROVIDER;
-    private static final Logger LOGGER = LogManager.getLogger();
+    protected static final Logger LOGGER = LogManager.getLogger();
     protected final LocalServerConnectionData serverConnectionData;
-    private final PacketDispatcher dispatcher;
-    private final ServiceData serviceSpecifications;
+    protected final PacketDispatcher dispatcher;
+    protected final ServiceData serviceSpecifications;
     /**
      * Flag signalisiert dem Aufrufer des Service, dass dieser Einsatzbereit ist.
      */
@@ -127,7 +127,7 @@ class ServiceBase implements Service {
     }
 
     /** Schliesst die Einrichtung des Services ab. */
-    public abstract
+    protected abstract
     void finishSetup ();
 
     /**
@@ -141,11 +141,11 @@ class ServiceBase implements Service {
     }
 
     /** Arbeitslogik. */
-    public abstract
+    protected abstract
     void work ();
 
     /** Schliesst das Beenden eines Services ab. */
-    public abstract
+    protected abstract
     void breakDown ();
 
     /**
@@ -156,16 +156,6 @@ class ServiceBase implements Service {
     protected final
     int getServiceId () {
         return serviceSpecifications.getServiceId();
-    }
-
-    /**
-     * Gets the LOGGER.
-     *
-     * @return the LOGGER
-     */
-    protected final
-    Logger getServiceLogger () {
-        return LOGGER;
     }
 
     /** Sets the ready state. */

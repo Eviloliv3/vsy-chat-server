@@ -252,7 +252,6 @@ class InterServerCommunicationService extends ServiceBase {
                 final var input = inputBuffer.getPacket();
 
                 if(input != null){
-                    LOGGER.info("Eingehendes Paket gelesen: {}", input);
                     processPacket(input);
                 }
             } catch (InterruptedException ie) {
