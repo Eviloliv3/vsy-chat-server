@@ -125,8 +125,13 @@ class AbstractPacketCategorySubscriptionManager {
             subSuccessful = subscriber.addSubscription(subscriptionBuffer);
 
             if (subSuccessful) {
+                LOGGER.trace("Abonnement erfolgreich. Topic: {}; Thread: " +
+                             "{}; Buffer: {}", topic, topicId, subscriptionBuffer);
                 topicSubscriptions.put(topicId, subscriber);
                 this.subscriptions.put(topic, topicSubscriptions);
+            }else{
+                LOGGER.warn("Abonnement fehlgeschlagen. Topic/Thread {} " +
+                            "/ {} bereits abonniert", topic, topicId);
             }
         } finally {
             this.lock.writeLock().unlock();
@@ -181,7 +186,6 @@ class AbstractPacketCategorySubscriptionManager {
                         subscriptionBuffer);
 
                 if (unsubSuccessful) {
-
                     if (!subscriptionBuffers.hasSubscribers()) {
                         topicSubscriptions.remove(threadId);
                     } else {
@@ -190,6 +194,13 @@ class AbstractPacketCategorySubscriptionManager {
                 }
             } else {
                 unsubSuccessful = false;
+            }
+            if(unsubSuccessful){
+                LOGGER.trace("Deabonnieren erfolgreich. Topic/Thread: {}/{}", topic, threadId);
+
+            }else{
+                LOGGER.warn("Deabonnieren fehlgeschlagen. Es bestand kein " +
+                            "Abonnement Topic/Thread: {}/{}", topic, threadId);
             }
         } finally {
             this.lock.writeLock().unlock();

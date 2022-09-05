@@ -76,7 +76,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
                                  final Packet toAppend) {
         if(classification == null || toAppend == null){
             throw new IllegalArgumentException("Ungueltiger Parameter. " +
-                                               classification + " / " + toAppend);
+                                               classification + "/" + toAppend);
         }
         var packetAdded = false;
         Map<String, Packet> pendingMap;

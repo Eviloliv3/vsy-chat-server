@@ -72,7 +72,7 @@ class ServicePacketBufferManager {
         } finally {
             this.lock.writeLock().unlock();
         }
-        LOGGER.info("Buffer deregistered: Service - {} / Label - {}", serviceType,
+        LOGGER.info("Buffer deregistered: Service - {}/Label - {}", serviceType,
                     bufferLabel);
 
         return bufferDeregistered;
@@ -201,14 +201,14 @@ class ServicePacketBufferManager {
                     bufferRegistered = packetBuffer;
                 } else {
                     LOGGER.info(
-                            "Buffer bereits registriert Servicetyp/Hash: {} / {}",
+                            "Buffer bereits registriert Servicetyp/Hash: {}/{}",
                             serviceType, packetBuffer.toString());
                 }
             } finally {
                 this.lock.writeLock().unlock();
             }
         }
-        LOGGER.info("Buffer registered: Service - {} / Label - {}", serviceType,
+        LOGGER.info("Buffer registered: Service - {}/Label - {}", serviceType,
                     bufferLabel);
 
         return bufferRegistered;

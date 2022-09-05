@@ -67,7 +67,9 @@ class ClientSubscriptionHandler implements ClientStateListener {
         }
 
         if (!handleSubscribing(threadIdMap, subscriptionLogic)) {
-            LOGGER.error("Subscription Error -> Exception sinnvoll");
+            LOGGER.error("Es kam zu einem/mehreren Fehlern beim (De-)Abonnieren. " +
+                         "Siehe TraceLog fuer vollstaendigen Ablauf. Siehe WarnLog " +
+                         "fuer Fehlerschlaege.");
         }
 
         if (!extraSubscriptionMap.isEmpty()) {
@@ -75,7 +77,10 @@ class ClientSubscriptionHandler implements ClientStateListener {
 
             if (!handleExtraSubscribing(clientId, extraSubscriptionMap,
                                         extraSubscriptionLogic)) {
-                LOGGER.error("Extra-Subscription Error -> Exception sinnvoll");
+                LOGGER.error("Es kam zu einem/mehreren Fehlern beim (De-)" +
+                             "Abonnieren der Zusatzabos. Siehe TraceLog fuer " +
+                             "vollstaendigen Ablauf. Siehe WarnLog fuer " +
+                             "Fehlerschlaege.");
             }
         }
     }
@@ -83,6 +88,7 @@ class ClientSubscriptionHandler implements ClientStateListener {
     private
     boolean handleSubscribing (final Map<PacketCategory, Set<Integer>> threadIdMap,
                                final SubscriptionHandler handler) {
+        var successFul = true;
         final var handlerBoundBuffer = this.clientBuffer.getPacketBuffer(
                 ThreadPacketBufferLabel.HANDLER_BOUND);
 
@@ -91,38 +97,28 @@ class ClientSubscriptionHandler implements ClientStateListener {
             final var threadIdSet = topicEntry.getValue();
 
             for (var currentThreadId : threadIdSet) {
-                final var stateChanged = handler.handle(topic, currentThreadId,
+                successFul &= handler.handle(topic, currentThreadId,
                                                         handlerBoundBuffer);
-
-                if (!stateChanged) {
-                    LOGGER.error("(De-)Abonnement fehlgeschlagen." +
-                                 " Topic: {}; Thread: {}; Handler: {};" +
-                                 " Buffer: {}", topic, currentThreadId,
-                                 handler.getClass().getSimpleName(),
-                                 handlerBoundBuffer);
-                    return false;
-                }
             }
         }
-        return true;
+        return successFul;
     }
 
     private
     boolean handleExtraSubscribing (final int clientId,
                                     final Map<PacketCategory, Set<Integer>> extraSubscriptions,
                                     final ExtraSubscriptionHandler extraSubscriptionLogic) {
+        var successful = true;
 
         for (final var topicSubscriptionSet : extraSubscriptions.entrySet()) {
             final var currentTopic = topicSubscriptionSet.getKey();
 
             for (final var currentThread : topicSubscriptionSet.getValue()) {
 
-                if (!extraSubscriptionLogic.handle(clientId, currentTopic,
-                                                   currentThread)) {
-                    return false;
-                }
+                successful &= !extraSubscriptionLogic.handle(clientId, currentTopic,
+                                                   currentThread);
             }
         }
-        return true;
+        return successful;
     }
 }
