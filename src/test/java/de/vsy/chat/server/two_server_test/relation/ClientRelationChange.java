@@ -10,6 +10,8 @@ import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.raw_server_test.relation.TestClientRelationChanges;
 import org.apache.logging.log4j.ThreadContext;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 /** @author fredward */
 public
 class ClientRelationChange extends TestClientRelationChanges {
@@ -18,6 +20,6 @@ class ClientRelationChange extends TestClientRelationChanges {
     ClientRelationChange () {
         super(ServerPortProvider.DUAL_SERVER_PORT_PROVIDER,
               TestClientDataProvider.RELA_CLIENT_LIST);
-        ThreadContext.put("logFilename", "dualServerRelation");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerRelation");
     }
 }

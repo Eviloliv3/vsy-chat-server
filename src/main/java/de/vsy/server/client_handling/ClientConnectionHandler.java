@@ -24,6 +24,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Queue;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
+
 /**
  * Handles client connection as well as processing requests and transferring them
  * into server readable structures if needed .
@@ -89,12 +91,12 @@ class ClientConnectionHandler implements Runnable {
     private
     void finishThreadSetup () {
         var localDate = LocalDateTime.now();
-        var threadName = String.format("ClientHandler_" + localDate.format(
-                DateTimeFormatter.ISO_LOCAL_DATE) + "_" + localDate.getNano());
+        var threadName = THREAD_BASE_NAME + localDate.format(
+                DateTimeFormatter.ISO_LOCAL_DATE) + "_" + localDate.getNano();
 
         ThreadContext.clearAll();
-        ThreadContext.put("routeDir", "clientLog");
-        ThreadContext.put("logFilename", threadName);
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_CLIENT_ROUTE_VALUE);
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, threadName);
         Thread.currentThread().setName(threadName);
 
         this.connectionControl = new ConnectionThreadControl(this.clientConnection,

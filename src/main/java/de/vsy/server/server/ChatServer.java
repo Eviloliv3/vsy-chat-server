@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 public
@@ -60,7 +61,7 @@ class ChatServer implements ClientServer {
     void main (final String[] args) {
         final var server = new ChatServer();
         Thread.currentThread().setName("Chatserver");
-        ThreadContext.put("routeDir", "serverLog");
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
 
         if (server.prepareServer()) {
             server.startServing();
@@ -88,7 +89,7 @@ class ChatServer implements ClientServer {
             String threadName =
                     "ChatServer[" + localServerConnectionData.getServerId() + ":" +
                     localServerConnectionData.getServerPort() + "]";
-            ThreadContext.put("logFilename", threadName);
+            ThreadContext.put(LOG_FILE_CONTEXT_KEY, threadName);
             LOGGER.info("Server wird Anfragen auf Port: {} annehmen.",
                         localServerConnectionData.getConnectionSocket()
                                                  .getLocalPort());

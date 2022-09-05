@@ -7,6 +7,8 @@ import org.apache.logging.log4j.ThreadContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
+
 public
 class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
 
@@ -26,8 +28,8 @@ class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
     @Override
     public
     void runWithContext () {
-        ThreadContext.put("routeDir", "serverLog");
-        ThreadContext.put("logFilename", "reconnectWatcher");
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "reconnectWatcher");
 
         List<Integer> reconnectedClientIds = new ArrayList<>();
 

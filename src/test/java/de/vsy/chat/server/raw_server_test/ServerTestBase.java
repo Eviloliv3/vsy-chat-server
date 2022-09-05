@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public
 class ServerTestBase {
@@ -29,7 +31,7 @@ class ServerTestBase {
     public
     ServerTestBase (ServerPortProvider clientConnectionPorts,
                     List<AuthenticationDTO> clientAuthenticationDataList) {
-        ThreadContext.put("routeDir", "test");
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, "test");
         this.portProvider = clientConnectionPorts;
         this.clientAuthenticationDataList = clientAuthenticationDataList;
         this.clientConnectionList = new ArrayList<>(6);

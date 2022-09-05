@@ -15,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 /** PacketProcessor for login type Packet. */
 public
 class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> {
@@ -59,7 +61,7 @@ class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> {
                             ClientState.AUTHENTICATED, true)) {
                         final var communicatorData = ConvertCommDataToDTO.convertFrom(
                                 clientData);
-                        ThreadContext.put("logFilename", String.valueOf(
+                        ThreadContext.put(LOG_FILE_CONTEXT_KEY, String.valueOf(
                                 communicatorData.getCommunicatorId()));
                         this.contentHandler.addResponse(
                                 new LoginResponseDTO(communicatorData));

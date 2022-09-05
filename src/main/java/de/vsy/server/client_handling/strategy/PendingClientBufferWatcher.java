@@ -13,6 +13,7 @@ import de.vsy.shared_utility.async_value_acquisition.TimeBasedValueFetcher;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ class PendingClientBufferWatcher extends ThreadContextRunnable {
      */
     public
     PendingClientBufferWatcher (final HandlerLocalDataManager threadDataAccess) {
+        super();
         this.pendingPacketAccessor = threadDataAccess.getLocalClientStateDependentLogicProvider()
                                                      .getClientPersistentAccess()
                                                      .getPendingPacketDAO();

@@ -6,6 +6,8 @@ import de.vsy.chat.server.raw_server_test.status.TestStatusChange;
 import org.apache.logging.log4j.ThreadContext;
 import org.junit.jupiter.api.TestInstance;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class TestClientStatusChange extends TestStatusChange {
 
@@ -13,6 +15,6 @@ class TestClientStatusChange extends TestStatusChange {
     TestClientStatusChange () {
         super(ServerPortProvider.DUAL_SERVER_PORT_PROVIDER,
               TestClientDataProvider.STATUS_CLIENT_LIST);
-        ThreadContext.put("logFilename", "dualServerStatus");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerStatus");
     }
 }

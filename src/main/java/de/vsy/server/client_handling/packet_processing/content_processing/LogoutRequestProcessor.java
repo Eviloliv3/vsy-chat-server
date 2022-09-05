@@ -15,6 +15,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 public
 class LogoutRequestProcessor implements ContentProcessor<LogoutRequestDTO> {
 
@@ -43,7 +45,7 @@ class LogoutRequestProcessor implements ContentProcessor<LogoutRequestDTO> {
 
         if (this.clientStateManager.changePersistentClientState(
                 ClientState.AUTHENTICATED, false)) {
-            ThreadContext.put("logFilename", Thread.currentThread().getName());
+            ThreadContext.put(LOG_FILE_CONTEXT_KEY, Thread.currentThread().getName());
 
             this.contentHandler.addResponse(new LogoutResponseDTO(true));
             this.clientStateManager.logoutClient();

@@ -5,6 +5,8 @@ import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.raw_server_test.authentication.TestLoginBehaviour;
 import org.apache.logging.log4j.ThreadContext;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 /** @author fredward */
 public
 class LoginBehaviour extends TestLoginBehaviour {
@@ -13,6 +15,6 @@ class LoginBehaviour extends TestLoginBehaviour {
     LoginBehaviour () {
         super(ServerPortProvider.SINGLE_SERVER_PORT_PROVIDER,
               TestClientDataProvider.AUTH_CLIENT_LIST);
-        ThreadContext.put("logFilename", "singleServerLogin");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "singleServerLogin");
     }
 }

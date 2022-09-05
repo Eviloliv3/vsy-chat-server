@@ -24,6 +24,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 public
 class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO> {
 
@@ -67,7 +69,7 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                         if (this.clientStateManager.changePersistentClientState(
                                 persistedState, true)) {
                             this.clientStateManager.changeReconnectionState(false);
-                            ThreadContext.put("logFilename", String.valueOf(
+                            ThreadContext.put(LOG_FILE_CONTEXT_KEY, String.valueOf(
                                     clientData.getCommunicatorId()));
                             this.contentHandler.addResponse(
                                     new ReconnectResponseDTO(true));

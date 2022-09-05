@@ -28,6 +28,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static java.lang.Thread.interrupted;
 
 /**
@@ -84,7 +85,7 @@ class InterServerSubstituteService extends ThreadContextRunnable
     public
     void runWithContext () {
         if (finishSetup()) {
-            LOGGER.info("{} gestartet.", ThreadContext.get("logFilename"));
+            LOGGER.info("{} gestartet.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
 
             while (this.interrupt.conditionNotMet()) {
                 processPacket();
@@ -94,7 +95,7 @@ class InterServerSubstituteService extends ThreadContextRunnable
             this.reconnectionStateWatcher.cancel();
             clearAndRemoveBuffer();
         }
-        LOGGER.info("{} gestoppt.", ThreadContext.get("logFilename"));
+        LOGGER.info("{} gestoppt.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
     }
 
     /** Finish setup. */
@@ -103,7 +104,7 @@ class InterServerSubstituteService extends ThreadContextRunnable
         boolean substituteSetup = false;
         Instant stopTime;
         List<Integer> pendingClientIds;
-        ThreadContext.put("logFilename", "InterServerSubstitute-" + this.serviceId);
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "InterServerSubstitute-" + this.serviceId);
 
         pendingClientIds = getPendingClientIds();
 

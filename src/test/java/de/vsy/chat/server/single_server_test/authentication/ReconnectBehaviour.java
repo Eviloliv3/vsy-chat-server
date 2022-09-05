@@ -10,6 +10,8 @@ import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.raw_server_test.authentication.TestReconnectionBehaviour;
 import org.apache.logging.log4j.ThreadContext;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 /** @author fredward */
 public
 class ReconnectBehaviour extends TestReconnectionBehaviour {
@@ -18,6 +20,6 @@ class ReconnectBehaviour extends TestReconnectionBehaviour {
     ReconnectBehaviour () {
         super(ServerPortProvider.SINGLE_SERVER_PORT_PROVIDER,
               TestClientDataProvider.AUTH_CLIENT_LIST);
-        ThreadContext.put("logFilename", "singleServerReconnect");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "singleServerReconnect");
     }
 }

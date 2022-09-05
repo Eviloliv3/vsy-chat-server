@@ -10,6 +10,8 @@ import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.raw_server_test.authentication.TestLogoutBehaviour;
 import org.apache.logging.log4j.ThreadContext;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+
 /** @author fredward */
 public
 class LogoutBehaviour extends TestLogoutBehaviour {
@@ -18,6 +20,6 @@ class LogoutBehaviour extends TestLogoutBehaviour {
     LogoutBehaviour () {
         super(ServerPortProvider.SINGLE_SERVER_PORT_PROVIDER,
               TestClientDataProvider.AUTH_CLIENT_LIST);
-        ThreadContext.put("logFilename", "singleServerLogout");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "singleServerLogout");
     }
 }

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.ThreadContext;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
 import static java.lang.String.format;
 
 /** The Interface Service. */
@@ -48,9 +49,9 @@ class ServiceBase implements Service {
         this.serverConnectionData = serverConnectionData;
 
         serviceSpecifications.setServiceId(SERVICE_ID_PROVIDER.getAndIncrement());
-        serviceSpecifications.setServiceName(
-                format("%s-%d", serviceSpecifications.getServiceBaseName(),
-                       serviceSpecifications.getServiceId()));
+        serviceSpecifications.setServiceName(serviceSpecifications.getServiceBaseName()
+                                             + "-" + serviceSpecifications.getServiceId()
+                                             + "-" + serverConnectionData.getServerId());
     }
 
     /**
@@ -97,10 +98,8 @@ class ServiceBase implements Service {
     @Override
     public
     void run () {
-        ThreadContext.put("routeDir", "serverLog");
-        ThreadContext.put("logFilename", getServiceName());
-
-        LOGGER.info("{} gestartet.", getServiceName());
+        this.setupThreadContext();
+        LOGGER.info("{} gestartet.", this.getServiceName());
 
         finishSetup();
 
@@ -109,8 +108,22 @@ class ServiceBase implements Service {
         }
 
         breakDown();
-        ThreadContext.clearAll();
+        this.clearThreadContext();
         LOGGER.info("{} beendet.", getServiceName());
+    }
+
+    protected
+    void setupThreadContext(){
+        final String serviceName = this.getServiceName();
+
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, serviceName);
+        Thread.currentThread().setName(serviceName);
+    }
+
+    protected
+    void clearThreadContext(){
+        ThreadContext.clearAll();
     }
 
     /** Schliesst die Einrichtung des Services ab. */
