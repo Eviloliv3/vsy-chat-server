@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.util.Arrays.asList;
+
 /** The Class PendingClientBufferWatcher. */
 public
 class PendingClientBufferWatcher extends ThreadContextRunnable {
@@ -78,14 +80,22 @@ class PendingClientBufferWatcher extends ThreadContextRunnable {
 
     /** Save incoming Packet. */
     private
-    void saveIncomingPackets () {
+    void saveIncomingPackets (){
         var reInterrupt = false;
+        try {
+            this.pendingPacketAccessor.createFileAccess(this.localClientData.getClientId());
+        }catch(InterruptedException ie){
+            throw new IllegalStateException("Dateizugriff fehlgeschlagen.\n"
+                                            + ie.getMessage() + "\n"
+                                            + asList(ie.getStackTrace()));
+        }
 
         while (this.terminationLatch.getCount() == TERMINATION_LATCH_COUNT) {
             try {
                 Packet currentPacket = clientBuffer.getPacket();
-                this.pendingPacketAccessor.appendPendingPacket(
-                        PendingType.PROCESSOR_BOUND, currentPacket);
+                if(currentPacket != null) {
+                    this.pendingPacketAccessor.appendPendingPacket(PendingType.PROCESSOR_BOUND, currentPacket);
+                }
             } catch (InterruptedException ie) {
                 reInterrupt = true;
                 LOGGER.warn("Watcher läuft weiter, weil alle Pakete verarbeitet " +

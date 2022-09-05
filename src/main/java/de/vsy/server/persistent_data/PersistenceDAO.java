@@ -351,12 +351,12 @@ class PersistenceDAO {
         try {
             this.localLock.readLock().unlock();
         }catch(IllegalMonitorStateException imse){
-            LOGGER.info("ReadLock nicht lokal gehalten.");
+            LOGGER.info("ReadLock nicht lokal gehalten.\n{}\n{}", imse.getMessage(), asList(imse.getStackTrace()));
         }
         try {
             this.localLock.writeLock().unlock();
         }catch(IllegalMonitorStateException imse){
-            LOGGER.info("WriteLock nicht lokal gehalten");
+            LOGGER.info("WriteLock nicht lokal gehalten.\n{}\n{}",imse.getMessage(), asList(imse.getStackTrace()));
         }
 
         if (this.globalLock != null) {

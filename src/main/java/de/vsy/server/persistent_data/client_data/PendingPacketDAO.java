@@ -74,10 +74,13 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
     public
     boolean appendPendingPacket (final PendingType classification,
                                  final Packet toAppend) {
+        if(classification == null || toAppend == null){
+            throw new IllegalArgumentException("Ungueltiger Parameter. " +
+                                               classification + " / " + toAppend);
+        }
         var packetAdded = false;
         Map<String, Packet> pendingMap;
 
-        if (toAppend != null) {
             final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
             if (!lockAlreadyAcquired) {
@@ -100,7 +103,6 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             if (packetAdded) {
                 LOGGER.info("PendingPacket hinzugefügt.");
             }
-        }
         return packetAdded;
     }
 
