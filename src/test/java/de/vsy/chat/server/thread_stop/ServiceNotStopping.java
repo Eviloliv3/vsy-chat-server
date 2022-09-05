@@ -15,7 +15,7 @@ import de.vsy.server.service.inter_server.InterServerCommunicationService;
 import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
 import de.vsy.server.service.inter_server.ServerFollowerConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
-import de.vsy.server.service.status_synchronization.ClientStatusSynchronizingService;
+import de.vsy.server.service.status_synchronization.ClientStatusSynchronizationService;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,7 +109,7 @@ class TestServiceNotStopping {
     @Test
     void TestrequestAssignmentStoppingOnInterrupt ()
     throws InterruptedException {
-        var test = new Thread(new ClientStatusSynchronizingService(serviceAccess));
+        var test = new Thread(new ClientStatusSynchronizationService(serviceAccess));
         test.start();
         Thread.sleep(1000);
         test.interrupt();

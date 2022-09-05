@@ -20,7 +20,7 @@ import static de.vsy.shared_transmission.shared_transmission.packet.property.pac
 
 /** Service processing inter-server synchronization Packet. */
 public
-class ClientStatusSynchronizingService extends ServiceBase {
+class ClientStatusSynchronizationService extends ServiceBase {
 
     private static final ServiceData SERVICE_SPECIFICATIONS;
     private static final Logger LOGGER = LogManager.getLogger();
@@ -50,7 +50,7 @@ class ClientStatusSynchronizingService extends ServiceBase {
      * @param serviceDataModel the dataManagement manager
      */
     public
-    ClientStatusSynchronizingService (
+    ClientStatusSynchronizationService (
             final ClientStatusRegistrationServiceDataProvider serviceDataModel) {
         super(SERVICE_SPECIFICATIONS,
               serviceDataModel.getServicePacketBufferManager(),

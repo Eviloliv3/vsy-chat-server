@@ -9,7 +9,7 @@ import de.vsy.server.server.data.access.ServiceDataAccessManager;
 import de.vsy.server.service.inter_server.InterServerCommunicationService;
 import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
-import de.vsy.server.service.status_synchronization.ClientStatusSynchronizingService;
+import de.vsy.server.service.status_synchronization.ClientStatusSynchronizationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,7 +78,7 @@ class ServiceControl {
     /** Start client status synchronization thread. */
     public
     void startClientStatusSynchronizationThread () {
-        final var csss = new ClientStatusSynchronizingService(this.serviceDataModel);
+        final var csss = new ClientStatusSynchronizationService(this.serviceDataModel);
         startService(csss);
     }
 
