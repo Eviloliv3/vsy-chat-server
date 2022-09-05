@@ -247,40 +247,43 @@ class InterServerCommunicationService extends ServiceBase {
                 ThreadPacketBufferLabel.HANDLER_BOUND);
 
         while (interrupt.conditionNotMet()) {
-            Packet input;
-            Packet output;
 
             try {
-                input = inputBuffer.getPacket();
+                final var input = inputBuffer.getPacket();
+
+                if(input != null){
+                    LOGGER.info("Eingehendes Paket gelesen: {}", input);
+                    processPacket(input);
+                }
             } catch (InterruptedException ie) {
                 LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}",
                              asList(ie.getStackTrace()));
                 reinterrupt = true;
-                input = null;
-            }
-
-            if (input != null) {
-                final var validationString = this.validator.checkPacket(input);
-
-                if (validationString.isEmpty()) {
-                    final var serverPacketContent = (ServerPacketContentImpl) input.getPacketContent();
-                    serverPacketContent.setReadingConnectionThread(getServiceId());
-                    output = input;
-                } else {
-                    final var errorMessage = "Das Paket wurde nicht zugestellt.";
-                    final var processingException = new PacketProcessingException(
-                            errorMessage + validationString);
-                    output = this.pheProcessor.processException(processingException,
-                                                                input);
-                }
-                this.packetDispatcher.dispatchPacket(output);
             }
         }
-        LOGGER.info("Eingehende Pakete werden nicht mehr weiter verarbeitet.");
 
         if (reinterrupt) {
             Thread.currentThread().interrupt();
         }
+        LOGGER.info("Eingehende Pakete werden nicht mehr weiter verarbeitet.");
+    }
+
+    private void processPacket(final Packet nextPacket){
+        final Packet output;
+        final var validationString = this.validator.checkPacket(nextPacket);
+
+        if (validationString.isEmpty()) {
+            final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
+            serverPacketContent.setReadingConnectionThread(getServiceId());
+            output = nextPacket;
+        } else {
+            final var errorMessage = "Das Paket wurde nicht zugestellt.";
+            final var processingException = new PacketProcessingException(
+                    errorMessage + validationString);
+            output = this.pheProcessor.processException(processingException,
+                                                        nextPacket);
+        }
+        this.packetDispatcher.dispatchPacket(output);
     }
 
     private
