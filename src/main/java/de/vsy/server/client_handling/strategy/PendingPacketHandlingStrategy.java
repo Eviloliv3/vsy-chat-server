@@ -10,8 +10,6 @@ interface PendingPacketHandlingStrategy {
      * Handle Packet
      *
      * @param input the input
-     *
-     * @return true, if successful
      */
-    boolean handlePacket (Packet input);
+    void handlePacket (Packet input);
 }

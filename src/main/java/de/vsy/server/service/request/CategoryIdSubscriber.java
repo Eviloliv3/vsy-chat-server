@@ -35,22 +35,6 @@ class CategoryIdSubscriber {
     }
 
     /**
-     * Instantiates a new category id subscriber.
-     *
-     * @param subscriptionBuffer the subscription buffer
-     */
-    public
-    CategoryIdSubscriber (final PacketBuffer subscriptionBuffer) {
-        this.subscriptionBuffers = new HashSet<>();
-
-        if (subscriptionBuffer != null) {
-            this.subscriptionBuffers.add(subscriptionBuffer);
-        } else {
-            throw new IllegalArgumentException("null statt PacketBuffer übergeben.");
-        }
-    }
-
-    /**
      * Adds the subscription.
      *
      * @param newSubscription the new subscription
@@ -80,20 +64,12 @@ class CategoryIdSubscriber {
      * Publish.
      *
      * @param toPublish the to publish
-     *
-     * @return true, if successful
      */
     public
-    int publish (final Packet toPublish) {
-        var remainingSubscribers = this.subscriptionBuffers.size();
-
+    void publish (final Packet toPublish) {
         for (var subscriptionBuffer : this.subscriptionBuffers) {
-
-            if (subscriptionBuffer.appendPacket(toPublish)) {
-                remainingSubscribers--;
-            }
+            subscriptionBuffer.appendPacket(toPublish);
         }
-        return remainingSubscribers;
     }
 
     /**

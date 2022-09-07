@@ -68,11 +68,7 @@ class ClientSubscriptionManager extends AbstractPacketCategorySubscriptionManage
                 packetProperties.getRecipient().getEntityId());
 
         if (subscriptionBuffers != null) {
-            final var notReceived = subscriptionBuffers.publish(packetToPublish);
-
-            if (notReceived > 0) {
-                LOGGER.info("{} wurde(n) nicht informiert.", notReceived);
-            }
+            subscriptionBuffers.publish(packetToPublish);
         } else {
             throw new PacketTransmissionException(
                     "Paket wurde nicht zugestellt. Kontakt offline.");

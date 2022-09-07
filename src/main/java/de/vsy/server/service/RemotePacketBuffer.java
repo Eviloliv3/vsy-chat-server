@@ -5,14 +5,15 @@ import de.vsy.server.server.server_connection.RemoteServerConnectionData;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Wird zur Unterbrechung von unendlichen Klientennachrichtenketten zwischen Servern
- * genutzt.
+ * Prueft ob Paketinhalt bereits vom entfernten Server verarbeitet wurde und stoppt
+ * den versandt gegebenenfalls.
  */
 public
 class RemotePacketBuffer extends PacketBuffer {
-
     /** Identifiziert den Server, der mittels dieses Buffers erreicht wird. */
     private final LocalServerConnectionData localConnection;
     private RemoteServerConnectionData remoteConnection;
@@ -26,28 +27,29 @@ class RemotePacketBuffer extends PacketBuffer {
 
     @Override
     public
-    boolean appendPacket (Packet input) {
+    void appendPacket (Packet input) {
         final var content = input.getPacketContent();
 
         if (content instanceof final ServerPacketContentImpl serverContent) {
-
             if (!serverContent.checkServerSyncState(
                     this.remoteConnection.getServerId())) {
                 synchronizeLocalServerId(serverContent);
-                return super.appendPacket(input);
+                super.appendPacket(input);
+            }else{
+                LOGGER.info("Paket wird nicht angehaengt. Der entfernte Server hat " +
+                            "dieses Paket bereits verarbeitet: {}", input);
             }
         } else if (content == null) {
-            return super.appendPacket(input);
+            super.appendPacket(input);
         } else {
             throw new IllegalArgumentException(
-                    "Ungesicherter Paketinhalt. Paket nicht verfolgbar, wird nicht gesandt.");
+                    "Paket wird nicht gesandt. Ungesicherter Paketinhalt: " + input);
         }
-        return true;
     }
 
     @Override
     public
-    boolean prependPacket (Packet input) {
+    void prependPacket (Packet input) {
         final var content = input.getPacketContent();
 
         if (content instanceof final ServerPacketContentImpl serverContent) {
@@ -55,15 +57,17 @@ class RemotePacketBuffer extends PacketBuffer {
             if (!serverContent.checkServerSyncState(
                     this.remoteConnection.getServerId())) {
                 synchronizeLocalServerId(serverContent);
-                return super.prependPacket(input);
+                super.prependPacket(input);
+            }else{
+                LOGGER.info("Paket wird nicht vorangestellt. Der entfernte " +
+                            "Server hat dieses Paket bereits verarbeitet: {}", input);
             }
         } else if (content == null) {
-            return super.appendPacket(input);
+            super.appendPacket(input);
         } else {
             throw new IllegalArgumentException(
-                    "Ungesicherter Paketinhalt. Paket nicht verfolgbar, wird nicht gesandt.");
+                    "Paket wird nicht gesandt. Ungesicherter Paketinhalt: " + input);
         }
-        return true;
     }
 
     private

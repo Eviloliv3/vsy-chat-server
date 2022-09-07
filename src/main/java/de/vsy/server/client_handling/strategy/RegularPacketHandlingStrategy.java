@@ -163,12 +163,8 @@ class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
                 List<String> handledPackets = new ArrayList<>();
 
                 for (final var currentPacket : pendingMap.entrySet()) {
-                    final var packetHandled = pendingStrategy.handlePacket(
-                            currentPacket.getValue());
-
-                    if (packetHandled) {
-                        handledPackets.add(currentPacket.getKey());
-                    }
+                    pendingStrategy.handlePacket(currentPacket.getValue());
+                    handledPackets.add(currentPacket.getKey());
                 }
 
                 for (final var currentHash : handledPackets) {

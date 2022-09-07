@@ -45,11 +45,7 @@ class ServiceSubscriptionManager extends AbstractPacketCategorySubscriptionManag
         subscriptionBuffers = getRandomServiceSubscription(topicSubscriptions);
 
         if (subscriptionBuffers != null) {
-            final var notReceived = subscriptionBuffers.publish(publishedPacket);
-
-            if (notReceived > 0) {
-                LOGGER.info("{} wurde(n) nicht informiert.", notReceived);
-            }
+            subscriptionBuffers.publish(publishedPacket);
         } else {
 
             throw new PacketTransmissionException(
