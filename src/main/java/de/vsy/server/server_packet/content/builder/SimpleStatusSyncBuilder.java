@@ -2,7 +2,7 @@ package de.vsy.server.server_packet.content.builder;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server_packet.content.SimpleStatusSyncDTO;
+import de.vsy.server.server_packet.content.BaseStatusSyncDTO;
 import de.vsy.shared_module.shared_module.data_element_validation.BeanChecker;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 
@@ -56,8 +56,8 @@ class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>>
 
     @Override
     public
-    SimpleStatusSyncDTO build () {
-        return new SimpleStatusSyncDTO(this);
+    BaseStatusSyncDTO build () {
+        return new BaseStatusSyncDTO(this);
     }
 
     /**

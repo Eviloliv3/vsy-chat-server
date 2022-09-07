@@ -21,7 +21,6 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.relation.Co
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
 import de.vsy.shared_transmission.shared_transmission.packet.content.status.*;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
-import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -62,7 +61,7 @@ class TestPendingPacketDAO {
         allPacketContentSamples.add(ContactRelationResponseDTO.valueOf(relationRequest, commDTO, true));
         allPacketContentSamples.add(new ErrorDTO("error", null));
         allPacketContentSamples.add(new TextMessageDTO(commDTO.getCommunicatorId(), EligibleContactEntity.CLIENT, 15002, "test nachricht"));
-        allPacketContentSamples.add(new SimpleStatusSyncDTO((SimpleStatusSyncBuilder)new SimpleStatusSyncBuilder<>().withToAdd(true).withClientState(
+        allPacketContentSamples.add(new BaseStatusSyncDTO((SimpleStatusSyncBuilder)new SimpleStatusSyncBuilder<>().withToAdd(true).withClientState(
                 ClientState.ACTIVE_MESSENGER).withContactData(commDTO).withOriginatingServerId(2134)));
         allPacketContentSamples.add(new ExtendedStatusSyncDTO((ExtendedStatusSyncBuilder)new ExtendedStatusSyncBuilder<>().withContactIdSet(Collections.emptySet()).withClientState(ClientState.ACTIVE_MESSENGER).withContactData(commDTO).withOriginatingServerId(1234)));
         allPacketContentSamples.add(new ServerFailureDTO((ServerFailureContentBuilder)new ServerFailureContentBuilder().withFailedServerId(4234).withOriginatingServerId(4234)));

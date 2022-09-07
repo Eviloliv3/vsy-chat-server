@@ -11,9 +11,9 @@ import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvi
 import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server.server_connection.RemoteServerConnectionData;
 import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server_packet.content.BaseStatusSyncDTO;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
-import de.vsy.server.server_packet.content.SimpleStatusSyncDTO;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.PacketResponseMap;
@@ -82,27 +82,29 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
             final var originatingServerId = inputData.getOriginatingServerId();
 
             if (originatingServerId != this.serverNode.getServerId() &&
-                inputData instanceof final SimpleStatusSyncDTO simpleStatus) {
-                LogManager.getLogger().debug("SimpleStatusSyncDTO gelesen: {}", simpleStatus);
+                inputData instanceof final BaseStatusSyncDTO simpleStatus) {
+                LogManager.getLogger().debug("BaseStatusSyncDTO gelesen: {}", simpleStatus);
                 translateState(simpleStatus, originatingServerId);
             }
+
+            if (inputData instanceof ExtendedStatusSyncDTO) {
+                LogManager.getLogger().debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
+                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
+                final var clientNotification = PacketCompiler.createRequest(
+                        clientBroadcast, inputData);
+                responses.setClientBoundPacket(clientNotification);
+            }
+
             notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
                     inputData.getSynchronizedServers());
 
             if (notSynchronizedServerData != null) {
-                LogManager.getLogger().debug("ExtendedStatusSync fuer anderen Server erstellt.");
+                LogManager.getLogger().debug("Statussynchronisierung fuer anderen Server erstellt.");
                 final var recipient = getServerEntity(
                         notSynchronizedServerData.getServerId());
                 final var serverNotification = PacketCompiler.createRequest(
                         recipient, inputData);
                 responses.setServerBoundPacket(serverNotification);
-            }
-
-            if (inputData instanceof ExtendedStatusSyncDTO) {
-                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
-                final var clientNotification = PacketCompiler.createRequest(
-                        clientBroadcast, inputData);
-                responses.setClientBoundPacket(clientNotification);
             }
         } else {
             throw new PacketProcessingException(
@@ -118,7 +120,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
      * @param clientStatusData the messenger status
      */
     private
-    void translateState (final SimpleStatusSyncDTO clientStatusData,
+    void translateState (final BaseStatusSyncDTO clientStatusData,
                          final int serviceId) {
         final var remoteClientBuffer = this.serviceBufferManager.getSpecificBuffer(
                 Service.TYPE.SERVER_TRANSFER, serviceId);
@@ -137,7 +139,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     }
 
     private
-    Map<PacketCategory, Set<Integer>> createSubscriptionMap(final SimpleStatusSyncDTO statusSync){
+    Map<PacketCategory, Set<Integer>> createSubscriptionMap(final BaseStatusSyncDTO statusSync){
         final var clientState = statusSync.getClientState();
         final var clientId = statusSync.getContactData().getCommunicatorId();
         final var subscriptions = ClientStateTranslator.prepareClientSubscriptionMap(

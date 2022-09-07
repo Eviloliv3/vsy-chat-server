@@ -13,7 +13,7 @@ import java.io.Serial;
  */
 @JsonDeserialize(builder = SimpleStatusSyncBuilder.class)
 public
-class SimpleStatusSyncDTO extends ServerPacketContentImpl {
+class BaseStatusSyncDTO extends ServerPacketContentImpl {
 
     @Serial
     private static final long serialVersionUID = 5018800882273083846L;
@@ -22,7 +22,7 @@ class SimpleStatusSyncDTO extends ServerPacketContentImpl {
     private final boolean isToAdd;
 
     public
-    SimpleStatusSyncDTO (
+    BaseStatusSyncDTO (
             SimpleStatusSyncBuilder<? extends SimpleStatusSyncBuilder<?>> builder) {
         super(builder);
         this.contactData = builder.getCommunicatorData();

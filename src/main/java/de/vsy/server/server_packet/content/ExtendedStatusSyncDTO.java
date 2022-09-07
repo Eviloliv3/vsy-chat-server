@@ -14,7 +14,7 @@ import static java.util.Set.copyOf;
  */
 @JsonDeserialize(builder = ExtendedStatusSyncBuilder.class)
 public
-class ExtendedStatusSyncDTO extends SimpleStatusSyncDTO
+class ExtendedStatusSyncDTO extends BaseStatusSyncDTO
         implements ClientContactSync {
 
     @Serial
