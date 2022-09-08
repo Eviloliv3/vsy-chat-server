@@ -67,6 +67,10 @@ class CategoryIdSubscriber {
      */
     public
     void publish (final Packet toPublish) {
+        if(toPublish == null){
+            throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+        }
+
         for (var subscriptionBuffer : this.subscriptionBuffers) {
             subscriptionBuffer.appendPacket(toPublish);
         }

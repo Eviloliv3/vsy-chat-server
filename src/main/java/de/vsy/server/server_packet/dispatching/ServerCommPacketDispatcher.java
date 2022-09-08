@@ -37,6 +37,9 @@ class ServerCommPacketDispatcher extends PacketDispatcherBase {
     @Override
     protected
     void sendInboundPacket (final Packet output) {
+        if(output == null){
+            throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+        }
         PacketBuffer buffer;
 
         buffer = this.serviceBuffers.getRandomBuffer(
@@ -50,6 +53,9 @@ class ServerCommPacketDispatcher extends PacketDispatcherBase {
     @Override
     protected
     void sendOutboundPacket (final Packet output) {
+        if(output == null){
+            throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+        }
         PacketBuffer buffer;
 
         buffer = this.serviceBuffers.getRandomBuffer(

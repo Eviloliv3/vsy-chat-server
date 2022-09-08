@@ -51,6 +51,9 @@ class ClientPacketDispatcher implements MultiplePacketDispatcher {
     @Override
     public
     void dispatchPacket (final Packet toAppend) {
+        if(toAppend == null){
+            throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+        }
         final var recipient = toAppend.getPacketProperties().getRecipient();
         final var recipientId = recipient.getEntityId();
 
