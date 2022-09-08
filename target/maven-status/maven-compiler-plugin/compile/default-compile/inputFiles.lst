@@ -4,7 +4,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/server_data/ServerDataAccess.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/AbstractPacketCategorySubscriptionManager.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/ServerPersistentDataManager.java
-/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/dispatching/ServerCommPacketDispatcher.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_creation/ClientHandlerPacketCreator.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processing/ClientStatusChangeProcessor.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/request_filter/PermittedPacketCategoryCheck.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processing/RelationRequestProcessor.java
@@ -20,6 +20,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/processor/PacketProcessorManager.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/request/PacketAssignmentService.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/packet_logic/type_processor/ClientStatusSyncPacketProcessor.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/dispatching/InterServerCommunicationPacketDispatcher.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/packet_logic/ServicePacketProcessorFactory.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/inter_server/InterServerSubstituteService.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/request/ExtendedClientStatusPreProcessor.java
@@ -65,6 +66,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/request_filter/PermittedPackets.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/persistent_data_access/ChatHandlingPersistentAccess.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/logic/ClientSubscriptionHandler.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/dispatching/ServerSynchronizationPacketDispatcher.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/ClientStatusRegistrationServiceDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/server_data/temporal/LiveClientStateDAO.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processing/NewAccountRequestProcessor.java
@@ -104,7 +106,6 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/CommunicationEntityDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/content/builder/ExtendedStatusSyncBuilder.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/ClientServer.java
-/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/error/ErrorMessageHandlingService.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/logic/ExtraSubscriptionHandler.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/manipulation_utility/RelationManipulator.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/content/ExtendedStatusSyncDTO.java
@@ -127,9 +128,9 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/data_bean/CommunicatorData.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_properties/packet_type/ServerSetupType.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/packet_logic/processor/InterServerSubstitutePacketProcessorLink.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_creation/ServerStatusSyncPacketCreator.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/dispatching/ClientPacketDispatcher.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/server_data/IdProvider.java
-/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/dispatching/PacketDispatcherBase.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/access_limiter/ChatHandlingDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_properties/packet_identifier/ServerUpdateIdentifier.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/logic/AuthenticationStateControl.java

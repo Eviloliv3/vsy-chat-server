@@ -41,7 +41,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     private final LocalServerConnectionData serverNode;
     private final ServicePacketBufferManager serviceBufferManager;
     private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
-    private ResultingPacketContentHandler resultingPackets;
+    private final ResultingPacketContentHandler resultingPackets;
     private final LiveClientStateDAO persistentClientStates;
 
     /**
@@ -50,8 +50,9 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
      * @param serviceDataAccess the service dataManagement accessLimiter
      */
     public
-    ClientStatusSyncPacketProcessor (
+    ClientStatusSyncPacketProcessor (final ResultingPacketContentHandler resultingPackets,
             final ClientStatusRegistrationServiceDataProvider serviceDataAccess) {
+        this.resultingPackets = resultingPackets;
         this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
         this.serverNode = this.serverConnectionDataManager.getLocalServerConnectionData();
         this.serviceBufferManager = serviceDataAccess.getServicePacketBufferManager();

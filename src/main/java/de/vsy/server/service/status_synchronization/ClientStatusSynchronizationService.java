@@ -70,9 +70,11 @@ class ClientStatusSynchronizationService extends ServiceBase {
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
         this.packetCreator = new ServerStatusSyncPacketCreator();
         this.packetsToSend = new PacketTransmissionCache();
+        var resultingPackets = new ResultingPacketContentHandler(packetCreator, packetsToSend);
         this.processor = new ServicePacketProcessor(
-                new ClientStatusPacketProcessorFactory(serviceDataModel),
-                new ResultingPacketContentHandler(packetCreator, packetsToSend));
+                new ClientStatusPacketProcessorFactory(resultingPackets,
+                                                       serviceDataModel),
+                resultingPackets);
         this.dispatcher = new ServerSynchronizationPacketDispatcher(this.serviceBuffers,
                                                                     SERVICE_SPECIFICATIONS.getResponseDirections());
     }

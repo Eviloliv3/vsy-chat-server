@@ -15,14 +15,16 @@ de/vsy/server/server_packet/packet_properties/packet_type/ServerSetupType.class
 de/vsy/server/service/request/PacketAssignmentService.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/StatusPacketProcessorFactory$1.class
 de/vsy/server/server/client_management/ClientStateTranslator.class
-de/vsy/server/service/error/ErrorMessageHandlingService.class
 de/vsy/server/persistent_data/server_data/ClientAuthPersistenceDAO.class
 de/vsy/server/service/inter_server/ClientReconnectionHandler.class
+de/vsy/server/server_packet/dispatching/InterServerCommunicationPacketDispatcher.class
+de/vsy/server/server_packet/packet_creation/ClientHandlerPacketCreator.class
 de/vsy/server/server_packet/content/ServerFailureDTO.class
 de/vsy/server/client_handling/strategy/PendingChatPacketHandling.class
 de/vsy/server/client_handling/data_management/bean/ClientDataManager.class
 de/vsy/server/server/data/access/HandlerAccessManager.class
 de/vsy/server/server_packet/packet_properties/packet_type/ServerErrorType.class
+de/vsy/server/server_packet/dispatching/ServerSynchronizationPacketDispatcher$1.class
 de/vsy/server/server_packet/packet_creation/ResultingPacketContentHandler.class
 de/vsy/server/service/inter_server/InterServerSocketConnectionEstablisher.class
 de/vsy/server/persistent_data/server_data/ClientTransactionDAO.class
@@ -37,7 +39,6 @@ de/vsy/server/service/packet_logic/ErrorPacketProcessorFactory.class
 de/vsy/server/persistent_data/PersistentDataLocationCreator$DataPathDescriptor.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/RelationPacketProcessorFactory.class
 de/vsy/server/client_handling/packet_processing/processor/ResultingPacketCreator.class
-de/vsy/server/server_packet/dispatching/PacketDispatcherBase$1.class
 de/vsy/server/server_packet/packet_properties/packet_identifier/ServerErrorIdentifier.class
 de/vsy/server/persistent_data/server_data/CommunicatorPersistenceDAO.class
 de/vsy/server/persistent_data/server_data/IdProvider.class
@@ -57,6 +58,7 @@ de/vsy/server/server/data/ServerDataManager.class
 de/vsy/server/server/data/access/ServiceBaseDataProvider.class
 de/vsy/server/server/client_management/ClientState.class
 de/vsy/server/service/packet_logic/type_processor/ServerErrorPacketProcessor.class
+de/vsy/server/server_packet/dispatching/ServerSynchronizationPacketDispatcher.class
 de/vsy/server/server_packet/content/builder/ServerFailureContentBuilder.class
 de/vsy/server/persistent_data/server_data/temporal/LiveClientStateDAO.class
 de/vsy/server/server_packet/packet_validation/ServerPacketTypeValidationCreator.class
@@ -98,7 +100,6 @@ de/vsy/server/client_handling/packet_processing/content_processor_provisioning/C
 de/vsy/server/client_handling/data_management/HandlerLocalDataManager.class
 de/vsy/server/client_handling/packet_processing/content_processing/ClientStatusChangeProcessor.class
 de/vsy/server/service/ServiceData$ServiceResponseDirection.class
-de/vsy/server/server_packet/dispatching/PacketDispatcherBase.class
 de/vsy/server/persistent_data/PersistentDataFileCreator.class
 de/vsy/server/client_handling/data_management/logic/ClientStateRecorder.class
 de/vsy/server/server_packet/content/builder/SimpleInternalContentBuilder.class
@@ -165,7 +166,6 @@ de/vsy/server/client_handling/packet_processing/content_processor_provisioning/E
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/RelationPacketProcessorFactory$1.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/ContentProcessingConditionProvider$1.class
 de/vsy/server/server/server_connection/ClientConnectionEstablisher.class
-de/vsy/server/server_packet/dispatching/ServerCommPacketDispatcher.class
 de/vsy/server/server_packet/dispatching/MultiplePacketDispatcher.class
 de/vsy/server/persistent_data/client_data/ClientDataAccess.class
 de/vsy/server/client_handling/packet_processing/content_processing/RelationResponseProcessor.class
@@ -178,6 +178,7 @@ de/vsy/server/server/data/access/ClientStatusRegistrationServiceDataProvider.cla
 de/vsy/server/client_handling/persistent_data_access/UpdateHandlingPersistentAccess.class
 de/vsy/server/persistent_data/client_data/ContactListDAO.class
 de/vsy/server/client_handling/persistent_data_access/RelationHandlingPersistenceAccess.class
+de/vsy/server/server_packet/packet_creation/ServerStatusSyncPacketCreator.class
 de/vsy/server/server_packet/packet_properties/packet_identifier/ServerUpdateIdentifier.class
 de/vsy/server/service/ServicePacketBufferManager.class
 de/vsy/server/persistent_data/PersistentDataAccess.class

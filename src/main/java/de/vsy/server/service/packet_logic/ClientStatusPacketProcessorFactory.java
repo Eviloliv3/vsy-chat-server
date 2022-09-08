@@ -4,6 +4,7 @@
 package de.vsy.server.service.packet_logic;
 
 import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
+import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_properties.packet_type.ServerStatusType;
 import de.vsy.server.service.packet_logic.type_processor.ClientStatusSyncPacketProcessor;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_type.PacketType;
@@ -28,19 +29,19 @@ class ClientStatusPacketProcessorFactory implements ServicePacketProcessorFactor
      * @param serviceDataAccess the service dataManagement accessLimiter
      */
     public
-    ClientStatusPacketProcessorFactory (
+    ClientStatusPacketProcessorFactory (final ResultingPacketContentHandler resultingPackets,
             final ClientStatusRegistrationServiceDataProvider serviceDataAccess) {
         this.registeredTypeHandlers = new HashMap<>();
         this.serviceDataModel = serviceDataAccess;
 
-        registerHandlers();
+        registerHandlers(resultingPackets);
     }
 
     /** Register handlers. */
     private
-    void registerHandlers () {
+    void registerHandlers (final ResultingPacketContentHandler resultingPackets) {
         this.registeredTypeHandlers.put(ServerStatusType.CLIENT_STATUS,
-                                        new ClientStatusSyncPacketProcessor(
+                                        new ClientStatusSyncPacketProcessor(resultingPackets,
                                                 this.serviceDataModel));
     }
 
