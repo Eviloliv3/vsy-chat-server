@@ -145,7 +145,10 @@ class PacketAssignmentService extends ServiceBase {
                         "Das Paket wurde nicht zugestellt. " + phe.getMessage();
                 final var errorResponse = this.pheProcessor.processException(
                         new PacketTransmissionException(errorMessage), nextPacket);
-                this.requestBuffer.prependPacket(errorResponse);
+
+                if(errorResponse != null) {
+                    this.requestBuffer.prependPacket(errorResponse);
+                }
             }
         } else {
             ServiceBase.LOGGER.error(validationString.get());
