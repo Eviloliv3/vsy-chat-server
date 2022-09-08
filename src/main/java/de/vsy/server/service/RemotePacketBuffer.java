@@ -31,7 +31,7 @@ class RemotePacketBuffer extends PacketBuffer {
         final var content = input.getPacketContent();
 
         if (content instanceof final ServerPacketContentImpl serverContent) {
-            
+
             if (!serverContent.checkServerSyncState(
                     this.remoteConnection.getServerId())) {
                 synchronizeLocalServerId(serverContent);

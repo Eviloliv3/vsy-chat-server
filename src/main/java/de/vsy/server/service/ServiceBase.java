@@ -2,7 +2,6 @@ package de.vsy.server.service;
 
 import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
-import de.vsy.server.server_packet.dispatching.ServerCommPacketDispatcher;
 import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +20,6 @@ class ServiceBase implements Service {
     private static final AtomicInteger SERVICE_ID_PROVIDER;
     protected static final Logger LOGGER = LogManager.getLogger();
     protected final LocalServerConnectionData serverConnectionData;
-    protected final PacketDispatcher dispatcher;
     protected final ServiceData serviceSpecifications;
     /**
      * Flag signalisiert dem Aufrufer des Service, dass dieser Einsatzbereit ist.
@@ -44,37 +42,12 @@ class ServiceBase implements Service {
                  final LocalServerConnectionData serverConnectionData) {
 
         this.serviceSpecifications = serviceSpecifications;
-        this.dispatcher = new ServerCommPacketDispatcher(serviceBuffers,
-                                                         serviceSpecifications.getResponseDirections());
         this.serverConnectionData = serverConnectionData;
 
         serviceSpecifications.setServiceId(SERVICE_ID_PROVIDER.getAndIncrement());
         serviceSpecifications.setServiceName(serviceSpecifications.getServiceBaseName()
                                              + "-" + serviceSpecifications.getServiceId()
                                              + "-" + serverConnectionData.getServerId());
-    }
-
-    /**
-     * Dispatch response Packetmap.
-     *
-     * @param responseMap the response map
-     */
-    public
-    void dispatchResponsePacketMap (final PacketResponseMap responseMap) {
-        Packet toDispatch;
-
-        if (responseMap != null) {
-            toDispatch = responseMap.getClientBoundPacket();
-
-            if (toDispatch != null) {
-                this.dispatcher.dispatchPacket(toDispatch);
-            }
-            toDispatch = responseMap.getServerBoundPacket();
-
-            if (toDispatch != null) {
-                this.dispatcher.dispatchPacket(toDispatch);
-            }
-        }
     }
 
     @Override

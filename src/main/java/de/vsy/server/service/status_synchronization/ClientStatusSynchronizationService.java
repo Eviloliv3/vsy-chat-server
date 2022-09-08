@@ -3,14 +3,22 @@
  */
 package de.vsy.server.service.status_synchronization;
 
+import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
+import de.vsy.server.server_packet.dispatching.PacketDispatcher;
+import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
+import de.vsy.server.server_packet.dispatching.ServerSynchronizationPacketDispatcher;
+import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
+import de.vsy.server.server_packet.packet_creation.ServerStatusSyncPacketCreator;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceBase;
 import de.vsy.server.service.ServiceData;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.ClientStatusPacketProcessorFactory;
+import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.processor.ServicePacketProcessor;
+import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
@@ -27,6 +35,9 @@ class ClientStatusSynchronizationService extends ServiceBase {
     private final ServicePacketProcessor processor;
     private final AbstractPacketCategorySubscriptionManager serverBoundNetwork;
     private final ServicePacketBufferManager serviceBuffers;
+    private final PacketTransmissionCache packetsToSend;
+    private final ServerStatusSyncPacketCreator packetCreator;
+    private final PacketDispatcher dispatcher;
     private PacketBuffer incomingBuffer;
 
     static {
@@ -57,8 +68,13 @@ class ClientStatusSynchronizationService extends ServiceBase {
               serviceDataModel.getLocalServerConnectionData());
         this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
+        this.packetCreator = new ServerStatusSyncPacketCreator();
+        this.packetsToSend = new PacketTransmissionCache();
         this.processor = new ServicePacketProcessor(
-                new ClientStatusPacketProcessorFactory(serviceDataModel));
+                new ClientStatusPacketProcessorFactory(serviceDataModel),
+                new ResultingPacketContentHandler(packetCreator, packetsToSend));
+        this.dispatcher = new ServerSynchronizationPacketDispatcher(this.serviceBuffers,
+                                                                    SERVICE_SPECIFICATIONS.getResponseDirections());
     }
 
     /** Finish setup. */
@@ -99,10 +115,9 @@ class ClientStatusSynchronizationService extends ServiceBase {
         }
 
         if (input != null) {
-            LOGGER.info("Synchronisierung gestartet.");
-            final var responseMap = this.processor.processPacket(input);
-
-            super.dispatchResponsePacketMap(responseMap);
+            this.packetCreator.changeCurrentRequest(input);
+            this.processor.processPacket(input);
+            this.packetsToSend.transmitPackets(this.dispatcher);
         }
     }
 
@@ -112,5 +127,28 @@ class ClientStatusSynchronizationService extends ServiceBase {
     void breakDown () {
         this.serviceBuffers.deregisterBuffer(getServiceType(), getServiceId(),
                                              this.incomingBuffer);
+    }
+
+    /**
+     * Dispatch response Packetmap.
+     *
+     * @param responseMap the response map
+     */
+    private
+    void dispatchResponsePacketMap (final PacketResponseMap responseMap) {
+        Packet toDispatch;
+
+        if (responseMap != null) {
+            toDispatch = responseMap.getClientBoundPacket();
+
+            if (toDispatch != null) {
+                this.dispatcher.dispatchPacket(toDispatch);
+            }
+            toDispatch = responseMap.getServerBoundPacket();
+
+            if (toDispatch != null) {
+                this.dispatcher.dispatchPacket(toDispatch);
+            }
+        }
     }
 }

@@ -111,8 +111,7 @@ class InterServerSocketConnectionEstablisher
         this.establishingThread.shutdownNow();
 
         do {
-            LOGGER.info(
-                    "Es wird noch auf den FollowerAcceptor-Thread " + " gewartet.");
+            LOGGER.info("FollowerAcceptor-Thread Ende wird erwartet.");
             Thread.yield();
         } while (!this.establishingThread.isTerminated());
         LOGGER.info("FollowerAcceptor-Thread gestoppt.");

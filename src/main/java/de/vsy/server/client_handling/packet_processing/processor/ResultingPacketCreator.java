@@ -7,17 +7,15 @@ import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import de.vsy.shared_utility.standard_value.StandardIdProvider;
 
-public
+public abstract
 class ResultingPacketCreator {
+    protected Packet currentRequest;
 
-    private final LocalClientDataProvider clientDataProvider;
-    private Packet currentRequest;
-
-    public
-    ResultingPacketCreator (LocalClientDataProvider clientDataProvider) {
-        this.clientDataProvider = clientDataProvider;
+    protected
+    ResultingPacketCreator () {
     }
 
     /**
@@ -33,55 +31,18 @@ class ResultingPacketCreator {
 
     public
     Packet createRequest (PacketContent processedContent) {
-        checkCurrentRequest();
-
-        if (processedContent == null) {
-            throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
-        }
-        final var resultingContent = adjustWrapping(processedContent, true);
         final var recipient = this.currentRequest.getPacketProperties()
                                                  .getRecipient();
-        return PacketCompiler.createFollowUpRequest(recipient, resultingContent,
-                                                    this.currentRequest);
+        return createRequest(processedContent, recipient);
     }
 
-    private
-    void checkCurrentRequest ()
-    throws IllegalStateException {
-        if (this.currentRequest == null) {
-            throw new IllegalStateException(
-                    "Kein zu beantwortendes Paket angegeben.");
-        }
-    }
+    public abstract
+    Packet createRequest(PacketContent processedContent, final CommunicationEndpoint recipient);
 
-    private
-    PacketContent adjustWrapping (final PacketContent contentToWrap,
-                                  final boolean isRequest) {
-        PacketContent finalContent;
+    public abstract
+    Packet createResponse (PacketContent processedContent);
 
-        final var clientIsSender = checkClientSender();
-        final var toWrap =
-                (!isRequest && !clientIsSender) || (isRequest && clientIsSender);
-
-        if (toWrap) {
-            finalContent = wrapContent(contentToWrap);
-        } else {
-            finalContent = contentToWrap;
-        }
-
-        return finalContent;
-    }
-
-    private
-    boolean checkClientSender () {
-        final var senderId = this.currentRequest.getPacketProperties()
-                                                .getSender()
-                                                .getEntityId();
-        return senderId == this.clientDataProvider.getClientId() ||
-               senderId == StandardIdProvider.STANDARD_CLIENT_ID;
-    }
-
-    private
+    protected
     PacketContent wrapContent (PacketContent processedContent) {
         final var newWrapper = new SimpleInternalContentBuilder();
         final var serverId = HandlerAccessManager.getLocalServerConnectionData()
@@ -94,12 +55,5 @@ class ResultingPacketCreator {
         }
         newWrapper.withContent(initialContent).withOriginatingServerId(serverId);
         return newWrapper.build();
-    }
-
-    public
-    Packet createResponse (PacketContent processedContent) {
-        checkCurrentRequest();
-        final var resultingContent = adjustWrapping(processedContent, false);
-        return PacketCompiler.createResponse(resultingContent, this.currentRequest);
     }
 }

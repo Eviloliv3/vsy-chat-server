@@ -10,8 +10,9 @@ import de.vsy.server.server.server_connection.ServerConnectionDataManager;
 import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
+import de.vsy.server.server_packet.dispatching.InterServerCommunicationPacketDispatcher;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
-import de.vsy.server.server_packet.dispatching.ServerCommPacketDispatcher;
+import de.vsy.server.server_packet.dispatching.ServerSynchronizationPacketDispatcher;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.Service;
@@ -51,12 +52,12 @@ class InterServerCommunicationService extends ServiceBase {
     private static final ServiceData SERVICE_SPECIFICATIONS;
     private static final Logger LOGGER = LogManager.getLogger();
     private final ServerConnectionDataManager serverConnectionDataManager;
-    private final PacketDispatcher packetDispatcher;
     private final UnconfirmedPacketTransmissionCache packetCache;
     private final PacketHandlingExceptionProcessor pheProcessor;
     private final ServerCommunicationServiceDataProvider serviceDataAccess;
     private final ThreadPacketBufferManager threadBuffers;
     private ConnectionThreadControl connectionControl;
+    private PacketDispatcher packetDispatcher;
     private RemoteServerConnectionData remoteConnectionData;
     private ProcessingInterruptProvider localInterruptor;
     private PacketCheck validator;
@@ -90,9 +91,6 @@ class InterServerCommunicationService extends ServiceBase {
         this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
         this.serviceDataAccess = serviceDataAccess;
         this.threadBuffers = new ThreadPacketBufferManager();
-        this.packetDispatcher = new ServerCommPacketDispatcher(
-                this.serviceDataAccess.getServicePacketBufferManager(),
-                SERVICE_SPECIFICATIONS.getResponseDirections());
         this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
         this.packetCache = new UnconfirmedPacketTransmissionCache(1000);
     }
@@ -116,6 +114,10 @@ class InterServerCommunicationService extends ServiceBase {
                     remoteConnectionData);
             Thread.currentThread().interrupt();
         }
+        this.packetDispatcher = new InterServerCommunicationPacketDispatcher(this.remoteConnectionData,
+                                                                             this.serviceDataAccess.getServicePacketBufferManager(),
+                                                                             SERVICE_SPECIFICATIONS.getResponseDirections(),
+                                                                             this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
     }
 
     @Override
@@ -227,7 +229,7 @@ class InterServerCommunicationService extends ServiceBase {
     void waitForServerSynchronization () {
         LOGGER.info("Warte auf Serversynchronisation.");
         while (this.serverConnectionDataManager.pendingConnectionStatus()) {
-            LOGGER.trace("Es wird noch auf Serversynchronisation gewartet.");
+            LOGGER.trace("Serversynchronisation wird erwartet.");
             Thread.yield();
         }
     }
@@ -276,7 +278,7 @@ class InterServerCommunicationService extends ServiceBase {
             serverPacketContent.setReadingConnectionThread(getServiceId());
             output = nextPacket;
         } else {
-            final var errorMessage = "Das Paket wurde nicht zugestellt.";
+            final var errorMessage = "Das Paket wurde nicht zugestellt. ";
             final var processingException = new PacketProcessingException(
                     errorMessage + validationString);
             output = this.pheProcessor.processException(processingException,
@@ -326,12 +328,12 @@ class InterServerCommunicationService extends ServiceBase {
                 this.remoteConnectionData.getConnectionSocket());
 
         remotePacketBuffer.updateRemoteConnectionData(this.remoteConnectionData);
-
-        this.serverConnectionDataManager.removeRemoteConnectionData(
-                currentRemoteConnectionData);
         this.remoteConnectionData.setRemoteServerConnector(remotePacketBuffer);
+
         this.serverConnectionDataManager.addSynchronizedConnectionData(
                 this.remoteConnectionData);
+        this.serverConnectionDataManager.removeRemoteConnectionData(
+                currentRemoteConnectionData);
     }
 
     /**

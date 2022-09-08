@@ -2,7 +2,6 @@ package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.server.data.access.ErrorHandlingServiceDataProvider;
 import de.vsy.server.server_packet.content.ServerFailureDTO;
-import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.ServicePacketProcessor;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
@@ -32,7 +31,7 @@ class ServerErrorPacketProcessor implements ServicePacketProcessor {
 
     @Override
     public
-    PacketResponseMap processPacket (final Packet input) {
+    void processPacket (final Packet input) {
         PacketContent content;
 
         content = input.getPacketContent();
@@ -40,7 +39,5 @@ class ServerErrorPacketProcessor implements ServicePacketProcessor {
         if (!(content instanceof ServerFailureDTO)) {
             LOGGER.info("Ungültiges Datenformat.");
         }
-
-        return null;
     }
 }

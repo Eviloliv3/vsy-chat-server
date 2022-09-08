@@ -14,11 +14,11 @@ import de.vsy.server.server.server_connection.ServerConnectionDataManager;
 import de.vsy.server.server_packet.content.BaseStatusSyncDTO;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
+import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.ServicePacketProcessor;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
@@ -41,6 +41,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     private final LocalServerConnectionData serverNode;
     private final ServicePacketBufferManager serviceBufferManager;
     private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+    private ResultingPacketContentHandler resultingPackets;
     private final LiveClientStateDAO persistentClientStates;
 
     /**
@@ -65,17 +66,13 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
      *
      * @param input das zu verarbeitende Paket
      *
-     * @return Server gerichtetes Paket, sofern ein Server noch nicht synchronisiert
-     *         wurde.
-     *
      * @throws PacketProcessingException the PacketHandling exception
      */
     @Override
     public
-    PacketResponseMap processPacket (final Packet input)
+    void processPacket (final Packet input)
     throws PacketProcessingException {
         RemoteServerConnectionData notSynchronizedServerData;
-        final var responses = new PacketResponseMap();
         final var content = input.getPacketContent();
 
         if (content instanceof final ServerPacketContentImpl inputData) {
@@ -90,9 +87,7 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
             if (inputData instanceof ExtendedStatusSyncDTO) {
                 LogManager.getLogger().debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
                 final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
-                final var clientNotification = PacketCompiler.createRequest(
-                        clientBroadcast, inputData);
-                responses.setClientBoundPacket(clientNotification);
+                resultingPackets.addRequest(inputData, clientBroadcast);
             }
 
             notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
@@ -102,16 +97,13 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
                 LogManager.getLogger().debug("Statussynchronisierung fuer anderen Server erstellt.");
                 final var recipient = getServerEntity(
                         notSynchronizedServerData.getServerId());
-                final var serverNotification = PacketCompiler.createRequest(
-                        recipient, inputData);
-                responses.setServerBoundPacket(serverNotification);
+                resultingPackets.addRequest(inputData, recipient);
             }
         } else {
             throw new PacketProcessingException(
                     "Inhalt nicht vom Typ " + "ServerPacketContentImpl. Konnte " +
                     "nicht von ClientStatusProcessor " + "verarbeitet werden.");
         }
-        return responses;
     }
 
     /**

@@ -70,7 +70,7 @@ class ClientConnectionEstablisher {
         this.clientConnectionPool.shutdownNow();
 
         do {
-            LOGGER.info("Es wird noch auf den KlientenAcceptor-Thread gewartet.");
+            LOGGER.info("KlientenAcceptor-Thread Ende wird erwartet.");
             Thread.yield();
         } while (!this.clientConnectionPool.isTerminated());
         LOGGER.info("KlientenAcceptor-Thread gestoppt.");

@@ -15,10 +15,8 @@ interface ServicePacketProcessor {
      *
      * @param input the input
      *
-     * @return the processor Packetresponse map
-     *
      * @throws PacketProcessingException the PacketHandling exception
      */
-    PacketResponseMap processPacket (Packet input)
+    void processPacket (Packet input)
     throws PacketProcessingException;
 }
