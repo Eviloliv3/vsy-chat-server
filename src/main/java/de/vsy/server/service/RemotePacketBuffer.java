@@ -31,13 +31,14 @@ class RemotePacketBuffer extends PacketBuffer {
         final var content = input.getPacketContent();
 
         if (content instanceof final ServerPacketContentImpl serverContent) {
+            
             if (!serverContent.checkServerSyncState(
                     this.remoteConnection.getServerId())) {
                 synchronizeLocalServerId(serverContent);
                 super.appendPacket(input);
             }else{
-                LOGGER.info("Paket wird nicht angehaengt. Der entfernte Server hat " +
-                            "dieses Paket bereits verarbeitet: {}", input);
+                LOGGER.info("Paket wird nicht angehaengt. Der entfernte Server {} hat " +
+                            "dieses Paket bereits verarbeitet: {}", this.remoteConnection.getServerId(), input);
             }
         } else if (content == null) {
             super.appendPacket(input);
@@ -60,7 +61,7 @@ class RemotePacketBuffer extends PacketBuffer {
                 super.prependPacket(input);
             }else{
                 LOGGER.info("Paket wird nicht vorangestellt. Der entfernte " +
-                            "Server hat dieses Paket bereits verarbeitet: {}", input);
+                            "Server {} hat dieses Paket bereits verarbeitet: {}",this.remoteConnection.getServerId(), input);
             }
         } else if (content == null) {
             super.appendPacket(input);
