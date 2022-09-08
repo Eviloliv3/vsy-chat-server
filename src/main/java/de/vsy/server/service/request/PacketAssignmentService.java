@@ -130,7 +130,6 @@ class PacketAssignmentService extends ServiceBase {
             ServiceBase.LOGGER.error("Beim Holen des naechsten Pakets " +
                                           "unterbrochen.");
             Thread.currentThread().interrupt();
-            return;
         }
     }
 

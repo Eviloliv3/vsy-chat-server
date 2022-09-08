@@ -54,6 +54,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/request_filter/AuthenticationPermittedPackets.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_creation/ServerContentIdentificationProviderImpl.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processing/TextMessageProcessor.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/content/BaseStatusSyncDTO.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/processor/PacketContextCheckLink.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/ServicePacketBufferManager.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_properties/packet_type/ServerStatusType.java
@@ -85,7 +86,6 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/exception_processing/ServiceResponseCreator.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/request_filter/ConnectionPermittedPackets.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/logic/ClientStateRecorder.java
-/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/content/SimpleStatusSyncDTO.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server_packet/packet_creation/ServerStatusIdentificationProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processor_provisioning/ChatPacketProcessorFactory.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processor_provisioning/ContentProcessingConditionProvider.java

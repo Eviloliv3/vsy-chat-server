@@ -89,6 +89,7 @@ de/vsy/server/service/packet_logic/ServicePacketProcessor.class
 de/vsy/server/client_handling/data_management/CommunicationEntityDataProvider.class
 de/vsy/server/server/client_management/PendingState.class
 de/vsy/server/server_packet/content/ServerStatusSync.class
+de/vsy/server/server_packet/content/BaseStatusSyncDTO.class
 de/vsy/server/client_handling/strategy/VolatilePacketIdentifier.class
 de/vsy/server/server_packet/packet_properties/packet_type/ServerStatusType.class
 de/vsy/server/server_packet/content/SimpleInternalContentWrapper.class
@@ -149,7 +150,6 @@ de/vsy/server/server/data/ClientSubscriptionManager.class
 de/vsy/server/client_handling/packet_processing/processor/ClientPacketProcessorLink.class
 de/vsy/server/server/data/access/ServiceDataAccessManager.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/AuthenticationPacketProcessorFactory$1.class
-de/vsy/server/server_packet/content/SimpleStatusSyncDTO.class
 de/vsy/server/service/ServiceData$ServiceDataBuilder.class
 de/vsy/server/persistent_data/PersistentDataFileCreator$DataFileDescriptor.class
 de/vsy/server/service/request/CategoryIdSubscriber.class
