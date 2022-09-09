@@ -148,6 +148,7 @@ class PersistenceDAO {
                             ex.getMessage());
             }
         }
+        LOGGER.error(" lockNOTNull: {}; isValid: {}", globalLock, globalLock.isValid());
         return globalLock != null && globalLock.isValid();
     }
 
