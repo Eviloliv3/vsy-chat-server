@@ -190,7 +190,7 @@ class InterServerCommunicationService extends ServiceBase {
                 final var content = synchronizationPacket.getPacketContent();
 
                 if (validatorString.isPresent()) {
-                    LOGGER.error("Paketfehler: {}", validatorString);
+                    LOGGER.error("Paketfehler: {}", validatorString.get());
                     continue;
                 }
 
@@ -280,7 +280,7 @@ class InterServerCommunicationService extends ServiceBase {
         } else {
             final var errorMessage = "Das Paket wurde nicht zugestellt. ";
             final var processingException = new PacketProcessingException(
-                    errorMessage + validationString);
+                    errorMessage + validationString.get());
             output = this.pheProcessor.processException(processingException,
                                                         nextPacket);
         }

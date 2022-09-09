@@ -53,7 +53,7 @@ class BaseStatusSyncDTO extends ServerPacketContentImpl {
     @Override
     public
     String toString () {
-        return "\"simpleStatusSync\": {" + super.toString() + ", \"contactData\": " +
+        return "\"baseStatusSync\": {" + super.toString() + ", \"contactData\": " +
                this.contactData + ", " + "\"isToAdd\": " + this.isToAdd +
                ", \"clientState\": " + this.clientState + "}";
     }

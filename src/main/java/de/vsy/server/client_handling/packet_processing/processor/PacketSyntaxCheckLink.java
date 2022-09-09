@@ -30,7 +30,7 @@ class PacketSyntaxCheckLink extends AbstractPacketProcessorLink {
 
         if (syntaxCheckString.isPresent()) {
             throw new PacketValidationException(
-                    SYNTAX_ERROR_STRING + syntaxCheckString);
+                    SYNTAX_ERROR_STRING + syntaxCheckString.get());
         } else {
             super.nextLink.processPacket(input);
         }
