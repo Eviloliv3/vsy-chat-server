@@ -10,6 +10,7 @@ import de.vsy.server.persistent_data.data_bean.AuthenticationData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,7 +61,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(!this.dataProvider.acquireAccess(false))
+                return false;
         }
         regClients = readRegisteredClients();
 
@@ -71,10 +73,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                 break;
             }
         }
-        if (!lockAlreadyAcquired) {
+        if (!lockAlreadyAcquired)
             this.dataProvider.releaseAccess();
-        }
-
         return idFound;
     }
 
@@ -92,7 +92,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return null;
         }
 
         fromFile = this.dataProvider.readData();
@@ -143,7 +144,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(!this.dataProvider.acquireAccess(false))
+                return clientId;
         }
         readList = readRegisteredClients();
 
@@ -177,7 +179,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(!this.dataProvider.acquireAccess(true))
+                return false;
         }
         regClients = readRegisteredClients();
 
@@ -218,7 +221,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
             final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(true);
+                if(!this.dataProvider.acquireAccess(true))
+                    return false;
             }
             regClients = readRegisteredClients();
 

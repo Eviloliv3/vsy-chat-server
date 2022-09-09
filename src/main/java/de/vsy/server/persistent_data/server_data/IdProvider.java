@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
+import de.vsy.shared_utility.standard_value.StandardIdProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 /**
  * Creates new uniqü client ids by reading the last unused id from a file,
@@ -64,7 +66,8 @@ class IdProvider implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return STANDARD_CLIENT_ID;
         }
         idMap = readIdMap();
         newId = idMap.get("client");
@@ -95,7 +98,8 @@ class IdProvider implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return readMap;
         }
         fromFile = this.dataProvider.readData();
 

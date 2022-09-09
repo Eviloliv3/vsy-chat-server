@@ -84,7 +84,8 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(true);
+                if(this.dataProvider.acquireAccess(true))
+return;
             }
             pendingMap = readPendingPackets(classification);
 
@@ -157,7 +158,8 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(true);
+                if(this.dataProvider.acquireAccess(true))
+return;
             }
             allPendingPackets = readAllPendingPackets();
             allPendingPackets.put(classification, classifiedPendingPackets);
@@ -235,7 +237,8 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+return;
         }
         allPendingPackets = readAllPendingPackets();
         pendingMap = allPendingPackets.get(classification);

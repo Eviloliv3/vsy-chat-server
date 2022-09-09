@@ -55,7 +55,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         communicatorList = readRegisteredCommunicators();
 
@@ -90,7 +91,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return readList;
         }
 
         fromFile = this.dataProvider.readData();
@@ -133,7 +135,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
 
         communicatorToRemove = getCommunicatorData(communicatorId);
@@ -161,7 +164,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return foundCommunicator;
         }
         communicatorList = readRegisteredCommunicators();
 
@@ -194,7 +198,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         communicatorList = readRegisteredCommunicators();
         communicatorRemoved = (communicatorList.remove(clientAuthData) &&

@@ -62,7 +62,8 @@ class ContactListDAO implements ClientDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
 
         contactMap = readContactMap();
@@ -264,7 +265,8 @@ class ContactListDAO implements ClientDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         contactMap = readContactMap();
         contactSet = contactMap.get(contactType);

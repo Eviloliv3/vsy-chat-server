@@ -46,8 +46,10 @@ class PersistenceDAO {
 
     static {
         LOGGER = LogManager.getLogger();
-        NO_DATA_FILE_PATHS_SET = "Noch kein Dateizugriff möglich: Dateipfade nicht gesetzt.";
-        NO_FILE_ACCESS_ACQUIRED = "Kein Dateizugriff möglich: Zugriffsrecht nicht erlangt.";
+        NO_DATA_FILE_PATHS_SET = "Noch kein Dateizugriff möglich: Referenzen ueber " +
+                                 "korrekte createFileReferences({id})-Methode erstellen.";
+        NO_FILE_ACCESS_ACQUIRED = "Kein Dateizugriff möglich: Zugriffsrecht ueber " +
+                                  "_acquireAccess()_-Metohode erlangen.";
     }
 
     /**
@@ -77,7 +79,7 @@ class PersistenceDAO {
      * @param writeAccess the write accessLimiter
      */
     public
-    void acquireAccess (final boolean writeAccess) {
+    boolean acquireAccess (final boolean writeAccess) {
         if (this.filePaths == null) {
             throw new IllegalStateException(NO_DATA_FILE_PATHS_SET);
         }
@@ -91,7 +93,7 @@ class PersistenceDAO {
         try {
             lockChannel = new RandomAccessFile(this.lockFilePath.toFile(),
                                                accessModifiers).getChannel();
-            acquireFileLock(lockChannel, !writeAccess);
+            return acquireFileLock(lockChannel, !writeAccess);
         } catch (final FileNotFoundException e) {
             Thread.currentThread().interrupt();
             LOGGER.error("Datei nicht gefunden: {}\n{}", lockFilePath,
@@ -105,6 +107,7 @@ class PersistenceDAO {
             LOGGER.error(
                     "FileLock konnte nicht akquiriert werden, da der FileChannel geschlossen wurde.");
         }
+        return false;
     }
 
     /**
@@ -119,7 +122,7 @@ class PersistenceDAO {
      *                                       while waiting for lock().
      */
     private
-    void acquireFileLock (final FileChannel toLock, final boolean sharedAccess)
+    boolean acquireFileLock (final FileChannel toLock, final boolean sharedAccess)
     throws ClosedChannelException, FileLockInterruptionException {
         try{
             if (sharedAccess) {
@@ -130,6 +133,7 @@ class PersistenceDAO {
         }catch(InterruptedException ie){
             Thread.currentThread().interrupt();
             LOGGER.error("Beim holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
+            return false;
         }
 
         while (globalLock == null && !Thread.currentThread().isInterrupted()) {
@@ -139,11 +143,12 @@ class PersistenceDAO {
                      FileLockInterruptionException killException) {
                 throw killException;
             } catch (OverlappingFileLockException | IOException ex) {
-                LOGGER.info(
-                        "Datei noch gesperrt. Neuer Versuch wird gestartet. {}: {}",
-                        ex.getClass().getSimpleName(), ex.getMessage());
+                LOGGER.info("Datei noch gesperrt. Neuer Versuch wird " +
+                            "gestartet. {}: {}", ex.getClass().getSimpleName(),
+                            ex.getMessage());
             }
         }
+        return globalLock != null && !globalLock.isValid();
     }
 
     /**

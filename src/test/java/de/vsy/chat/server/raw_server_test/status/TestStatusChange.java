@@ -30,7 +30,7 @@ class TestStatusChange extends ServerTestBase {
                       final List<AuthenticationDTO> clientAuthenticationDataList) {
         super(clientConnectionPorts, clientAuthenticationDataList);
     }
-/*
+
     @Test
     public
     void changeFromMessengerStateTwoClientSuccess ()
@@ -77,7 +77,6 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status zurücknehmen für mehrere Klienten gesetzt -> erfolgreich -- beendet");
     }
-
     @Test
     public
     void changeFromMessengerStateSingleClientSuccess () {
@@ -143,7 +142,7 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status nicht erreichbar -> kein Status angegeben -- beendet");
     }
-*/
+
     @Test
     public
     void changeToMessengerStateTwoClientSuccess ()
@@ -183,4 +182,5 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status für mehrere Klienten gesetzt -> erfolgreich -- beendet");
     }
+
 }

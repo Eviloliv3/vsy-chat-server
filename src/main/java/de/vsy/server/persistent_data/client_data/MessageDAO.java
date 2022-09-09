@@ -130,7 +130,8 @@ class MessageDAO implements ClientDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+return;
         }
 
         oldMessages = this.readAllClientMessages();
@@ -167,7 +168,8 @@ class MessageDAO implements ClientDataAccess {
             final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(true);
+                if(this.dataProvider.acquireAccess(true))
+return;
             }
 
             oldMessages = readAllClientMessages();

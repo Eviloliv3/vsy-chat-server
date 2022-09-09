@@ -58,7 +58,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return extraSubscriptions;
         }
         currentState = getClientState(clientId);
 
@@ -88,7 +89,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return new CurrentClientState(STANDARD_SERVER_ID);
         }
         clientStateMap = getAllActiveClientStates();
         currentClientState = clientStateMap.get(clientId);
@@ -118,7 +120,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return readMap;
         }
         fromFile = this.dataProvider.readData();
 
@@ -157,7 +160,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -189,7 +193,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -220,7 +225,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -259,7 +265,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -297,7 +304,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -340,7 +348,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -372,7 +381,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
@@ -398,15 +408,13 @@ class LiveClientStateDAO implements ServerDataAccess {
     public
     Map<Integer, CurrentClientState> getClientStatesForServer (
             final int serverPort) {
-        Map<Integer, CurrentClientState> remoteClientStates;
         Map<Integer, CurrentClientState> allClientStates;
-        boolean lockAlreadyAcquired;
-
-        remoteClientStates = new HashMap<>();
-        lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        Map<Integer, CurrentClientState> remoteClientStates = new HashMap<>();
+        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+            if(this.dataProvider.acquireAccess(false))
+                return remoteClientStates;
         }
         allClientStates = getAllActiveClientStates();
 
@@ -438,7 +446,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = new HashMap<>();
 
@@ -468,7 +477,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientStateRemoved = (clientStateMap.remove(clientId) != null) &&

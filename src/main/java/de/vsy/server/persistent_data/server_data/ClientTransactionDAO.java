@@ -58,7 +58,8 @@ class ClientTransactionDAO implements ServerDataAccess {
             Map<String, Boolean> allTransactions;
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(false);
+                if(this.dataProvider.acquireAccess(false))
+                    return false;
             }
             allTransactions = readTransactions();
             transactionAdded =
@@ -88,7 +89,8 @@ class ClientTransactionDAO implements ServerDataAccess {
         Object fromFile;
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return allTransactions;
         }
         fromFile = this.dataProvider.readData();
 
@@ -121,7 +123,8 @@ class ClientTransactionDAO implements ServerDataAccess {
             Map<String, Boolean> allTransactions;
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(false);
+                if(this.dataProvider.acquireAccess(false))
+                    return false;
             }
             allTransactions = readTransactions();
 
@@ -155,7 +158,8 @@ class ClientTransactionDAO implements ServerDataAccess {
         final Map<String, Boolean> incompleteTransactions = new HashMap<>();
 
         if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(true);
+            if(this.dataProvider.acquireAccess(true))
+                return incompleteTransactions;
         }
         final var allTransactions = readTransactions();
 
@@ -190,7 +194,8 @@ class ClientTransactionDAO implements ServerDataAccess {
         if (hashToCheck != null) {
 
             if (!lockAlreadyAcquired) {
-                this.dataProvider.acquireAccess(true);
+                if(this.dataProvider.acquireAccess(true))
+                    return false;
             }
             readTransactions = readTransactions();
             transactionComplete = Objects.equals(true,
