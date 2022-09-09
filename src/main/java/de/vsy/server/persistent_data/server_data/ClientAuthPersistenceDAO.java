@@ -93,7 +93,7 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
 
         if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(false))
-                return null;
+                return new HashSet<>();
         }
 
         fromFile = this.dataProvider.readData();

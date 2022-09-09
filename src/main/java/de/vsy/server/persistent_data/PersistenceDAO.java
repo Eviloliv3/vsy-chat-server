@@ -148,7 +148,7 @@ class PersistenceDAO {
                             ex.getMessage());
             }
         }
-        return globalLock != null && !globalLock.isValid();
+        return globalLock != null && globalLock.isValid();
     }
 
     /**

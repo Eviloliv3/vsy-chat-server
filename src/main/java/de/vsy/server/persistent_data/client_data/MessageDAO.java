@@ -169,7 +169,7 @@ return;
 
             if (!lockAlreadyAcquired) {
                 if(this.dataProvider.acquireAccess(true))
-return;
+                    return false;
             }
 
             oldMessages = readAllClientMessages();

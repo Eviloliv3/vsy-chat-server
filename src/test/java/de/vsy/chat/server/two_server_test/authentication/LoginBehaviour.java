@@ -15,6 +15,6 @@ class LoginBehaviour extends TestLoginBehaviour {
     LoginBehaviour () {
         super(ServerPortProvider.DUAL_SERVER_PORT_PROVIDER,
               TestClientDataProvider.AUTH_CLIENT_LIST);
-        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerAccCreation");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerLogin");
     }
 }

@@ -85,7 +85,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
 
             if (!lockAlreadyAcquired) {
                 if(this.dataProvider.acquireAccess(true))
-return;
+                    return false;
             }
             pendingMap = readPendingPackets(classification);
 
@@ -159,7 +159,7 @@ return;
 
             if (!lockAlreadyAcquired) {
                 if(this.dataProvider.acquireAccess(true))
-return;
+                    return false;
             }
             allPendingPackets = readAllPendingPackets();
             allPendingPackets.put(classification, classifiedPendingPackets);
