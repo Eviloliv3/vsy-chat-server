@@ -58,7 +58,7 @@ class ClientTransactionDAO implements ServerDataAccess {
             Map<String, Boolean> allTransactions;
 
             if (!lockAlreadyAcquired) {
-                if(this.dataProvider.acquireAccess(false))
+                if(!this.dataProvider.acquireAccess(false))
                     return false;
             }
             allTransactions = readTransactions();
@@ -123,7 +123,7 @@ class ClientTransactionDAO implements ServerDataAccess {
             Map<String, Boolean> allTransactions;
 
             if (!lockAlreadyAcquired) {
-                if(this.dataProvider.acquireAccess(false))
+                if(!this.dataProvider.acquireAccess(false))
                     return false;
             }
             allTransactions = readTransactions();

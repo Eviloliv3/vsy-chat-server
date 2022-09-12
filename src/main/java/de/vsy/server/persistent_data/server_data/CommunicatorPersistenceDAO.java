@@ -91,7 +91,7 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return readList;
         }
 
@@ -164,8 +164,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
-                return foundCommunicator;
+            if(!this.dataProvider.acquireAccess(false))
+                return null;
         }
         communicatorList = readRegisteredCommunicators();
 

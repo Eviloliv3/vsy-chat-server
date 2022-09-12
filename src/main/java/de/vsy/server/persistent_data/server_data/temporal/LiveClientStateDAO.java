@@ -58,7 +58,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return extraSubscriptions;
         }
         currentState = getClientState(clientId);
@@ -89,7 +89,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return new CurrentClientState(STANDARD_SERVER_ID);
         }
         clientStateMap = getAllActiveClientStates();
@@ -120,7 +120,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return readMap;
         }
         fromFile = this.dataProvider.readData();
@@ -348,7 +348,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return false;
         }
         clientStateMap = getAllActiveClientStates();
@@ -381,7 +381,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return false;
         }
         clientStateMap = getAllActiveClientStates();
@@ -413,7 +413,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(false))
+            if(!this.dataProvider.acquireAccess(false))
                 return remoteClientStates;
         }
         allClientStates = getAllActiveClientStates();
