@@ -1,5 +1,7 @@
 package de.vsy.chat.server.testing_grounds;
 
+import de.vsy.server.persistent_data.PersistentDataFileCreator;
+import de.vsy.server.persistent_data.PersistentDataLocationCreator;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
 import de.vsy.server.server.client_management.ClientState;
@@ -21,16 +23,25 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.relation.Co
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
 import de.vsy.shared_transmission.shared_transmission.packet.content.status.*;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.RandomAccess;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public
 class TestPendingPacketDAO {
 
+    /*
     @Test
     void writePackets ()
     throws InterruptedException {
@@ -78,5 +89,35 @@ class TestPendingPacketDAO {
 
     CommunicationEndpoint getOriginator () {
         return CommunicationEndpoint.getClientEntity(15001);
+    }
+     */
+
+    @Test
+    void testMultipleThreadChannelAccess()
+    throws InterruptedException {
+        final var path = PersistentDataLocationCreator.createDirectoryPath(
+                PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, "test");
+        final var file = PersistentDataFileCreator.createAndGetFilePath(path, "fileLock.lock",
+                                                                      LogManager.getLogger());
+        try(var raf = new RandomAccessFile(file.toFile(), "r")){
+            Runnable test = () -> {
+                try {
+                    var channel = raf.getChannel();
+                    var lock = raf.getChannel().tryLock(0, Long.MAX_VALUE, true);
+                    Assertions.assertTrue(lock.isValid(), "erfolgreich");
+                    Thread.sleep(500);
+                    lock.release();
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            };
+            ExecutorService threadPool = Executors.newFixedThreadPool(2);
+            threadPool.execute(test);
+            threadPool.execute(test);
+            Thread.sleep(750);
+            threadPool.shutdownNow();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -148,8 +148,12 @@ class PersistenceDAO {
                             ex.getMessage());
             }
         }
-        LOGGER.error(" lockNOTNull: {}; isValid: {}", globalLock, globalLock.isValid());
-        return globalLock != null && globalLock.isValid();
+        if(globalLock == null || !globalLock.isValid()){
+            releaseAccess();
+            return false;
+        }else{
+            return true;
+        }
     }
 
     /**
@@ -159,7 +163,7 @@ class PersistenceDAO {
      */
     public
     boolean checkForActiveLock () {
-        return (this.globalLock != null) && (this.globalLock.isValid());
+        return this.globalLock != null;
     }
 
     /**
@@ -374,8 +378,8 @@ class PersistenceDAO {
                 LOGGER.info("Dateischloss konnte nicht geöffnet werden. {}\n{}",
                             e.getClass().getSimpleName(), asList(e.getStackTrace()));
             }
+            this.globalLock = null;
         }
-        this.globalLock = null;
     }
 
     /**
