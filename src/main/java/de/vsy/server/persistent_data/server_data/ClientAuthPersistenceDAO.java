@@ -58,12 +58,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         var idFound = false;
         Set<AuthenticationData> regClients;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return false;
-        }
         regClients = readRegisteredClients();
 
         for (final AuthenticationData authData : regClients) {
@@ -73,7 +69,6 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                 break;
             }
         }
-        if (!lockAlreadyAcquired)
             this.dataProvider.releaseAccess();
         return idFound;
     }
@@ -89,18 +84,10 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         Object fromFile;
         Set<AuthenticationData> readList = null;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return new HashSet<>();
-        }
-
         fromFile = this.dataProvider.readData();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof HashSet) {
 
@@ -141,12 +128,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         var clientAuth = AuthenticationData.valueOf(loginName, password,
                                                     STANDARD_CLIENT_ID);
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return clientId;
-        }
         readList = readRegisteredClients();
 
         for (final AuthenticationData authData : readList) {
@@ -157,9 +140,7 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
             }
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return clientId;
     }
@@ -176,12 +157,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         var accountRemoved = false;
         Set<AuthenticationData> regClients;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(true))
                 return false;
-        }
         regClients = readRegisteredClients();
 
         for (final var authData : regClients) {
@@ -191,9 +168,7 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                                  this.dataProvider.writeData(regClients);
             }
         }
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return accountRemoved;
     }
@@ -218,12 +193,8 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         Set<AuthenticationData> regClients;
 
         if (toAdd != null) {
-            final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-            if (!lockAlreadyAcquired) {
                 if(!this.dataProvider.acquireAccess(true))
                     return false;
-            }
             regClients = readRegisteredClients();
 
             for (final AuthenticationData authData : regClients) {
@@ -240,9 +211,7 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                 LOGGER.info("Account erstellt.");
             }
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+            this.dataProvider.releaseAccess();
         }
 
         return accountRegistered;

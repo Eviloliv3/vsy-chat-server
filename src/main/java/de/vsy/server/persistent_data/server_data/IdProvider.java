@@ -63,12 +63,8 @@ class IdProvider implements ServerDataAccess {
         Map<String, Integer> idMap;
         int newId;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return STANDARD_CLIENT_ID;
-        }
         idMap = readIdMap();
         newId = idMap.get("client");
 
@@ -79,9 +75,7 @@ class IdProvider implements ServerDataAccess {
         idMap.put("client", newId + 1);
         this.dataProvider.writeData(idMap);
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return newId;
     }
@@ -95,17 +89,10 @@ class IdProvider implements ServerDataAccess {
     Map<String, Integer> readIdMap () {
         Object fromFile;
         var readMap = new HashMap<String, Integer>();
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return readMap;
-        }
         fromFile = this.dataProvider.readData();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof HashMap) {
 

@@ -70,17 +70,12 @@ class MessageDAO implements ClientDataAccess {
         Map<Integer, List<TextMessageDTO>> readMap;
         List<TextMessageDTO> readMessages;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
+            if(!this.dataProvider.acquireAccess(false))
+                return new ArrayList<>();
         readMap = readAllClientMessages();
         readMessages = readMap.get(clientId);
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (readMessages == null) {
             readMessages = new ArrayList<>();
@@ -94,22 +89,15 @@ class MessageDAO implements ClientDataAccess {
      * @return the hash map
      */
     @SuppressWarnings("unchecked")
-    public
+    private
     Map<Integer, List<TextMessageDTO>> readAllClientMessages () {
         var readMap = new HashMap<Integer, List<TextMessageDTO>>();
         Object fromFile;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
-
+            if(!this.dataProvider.acquireAccess(false))
+                return readMap;
         fromFile = this.dataProvider.readData();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof HashMap) {
 
@@ -127,20 +115,12 @@ class MessageDAO implements ClientDataAccess {
     void removeMessages (final int contactId) {
         Map<Integer, List<TextMessageDTO>> oldMessages;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
-return;
-        }
-
+                return;
         oldMessages = this.readAllClientMessages();
         oldMessages.remove(contactId);
         this.dataProvider.writeData(oldMessages);
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
     }
 
     @Override
@@ -164,18 +144,10 @@ return;
         List<TextMessageDTO> msgHistory;
 
         if (contactId > 0 && msg != null) {
-
-            final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-            if (!lockAlreadyAcquired) {
                 if(this.dataProvider.acquireAccess(true))
                     return false;
-            }
-
             oldMessages = readAllClientMessages();
-
-            if (oldMessages != null) {
-                msgHistory = oldMessages.getOrDefault(contactId, new ArrayList<>());
+            msgHistory = oldMessages.getOrDefault(contactId, new ArrayList<>());
                 msgHistory.add(msg);
 
                 while (msgHistory.size() >= MAX_HISTORY_LENGTH) {
@@ -183,11 +155,8 @@ return;
                 }
                 oldMessages.put(contactId, msgHistory);
                 messageSaved = this.dataProvider.writeData(oldMessages);
-            }
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+            this.dataProvider.releaseAccess();
         }
         return messageSaved;
     }

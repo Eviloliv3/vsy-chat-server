@@ -52,12 +52,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         Set<CommunicatorData> communicatorList;
         var communicatorAdded = false;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         communicatorList = readRegisteredCommunicators();
 
         if (communicatorList.add(commData)) {
@@ -67,9 +63,7 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
                          "existiert bereits ein Kommunikator mit demselben " +
                          "Anzeigenamen.");
         }
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (communicatorAdded) {
             LOGGER.info("Communicator added.");
@@ -88,18 +82,11 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         Object fromFile;
         Set<CommunicatorData> readList = new HashSet<>();
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return readList;
-        }
-
         fromFile = this.dataProvider.readData();
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof Set) {
 
@@ -132,19 +119,12 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         var communicatorRemoved = false;
         CommunicatorData communicatorToRemove;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
-
         communicatorToRemove = getCommunicatorData(communicatorId);
         communicatorRemoved = removeCommunicator(communicatorToRemove);
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return communicatorRemoved;
     }
@@ -161,12 +141,8 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         CommunicatorData foundCommunicator = null;
         Set<CommunicatorData> communicatorList;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return null;
-        }
         communicatorList = readRegisteredCommunicators();
 
         for (final CommunicatorData CommunicatorData : communicatorList) {
@@ -177,9 +153,7 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
             }
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
         return foundCommunicator;
     }
 
@@ -195,19 +169,13 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         var communicatorRemoved = false;
         Set<CommunicatorData> communicatorList;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         communicatorList = readRegisteredCommunicators();
         communicatorRemoved = (communicatorList.remove(clientAuthData) &&
                                this.dataProvider.writeData(communicatorList));
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (communicatorRemoved) {
             LOGGER.info("Communicator removed.");

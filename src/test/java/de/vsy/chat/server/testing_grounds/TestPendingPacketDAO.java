@@ -31,12 +31,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.RandomAccess;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public
 class TestPendingPacketDAO {
@@ -90,7 +95,7 @@ class TestPendingPacketDAO {
     CommunicationEndpoint getOriginator () {
         return CommunicationEndpoint.getClientEntity(15001);
     }
-     */
+
 
     @Test
     void testMultipleThreadChannelAccess()
@@ -119,5 +124,55 @@ class TestPendingPacketDAO {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+     */
+    @Test
+    void testParallelReadingDifferentChannelsSameJVM()
+    throws InterruptedException {
+        var test = new Runnable() {
+            @Override
+            public
+            void run () {
+                final String path;
+                try {
+                    path = PersistentDataLocationCreator.createDirectoryPath(
+                            PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, "test");
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                final var file = PersistentDataFileCreator.createAndGetFilePath(path, "fileLock.lock",
+                                                                                LogManager.getLogger());
+                RandomAccessFile fileChannel = null;
+                try {
+                    fileChannel = new RandomAccessFile(file.toFile(), "r");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                try {
+                    try {
+                        FileLock lock = null;
+                        if(!fileChannel.getChannel().isOpen())
+                            lock = fileChannel.getChannel().tryLock(0, Long.MAX_VALUE, false);
+                        var buffer = ByteBuffer.allocate(1024);
+                        Thread.sleep(200);
+                        Assertions.assertEquals(-1, fileChannel.getChannel().read(buffer));
+                        if(lock != null && fileChannel.getChannel().isOpen())
+                            lock.release();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    var buffer = ByteBuffer.allocate(1024);
+                    fileChannel.getChannel().read(buffer);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        ExecutorService threadPool = Executors.newFixedThreadPool(3);
+        threadPool.execute(test);
+        threadPool.execute(test);
+        threadPool.execute(test);
+        Thread.sleep(700);
+        threadPool.shutdownNow();
     }
 }

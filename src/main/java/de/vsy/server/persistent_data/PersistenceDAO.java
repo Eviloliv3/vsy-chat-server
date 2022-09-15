@@ -18,11 +18,11 @@ import java.nio.channels.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
-import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
-import static java.lang.Integer.MAX_VALUE;
 import static java.util.Arrays.asList;
 
 /**
@@ -38,10 +38,11 @@ class PersistenceDAO {
     private static final Logger LOGGER;
     private final JavaType dataFormat;
     private final PersistentDataFileCreator.DataFileDescriptor fileDescriptor;
-    private final ReadWriteLock localLock;
+    private final ReentrantReadWriteLock localLock;
+    private final Lock accessLock;
     private final ObjectMapper mapper;
-    private Path lockFilePath;
     private FileLock globalLock;
+    private Path lockFilePath;
     private Path[] filePaths;
 
     static {
@@ -66,46 +67,54 @@ class PersistenceDAO {
         this.dataFormat = dataFormat;
         this.mapper = new ObjectMapper();
         this.lockFilePath = null;
-        this.globalLock = null;
         this.localLock = new ReentrantReadWriteLock();
+        this.accessLock = new ReentrantLock();
+        this.globalLock = null;
         this.filePaths = null;
         this.mapper.configure(INDENT_OUTPUT, true);
         this.mapper.findAndRegisterModules();
     }
 
     /**
-     * Acquire accessLimiter.
+     * Erstellt ein RandomAccessFile Objekt fuer bestehenden lockFilePath mit
+     * Lesbefugnissen und laesst anschliessend acquireFileLock() den
+     * exklusiven Zugriff akquirieren
      *
-     * @param writeAccess the write accessLimiter
+     * @return true, wenn exklusiver Zugriff auf Daten erlangt wurde,
+     * false sonst. Zusaetzlich wird das Interrupt-Flag gesetzt, wenn: lockFilePath
+     * keinen gueltigen Dateipfad enthaelt, es zu einer FileLockInterruption kommt,
+     * eine allgemeine Interruption geworfen wird oder eine unerwartete IOException
+     * geworfen wird.
      */
     public
     boolean acquireAccess (final boolean writeAccess) {
         if (this.filePaths == null) {
             throw new IllegalStateException(NO_DATA_FILE_PATHS_SET);
         }
+        final var readAccess = "r";
         FileChannel lockChannel;
-        String accessModifiers = "r";
-
-        if (writeAccess) {
-            accessModifiers += "w";
-        }
 
         try {
-            lockChannel = new RandomAccessFile(this.lockFilePath.toFile(),
-                                               accessModifiers).getChannel();
-            return acquireFileLock(lockChannel, !writeAccess);
-        } catch (final FileNotFoundException e) {
+            lockChannel = new RandomAccessFile(this.lockFilePath.toFile(), readAccess).getChannel();
+            return acquireFileLock(lockChannel, writeAccess);
+        } catch (final FileNotFoundException fnfe) {
             Thread.currentThread().interrupt();
             LOGGER.error("Datei nicht gefunden: {}\n{}", lockFilePath,
-                         asList(e.getStackTrace()));
-        } catch (final FileLockInterruptionException e) {
+                         asList(fnfe.getStackTrace()));
+        } catch (final FileLockInterruptionException flie) {
             Thread.currentThread().interrupt();
             LOGGER.info(
                     "FileLock konnte nicht akquiriert werden, da der Thread unterbrochen wurde.\n{}",
-                    asList(e.getStackTrace()));
-        } catch (final ClosedChannelException e) {
+                    asList(flie.getStackTrace()));
+        } catch (final ClosedChannelException cce) {
             LOGGER.error(
-                    "FileLock konnte nicht akquiriert werden, da der FileChannel geschlossen wurde.");
+                    "FileLock wurde nicht akquiriert. FileChannel vorher geschlossen.");
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            LOGGER.error("Beim Holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
+        } catch (IOException ioe) {
+            Thread.currentThread().interrupt();
+            LOGGER.error("Unerwarteter Fehler beim Holen des Locks {}. \nUrsprung: {}", ioe.getMessage(), asList(ioe.getStackTrace()));
         }
         return false;
     }
@@ -114,41 +123,38 @@ class PersistenceDAO {
      * Acquire file lock.
      *
      * @param toLock the channel to be locked
-     * @param sharedAccess the shared accessLimiter
      *
      * @throws ClosedChannelException        Signals that the underlying channel has
      *                                       been closed.
      * @throws FileLockInterruptionException Signals that thread has been interrupted
      *                                       while waiting for lock().
+     * @throws InterruptedException          Signals that the Thread has been
+     *                                       interrupted.
      */
     private
-    boolean acquireFileLock (final FileChannel toLock, final boolean sharedAccess)
-    throws ClosedChannelException, FileLockInterruptionException {
-        try{
-            if (sharedAccess) {
-                this.localLock.readLock().lockInterruptibly();
-            } else {
+    boolean acquireFileLock (final FileChannel toLock, final boolean writeAccesss)
+    throws IOException, InterruptedException {
+        try {
+            this.accessLock.lock();
+            if (writeAccesss) {
                 this.localLock.writeLock().lockInterruptibly();
+            } else {
+                this.localLock.readLock().lockInterruptibly();
             }
-        }catch(InterruptedException ie){
-            Thread.currentThread().interrupt();
-            LOGGER.error("Beim holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
-            return false;
+        }finally{
+            this.accessLock.unlock();
         }
 
-        while (globalLock == null && !Thread.currentThread().isInterrupted()) {
+        while (this.globalLock == null && !Thread.currentThread().isInterrupted()) {
             try {
-                this.globalLock = toLock.tryLock(0L, MAX_VALUE, sharedAccess);
-            } catch (ClosedChannelException |
-                     FileLockInterruptionException killException) {
-                throw killException;
-            } catch (OverlappingFileLockException | IOException ex) {
-                LOGGER.info("Datei noch gesperrt. Neuer Versuch wird " +
+                this.globalLock = toLock.tryLock();
+            } catch (OverlappingFileLockException ex) {
+                LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " +
                             "gestartet. {}: {}", ex.getClass().getSimpleName(),
                             ex.getMessage());
             }
         }
-        if(globalLock == null || !globalLock.isValid()){
+        if(this.globalLock == null || !this.globalLock.isValid()){
             releaseAccess();
             return false;
         }else{
@@ -162,7 +168,7 @@ class PersistenceDAO {
      * @return true, if successful
      */
     public
-    boolean checkForActiveLock () {
+    boolean checkForActiveLock (final boolean writeAccess) {
         return this.globalLock != null;
     }
 
@@ -308,7 +314,7 @@ class PersistenceDAO {
         }
 
         Object readObject = null;
-        final var lastChangedFile = this.getLatestChangedFile();
+        final var lastChangedFile = this.getLatestChangedFilePath();
 
         try {
             String readJsonString = Files.readString(lastChangedFile);
@@ -330,7 +336,7 @@ class PersistenceDAO {
     }
 
     private
-    Path getLatestChangedFile () {
+    Path getLatestChangedFilePath () {
         Path upToDateFile = null;
         Instant lastChangedTime = Instant.MIN;
 
@@ -358,27 +364,20 @@ class PersistenceDAO {
      */
     public
     void releaseAccess () {
-        try {
-            this.localLock.readLock().unlock();
-        }catch(IllegalMonitorStateException imse){
-            LOGGER.trace("ReadLock nicht lokal gehalten.\n{}", asList(imse.getStackTrace()));
-        }
-        try {
-            this.localLock.writeLock().unlock();
-        }catch(IllegalMonitorStateException imse){
-            LOGGER.trace("WriteLock nicht lokal gehalten.\n{}", asList(imse.getStackTrace()));
-        }
 
-        if (this.globalLock != null) {
-            try {
-                final var channel = this.globalLock.channel();
-                this.globalLock.release();
-                channel.close();
-            } catch (IOException e) {
-                LOGGER.info("Dateischloss konnte nicht geöffnet werden. {}\n{}",
-                            e.getClass().getSimpleName(), asList(e.getStackTrace()));
+        try {
+            this.accessLock.lock();
+
+            if(this.releaseReadLock()){
+
+                if(this.localLock.getReadLockCount() == 0) {
+                    releaseGlobalAccess();
+                }
+            }else if(this.releaseWriteLock()){
+                releaseGlobalAccess();
             }
-            this.globalLock = null;
+        }  finally {
+            this.accessLock.unlock();
         }
     }
 
@@ -416,6 +415,56 @@ class PersistenceDAO {
             return dataWritten;
         }
         return !dataWritten;
+    }
+
+    private
+    boolean releaseReadLock() {
+
+        try {
+            this.accessLock.lock();
+            var initialReaders = localLock.getReadLockCount();
+
+            if(initialReaders > 0) {
+                try {
+                    this.localLock.readLock().unlock();
+                } catch (IllegalMonitorStateException imse) {
+                    LOGGER.trace("Kein ReadLock gehalten. {}\n{}", imse.getMessage(),
+                                 asList(imse.getStackTrace()));
+                }
+            }
+            return initialReaders < this.localLock.getReadLockCount();
+        }finally {
+            this.accessLock.unlock();
+        }
+    }
+
+    private
+    boolean releaseWriteLock() {
+
+        try {
+            this.accessLock.lock();
+            var isWriter = this.localLock.isWriteLockedByCurrentThread();
+
+            if(isWriter)
+                this.localLock.writeLock().unlock();
+            return isWriter;
+        }finally {
+            this.accessLock.unlock();
+        }
+    }
+
+    private
+    void releaseGlobalAccess(){
+        if (this.globalLock != null) {
+            try {
+                final var channel = this.globalLock.channel();
+                channel.close();
+            } catch (IOException e) {
+                LOGGER.info("Dateizugang konnte nicht geöffnet werden. {}\n{}",
+                            e.getClass().getSimpleName(), asList(e.getStackTrace()));
+            }
+            this.globalLock = null;
+        }
     }
 
     private

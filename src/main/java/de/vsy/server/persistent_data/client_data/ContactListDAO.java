@@ -59,13 +59,8 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(true))
-                return false;
-        }
-
+        if (this.dataProvider.acquireAccess(true))
+            return false;
         contactMap = readContactMap();
         contactSet = contactMap.get(contactType);
 
@@ -78,9 +73,7 @@ class ContactListDAO implements ClientDataAccess {
             contactAdded = this.dataProvider.writeData(contactMap);
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (contactAdded) {
             LOGGER.info("Contact added.");
@@ -101,16 +94,11 @@ class ContactListDAO implements ClientDataAccess {
         var readMap = new EnumMap<EligibleContactEntity, Set<Integer>>(
                 EligibleContactEntity.class);
         Object fromFile;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
+        if (!this.dataProvider.acquireAccess(false))
+            return readMap;
         fromFile = this.dataProvider.readData();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof EnumMap) {
 
@@ -127,18 +115,14 @@ class ContactListDAO implements ClientDataAccess {
     public
     boolean checkContact (final EligibleContactEntity contactType,
                           final int contactId) {
-        boolean isContact = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        final boolean isContact;
+        final Set<Integer> contacts;
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
-        final var contacts = this.readContacts(contactType);
+        if (!this.dataProvider.acquireAccess(false))
+                return false;
+        contacts = this.readContacts(contactType);
         isContact = contacts.contains(contactId);
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
         return isContact;
     }
 
@@ -153,17 +137,12 @@ class ContactListDAO implements ClientDataAccess {
     Set<Integer> readContacts (final EligibleContactEntity contactType) {
         Map<EligibleContactEntity, Set<Integer>> readMap;
         Set<Integer> readContacts;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
+            if (!this.dataProvider.acquireAccess(false))
+                return new HashSet<>();
         readMap = readContactMap();
         readContacts = readMap.get(contactType);
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (readContacts == null) {
             readContacts = new HashSet<>();
@@ -185,16 +164,10 @@ class ContactListDAO implements ClientDataAccess {
         var acquaintanceState = false;
         Set<Integer> contactSet;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
+        if (!this.dataProvider.acquireAccess(false))
+            return false;
         contactSet = readContacts(contactType);
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (contactSet != null) {
             acquaintanceState = contactSet.contains(contactId);
@@ -216,16 +189,10 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
-        }
+        if (!this.dataProvider.acquireAccess(false))
+            return false;
         contactMap = readContactMap();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         for (final EligibleContactEntity contactType : EligibleContactEntity.values()) {
             contactSet = contactMap.getOrDefault(contactType,
@@ -262,12 +229,8 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(true))
-                return false;
-        }
+        if (this.dataProvider.acquireAccess(true))
+            return false;
         contactMap = readContactMap();
         contactSet = contactMap.get(contactType);
 
@@ -277,9 +240,7 @@ class ContactListDAO implements ClientDataAccess {
             contactRemoved &= this.dataProvider.writeData(contactMap);
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (contactRemoved) {
             LOGGER.info("Contact removed.");

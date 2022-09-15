@@ -55,21 +55,15 @@ class LiveClientStateDAO implements ServerDataAccess {
         final Map<PacketCategory, Set<Integer>> extraSubscriptions = new EnumMap<>(
                 PacketCategory.class);
         final CurrentClientState currentState;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return extraSubscriptions;
-        }
         currentState = getClientState(clientId);
 
         if (currentState != null) {
             extraSubscriptions.putAll(currentState.getExtraSubscriptions());
         }
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
         return extraSubscriptions;
     }
 
@@ -86,22 +80,15 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState currentClientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return new CurrentClientState(STANDARD_SERVER_ID);
-        }
         clientStateMap = getAllActiveClientStates();
         currentClientState = clientStateMap.get(clientId);
 
         if (currentClientState == null) {
             currentClientState = new CurrentClientState(STANDARD_SERVER_ID);
         }
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
         return currentClientState;
     }
 
@@ -117,17 +104,10 @@ class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> readMap = new HashMap<>();
         Object fromFile;
 
-        lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return readMap;
-        }
         fromFile = this.dataProvider.readData();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof Map) {
 
@@ -157,12 +137,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -174,9 +150,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         clientStateMap.put(clientId, clientState);
         stateChanged = this.dataProvider.writeData(clientStateMap);
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (stateChanged) {
             LOGGER.info("{}: {}", clientId, newState);
@@ -190,12 +164,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var subscriptionAdded = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -209,9 +179,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                     clientId);
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return subscriptionAdded;
     }
@@ -222,12 +190,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var subscriptionAdded = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -241,9 +205,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                     clientId);
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return subscriptionAdded;
     }
@@ -262,12 +224,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var pendingStateChanged = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -281,9 +239,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                     clientId);
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         return pendingStateChanged;
     }
@@ -301,12 +257,8 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var reconnectionAllowed = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -316,11 +268,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                 reconnectionAllowed = this.dataProvider.writeData(clientStateMap);
             }
         }
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
-
+        this.dataProvider.releaseAccess();
         return reconnectionAllowed;
     }
 
@@ -345,22 +293,15 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
         if (clientState != null) {
             clientPending = clientState.getPendingFlag();
         }
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
         return clientPending;
     }
 
@@ -378,22 +319,15 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
         if (clientState != null) {
             clientPending = clientState.getReconnectionState();
         }
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
         return clientPending;
     }
 
@@ -410,12 +344,9 @@ class LiveClientStateDAO implements ServerDataAccess {
             final int serverPort) {
         Map<Integer, CurrentClientState> allClientStates;
         Map<Integer, CurrentClientState> remoteClientStates = new HashMap<>();
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-        if (!lockAlreadyAcquired) {
             if(!this.dataProvider.acquireAccess(false))
                 return remoteClientStates;
-        }
         allClientStates = getAllActiveClientStates();
 
         for (final Map.Entry<Integer, CurrentClientState> client : allClientStates.entrySet()) {
@@ -426,10 +357,7 @@ class LiveClientStateDAO implements ServerDataAccess {
             }
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
-
+        this.dataProvider.releaseAccess();
         return remoteClientStates;
     }
 
@@ -443,19 +371,11 @@ class LiveClientStateDAO implements ServerDataAccess {
         var clientStatesRemoved = false;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = new HashMap<>();
-
         clientStatesRemoved = this.dataProvider.writeData(clientStateMap);
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (clientStatesRemoved) {
             LOGGER.info("Klientenzustände wurden entfernt");
@@ -474,19 +394,13 @@ class LiveClientStateDAO implements ServerDataAccess {
     boolean removeClientState (final int clientId) {
         Map<Integer, CurrentClientState> clientStateMap;
         var clientStateRemoved = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-        if (!lockAlreadyAcquired) {
             if(this.dataProvider.acquireAccess(true))
                 return false;
-        }
         clientStateMap = getAllActiveClientStates();
         clientStateRemoved = (clientStateMap.remove(clientId) != null) &&
                              this.dataProvider.writeData(clientStateMap);
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (clientStateRemoved) {
             LOGGER.info("Klient entfernt: {} ", clientId);

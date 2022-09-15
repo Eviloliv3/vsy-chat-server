@@ -52,15 +52,13 @@ class ClientTransactionDAO implements ServerDataAccess {
     public
     boolean addTransaction (final String transactionHash) {
         var transactionAdded = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        
 
         if (transactionHash != null) {
             Map<String, Boolean> allTransactions;
 
-            if (!lockAlreadyAcquired) {
-                if(!this.dataProvider.acquireAccess(false))
+                if(!this.dataProvider.acquireAccess(true))
                     return false;
-            }
             allTransactions = readTransactions();
             transactionAdded =
                     allTransactions.putIfAbsent(transactionHash, false) == null;
@@ -69,9 +67,7 @@ class ClientTransactionDAO implements ServerDataAccess {
                 this.dataProvider.writeData(allTransactions);
             }
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+            this.dataProvider.releaseAccess();
         }
         return transactionAdded;
     }
@@ -85,18 +81,13 @@ class ClientTransactionDAO implements ServerDataAccess {
     private
     Map<String, Boolean> readTransactions () {
         Map<String, Boolean> allTransactions = new HashMap<>();
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
         Object fromFile;
 
-        if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(true))
+            if(this.dataProvider.acquireAccess(false))
                 return allTransactions;
-        }
         fromFile = this.dataProvider.readData();
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         try {
             allTransactions = (Map<String, Boolean>) fromFile;
@@ -117,15 +108,12 @@ class ClientTransactionDAO implements ServerDataAccess {
     public
     boolean completeTransaction (final String transactionHash) {
         var transactionComplete = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
         if (transactionHash != null) {
             Map<String, Boolean> allTransactions;
 
-            if (!lockAlreadyAcquired) {
-                if(!this.dataProvider.acquireAccess(false))
+                if(!this.dataProvider.acquireAccess(true))
                     return false;
-            }
             allTransactions = readTransactions();
 
             if (allTransactions.containsKey(transactionHash)) {
@@ -133,9 +121,7 @@ class ClientTransactionDAO implements ServerDataAccess {
                 transactionComplete = this.dataProvider.writeData(allTransactions);
             }
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+            this.dataProvider.releaseAccess();
         }
         return transactionComplete;
     }
@@ -154,14 +140,13 @@ class ClientTransactionDAO implements ServerDataAccess {
      */
     public
     Map<String, Boolean> getAllIncompleteTransactions () {
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        
         final Map<String, Boolean> incompleteTransactions = new HashMap<>();
 
-        if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(true))
+            if(this.dataProvider.acquireAccess(false))
                 return incompleteTransactions;
-        }
         final var allTransactions = readTransactions();
+        this.dataProvider.releaseAccess();
 
         for (final var transaction : allTransactions.entrySet()) {
             final var completionState = transaction.getValue();
@@ -169,10 +154,6 @@ class ClientTransactionDAO implements ServerDataAccess {
             if (completionState != null && !completionState) {
                 incompleteTransactions.put(transaction.getKey(), completionState);
             }
-        }
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
         }
         return incompleteTransactions;
     }
@@ -187,23 +168,19 @@ class ClientTransactionDAO implements ServerDataAccess {
     public
     boolean isTransactionCompleted (final Packet toCheck) {
         var transactionComplete = false;
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        
         final var hashToCheck = toCheck.getPacketHash();
         Map<String, Boolean> readTransactions;
 
         if (hashToCheck != null) {
 
-            if (!lockAlreadyAcquired) {
-                if(this.dataProvider.acquireAccess(true))
+                if(this.dataProvider.acquireAccess(false))
                     return false;
-            }
             readTransactions = readTransactions();
             transactionComplete = Objects.equals(true,
                                                  readTransactions.get(hashToCheck));
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+            this.dataProvider.releaseAccess();
         }
 
         return transactionComplete;

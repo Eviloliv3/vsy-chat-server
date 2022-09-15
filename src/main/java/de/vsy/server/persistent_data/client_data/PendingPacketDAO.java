@@ -74,36 +74,29 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
     public
     boolean appendPendingPacket (final PendingType classification,
                                  final Packet toAppend) {
-        if(classification == null || toAppend == null){
-            throw new IllegalArgumentException("Ungueltiger Parameter. " +
-                                               classification + "/" + toAppend);
+        if (classification == null || toAppend == null) {
+            throw new IllegalArgumentException(
+                    "Ungueltiger Parameter. " + classification + "/" + toAppend);
         }
         var packetAdded = false;
         Map<String, Packet> pendingMap;
 
-            final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
+        if (this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
+        pendingMap = readPendingPackets(classification);
+        packetAdded =
+                pendingMap.putIfAbsent(toAppend.getPacketHash(), toAppend) == null;
 
-            if (!lockAlreadyAcquired) {
-                if(this.dataProvider.acquireAccess(true))
-                    return false;
-            }
-            pendingMap = readPendingPackets(classification);
+        if (packetAdded) {
+            packetAdded = setPendingPackets(classification, pendingMap);
+        }
 
-            packetAdded =
-                    pendingMap.putIfAbsent(toAppend.getPacketHash(), toAppend) ==
-                    null;
+        this.dataProvider.releaseAccess();
 
-            if (packetAdded) {
-                packetAdded = setPendingPackets(classification, pendingMap);
-            }
-
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
-
-            if (packetAdded) {
-                LOGGER.info("PendingPacket hinzugefügt.");
-            }
+        if (packetAdded) {
+            LOGGER.info("PendingPacket hinzugefügt.");
+        }
         return packetAdded;
     }
 
@@ -119,17 +112,13 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
         Map<String, Packet> pendingMap;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+        if (!this.dataProvider.acquireAccess(false)) {
+            return new LinkedHashMap<>();
         }
         allPendingPackets = readAllPendingPackets();
         pendingMap = allPendingPackets.get(classification);
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (pendingMap == null) {
             pendingMap = new LinkedHashMap<>();
@@ -155,19 +144,15 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         if (toSet != null) {
             final boolean lockAlreadyAcquired;
             classifiedPendingPackets = new LinkedHashMap<>(toSet);
-            lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
 
-            if (!lockAlreadyAcquired) {
-                if(this.dataProvider.acquireAccess(true))
-                    return false;
+            if (this.dataProvider.acquireAccess(true)) {
+                return false;
             }
             allPendingPackets = readAllPendingPackets();
             allPendingPackets.put(classification, classifiedPendingPackets);
             packetAdded = this.dataProvider.writeData(allPendingPackets);
 
-            if (!lockAlreadyAcquired) {
-                this.dataProvider.releaseAccess();
-            }
+            this.dataProvider.releaseAccess();
         }
         return packetAdded;
     }
@@ -183,17 +168,11 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         EnumMap<PendingType, LinkedHashMap<String, Packet>> allPendingPackets = null;
         Object fromFile;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.acquireAccess(false);
+        if (!this.dataProvider.acquireAccess(false)) {
+            return new EnumMap<>(PendingType.class);
         }
-
         fromFile = this.dataProvider.readData();
-
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
 
         if (fromFile instanceof EnumMap) {
             try {
@@ -229,16 +208,13 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
      */
     public
     void removePendingPacket (final PendingType classification,
-                                 final Packet toRemove) {
+                              final Packet toRemove) {
         var packetRemoved = false;
         Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
         LinkedHashMap<String, Packet> pendingMap;
 
-        final var lockAlreadyAcquired = this.dataProvider.checkForActiveLock();
-
-        if (!lockAlreadyAcquired) {
-            if(this.dataProvider.acquireAccess(true))
-return;
+        if (this.dataProvider.acquireAccess(true)) {
+            return;
         }
         allPendingPackets = readAllPendingPackets();
         pendingMap = allPendingPackets.get(classification);
@@ -249,9 +225,7 @@ return;
             this.dataProvider.writeData(allPendingPackets);
         }
 
-        if (!lockAlreadyAcquired) {
-            this.dataProvider.releaseAccess();
-        }
+        this.dataProvider.releaseAccess();
     }
 
     @Override
