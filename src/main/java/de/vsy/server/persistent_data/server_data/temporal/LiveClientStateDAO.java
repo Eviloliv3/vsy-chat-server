@@ -76,7 +76,7 @@ class LiveClientStateDAO implements ServerDataAccess {
      */
     public
     CurrentClientState getClientState (final int clientId) {
-        boolean lockAlreadyAcquired;
+       this.dataProvider.releaseAccess();
         CurrentClientState currentClientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
@@ -100,16 +100,16 @@ class LiveClientStateDAO implements ServerDataAccess {
     @SuppressWarnings("unchecked")
     public
     Map<Integer, CurrentClientState> getAllActiveClientStates () {
-        boolean lockAlreadyAcquired;
+       this.dataProvider.releaseAccess();
         Map<Integer, CurrentClientState> readMap = new HashMap<>();
         Object fromFile;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return readMap;
+        if(!this.dataProvider.acquireAccess(false))
+            return readMap;
         fromFile = this.dataProvider.readData();
         this.dataProvider.releaseAccess();
 
-        if (fromFile instanceof Map) {
+        if (fromFile instanceof HashMap) {
 
             try {
                 readMap = (Map<Integer, CurrentClientState>) fromFile;
@@ -288,7 +288,7 @@ class LiveClientStateDAO implements ServerDataAccess {
      */
     public
     boolean getClientPendingState (final int clientId) {
-        boolean lockAlreadyAcquired;
+       this.dataProvider.releaseAccess();
         var clientPending = false;
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
@@ -314,7 +314,7 @@ class LiveClientStateDAO implements ServerDataAccess {
      */
     public
     boolean getClientReconnectionState (final int clientId) {
-        boolean lockAlreadyAcquired;
+       this.dataProvider.releaseAccess();
         var clientPending = false;
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;

@@ -15,6 +15,7 @@ de/vsy/chat/server/raw_server_test/authentication/TestLogoutBehaviour.class
 de/vsy/chat/server/testing_grounds/TestCommunicatorDAO.class
 de/vsy/chat/server/testing_grounds/TestServerStatusBuilder.class
 de/vsy/chat/server/testing_grounds/TestConnectionThreads.class
+de/vsy/chat/server/testing_grounds/TestPendingPacketDAO$1.class
 de/vsy/chat/server/testing_grounds/TestContactListPersistence.class
 de/vsy/chat/server/raw_server_test/ServerTestBase.class
 de/vsy/chat/server/single_server_test/status/TestClientStatusChange.class
@@ -34,6 +35,7 @@ de/vsy/chat/server/testing_grounds/TestIdDAO.class
 de/vsy/chat/server/two_server_test/authentication/LoginBehaviour.class
 de/vsy/chat/server/two_server_test/TestClientStatusChange.class
 de/vsy/chat/server/testing_grounds/TestFileChannel.class
+de/vsy/chat/server/testing_grounds/TestNestedWriteReadLock.class
 de/vsy/chat/server/raw_server_test/status/TestStatusChange.class
 de/vsy/chat/server/raw_server_test/ServerPortProvider.class
 de/vsy/chat/server/raw_server_test/authentication/TestReconnectionBehaviour.class

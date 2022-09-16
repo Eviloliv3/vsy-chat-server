@@ -91,8 +91,10 @@ class PersistenceDAO {
         if (this.filePaths == null) {
             throw new IllegalStateException(NO_DATA_FILE_PATHS_SET);
         }
-        final var readAccess = "r";
+        var readAccess = "r";
         FileChannel lockChannel;
+        if(writeAccess)
+            readAccess += "w";
 
         try {
             lockChannel = new RandomAccessFile(this.lockFilePath.toFile(), readAccess).getChannel();
@@ -147,7 +149,7 @@ class PersistenceDAO {
 
         while (this.globalLock == null && !Thread.currentThread().isInterrupted()) {
             try {
-                this.globalLock = toLock.tryLock();
+                this.globalLock = toLock.tryLock(0, Long.MAX_VALUE, !writeAccesss);
             } catch (OverlappingFileLockException ex) {
                 LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " +
                             "gestartet. {}: {}", ex.getClass().getSimpleName(),

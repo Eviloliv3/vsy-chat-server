@@ -142,7 +142,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         LinkedHashMap<String, Packet> classifiedPendingPackets;
 
         if (toSet != null) {
-            final boolean lockAlreadyAcquired;
+            this.dataProvider.releaseAccess();
             classifiedPendingPackets = new LinkedHashMap<>(toSet);
 
             if (this.dataProvider.acquireAccess(true)) {

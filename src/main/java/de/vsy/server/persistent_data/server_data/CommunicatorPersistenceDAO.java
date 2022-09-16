@@ -88,7 +88,7 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
 
         this.dataProvider.releaseAccess();
 
-        if (fromFile instanceof Set) {
+        if (fromFile instanceof HashSet) {
 
             try {
                 readList = (Set<CommunicatorData>) fromFile;
