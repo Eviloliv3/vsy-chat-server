@@ -180,6 +180,8 @@ class PersistenceDAO {
         var accessAcquired = false;
 
         try{
+            accessLock.lock();
+
             while(!accessAcquired && !Thread.currentThread().isInterrupted()){
                 accessAcquired = lockingMethod.get();
             }
