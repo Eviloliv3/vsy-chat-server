@@ -2,46 +2,17 @@ package de.vsy.chat.server.testing_grounds;
 
 import de.vsy.server.persistent_data.PersistentDataFileCreator;
 import de.vsy.server.persistent_data.PersistentDataLocationCreator;
-import de.vsy.server.persistent_data.data_bean.CommunicatorData;
-import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
-import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server_packet.content.*;
-import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
-import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
-import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
-import de.vsy.shared_module.shared_module.packet_creation.ContentIdentificationProviderImpl;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
-import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.*;
-import de.vsy.shared_transmission.shared_transmission.packet.content.chat.TextMessageDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.error.ErrorDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.shared_transmission.shared_transmission.packet.content.status.*;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.RandomAccess;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public
 class TestPendingPacketDAO {
@@ -127,7 +98,7 @@ class TestPendingPacketDAO {
     }
      */
     @Test
-    void testParallelReadingDifferentChannelsSameJVM()
+    void testParallelReadingDifferentChannelsSameJVM ()
     throws InterruptedException {
         var test = new Runnable() {
             @Override
@@ -136,11 +107,13 @@ class TestPendingPacketDAO {
                 final String path;
                 try {
                     path = PersistentDataLocationCreator.createDirectoryPath(
-                            PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, "test");
+                            PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER,
+                            "test");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                final var file = PersistentDataFileCreator.createAndGetFilePath(path, "fileLock.lock",
+                final var file = PersistentDataFileCreator.createAndGetFilePath(path,
+                                                                                "fileLock.lock",
                                                                                 LogManager.getLogger());
                 RandomAccessFile fileChannel = null;
                 try {
@@ -151,13 +124,17 @@ class TestPendingPacketDAO {
                 try {
                     try {
                         FileLock lock = null;
-                        if(!fileChannel.getChannel().isOpen())
-                            lock = fileChannel.getChannel().tryLock(0, Long.MAX_VALUE, false);
+                        if (!fileChannel.getChannel().isOpen()) {
+                            lock = fileChannel.getChannel()
+                                              .tryLock(0, Long.MAX_VALUE, false);
+                        }
                         var buffer = ByteBuffer.allocate(1024);
                         Thread.sleep(200);
-                        Assertions.assertEquals(-1, fileChannel.getChannel().read(buffer));
-                        if(lock != null && fileChannel.getChannel().isOpen())
+                        Assertions.assertEquals(-1, fileChannel.getChannel()
+                                                               .read(buffer));
+                        if (lock != null && fileChannel.getChannel().isOpen()) {
                             lock.release();
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }

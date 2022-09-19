@@ -3,7 +3,6 @@
  */
 package de.vsy.server.service.status_synchronization;
 
-import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
@@ -18,7 +17,6 @@ import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.ClientStatusPacketProcessorFactory;
 import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.processor.ServicePacketProcessor;
-import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
@@ -70,13 +68,14 @@ class ClientStatusSynchronizationService extends ServiceBase {
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
         this.packetCreator = new ServerStatusSyncPacketCreator();
         this.packetsToSend = new PacketTransmissionCache();
-        var resultingPackets = new ResultingPacketContentHandler(packetCreator, packetsToSend);
+        var resultingPackets = new ResultingPacketContentHandler(packetCreator,
+                                                                 packetsToSend);
         this.processor = new ServicePacketProcessor(
                 new ClientStatusPacketProcessorFactory(resultingPackets,
                                                        serviceDataModel),
                 resultingPackets);
-        this.dispatcher = new ServerSynchronizationPacketDispatcher(this.serviceBuffers,
-                                                                    SERVICE_SPECIFICATIONS.getResponseDirections());
+        this.dispatcher = new ServerSynchronizationPacketDispatcher(
+                this.serviceBuffers, SERVICE_SPECIFICATIONS.getResponseDirections());
     }
 
     /** Finish setup. */

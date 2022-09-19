@@ -77,6 +77,7 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status zurücknehmen für mehrere Klienten gesetzt -> erfolgreich -- beendet");
     }
+
     @Test
     public
     void changeFromMessengerStateSingleClientSuccess () {
@@ -182,5 +183,4 @@ class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: Status für mehrere Klienten gesetzt -> erfolgreich -- beendet");
     }
-
 }

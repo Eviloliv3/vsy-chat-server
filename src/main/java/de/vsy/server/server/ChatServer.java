@@ -233,8 +233,8 @@ class ChatServer implements ClientServer {
             return listening;
         } catch (final UnknownHostException uhe) {
             final var errorMessage =
-                    "Ungueltige Kombination von Host/Port: " + host + "/" +
-                    port + "\n";
+                    "Ungueltige Kombination von Host/Port: " + host + "/" + port +
+                    "\n";
             throw new IllegalArgumentException(errorMessage, uhe);
         } catch (final IOException ioe) {
             LOGGER.info("Kombination Host/Port: {}/{} frei.", host, port);

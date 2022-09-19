@@ -1,17 +1,15 @@
 package de.vsy.server.client_handling.packet_processing.processor;
 
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.server.data.access.HandlerAccessManager;
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
-import de.vsy.shared_utility.standard_value.StandardIdProvider;
 
 public abstract
 class ResultingPacketCreator {
+
     protected Packet currentRequest;
 
     protected
@@ -37,7 +35,8 @@ class ResultingPacketCreator {
     }
 
     public abstract
-    Packet createRequest(PacketContent processedContent, final CommunicationEndpoint recipient);
+    Packet createRequest (PacketContent processedContent,
+                          final CommunicationEndpoint recipient);
 
     public abstract
     Packet createResponse (PacketContent processedContent);
@@ -51,7 +50,8 @@ class ResultingPacketCreator {
 
         if (processedContent instanceof final SimpleInternalContentWrapper wrappedContent) {
             initialContent = wrappedContent.getWrappedContent();
-            newWrapper.withSynchronizedServers(wrappedContent.getSynchronizedServers());
+            newWrapper.withSynchronizedServers(
+                    wrappedContent.getSynchronizedServers());
         }
         newWrapper.withContent(initialContent).withOriginatingServerId(serverId);
         return newWrapper.build();

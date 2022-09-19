@@ -39,9 +39,11 @@ class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
                     currentClientId)) {
                 reconnectionHandler.processReconnection(currentClientId);
                 reconnectedClientIds.add(currentClientId);
-            } else if (this.clientStateAccessor.getClientPendingState(
-                    currentClientId)) {
-                reconnectedClientIds.add(currentClientId);
+            } else {
+                if (this.clientStateAccessor.getClientPendingState(
+                        currentClientId)) {
+                    reconnectedClientIds.add(currentClientId);
+                }
             }
         }
         this.pendingClientIdList.removeAll(reconnectedClientIds);

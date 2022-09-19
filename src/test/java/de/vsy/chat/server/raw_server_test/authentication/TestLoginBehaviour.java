@@ -46,7 +46,8 @@ class TestLoginBehaviour extends ServerTestBase {
         content = new LoginRequestDTO(clientOneAuth.getLogin(),
                                       clientOneAuth.getPassword());
 
-        TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content,
+        TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(
+                                                            STANDARD_SERVER_ID), content,
                                                     "Sie sind bereits von einem anderen Gerät aus angemeldet.");
         LOGGER.info(
                 "Test: Login eingeloggt -> bereits von anderem Gerät aus eingeloggt. --beendet");
@@ -59,8 +60,8 @@ class TestLoginBehaviour extends ServerTestBase {
         final var clientOne = super.getUnusedClientConnection();
 
         content = new LoginRequestDTO(STANDARD_EMPTY_STRING, STANDARD_EMPTY_STRING);
-        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                                                    "Fehlerhafte Klientendaten:");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(
+                STANDARD_SERVER_ID), content, "Fehlerhafte Klientendaten:");
         LOGGER.info("Test: Login falsch -> fehlerhafte Daten -- beendet");
     }
 
@@ -71,7 +72,8 @@ class TestLoginBehaviour extends ServerTestBase {
         final var clientOne = super.getUnusedClientConnection();
 
         content = new LoginRequestDTO("frank1", "falsch");
-        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(
+                                                            STANDARD_SERVER_ID), content,
                                                     "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.");
         LOGGER.info("Test: Login falsch -> Kein Konto --beendet");
     }
@@ -88,7 +90,8 @@ class TestLoginBehaviour extends ServerTestBase {
         content = new LoginRequestDTO(clientOneAuthenticationData.getLogin(),
                                       clientOneAuthenticationData.getPassword());
 
-        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(
+                                                            STANDARD_SERVER_ID), content,
                                                     "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
         LOGGER.info("Test: Login richtig -> schon eingeloggt --beendet");
     }

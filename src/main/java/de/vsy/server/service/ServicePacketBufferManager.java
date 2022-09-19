@@ -200,9 +200,8 @@ class ServicePacketBufferManager {
                     this.registeredBuffers.put(serviceType, serviceBufferMap);
                     bufferRegistered = packetBuffer;
                 } else {
-                    LOGGER.info(
-                            "Buffer bereits registriert Servicetyp/Hash: {}/{}",
-                            serviceType, packetBuffer.toString());
+                    LOGGER.info("Buffer bereits registriert Servicetyp/Hash: {}/{}",
+                                serviceType, packetBuffer.toString());
                 }
             } finally {
                 this.lock.writeLock().unlock();

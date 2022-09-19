@@ -13,7 +13,6 @@ import de.vsy.shared_utility.async_value_acquisition.TimeBasedValueFetcher;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -80,21 +79,23 @@ class PendingClientBufferWatcher extends ThreadContextRunnable {
 
     /** Save incoming Packet. */
     private
-    void saveIncomingPackets (){
+    void saveIncomingPackets () {
         var reInterrupt = false;
         try {
-            this.pendingPacketAccessor.createFileAccess(this.localClientData.getClientId());
-        }catch(InterruptedException ie){
-            throw new IllegalStateException("Dateizugriff fehlgeschlagen.\n"
-                                            + ie.getMessage() + "\n"
-                                            + asList(ie.getStackTrace()));
+            this.pendingPacketAccessor.createFileAccess(
+                    this.localClientData.getClientId());
+        } catch (InterruptedException ie) {
+            throw new IllegalStateException(
+                    "Dateizugriff fehlgeschlagen.\n" + ie.getMessage() + "\n" +
+                    asList(ie.getStackTrace()));
         }
 
         while (this.terminationLatch.getCount() == TERMINATION_LATCH_COUNT) {
             try {
                 Packet currentPacket = clientBuffer.getPacket();
-                if(currentPacket != null) {
-                    this.pendingPacketAccessor.appendPendingPacket(PendingType.PROCESSOR_BOUND, currentPacket);
+                if (currentPacket != null) {
+                    this.pendingPacketAccessor.appendPendingPacket(
+                            PendingType.PROCESSOR_BOUND, currentPacket);
                 }
             } catch (InterruptedException ie) {
                 reInterrupt = true;

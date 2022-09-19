@@ -17,7 +17,6 @@ import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
-import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.ServicePacketProcessor;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
@@ -50,7 +49,8 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
      * @param serviceDataAccess the service dataManagement accessLimiter
      */
     public
-    ClientStatusSyncPacketProcessor (final ResultingPacketContentHandler resultingPackets,
+    ClientStatusSyncPacketProcessor (
+            final ResultingPacketContentHandler resultingPackets,
             final ClientStatusRegistrationServiceDataProvider serviceDataAccess) {
         this.resultingPackets = resultingPackets;
         this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
@@ -81,13 +81,16 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
 
             if (originatingServerId != this.serverNode.getServerId() &&
                 inputData instanceof final BaseStatusSyncDTO simpleStatus) {
-                LogManager.getLogger().debug("BaseStatusSyncDTO gelesen: {}", simpleStatus);
+                LogManager.getLogger()
+                          .debug("BaseStatusSyncDTO gelesen: {}", simpleStatus);
                 translateState(simpleStatus, originatingServerId);
             }
 
             if (inputData instanceof ExtendedStatusSyncDTO) {
-                LogManager.getLogger().debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
-                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
+                LogManager.getLogger()
+                          .debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
+                final var clientBroadcast = getClientEntity(
+                        STANDARD_CLIENT_BROADCAST_ID);
                 resultingPackets.addRequest(inputData, clientBroadcast);
             }
 
@@ -95,7 +98,8 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
                     inputData.getSynchronizedServers());
 
             if (notSynchronizedServerData != null) {
-                LogManager.getLogger().debug("Statussynchronisierung fuer anderen Server erstellt.");
+                LogManager.getLogger()
+                          .debug("Statussynchronisierung fuer anderen Server erstellt.");
                 final var recipient = getServerEntity(
                         notSynchronizedServerData.getServerId());
                 resultingPackets.addRequest(inputData, recipient);
@@ -132,13 +136,14 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     }
 
     private
-    Map<PacketCategory, Set<Integer>> createSubscriptionMap(final BaseStatusSyncDTO statusSync){
+    Map<PacketCategory, Set<Integer>> createSubscriptionMap (
+            final BaseStatusSyncDTO statusSync) {
         final var clientState = statusSync.getClientState();
         final var clientId = statusSync.getContactData().getCommunicatorId();
         final var subscriptions = ClientStateTranslator.prepareClientSubscriptionMap(
-                clientState, statusSync.isToAdd(),
+                clientState, statusSync.isToAdd(), clientId);
+        final var persistedClientState = this.persistentClientStates.getClientState(
                 clientId);
-        final var persistedClientState= this.persistentClientStates.getClientState(clientId);
 
         subscriptions.putAll(persistedClientState.getExtraSubscriptions());
         return subscriptions;

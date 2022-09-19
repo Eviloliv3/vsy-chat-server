@@ -29,7 +29,8 @@ class ClientStatusPacketProcessorFactory implements ServicePacketProcessorFactor
      * @param serviceDataAccess the service dataManagement accessLimiter
      */
     public
-    ClientStatusPacketProcessorFactory (final ResultingPacketContentHandler resultingPackets,
+    ClientStatusPacketProcessorFactory (
+            final ResultingPacketContentHandler resultingPackets,
             final ClientStatusRegistrationServiceDataProvider serviceDataAccess) {
         this.registeredTypeHandlers = new HashMap<>();
         this.serviceDataModel = serviceDataAccess;
@@ -41,7 +42,8 @@ class ClientStatusPacketProcessorFactory implements ServicePacketProcessorFactor
     private
     void registerHandlers (final ResultingPacketContentHandler resultingPackets) {
         this.registeredTypeHandlers.put(ServerStatusType.CLIENT_STATUS,
-                                        new ClientStatusSyncPacketProcessor(resultingPackets,
+                                        new ClientStatusSyncPacketProcessor(
+                                                resultingPackets,
                                                 this.serviceDataModel));
     }
 

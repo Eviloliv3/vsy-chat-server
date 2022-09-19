@@ -59,8 +59,9 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        if (this.dataProvider.acquireAccess(true))
+        if (!this.dataProvider.acquireAccess(true)) {
             return false;
+        }
         contactMap = readContactMap();
         contactSet = contactMap.get(contactType);
 
@@ -72,8 +73,7 @@ class ContactListDAO implements ClientDataAccess {
             contactMap.put(contactType, contactSet);
             contactAdded = this.dataProvider.writeData(contactMap);
         }
-
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (contactAdded) {
             LOGGER.info("Contact added.");
@@ -95,10 +95,11 @@ class ContactListDAO implements ClientDataAccess {
                 EligibleContactEntity.class);
         Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false))
+        if (!this.dataProvider.acquireAccess(false)) {
             return readMap;
+        }
         fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof EnumMap) {
 
@@ -118,11 +119,12 @@ class ContactListDAO implements ClientDataAccess {
         final boolean isContact;
         final Set<Integer> contacts;
 
-        if (!this.dataProvider.acquireAccess(false))
-                return false;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return false;
+        }
         contacts = this.readContacts(contactType);
+        this.dataProvider.releaseAccess(false);
         isContact = contacts.contains(contactId);
-        this.dataProvider.releaseAccess();
         return isContact;
     }
 
@@ -138,11 +140,12 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> readMap;
         Set<Integer> readContacts;
 
-            if (!this.dataProvider.acquireAccess(false))
-                return new HashSet<>();
+        if (!this.dataProvider.acquireAccess(false)) {
+            return new HashSet<>();
+        }
         readMap = readContactMap();
+        this.dataProvider.releaseAccess(false);
         readContacts = readMap.get(contactType);
-        this.dataProvider.releaseAccess();
 
         if (readContacts == null) {
             readContacts = new HashSet<>();
@@ -164,10 +167,11 @@ class ContactListDAO implements ClientDataAccess {
         var acquaintanceState = false;
         Set<Integer> contactSet;
 
-        if (!this.dataProvider.acquireAccess(false))
+        if (!this.dataProvider.acquireAccess(false)) {
             return false;
+        }
         contactSet = readContacts(contactType);
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (contactSet != null) {
             acquaintanceState = contactSet.contains(contactId);
@@ -189,10 +193,11 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        if (!this.dataProvider.acquireAccess(false))
+        if (!this.dataProvider.acquireAccess(false)) {
             return false;
+        }
         contactMap = readContactMap();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         for (final EligibleContactEntity contactType : EligibleContactEntity.values()) {
             contactSet = contactMap.getOrDefault(contactType,
@@ -229,8 +234,9 @@ class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        if (this.dataProvider.acquireAccess(true))
+        if (!this.dataProvider.acquireAccess(true)) {
             return false;
+        }
         contactMap = readContactMap();
         contactSet = contactMap.get(contactType);
 
@@ -240,7 +246,7 @@ class ContactListDAO implements ClientDataAccess {
             contactRemoved &= this.dataProvider.writeData(contactMap);
         }
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (contactRemoved) {
             LOGGER.info("Contact removed.");

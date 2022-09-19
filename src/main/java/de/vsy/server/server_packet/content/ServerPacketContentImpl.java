@@ -40,9 +40,12 @@ class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
 
     @JsonCreator
     protected
-    ServerPacketContentImpl (@JsonProperty("synchronizedServers") final Set<Integer> synchronizedServers,
-                             @JsonProperty("originatingServerId") final int originatingServerId,
-                             @JsonProperty("readByConnectionThread") final int readByConnectionThread) {
+    ServerPacketContentImpl (@JsonProperty("synchronizedServers")
+                             final Set<Integer> synchronizedServers,
+                             @JsonProperty("originatingServerId")
+                             final int originatingServerId,
+                             @JsonProperty("readByConnectionThread")
+                             final int readByConnectionThread) {
         this.synchronizedServers = synchronizedServers;
         this.originatingServerId = originatingServerId;
         this.readByConnectionThread = readByConnectionThread;

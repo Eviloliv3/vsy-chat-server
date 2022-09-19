@@ -75,8 +75,7 @@ class ServerPacketTypeValidationCreator {
         Map<PacketType, Set<Class<? extends PacketContent>>> statusMapping = new HashMap<>();
 
         statusMapping.put(ServerStatusType.CLIENT_STATUS,
-                          of(BaseStatusSyncDTO.class,
-                             ExtendedStatusSyncDTO.class));
+                          of(BaseStatusSyncDTO.class, ExtendedStatusSyncDTO.class));
         statusMapping.put(ServerStatusType.SERVER_STATUS,
                           of(InterServerCommSyncDTO.class));
         statusMapping.put(CHAT_STATUS, of(SimpleInternalContentWrapper.class));

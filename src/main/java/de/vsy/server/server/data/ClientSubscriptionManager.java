@@ -62,7 +62,8 @@ class ClientSubscriptionManager extends AbstractPacketCategorySubscriptionManage
         final var packetProperties = packetToPublish.getPacketProperties();
 
         topicSubscriptions = super.getTopicSubscriptions(
-                packetProperties.getPacketIdentificationProvider().getPacketCategory());
+                packetProperties.getPacketIdentificationProvider()
+                                .getPacketCategory());
 
         subscriptionBuffers = topicSubscriptions.get(
                 packetProperties.getRecipient().getEntityId());

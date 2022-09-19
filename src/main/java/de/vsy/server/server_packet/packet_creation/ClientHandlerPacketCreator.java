@@ -25,32 +25,24 @@ class ClientHandlerPacketCreator extends ResultingPacketCreator {
         if (processedContent == null) {
             throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
         }
-            if(recipient == null){
-                throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
-            }
+        if (recipient == null) {
+            throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
+        }
 
-            final var resultingContent = adjustWrapping(processedContent, true);
-            if(this.currentRequest == null){
-                return PacketCompiler.createRequest(recipient, resultingContent);
-            }else{
-                return PacketCompiler.createFollowUpRequest(recipient, resultingContent,
-                                                            this.currentRequest);
-            }
+        final var resultingContent = adjustWrapping(processedContent, true);
+        if (this.currentRequest == null) {
+            return PacketCompiler.createRequest(recipient, resultingContent);
+        } else {
+            return PacketCompiler.createFollowUpRequest(recipient, resultingContent,
+                                                        this.currentRequest);
+        }
     }
+
     @Override
     public
     Packet createResponse (PacketContent processedContent) {
         final var resultingContent = adjustWrapping(processedContent, false);
         return PacketCompiler.createResponse(resultingContent, this.currentRequest);
-    }
-
-    protected
-    boolean checkClientSender () {
-        final var senderId = this.currentRequest.getPacketProperties()
-                                                .getSender()
-                                                .getEntityId();
-        return senderId == this.clientDataProvider.getClientId() ||
-               senderId == StandardIdProvider.STANDARD_CLIENT_ID;
     }
 
     protected
@@ -69,5 +61,14 @@ class ClientHandlerPacketCreator extends ResultingPacketCreator {
         }
 
         return finalContent;
+    }
+
+    protected
+    boolean checkClientSender () {
+        final var senderId = this.currentRequest.getPacketProperties()
+                                                .getSender()
+                                                .getEntityId();
+        return senderId == this.clientDataProvider.getClientId() ||
+               senderId == StandardIdProvider.STANDARD_CLIENT_ID;
     }
 }

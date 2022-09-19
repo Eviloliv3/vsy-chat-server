@@ -43,6 +43,7 @@ class ContentPreProcessor implements PublishablePacketCreator {
 
     private
     boolean isLocalBroadcast (final Packet input) {
-        return input.getPacketProperties().getRecipient().getEntityId() == STANDARD_CLIENT_BROADCAST_ID;
+        return input.getPacketProperties().getRecipient().getEntityId() ==
+               STANDARD_CLIENT_BROADCAST_ID;
     }
 }

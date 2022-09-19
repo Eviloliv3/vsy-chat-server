@@ -91,9 +91,8 @@ class RemoteClientDisconnector {
                         clientId);
 
                 statusSyncBuilder.withContactIdSet(contactIdList)
-                                 .withContactData(
-                                         ConvertCommDataToDTO.convertFrom(
-                                                 communicatorData))
+                                 .withContactData(ConvertCommDataToDTO.convertFrom(
+                                         communicatorData))
                                  .withClientState(currentState)
                                  .withToAdd(false);
 

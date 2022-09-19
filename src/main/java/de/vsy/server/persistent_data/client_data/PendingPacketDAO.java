@@ -81,7 +81,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         var packetAdded = false;
         Map<String, Packet> pendingMap;
 
-        if (this.dataProvider.acquireAccess(true)) {
+        if (!this.dataProvider.acquireAccess(true)) {
             return false;
         }
         pendingMap = readPendingPackets(classification);
@@ -92,7 +92,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             packetAdded = setPendingPackets(classification, pendingMap);
         }
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (packetAdded) {
             LOGGER.info("PendingPacket hinzugefügt.");
@@ -116,9 +116,8 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             return new LinkedHashMap<>();
         }
         allPendingPackets = readAllPendingPackets();
+        this.dataProvider.releaseAccess(false);
         pendingMap = allPendingPackets.get(classification);
-
-        this.dataProvider.releaseAccess();
 
         if (pendingMap == null) {
             pendingMap = new LinkedHashMap<>();
@@ -142,17 +141,16 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         LinkedHashMap<String, Packet> classifiedPendingPackets;
 
         if (toSet != null) {
-            this.dataProvider.releaseAccess();
             classifiedPendingPackets = new LinkedHashMap<>(toSet);
 
-            if (this.dataProvider.acquireAccess(true)) {
+            if (!this.dataProvider.acquireAccess(true)) {
                 return false;
             }
             allPendingPackets = readAllPendingPackets();
             allPendingPackets.put(classification, classifiedPendingPackets);
             packetAdded = this.dataProvider.writeData(allPendingPackets);
 
-            this.dataProvider.releaseAccess();
+            this.dataProvider.releaseAccess(true);
         }
         return packetAdded;
     }
@@ -172,7 +170,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             return new EnumMap<>(PendingType.class);
         }
         fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof EnumMap) {
             try {
@@ -213,7 +211,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
         Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
         LinkedHashMap<String, Packet> pendingMap;
 
-        if (this.dataProvider.acquireAccess(true)) {
+        if (!this.dataProvider.acquireAccess(true)) {
             return;
         }
         allPendingPackets = readAllPendingPackets();
@@ -225,7 +223,7 @@ class PendingPacketDAO implements ClientDataAccess, PendingPacketPersistence {
             this.dataProvider.writeData(allPendingPackets);
         }
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
     }
 
     @Override

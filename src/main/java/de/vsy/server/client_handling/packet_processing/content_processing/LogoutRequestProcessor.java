@@ -45,7 +45,8 @@ class LogoutRequestProcessor implements ContentProcessor<LogoutRequestDTO> {
 
         if (this.clientStateManager.changePersistentClientState(
                 ClientState.AUTHENTICATED, false)) {
-            ThreadContext.put(LOG_FILE_CONTEXT_KEY, Thread.currentThread().getName());
+            ThreadContext.put(LOG_FILE_CONTEXT_KEY,
+                              Thread.currentThread().getName());
 
             this.contentHandler.addResponse(new LogoutResponseDTO(true));
             this.clientStateManager.logoutClient();

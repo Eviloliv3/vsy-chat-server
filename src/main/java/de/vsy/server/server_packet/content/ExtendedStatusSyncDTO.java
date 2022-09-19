@@ -14,8 +14,7 @@ import static java.util.Set.copyOf;
  */
 @JsonDeserialize(builder = ExtendedStatusSyncBuilder.class)
 public
-class ExtendedStatusSyncDTO extends BaseStatusSyncDTO
-        implements ClientContactSync {
+class ExtendedStatusSyncDTO extends BaseStatusSyncDTO implements ClientContactSync {
 
     @Serial
     private static final long serialVersionUID = -2447318735172645953L;

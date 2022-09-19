@@ -3,18 +3,11 @@
  */
 package de.vsy.server.service.packet_logic.processor;
 
-import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
-import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
-import de.vsy.server.server_packet.packet_creation.ClientHandlerPacketCreator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
-import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.ServicePacketProcessorFactory;
-import de.vsy.shared_module.shared_module.exception_processing.PacketHandlingExceptionProcessor;
 import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.error.ErrorDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 
 /**
  * Basic Packetprocessor using the strategy that is passed through the constructor.
@@ -35,7 +28,8 @@ class ServicePacketProcessor {
      * @param sphf the sphf
      */
     public
-    ServicePacketProcessor (final ServicePacketProcessorFactory sphf, final ResultingPacketContentHandler contentHandler) {
+    ServicePacketProcessor (final ServicePacketProcessorFactory sphf,
+                            final ResultingPacketContentHandler contentHandler) {
         super();
         this.sphf = sphf;
         this.contentHandler = contentHandler;
@@ -60,7 +54,7 @@ class ServicePacketProcessor {
                 final var errorContent = new ErrorDTO(phe.getMessage(), input);
                 this.contentHandler.setError(errorContent);
             }
-        }else{
+        } else {
             final var errorMessage = "Paket wurde nicht verarbeitet. Paket-" +
                                      "Identifzierer oder -Typ nicht gefunden.";
             final var errorContent = new ErrorDTO(errorMessage, input);

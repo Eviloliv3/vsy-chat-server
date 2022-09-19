@@ -79,10 +79,13 @@ class RelationRequestProcessor
                                                 "verarbeitet. Sie sind bereits mit " +
                                                 contactData.getDisplayName() +
                                                 " befreundet.");
-        } else if (!desiredState && !contactsAlready) {
-            throw new PacketProcessingException("Freundschaftsanfrage wurde nicht " +
-                                                "verarbeitet. Sie sind nicht mit " +
-                                                contactId + " befreundet.");
+        } else {
+            if (!desiredState && !contactsAlready) {
+                throw new PacketProcessingException(
+                        "Freundschaftsanfrage wurde nicht " +
+                        "verarbeitet. Sie sind nicht mit " + contactId +
+                        " befreundet.");
+            }
         }
     }
 }

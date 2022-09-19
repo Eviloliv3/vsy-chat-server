@@ -25,5 +25,5 @@ interface ClientStatusRegistrationServiceDataProvider
      */
     ServicePacketBufferManager getServicePacketBufferManager ();
 
-    LiveClientStateDAO getLiveClientStateDAO();
+    LiveClientStateDAO getLiveClientStateDAO ();
 }

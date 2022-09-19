@@ -1,7 +1,6 @@
 package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
-import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +30,8 @@ class PendingChatPacketHandling implements PacketHandlingStrategy {
         if (this.handlerDataManager.getGlobalAuthenticationStateControl()
                                    .changePendingState(true)) {
 
-            pendingClientThread = new Thread(new PendingClientBufferWatcher(this.handlerDataManager));
+            pendingClientThread = new Thread(
+                    new PendingClientBufferWatcher(this.handlerDataManager));
             pendingClientThread.start();
         } else {
             LOGGER.error("Global pending state could not be set for: {}",

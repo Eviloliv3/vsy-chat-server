@@ -5,12 +5,6 @@ import de.vsy.server.server.server_connection.LocalServerConnectionData;
 
 public
 interface ServiceBaseDataProvider {
-    /**
-     * Gets the thread status manipulator.
-     *
-     * @return the thread status manipulator
-     */
-    // ThreadStatusManipulator getThreadStatusManipulator ();
 
     /**
      * Gets the client subscription manager.

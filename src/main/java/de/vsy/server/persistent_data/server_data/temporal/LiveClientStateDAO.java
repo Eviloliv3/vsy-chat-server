@@ -56,14 +56,15 @@ class LiveClientStateDAO implements ServerDataAccess {
                 PacketCategory.class);
         final CurrentClientState currentState;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return extraSubscriptions;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return extraSubscriptions;
+        }
         currentState = getClientState(clientId);
+        this.dataProvider.releaseAccess(false);
 
         if (currentState != null) {
             extraSubscriptions.putAll(currentState.getExtraSubscriptions());
         }
-        this.dataProvider.releaseAccess();
         return extraSubscriptions;
     }
 
@@ -76,19 +77,19 @@ class LiveClientStateDAO implements ServerDataAccess {
      */
     public
     CurrentClientState getClientState (final int clientId) {
-       this.dataProvider.releaseAccess();
         CurrentClientState currentClientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return new CurrentClientState(STANDARD_SERVER_ID);
+        if (!this.dataProvider.acquireAccess(false)) {
+            return new CurrentClientState(STANDARD_SERVER_ID);
+        }
         clientStateMap = getAllActiveClientStates();
+        this.dataProvider.releaseAccess(false);
         currentClientState = clientStateMap.get(clientId);
 
         if (currentClientState == null) {
             currentClientState = new CurrentClientState(STANDARD_SERVER_ID);
         }
-        this.dataProvider.releaseAccess();
         return currentClientState;
     }
 
@@ -100,14 +101,14 @@ class LiveClientStateDAO implements ServerDataAccess {
     @SuppressWarnings("unchecked")
     public
     Map<Integer, CurrentClientState> getAllActiveClientStates () {
-       this.dataProvider.releaseAccess();
         Map<Integer, CurrentClientState> readMap = new HashMap<>();
         Object fromFile;
 
-        if(!this.dataProvider.acquireAccess(false))
+        if (!this.dataProvider.acquireAccess(false)) {
             return readMap;
+        }
         fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof HashMap) {
 
@@ -137,8 +138,9 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -150,7 +152,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         clientStateMap.put(clientId, clientState);
         stateChanged = this.dataProvider.writeData(clientStateMap);
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (stateChanged) {
             LOGGER.info("{}: {}", clientId, newState);
@@ -164,8 +166,9 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var subscriptionAdded = false;
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -179,7 +182,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                     clientId);
         }
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         return subscriptionAdded;
     }
@@ -190,8 +193,9 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var subscriptionAdded = false;
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -205,7 +209,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                     clientId);
         }
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         return subscriptionAdded;
     }
@@ -224,8 +228,9 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var pendingStateChanged = false;
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -239,7 +244,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                     clientId);
         }
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         return pendingStateChanged;
     }
@@ -257,8 +262,9 @@ class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var reconnectionAllowed = false;
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
@@ -268,7 +274,7 @@ class LiveClientStateDAO implements ServerDataAccess {
                 reconnectionAllowed = this.dataProvider.writeData(clientStateMap);
             }
         }
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
         return reconnectionAllowed;
     }
 
@@ -288,20 +294,20 @@ class LiveClientStateDAO implements ServerDataAccess {
      */
     public
     boolean getClientPendingState (final int clientId) {
-       this.dataProvider.releaseAccess();
         var clientPending = false;
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return false;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
+        this.dataProvider.releaseAccess(false);
         clientState = clientStateMap.get(clientId);
 
         if (clientState != null) {
             clientPending = clientState.getPendingFlag();
         }
-        this.dataProvider.releaseAccess();
         return clientPending;
     }
 
@@ -314,20 +320,20 @@ class LiveClientStateDAO implements ServerDataAccess {
      */
     public
     boolean getClientReconnectionState (final int clientId) {
-       this.dataProvider.releaseAccess();
         var clientPending = false;
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return false;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
+        this.dataProvider.releaseAccess(false);
         clientState = clientStateMap.get(clientId);
 
         if (clientState != null) {
             clientPending = clientState.getReconnectionState();
         }
-        this.dataProvider.releaseAccess();
         return clientPending;
     }
 
@@ -345,9 +351,11 @@ class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> allClientStates;
         Map<Integer, CurrentClientState> remoteClientStates = new HashMap<>();
 
-            if(!this.dataProvider.acquireAccess(false))
-                return remoteClientStates;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return remoteClientStates;
+        }
         allClientStates = getAllActiveClientStates();
+        this.dataProvider.releaseAccess(false);
 
         for (final Map.Entry<Integer, CurrentClientState> client : allClientStates.entrySet()) {
             final var clientState = client.getValue();
@@ -356,8 +364,6 @@ class LiveClientStateDAO implements ServerDataAccess {
                 remoteClientStates.put(client.getKey(), clientState);
             }
         }
-
-        this.dataProvider.releaseAccess();
         return remoteClientStates;
     }
 
@@ -371,11 +377,12 @@ class LiveClientStateDAO implements ServerDataAccess {
         var clientStatesRemoved = false;
         Map<Integer, CurrentClientState> clientStateMap;
 
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = new HashMap<>();
         clientStatesRemoved = this.dataProvider.writeData(clientStateMap);
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (clientStatesRemoved) {
             LOGGER.info("Klientenzustände wurden entfernt");
@@ -395,12 +402,13 @@ class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> clientStateMap;
         var clientStateRemoved = false;
 
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         clientStateMap = getAllActiveClientStates();
         clientStateRemoved = (clientStateMap.remove(clientId) != null) &&
                              this.dataProvider.writeData(clientStateMap);
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (clientStateRemoved) {
             LOGGER.info("Klient entfernt: {} ", clientId);

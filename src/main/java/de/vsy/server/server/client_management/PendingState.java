@@ -77,9 +77,11 @@ class PendingState {
         if (reconnectState && this.pending && !this.reconnecting) {
             this.reconnecting = true;
             return reconnectSet;
-        } else if (!reconnectState) {
-            this.reconnecting = false;
-            return reconnectSet;
+        } else {
+            if (!reconnectState) {
+                this.reconnecting = false;
+                return reconnectSet;
+            }
         }
         return !reconnectSet;
     }

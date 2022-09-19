@@ -30,10 +30,13 @@ class InterServerCommSyncDTO extends ServerPacketContentImpl {
 
     @JsonCreator
     public
-    InterServerCommSyncDTO(@JsonProperty("synchronizedServers")final Set<Integer> synchronizedServers,
-            @JsonProperty("originatingServerId") final int originatingServerId,
-            @JsonProperty("readByConnectionThread") final int readByConnectionThread,
-            @JsonProperty("serverId") final int serverId){
+    InterServerCommSyncDTO (@JsonProperty("synchronizedServers")
+                            final Set<Integer> synchronizedServers,
+                            @JsonProperty("originatingServerId")
+                            final int originatingServerId,
+                            @JsonProperty("readByConnectionThread")
+                            final int readByConnectionThread,
+                            @JsonProperty("serverId") final int serverId) {
         super(synchronizedServers, originatingServerId, readByConnectionThread);
         this.serverId = serverId;
     }

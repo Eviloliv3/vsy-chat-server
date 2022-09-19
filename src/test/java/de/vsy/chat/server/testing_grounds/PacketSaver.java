@@ -35,7 +35,7 @@ class PacketSaver implements ClientDataAccess {
             persistance.acquireAccess(true);
             persistance.writeData(toWrite);
         } finally {
-            persistance.releaseAccess();
+            persistance.releaseAccess(true);
         }
     }
 
@@ -45,7 +45,7 @@ class PacketSaver implements ClientDataAccess {
             persistance.acquireAccess(false);
             return (Packet) persistance.readData();
         } finally {
-            persistance.releaseAccess();
+            persistance.releaseAccess(false);
         }
     }
 

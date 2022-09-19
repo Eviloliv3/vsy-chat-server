@@ -1,6 +1,5 @@
 package de.vsy.server.server_packet.dispatching;
 
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server.server_connection.RemoteServerConnectionData;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceData;
@@ -16,24 +15,33 @@ import java.util.Deque;
 import java.util.Map;
 
 public
-class InterServerCommunicationPacketDispatcher implements MultiplePacketDispatcher{
+class InterServerCommunicationPacketDispatcher implements MultiplePacketDispatcher {
 
     private static final Logger LOGGER = LogManager.getLogger();
-
     private final RemoteServerConnectionData remoteServerData;
     private final ServicePacketBufferManager serviceBuffers;
     private final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections;
     private final OutputBuffer outputBuffer;
 
     public
-    InterServerCommunicationPacketDispatcher (final RemoteServerConnectionData remoteServerData,
-                                              final ServicePacketBufferManager serviceBuffers,
-                                              final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections,
-                                              final OutputBuffer outputBuffer) {
+    InterServerCommunicationPacketDispatcher (
+            final RemoteServerConnectionData remoteServerData,
+            final ServicePacketBufferManager serviceBuffers,
+            final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections,
+            final OutputBuffer outputBuffer) {
         this.remoteServerData = remoteServerData;
         this.serviceBuffers = serviceBuffers;
         this.responseDirections = responseDirections;
         this.outputBuffer = outputBuffer;
+    }
+
+    @Override
+    public
+    void dispatchPacket (Deque<Packet> output) {
+        while (!output.isEmpty()) {
+            final Packet toDispatch = output.pop();
+            dispatchPacket(toDispatch);
+        }
     }
 
     /**
@@ -45,27 +53,50 @@ class InterServerCommunicationPacketDispatcher implements MultiplePacketDispatch
     @Override
     public
     void dispatchPacket (final Packet output) {
-            if (serverIsRecipient(output)) {
-                sendInboundPacket(output);
-            }else {
-                sendOutboundPacket(output);
-            }
-    }
-
-    @Override
-    public
-    void dispatchPacket (Deque<Packet> output) {
-            while (!output.isEmpty()) {
-                final Packet toDispatch = output.pop();
-                dispatchPacket(toDispatch);
-            }
+        if (serverIsRecipient(output)) {
+            sendInboundPacket(output);
+        } else {
+            sendOutboundPacket(output);
+        }
     }
 
     private
-    boolean serverIsRecipient(final Packet output){
-        final var recipientId = output.getPacketProperties().getRecipient().getEntityId();
+    boolean serverIsRecipient (final Packet output) {
+        final var recipientId = output.getPacketProperties()
+                                      .getRecipient()
+                                      .getEntityId();
         return recipientId != remoteServerData.getServerId() &&
                recipientId != remoteServerData.getServerPort();
+    }
+
+    /**
+     * Regelt den Versand eines, an den Klienten gerichteten Paketes.
+     *
+     * @param output Das Paket vom Typ Packet dass versandt wird.
+     */
+    protected
+    void sendInboundPacket (final Packet output) {
+        if (output == null) {
+            throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+        }
+        PacketBuffer buffer;
+
+        buffer = this.serviceBuffers.getRandomBuffer(this.responseDirections.get(
+                ServiceData.ServiceResponseDirection.INBOUND));
+
+        if (buffer != null) {
+            buffer.appendPacket(output);
+        }
+    }
+
+    /**
+     * Regelt den Versand eines, an den Server gerichteten, Paketes.
+     *
+     * @param output Das Paket vom Typ Packet dass versandt wird.
+     */
+    protected
+    void sendOutboundPacket (final Packet output) {
+        outputBuffer.appendPacket(output);
     }
 
     private
@@ -84,35 +115,5 @@ class InterServerCommunicationPacketDispatcher implements MultiplePacketDispatch
                     "Kein Paket zum Versenden übergeben.");
         }
         return recipientEntity;
-    }
-
-    /**
-     * Regelt den Versand eines, an den Klienten gerichteten Paketes.
-     *
-     * @param output Das Paket vom Typ Packet dass versandt wird.
-     */
-    protected
-    void sendInboundPacket (final Packet output) {
-        if(output == null){
-            throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
-        }
-        PacketBuffer buffer;
-
-        buffer = this.serviceBuffers.getRandomBuffer(
-                this.responseDirections.get(ServiceData.ServiceResponseDirection.INBOUND));
-
-        if (buffer != null) {
-            buffer.appendPacket(output);
-        }
-    }
-
-    /**
-     * Regelt den Versand eines, an den Server gerichteten, Paketes.
-     *
-     * @param output Das Paket vom Typ Packet dass versandt wird.
-     */
-    protected
-    void sendOutboundPacket (final Packet output) {
-        outputBuffer.appendPacket(output);
     }
 }

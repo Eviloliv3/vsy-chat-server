@@ -23,7 +23,6 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.communicat
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
@@ -123,18 +122,18 @@ class PacketAssignmentService extends ServiceBase {
 
         try {
             request = this.requestBuffer.getPacket();
-            if(request != null){
+            if (request != null) {
                 processPacket(request);
             }
         } catch (InterruptedException ie) {
-            ServiceBase.LOGGER.error("Beim Holen des naechsten Pakets " +
-                                          "unterbrochen.");
+            ServiceBase.LOGGER.error(
+                    "Beim Holen des naechsten Pakets " + "unterbrochen.");
             Thread.currentThread().interrupt();
         }
     }
 
     private
-    void processPacket(final Packet nextPacket){
+    void processPacket (final Packet nextPacket) {
         final var validationString = validator.checkPacket(nextPacket);
 
         if (validationString.isEmpty()) {
@@ -146,7 +145,7 @@ class PacketAssignmentService extends ServiceBase {
                 final var errorResponse = this.pheProcessor.processException(
                         new PacketTransmissionException(errorMessage), nextPacket);
 
-                if(errorResponse != null) {
+                if (errorResponse != null) {
                     this.requestBuffer.prependPacket(errorResponse);
                 }
             }

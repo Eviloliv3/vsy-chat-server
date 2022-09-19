@@ -14,17 +14,17 @@ class ServerStatusSyncPacketCreator extends ResultingPacketCreator {
     public
     Packet createRequest (PacketContent processedContent,
                           CommunicationEndpoint recipient) {
-        if(processedContent == null){
+        if (processedContent == null) {
             throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
         }
-        if(recipient == null){
+        if (recipient == null) {
             throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
         }
         final var wrappedContent = wrapIfNecessary(processedContent);
 
-        if(this.currentRequest == null){
+        if (this.currentRequest == null) {
             return PacketCompiler.createRequest(recipient, wrappedContent);
-        }else{
+        } else {
             return PacketCompiler.createFollowUpRequest(recipient, wrappedContent,
                                                         this.currentRequest);
         }
@@ -33,7 +33,7 @@ class ServerStatusSyncPacketCreator extends ResultingPacketCreator {
     @Override
     public
     Packet createResponse (PacketContent processedContent) {
-        if(processedContent == null){
+        if (processedContent == null) {
             throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
         }
         final var wrappedContent = wrapIfNecessary(processedContent);
@@ -41,12 +41,12 @@ class ServerStatusSyncPacketCreator extends ResultingPacketCreator {
     }
 
     protected
-    PacketContent wrapIfNecessary(PacketContent processedContent){
+    PacketContent wrapIfNecessary (PacketContent processedContent) {
         final PacketContent wrappedContent;
 
-        if(processedContent instanceof ServerPacketContentImpl) {
+        if (processedContent instanceof ServerPacketContentImpl) {
             wrappedContent = processedContent;
-        }else{
+        } else {
             wrappedContent = wrapContent(processedContent);
         }
         return wrappedContent;

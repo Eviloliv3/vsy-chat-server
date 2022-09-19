@@ -77,8 +77,8 @@ class ClientSubscriptionHandler implements ClientStateListener {
             if (!handleExtraSubscribing(clientId, extraSubscriptionMap,
                                         extraSubscriptionLogic)) {
                 LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren der " +
-                             "Zusatzabos. Siehe TraceLog fuer vollstaendigen Ablauf." +
-                             " Siehe WarnLog fuer Fehlerschlaege.");
+                            "Zusatzabos. Siehe TraceLog fuer vollstaendigen Ablauf." +
+                            " Siehe WarnLog fuer Fehlerschlaege.");
             }
         }
     }
@@ -96,7 +96,7 @@ class ClientSubscriptionHandler implements ClientStateListener {
 
             for (var currentThreadId : threadIdSet) {
                 successFul &= handler.handle(topic, currentThreadId,
-                                                        handlerBoundBuffer);
+                                             handlerBoundBuffer);
             }
         }
         return successFul;
@@ -114,7 +114,7 @@ class ClientSubscriptionHandler implements ClientStateListener {
             for (final var currentThread : topicSubscriptionSet.getValue()) {
 
                 successful &= !extraSubscriptionLogic.handle(clientId, currentTopic,
-                                                   currentThread);
+                                                             currentThread);
             }
         }
         return successful;

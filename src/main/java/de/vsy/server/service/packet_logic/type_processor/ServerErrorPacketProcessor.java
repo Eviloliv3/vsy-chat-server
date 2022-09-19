@@ -15,10 +15,6 @@ class ServerErrorPacketProcessor implements ServicePacketProcessor {
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
-     * threadsicheres Flag; zeigt an, ob bestehende Klientenverbindungen nach
-     * Serverstart geladen wurden.
-     */
-    /**
      * Instantiates a new server error PacketHandler.
      *
      * @param serviceDataProvider the dataManagement accessLimiter provider

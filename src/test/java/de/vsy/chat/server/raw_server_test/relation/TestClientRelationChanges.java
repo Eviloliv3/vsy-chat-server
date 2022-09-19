@@ -124,7 +124,8 @@ class TestClientRelationChanges extends ServerTestBase {
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientData.getCommunicatorId(),
                                                 STANDARD_SERVER_ID, null, true);
-        TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(STANDARD_SERVER_ID), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(
+                                                            STANDARD_SERVER_ID), content,
                                                     "Ungültige Kontaktanfrage. Fehlerhafte Kommunikatordaten: Es sind keine Kommunikatordaten vorhanden.");
     }
 
@@ -138,7 +139,8 @@ class TestClientRelationChanges extends ServerTestBase {
                                                 clientData.getCommunicatorId(),
                                                 15003, clientData, true);
 
-        TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(15003), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne,
+                                                    getClientEntity(15003), content,
                                                     "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
     }
 
@@ -151,7 +153,8 @@ class TestClientRelationChanges extends ServerTestBase {
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientData.getCommunicatorId(),
                                                 15002, clientData, true);
-        TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(15002), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne,
+                                                    getClientEntity(15002), content,
                                                     "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind bereits mit");
     }
 
@@ -164,7 +167,8 @@ class TestClientRelationChanges extends ServerTestBase {
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientData.getCommunicatorId(),
                                                 15005, clientData, false);
-        TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(15005), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne,
+                                                    getClientEntity(15005), content,
                                                     "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind nicht mit");
     }
 }

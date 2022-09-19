@@ -40,12 +40,6 @@ class ServiceDataAccessManager
 
     @Override
     public
-    LiveClientStateDAO getLiveClientStateDAO () {
-        return this.persistenClientStates;
-    }
-
-    @Override
-    public
     CommunicatorPersistenceDAO getCommunicatorDataAccessor () {
         return this.clientRegistry;
     }
@@ -66,6 +60,12 @@ class ServiceDataAccessManager
     public
     ServicePacketBufferManager getServicePacketBufferManager () {
         return this.serviceBuffers;
+    }
+
+    @Override
+    public
+    LiveClientStateDAO getLiveClientStateDAO () {
+        return this.persistenClientStates;
     }
 
     @Override

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
-import de.vsy.shared_utility.standard_value.StandardIdProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,8 +62,9 @@ class IdProvider implements ServerDataAccess {
         Map<String, Integer> idMap;
         int newId;
 
-            if(this.dataProvider.acquireAccess(true))
-                return STANDARD_CLIENT_ID;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return STANDARD_CLIENT_ID;
+        }
         idMap = readIdMap();
         newId = idMap.get("client");
 
@@ -75,7 +75,7 @@ class IdProvider implements ServerDataAccess {
         idMap.put("client", newId + 1);
         this.dataProvider.writeData(idMap);
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         return newId;
     }
@@ -89,10 +89,11 @@ class IdProvider implements ServerDataAccess {
     Map<String, Integer> readIdMap () {
         Object fromFile;
         var readMap = new HashMap<String, Integer>();
-            if(!this.dataProvider.acquireAccess(false))
-                return readMap;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return readMap;
+        }
         fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof HashMap) {
 

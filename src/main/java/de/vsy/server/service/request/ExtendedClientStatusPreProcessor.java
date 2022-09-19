@@ -29,16 +29,16 @@ class ExtendedClientStatusPreProcessor {
     }
 
     public
-    PacketContent processContent (ExtendedStatusSyncDTO toProcess)
-    throws PacketProcessingException {
+    PacketContent processContent (ExtendedStatusSyncDTO toProcess) {
         Set<Packet> updatePackets;
-        Set<Integer> eligibleRecipients = new HashSet<>(
-                toProcess.getContactIdSet());
+        Set<Integer> eligibleRecipients = new HashSet<>(toProcess.getContactIdSet());
 
         eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT,
                                                                  eligibleRecipients);
 
-        LogManager.getLogger().debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients, toProcess.getContactIdSet());
+        LogManager.getLogger()
+                  .debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients,
+                         toProcess.getContactIdSet());
         updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess,
                                                               eligibleRecipients);
 

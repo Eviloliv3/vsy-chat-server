@@ -78,7 +78,8 @@ class ServiceControl {
     /** Start client status synchronization thread. */
     public
     void startClientStatusSynchronizationThread () {
-        final var csss = new ClientStatusSynchronizationService(this.serviceDataModel);
+        final var csss = new ClientStatusSynchronizationService(
+                this.serviceDataModel);
         startService(csss);
     }
 

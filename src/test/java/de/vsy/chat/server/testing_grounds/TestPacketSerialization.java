@@ -1,8 +1,8 @@
 package de.vsy.chat.server.testing_grounds;
 
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
+import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;

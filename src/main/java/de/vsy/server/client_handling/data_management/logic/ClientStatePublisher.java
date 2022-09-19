@@ -56,9 +56,8 @@ class ClientStatePublisher implements ClientStateListener {
         switch (clientState) {
             case AUTHENTICATED ->
                     statePacket = buildSimpleStatusPacket(clientState, changeTo);
-            case ACTIVE_MESSENGER -> {
-                statePacket = buildExtendedStatusPacket(clientState, changeTo);
-            }
+            case ACTIVE_MESSENGER ->
+                    statePacket = buildExtendedStatusPacket(clientState, changeTo);
             default -> statePacket = null;
         }
         return statePacket;

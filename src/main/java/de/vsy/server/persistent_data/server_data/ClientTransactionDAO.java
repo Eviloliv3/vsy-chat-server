@@ -52,13 +52,13 @@ class ClientTransactionDAO implements ServerDataAccess {
     public
     boolean addTransaction (final String transactionHash) {
         var transactionAdded = false;
-        
 
         if (transactionHash != null) {
             Map<String, Boolean> allTransactions;
 
-                if(!this.dataProvider.acquireAccess(true))
-                    return false;
+            if (!this.dataProvider.acquireAccess(true)) {
+                return false;
+            }
             allTransactions = readTransactions();
             transactionAdded =
                     allTransactions.putIfAbsent(transactionHash, false) == null;
@@ -67,7 +67,7 @@ class ClientTransactionDAO implements ServerDataAccess {
                 this.dataProvider.writeData(allTransactions);
             }
 
-            this.dataProvider.releaseAccess();
+            this.dataProvider.releaseAccess(true);
         }
         return transactionAdded;
     }
@@ -83,11 +83,11 @@ class ClientTransactionDAO implements ServerDataAccess {
         Map<String, Boolean> allTransactions = new HashMap<>();
         Object fromFile;
 
-            if(this.dataProvider.acquireAccess(false))
-                return allTransactions;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return allTransactions;
+        }
         fromFile = this.dataProvider.readData();
-
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         try {
             allTransactions = (Map<String, Boolean>) fromFile;
@@ -112,8 +112,9 @@ class ClientTransactionDAO implements ServerDataAccess {
         if (transactionHash != null) {
             Map<String, Boolean> allTransactions;
 
-                if(!this.dataProvider.acquireAccess(true))
-                    return false;
+            if (!this.dataProvider.acquireAccess(true)) {
+                return false;
+            }
             allTransactions = readTransactions();
 
             if (allTransactions.containsKey(transactionHash)) {
@@ -121,7 +122,7 @@ class ClientTransactionDAO implements ServerDataAccess {
                 transactionComplete = this.dataProvider.writeData(allTransactions);
             }
 
-            this.dataProvider.releaseAccess();
+            this.dataProvider.releaseAccess(true);
         }
         return transactionComplete;
     }
@@ -140,13 +141,14 @@ class ClientTransactionDAO implements ServerDataAccess {
      */
     public
     Map<String, Boolean> getAllIncompleteTransactions () {
-        
+
         final Map<String, Boolean> incompleteTransactions = new HashMap<>();
 
-            if(this.dataProvider.acquireAccess(false))
-                return incompleteTransactions;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return incompleteTransactions;
+        }
         final var allTransactions = readTransactions();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         for (final var transaction : allTransactions.entrySet()) {
             final var completionState = transaction.getValue();
@@ -168,19 +170,20 @@ class ClientTransactionDAO implements ServerDataAccess {
     public
     boolean isTransactionCompleted (final Packet toCheck) {
         var transactionComplete = false;
-        
+
         final var hashToCheck = toCheck.getPacketHash();
         Map<String, Boolean> readTransactions;
 
         if (hashToCheck != null) {
 
-                if(this.dataProvider.acquireAccess(false))
-                    return false;
+            if (!this.dataProvider.acquireAccess(false)) {
+                return false;
+            }
             readTransactions = readTransactions();
+            this.dataProvider.releaseAccess(false);
             transactionComplete = Objects.equals(true,
                                                  readTransactions.get(hashToCheck));
 
-            this.dataProvider.releaseAccess();
         }
 
         return transactionComplete;

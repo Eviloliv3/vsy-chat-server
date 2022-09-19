@@ -52,8 +52,9 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         Set<CommunicatorData> communicatorList;
         var communicatorAdded = false;
 
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         communicatorList = readRegisteredCommunicators();
 
         if (communicatorList.add(commData)) {
@@ -63,7 +64,7 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
                          "existiert bereits ein Kommunikator mit demselben " +
                          "Anzeigenamen.");
         }
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (communicatorAdded) {
             LOGGER.info("Communicator added.");
@@ -82,11 +83,11 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         Object fromFile;
         Set<CommunicatorData> readList = new HashSet<>();
 
-            if(!this.dataProvider.acquireAccess(false))
-                return readList;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return readList;
+        }
         fromFile = this.dataProvider.readData();
-
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof HashSet) {
 
@@ -119,12 +120,13 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         var communicatorRemoved = false;
         CommunicatorData communicatorToRemove;
 
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         communicatorToRemove = getCommunicatorData(communicatorId);
         communicatorRemoved = removeCommunicator(communicatorToRemove);
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         return communicatorRemoved;
     }
@@ -141,9 +143,11 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         CommunicatorData foundCommunicator = null;
         Set<CommunicatorData> communicatorList;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return null;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return null;
+        }
         communicatorList = readRegisteredCommunicators();
+        this.dataProvider.releaseAccess(false);
 
         for (final CommunicatorData CommunicatorData : communicatorList) {
 
@@ -152,8 +156,6 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
                 break;
             }
         }
-
-        this.dataProvider.releaseAccess();
         return foundCommunicator;
     }
 
@@ -169,13 +171,14 @@ class CommunicatorPersistenceDAO implements ServerDataAccess {
         var communicatorRemoved = false;
         Set<CommunicatorData> communicatorList;
 
-            if(this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         communicatorList = readRegisteredCommunicators();
         communicatorRemoved = (communicatorList.remove(clientAuthData) &&
                                this.dataProvider.writeData(communicatorList));
 
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         if (communicatorRemoved) {
             LOGGER.info("Communicator removed.");

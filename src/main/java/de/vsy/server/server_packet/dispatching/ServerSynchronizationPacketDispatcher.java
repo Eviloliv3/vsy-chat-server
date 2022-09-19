@@ -23,10 +23,20 @@ class ServerSynchronizationPacketDispatcher implements MultiplePacketDispatcher 
     private final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections;
 
     public
-    ServerSynchronizationPacketDispatcher (final ServicePacketBufferManager serviceBuffers,
-                                           final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections) {
+    ServerSynchronizationPacketDispatcher (
+            final ServicePacketBufferManager serviceBuffers,
+            final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections) {
         this.serviceBuffers = serviceBuffers;
         this.responseDirections = responseDirections;
+    }
+
+    @Override
+    public
+    void dispatchPacket (Deque<Packet> output) {
+        while (!output.isEmpty()) {
+            final var currentPacket = output.pop();
+            this.dispatchPacket(currentPacket);
+        }
     }
 
     /**
@@ -40,7 +50,6 @@ class ServerSynchronizationPacketDispatcher implements MultiplePacketDispatcher 
     void dispatchPacket (final Packet output) {
         final var recipientEntity = getRecipientEntity(output);
 
-
         if (recipientEntity != null) {
 
             switch (recipientEntity) {
@@ -48,15 +57,6 @@ class ServerSynchronizationPacketDispatcher implements MultiplePacketDispatcher 
                 case SERVER -> sendOutboundPacket(output);
                 default -> LOGGER.error("Ungültige Direktion.");
             }
-        }
-    }
-
-    @Override
-    public
-    void dispatchPacket (Deque<Packet> output) {
-        while(!output.isEmpty()){
-            final var currentPacket = output.pop();
-            this.dispatchPacket(currentPacket);
         }
     }
 
@@ -85,13 +85,13 @@ class ServerSynchronizationPacketDispatcher implements MultiplePacketDispatcher 
      */
     protected
     void sendInboundPacket (final Packet output) {
-        if(output == null){
+        if (output == null) {
             throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
         }
         PacketBuffer buffer;
 
-        buffer = this.serviceBuffers.getRandomBuffer(
-                this.responseDirections.get(ServiceData.ServiceResponseDirection.INBOUND));
+        buffer = this.serviceBuffers.getRandomBuffer(this.responseDirections.get(
+                ServiceData.ServiceResponseDirection.INBOUND));
 
         if (buffer != null) {
             buffer.appendPacket(output);
@@ -105,13 +105,13 @@ class ServerSynchronizationPacketDispatcher implements MultiplePacketDispatcher 
      */
     protected
     void sendOutboundPacket (final Packet output) {
-        if(output == null){
+        if (output == null) {
             throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
         }
         PacketBuffer buffer;
 
-        buffer = this.serviceBuffers.getRandomBuffer(
-                this.responseDirections.get(ServiceData.ServiceResponseDirection.OUTBOUND));
+        buffer = this.serviceBuffers.getRandomBuffer(this.responseDirections.get(
+                ServiceData.ServiceResponseDirection.OUTBOUND));
 
         if (buffer != null) {
             buffer.appendPacket(output);

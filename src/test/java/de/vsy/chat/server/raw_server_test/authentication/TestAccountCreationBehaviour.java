@@ -43,8 +43,9 @@ class TestAccountCreationBehaviour extends ServerTestBase {
                               .withPersonalData(PersonalData.valueOf(
                                       "ZufallsPeter" + randomAppendix, "Zufall"));
         content = new NewAccountRequestDTO(accountCreationBuilder.build());
-        TestResponseSingleClient.checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                                               LoginResponseDTO.class);
+        TestResponseSingleClient.checkResponse(clientOne,
+                                               getServerEntity(STANDARD_SERVER_ID),
+                                               content, LoginResponseDTO.class);
         LOGGER.info("Test: Neues Konto erstellen -> Erfolg -- beendet");
     }
 
@@ -60,8 +61,8 @@ class TestAccountCreationBehaviour extends ServerTestBase {
                               .withPersonalData(PersonalData.valueOf("34fsjö5&",
                                                                      "jsdfj34ßtm"));
         content = new NewAccountRequestDTO(accountCreationBuilder.build());
-        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-                                                    "Fehlerhafte Klientendaten:");
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(
+                STANDARD_SERVER_ID), content, "Fehlerhafte Klientendaten:");
         LOGGER.info("Test: Neues Konto nicht erstellt -> ungültigeDaten -- beendet");
     }
 
@@ -77,7 +78,8 @@ class TestAccountCreationBehaviour extends ServerTestBase {
                               .withPersonalData(
                                       PersonalData.valueOf("Frank", "Relation1"));
         content = new NewAccountRequestDTO(accountCreationBuilder.build());
-        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
+        TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(
+                                                            STANDARD_SERVER_ID), content,
                                                     "Es gibt bereits einen Account mit den, von Ihnen, eingegebenen Login-Daten.");
         LOGGER.info(
                 "Test: Neues Konto nicht erstellt -> Konto existiert bereits -- beendet");
@@ -94,7 +96,8 @@ class TestAccountCreationBehaviour extends ServerTestBase {
                                       TestClientDataProvider.FRANK_1_AUTH)
                               .withPersonalData(valueOf("Frank", "Franke"));
         content = new NewAccountRequestDTO(accountCreationBuilder.build());
-        TestResponseSingleClient.checkErrorResponse(client, getServerEntity(STANDARD_SERVER_ID), content,
+        TestResponseSingleClient.checkErrorResponse(client, getServerEntity(
+                                                            STANDARD_SERVER_ID), content,
                                                     "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
         LOGGER.info(
                 "Test: Neues Konto nicht erstellt -> bereits eingeloggt -- beendet");

@@ -10,7 +10,6 @@ import de.vsy.server.persistent_data.data_bean.AuthenticationData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,9 +57,11 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         var idFound = false;
         Set<AuthenticationData> regClients;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return false;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return false;
+        }
         regClients = readRegisteredClients();
+        this.dataProvider.releaseAccess(false);
 
         for (final AuthenticationData authData : regClients) {
 
@@ -69,7 +70,6 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                 break;
             }
         }
-            this.dataProvider.releaseAccess();
         return idFound;
     }
 
@@ -84,10 +84,11 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         Object fromFile;
         Set<AuthenticationData> readList = null;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return new HashSet<>();
+        if (!this.dataProvider.acquireAccess(false)) {
+            return new HashSet<>();
+        }
         fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof HashSet) {
 
@@ -128,9 +129,11 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         var clientAuth = AuthenticationData.valueOf(loginName, password,
                                                     STANDARD_CLIENT_ID);
 
-            if(!this.dataProvider.acquireAccess(false))
-                return clientId;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return clientId;
+        }
         readList = readRegisteredClients();
+        this.dataProvider.releaseAccess(false);
 
         for (final AuthenticationData authData : readList) {
 
@@ -139,9 +142,6 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                 break;
             }
         }
-
-        this.dataProvider.releaseAccess();
-
         return clientId;
     }
 
@@ -157,8 +157,9 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         var accountRemoved = false;
         Set<AuthenticationData> regClients;
 
-            if(!this.dataProvider.acquireAccess(true))
-                return false;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return false;
+        }
         regClients = readRegisteredClients();
 
         for (final var authData : regClients) {
@@ -168,7 +169,7 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                                  this.dataProvider.writeData(regClients);
             }
         }
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
 
         return accountRemoved;
     }
@@ -193,8 +194,9 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
         Set<AuthenticationData> regClients;
 
         if (toAdd != null) {
-                if(!this.dataProvider.acquireAccess(true))
-                    return false;
+            if (!this.dataProvider.acquireAccess(true)) {
+                return false;
+            }
             regClients = readRegisteredClients();
 
             for (final AuthenticationData authData : regClients) {
@@ -211,7 +213,7 @@ class ClientAuthPersistenceDAO implements ServerDataAccess {
                 LOGGER.info("Account erstellt.");
             }
 
-            this.dataProvider.releaseAccess();
+            this.dataProvider.releaseAccess(true);
         }
 
         return accountRegistered;

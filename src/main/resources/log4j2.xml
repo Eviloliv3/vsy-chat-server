@@ -10,7 +10,7 @@
             <PatternLayout pattern="${stdPattern}"/>
         </Console>
         <RollingRandomAccessFile name="Rolling-default" filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default.log"
-                                         filePattern="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
+                                 filePattern="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/default-%i.log.gz">
             <PatternLayout pattern="${stdPattern}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -29,8 +29,8 @@
             The value dynamically determines the name of the log file. -->
                 <Route>
                     <RollingRandomAccessFile name="Rolling-${ctx:logFilename}"
-                                                     filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
-                                                     filePattern="logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
+                                             filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
+                                             filePattern="logs/${ctx:routeDir}/%d{yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
                             <SizeBasedTriggeringPolicy size="10 MB"/>

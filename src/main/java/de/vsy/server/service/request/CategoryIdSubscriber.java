@@ -67,7 +67,7 @@ class CategoryIdSubscriber {
      */
     public
     void publish (final Packet toPublish) {
-        if(toPublish == null){
+        if (toPublish == null) {
             throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
         }
 

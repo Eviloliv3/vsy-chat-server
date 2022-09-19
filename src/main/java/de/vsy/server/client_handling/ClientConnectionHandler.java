@@ -91,8 +91,9 @@ class ClientConnectionHandler implements Runnable {
     private
     void finishThreadSetup () {
         var localDate = LocalDateTime.now();
-        var threadName = THREAD_BASE_NAME + localDate.format(
-                DateTimeFormatter.ISO_LOCAL_DATE) + "_" + localDate.getNano();
+        var threadName = THREAD_BASE_NAME +
+                         localDate.format(DateTimeFormatter.ISO_LOCAL_DATE) + "_" +
+                         localDate.getNano();
 
         ThreadContext.clearAll();
         ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_CLIENT_ROUTE_VALUE);

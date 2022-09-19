@@ -34,9 +34,10 @@ class ResultingPacketContentHandler {
     }
 
     public
-    void addRequest(PacketContent requestContent, final
-                           CommunicationEndpoint recipient){
-        final var request = this.standardResultCreator.createRequest(requestContent, recipient);
+    void addRequest (PacketContent requestContent,
+                     final CommunicationEndpoint recipient) {
+        final var request = this.standardResultCreator.createRequest(requestContent,
+                                                                     recipient);
         this.packetCache.addPacket(request);
     }
 

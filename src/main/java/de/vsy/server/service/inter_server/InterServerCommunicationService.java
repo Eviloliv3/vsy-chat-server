@@ -12,7 +12,6 @@ import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
 import de.vsy.server.server_packet.dispatching.InterServerCommunicationPacketDispatcher;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
-import de.vsy.server.server_packet.dispatching.ServerSynchronizationPacketDispatcher;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.Service;
@@ -114,10 +113,12 @@ class InterServerCommunicationService extends ServiceBase {
                     remoteConnectionData);
             Thread.currentThread().interrupt();
         }
-        this.packetDispatcher = new InterServerCommunicationPacketDispatcher(this.remoteConnectionData,
-                                                                             this.serviceDataAccess.getServicePacketBufferManager(),
-                                                                             SERVICE_SPECIFICATIONS.getResponseDirections(),
-                                                                             this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+        this.packetDispatcher = new InterServerCommunicationPacketDispatcher(
+                this.remoteConnectionData,
+                this.serviceDataAccess.getServicePacketBufferManager(),
+                SERVICE_SPECIFICATIONS.getResponseDirections(),
+                this.threadBuffers.getPacketBuffer(
+                        ThreadPacketBufferLabel.OUTSIDE_BOUND));
     }
 
     @Override
@@ -253,7 +254,7 @@ class InterServerCommunicationService extends ServiceBase {
             try {
                 final var input = inputBuffer.getPacket();
 
-                if(input != null){
+                if (input != null) {
                     processPacket(input);
                 }
             } catch (InterruptedException ie) {
@@ -267,24 +268,6 @@ class InterServerCommunicationService extends ServiceBase {
             Thread.currentThread().interrupt();
         }
         LOGGER.info("Eingehende Pakete werden nicht mehr weiter verarbeitet.");
-    }
-
-    private void processPacket(final Packet nextPacket){
-        final Packet output;
-        final var validationString = this.validator.checkPacket(nextPacket);
-
-        if (validationString.isEmpty()) {
-            final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
-            serverPacketContent.setReadingConnectionThread(getServiceId());
-            output = nextPacket;
-        } else {
-            final var errorMessage = "Das Paket wurde nicht zugestellt. ";
-            final var processingException = new PacketProcessingException(
-                    errorMessage + validationString.get());
-            output = this.pheProcessor.processException(processingException,
-                                                        nextPacket);
-        }
-        this.packetDispatcher.dispatchPacket(output);
     }
 
     private
@@ -334,6 +317,25 @@ class InterServerCommunicationService extends ServiceBase {
                 this.remoteConnectionData);
         this.serverConnectionDataManager.removeRemoteConnectionData(
                 currentRemoteConnectionData);
+    }
+
+    private
+    void processPacket (final Packet nextPacket) {
+        final Packet output;
+        final var validationString = this.validator.checkPacket(nextPacket);
+
+        if (validationString.isEmpty()) {
+            final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
+            serverPacketContent.setReadingConnectionThread(getServiceId());
+            output = nextPacket;
+        } else {
+            final var errorMessage = "Das Paket wurde nicht zugestellt. ";
+            final var processingException = new PacketProcessingException(
+                    errorMessage + validationString.get());
+            output = this.pheProcessor.processException(processingException,
+                                                        nextPacket);
+        }
+        this.packetDispatcher.dispatchPacket(output);
     }
 
     /**

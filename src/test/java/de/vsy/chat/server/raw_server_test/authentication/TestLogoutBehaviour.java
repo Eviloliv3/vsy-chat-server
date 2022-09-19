@@ -35,10 +35,14 @@ class TestLogoutBehaviour extends ServerTestBase {
         LOGGER.info("Test: Logout fehlgeschlagen -> nicht eingeloggt");
 
         final var clientOne = super.getUnusedClientConnection();
-        final var logoutContent = new LogoutRequestDTO(clientOne.getCommunicatorData());
+        final var logoutContent = new LogoutRequestDTO(
+                clientOne.getCommunicatorData());
 
-        TestResponseSingleClient.checkErrorResponse(clientOne, CommunicationEndpoint.getServerEntity(STANDARD_SERVER_ID),
-                                                    logoutContent, "Anfrage nicht bearbeitet. Sie sind noch nicht authentifiziert.");
+        TestResponseSingleClient.checkErrorResponse(clientOne,
+                                                    CommunicationEndpoint.getServerEntity(
+                                                            STANDARD_SERVER_ID),
+                                                    logoutContent,
+                                                    "Anfrage nicht bearbeitet. Sie sind noch nicht authentifiziert.");
         LOGGER.info("Test: Logout fehlgeschlagen -> nicht eingeloggt -- beendet");
     }
 

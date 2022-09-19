@@ -70,12 +70,12 @@ class MessageDAO implements ClientDataAccess {
         Map<Integer, List<TextMessageDTO>> readMap;
         List<TextMessageDTO> readMessages;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return new ArrayList<>();
+        if (!this.dataProvider.acquireAccess(false)) {
+            return new ArrayList<>();
+        }
         readMap = readAllClientMessages();
+        this.dataProvider.releaseAccess(false);
         readMessages = readMap.get(clientId);
-
-        this.dataProvider.releaseAccess();
 
         if (readMessages == null) {
             readMessages = new ArrayList<>();
@@ -94,10 +94,11 @@ class MessageDAO implements ClientDataAccess {
         var readMap = new HashMap<Integer, List<TextMessageDTO>>();
         Object fromFile;
 
-            if(!this.dataProvider.acquireAccess(false))
-                return readMap;
+        if (!this.dataProvider.acquireAccess(false)) {
+            return readMap;
+        }
         fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(false);
 
         if (fromFile instanceof HashMap) {
 
@@ -115,12 +116,13 @@ class MessageDAO implements ClientDataAccess {
     void removeMessages (final int contactId) {
         Map<Integer, List<TextMessageDTO>> oldMessages;
 
-            if(this.dataProvider.acquireAccess(true))
-                return;
+        if (!this.dataProvider.acquireAccess(true)) {
+            return;
+        }
         oldMessages = this.readAllClientMessages();
         oldMessages.remove(contactId);
         this.dataProvider.writeData(oldMessages);
-        this.dataProvider.releaseAccess();
+        this.dataProvider.releaseAccess(true);
     }
 
     @Override
@@ -144,19 +146,20 @@ class MessageDAO implements ClientDataAccess {
         List<TextMessageDTO> msgHistory;
 
         if (contactId > 0 && msg != null) {
-                if(this.dataProvider.acquireAccess(true))
-                    return false;
+            if (!this.dataProvider.acquireAccess(true)) {
+                return false;
+            }
             oldMessages = readAllClientMessages();
             msgHistory = oldMessages.getOrDefault(contactId, new ArrayList<>());
-                msgHistory.add(msg);
+            msgHistory.add(msg);
 
-                while (msgHistory.size() >= MAX_HISTORY_LENGTH) {
-                    msgHistory.remove(0);
-                }
-                oldMessages.put(contactId, msgHistory);
-                messageSaved = this.dataProvider.writeData(oldMessages);
+            while (msgHistory.size() >= MAX_HISTORY_LENGTH) {
+                msgHistory.remove(0);
+            }
+            oldMessages.put(contactId, msgHistory);
+            messageSaved = this.dataProvider.writeData(oldMessages);
 
-            this.dataProvider.releaseAccess();
+            this.dataProvider.releaseAccess(true);
         }
         return messageSaved;
     }

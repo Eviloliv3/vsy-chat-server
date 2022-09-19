@@ -1,13 +1,13 @@
 package de.vsy.chat.server.server_test_helpers;
 
+import de.vsy.server.server.data.ConnectionSpecifications;
+import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.shared_module.shared_module.packet_creation.NonStaticPacketCompiler;
 import de.vsy.shared_module.shared_module.packet_creation.OriginatingEntityProvider;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;
-import de.vsy.server.server.data.ConnectionSpecifications;
-import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
@@ -16,6 +16,7 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.authenticat
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutRequestDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutResponseDTO;
+import de.vsy.shared_transmission.shared_transmission.packet.content.error.ErrorDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -207,7 +208,7 @@ class ClientConnection {
 
         PacketBuffer handlerBoundBuffer = this.bufferManager.getPacketBuffer(
                 ThreadPacketBufferLabel.HANDLER_BOUND);
-        do{
+        do {
             try {
                 readPacket = handlerBoundBuffer.getPacket();
             } catch (InterruptedException ie) {
@@ -215,7 +216,7 @@ class ClientConnection {
                 LOGGER.info("Beim Holen des naechsten Pakets unterbrochen.");
                 break;
             }
-        } while (readPacket == null && System.currentTimeMillis() < timeout);
+        } while (readPacket == null);// && System.currentTimeMillis() < timeout);
         return readPacket;
     }
 
@@ -251,6 +252,9 @@ class ClientConnection {
                                 "statt LoginResponseDTO: {}",
                                 this.authenticationData.getLogin(),
                                 content.getClass().getSimpleName());
+                    if(content instanceof ErrorDTO errorResponse){
+                        LOGGER.info(errorResponse.getErrorMessage());
+                    }
                 }
             } else {
                 LOGGER.info("{}-Login fehlgeschlagen. Keine Antwort " + "erhalten.",

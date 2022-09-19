@@ -50,14 +50,16 @@ class RelationResponseProcessor
         final var iAmOriginator = this.checkClientOriginator(extractedContent);
 
         if (isFriendshipRequest && extractedContent.getDecision()) {
-            RelationManipulator.addContact(requestData.getContactType(),
-                                           contactId, this.contactListAccess);
+            RelationManipulator.addContact(requestData.getContactType(), contactId,
+                                           this.contactListAccess);
             this.appendStatusMessage(contactId, true);
-        } else if (iAmOriginator && !isFriendshipRequest) {
-            RelationManipulator.removeContact(requestData.getContactType(),
-                                              contactId, this.contactListAccess,
-                                              this.messageHistoryAccess);
-            this.appendStatusMessage(contactId, false);
+        } else {
+            if (iAmOriginator && !isFriendshipRequest) {
+                RelationManipulator.removeContact(requestData.getContactType(),
+                                                  contactId, this.contactListAccess,
+                                                  this.messageHistoryAccess);
+                this.appendStatusMessage(contactId, false);
+            }
         }
         this.contentHandler.addResponse(extractedContent);
     }

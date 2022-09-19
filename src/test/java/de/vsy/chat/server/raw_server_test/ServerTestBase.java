@@ -45,26 +45,6 @@ class ServerTestBase {
     }
 
     /**
-     * Connection object that will attempt connecting to the same server as the
-     * previously created connection object, will be generated. That bare object can
-     * subsequently be gotten hold of using the <ref>getUnusedClientConnection()
-     * </ref>-method. The connection object will still need to be setup
-     * subsequently.
-     */
-    protected
-    void addConnectionSameServer ()
-    throws IOException {
-        final var clientConnection = new ClientConnection(
-                portProvider.getCurrentServerPort());
-        addClientConnection(clientConnection);
-    }
-
-    protected
-    void addClientConnection (final ClientConnection connection) {
-        clientConnectionList.add(connection);
-    }
-
-    /**
      * Connection object that will attempt connecting to a different server than the
      * previously created connection object, will be generated. That bare object can
      * subsequently be gotten hold of using the <ref>getUnusedClientConnection()
@@ -77,6 +57,26 @@ class ServerTestBase {
     throws IOException {
         final var clientConnection = new ClientConnection(
                 portProvider.getNextServerPort());
+        addClientConnection(clientConnection);
+    }
+
+    protected
+    void addClientConnection (final ClientConnection connection) {
+        clientConnectionList.add(connection);
+    }
+
+    /**
+     * Connection object that will attempt connecting to the same server as the
+     * previously created connection object, will be generated. That bare object can
+     * subsequently be gotten hold of using the <ref>getUnusedClientConnection()
+     * </ref>-method. The connection object will still need to be setup
+     * subsequently.
+     */
+    protected
+    void addConnectionSameServer ()
+    throws IOException {
+        final var clientConnection = new ClientConnection(
+                portProvider.getCurrentServerPort());
         addClientConnection(clientConnection);
     }
 
