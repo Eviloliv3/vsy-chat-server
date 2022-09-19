@@ -179,14 +179,14 @@ class PersistenceDAO {
     private boolean acquireLocalLock(Supplier<Boolean> lockingMethod){
         var accessAcquired = false;
 
-        try{
-            accessLock.lock();
+        while(!accessAcquired && !Thread.currentThread().isInterrupted()) {
+            try {
+                accessLock.lock();
 
-            while(!accessAcquired && !Thread.currentThread().isInterrupted()){
                 accessAcquired = lockingMethod.get();
+            } finally {
+                this.accessLock.unlock();
             }
-        } finally {
-            this.accessLock.unlock();
         }
 
         return accessAcquired;
