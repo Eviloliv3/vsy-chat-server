@@ -45,9 +45,9 @@ class RelationResponseProcessor
         final var contactId = this.extractContactId(extractedContent);
 
         checkResponseLegitimacy(extractedContent, contactId);
+        final var iAmOriginator = this.checkClientOriginator(extractedContent);
         final var requestData = extractedContent.getRequestData();
         final var isFriendshipRequest = requestData.getDesiredState();
-        final var iAmOriginator = this.checkClientOriginator(extractedContent);
 
         if (isFriendshipRequest && extractedContent.getDecision()) {
             RelationManipulator.addContact(requestData.getContactType(), contactId,
@@ -98,6 +98,10 @@ class RelationResponseProcessor
                                                 "mit " +
                                                 contactData.getDisplayName() +
                                                 " befreundet.");
+        } else if(contactResponse.getRequestData().getOriginatorId() != contactId && !desiredState){
+            throw new PacketProcessingException("Freundschaftsanfrage wurde nicht " +
+                                                "verarbeitet. Antwort auf Beendigung " +
+                                                "der Freundschaft wird automatisch erstellt.");
         }
     }
 

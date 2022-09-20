@@ -56,6 +56,8 @@ class RelationRequestProcessor
         if (!iAmOriginator && !isFriendshipRequest) {
             this.contactProvider.removeContactFromSet(
                     extractedContent.getContactType(), contactId);
+            this.contentHandler.addResponse(extractedContent.setDecision(this.localClientDataManager
+                                                                                 .getCommunicatorData(), false));
         }
         this.contentHandler.addRequest(extractedContent);
     }
