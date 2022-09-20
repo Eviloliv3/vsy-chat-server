@@ -2,24 +2,19 @@ package de.vsy.server.client_handling.data_management.bean;
 
 import de.vsy.server.server.client_management.ClientState;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public
 class ClientStateManager implements LocalClientStateProvider {
 
     private final Set<ClientStateListener> stateListeners;
     private final List<ClientState> currentState;
-    private int previousStateCount;
     private boolean stateChanged;
 
     public
     ClientStateManager () {
-        this.stateListeners = new HashSet<>();
+        this.stateListeners = new LinkedHashSet<>();
         this.currentState = new ArrayList<>(ClientState.values().length);
-        this.previousStateCount = 0;
         this.stateChanged = false;
     }
 
@@ -54,7 +49,6 @@ class ClientStateManager implements LocalClientStateProvider {
 
     public
     boolean changeClientState (final ClientState toChange, boolean toAdd) {
-        this.previousStateCount = this.currentState.size();
 
         if (changeCurrentState(toChange, toAdd)) {
             for (final ClientStateListener listener : stateListeners) {

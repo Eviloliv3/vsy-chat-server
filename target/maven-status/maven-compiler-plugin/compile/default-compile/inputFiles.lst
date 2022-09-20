@@ -39,6 +39,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/ServiceBaseDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/client_data/PendingPacketPersistence.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/ServiceDataAccessManager.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/strategy/StateDependendPacketRetriever.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/bean/ClientStateManager.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processing/ContactStatusChangeProcessor.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/ServiceControl.java
