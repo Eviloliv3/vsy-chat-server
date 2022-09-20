@@ -212,10 +212,11 @@ class InterServerCommunicationService extends ServiceBase {
      */
     private
     void makeServiceAvailable () {
+        final var remoteServerId = this.remoteConnectionData.getServerId();
         this.serviceDataAccess.getServicePacketBufferManager()
                               .registerBuffer(
                                       SERVICE_SPECIFICATIONS.getServiceType(),
-                                      getServiceId(),
+                                      remoteServerId,
                                       this.threadBuffers.getPacketBuffer(
                                               ThreadPacketBufferLabel.OUTSIDE_BOUND));
         super.setReadyState();
