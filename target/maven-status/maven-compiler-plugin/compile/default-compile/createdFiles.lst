@@ -87,7 +87,6 @@ de/vsy/server/client_handling/packet_processing/content_processor_provisioning/C
 de/vsy/server/server/server_connection/ClientConnectionEstablisher.class
 de/vsy/server/server_packet/dispatching/MultiplePacketDispatcher.class
 de/vsy/server/client_handling/packet_processing/content_processing/RelationResponseProcessor.class
-de/vsy/server/client_handling/strategy/StateDependendPacketRetriever.class
 de/vsy/server/server/ClientServer.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/AuthenticationPacketProcessorFactory.class
 de/vsy/server/persistent_data/client_data/ContactListDAO.class
@@ -119,6 +118,7 @@ de/vsy/server/service/ServiceBase.class
 de/vsy/server/persistent_data/client_data/PendingPacketPersistence.class
 de/vsy/server/server_packet/packet_creation/ServerStatusIdentificationProvider.class
 de/vsy/server/service/inter_server/InterServerSubstituteService.class
+de/vsy/server/client_handling/strategy/StateDependentPacketRetriever.class
 de/vsy/server/client_handling/packet_processing/content_processor_provisioning/CategoryBasedProcessorFactoryProvider.class
 de/vsy/server/server/server_connection/LocalServerConnectionData.class
 de/vsy/server/server_packet/content/ServerPacketContentImpl.class

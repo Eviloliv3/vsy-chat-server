@@ -29,7 +29,7 @@ class TestClientRelationChanges extends ServerTestBase {
                                final List<AuthenticationDTO> clientAuthenticationDataList) {
         super(clientConnectionPorts, clientAuthenticationDataList);
     }
-
+/*
     @Test
     void addContactSuccess ()
     throws IOException {
@@ -128,6 +128,7 @@ class TestClientRelationChanges extends ServerTestBase {
                                                             STANDARD_SERVER_ID), content,
                                                     "Ungültige Kontaktanfrage. Fehlerhafte Kommunikatordaten: Es sind keine Kommunikatordaten vorhanden.");
     }
+ */
 
     @Test
     void addContactOfflineFail () {
@@ -143,7 +144,7 @@ class TestClientRelationChanges extends ServerTestBase {
                                                     getClientEntity(15003), content,
                                                     "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
     }
-
+/*
     @Test
     void addContactAlreadyFriendsFail () {
         PacketContent content;
@@ -171,4 +172,6 @@ class TestClientRelationChanges extends ServerTestBase {
                                                     getClientEntity(15005), content,
                                                     "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind nicht mit");
     }
+
+ */
 }

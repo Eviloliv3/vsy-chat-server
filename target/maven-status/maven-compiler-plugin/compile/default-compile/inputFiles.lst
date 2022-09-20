@@ -39,7 +39,6 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/ServiceBaseDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/client_data/PendingPacketPersistence.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/ServiceDataAccessManager.java
-/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/strategy/StateDependendPacketRetriever.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/bean/ClientStateManager.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processing/ContactStatusChangeProcessor.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/ServiceControl.java
@@ -151,6 +150,7 @@
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/server_connection/ServerConnectionDataProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/persistent_data/PersistentDataFileCreator.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/CommunicatorDataManipulator.java
+/home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/strategy/StateDependentPacketRetriever.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/service/inter_server/InterServerCommunicationService.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/request_filter/PermittedCategoryProvider.java
 /home/fredward/Dokumente/01_Studium/3_Semester/03_Praktika/VSY/complete-project/server/src/main/java/de/vsy/server/server/data/access/ErrorHandlingServiceDataProvider.java

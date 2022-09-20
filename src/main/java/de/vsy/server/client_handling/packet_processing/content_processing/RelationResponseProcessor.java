@@ -61,7 +61,7 @@ class RelationResponseProcessor
                 this.appendStatusMessage(contactId, false);
             }
         }
-        this.contentHandler.addResponse(extractedContent);
+        this.contentHandler.addRequest(extractedContent);
     }
 
     private

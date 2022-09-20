@@ -57,7 +57,7 @@ class RelationRequestProcessor
             this.contactProvider.removeContactFromSet(
                     extractedContent.getContactType(), contactId);
         }
-        this.contentHandler.addResponse(extractedContent);
+        this.contentHandler.addRequest(extractedContent);
     }
 
     /**

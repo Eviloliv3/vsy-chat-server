@@ -216,7 +216,7 @@ class ClientConnection {
                 LOGGER.info("Beim Holen des naechsten Pakets unterbrochen.");
                 break;
             }
-        } while (readPacket == null && System.currentTimeMillis() < timeout);
+        } while (readPacket == null);// && System.currentTimeMillis() < timeout);
         return readPacket;
     }
 
