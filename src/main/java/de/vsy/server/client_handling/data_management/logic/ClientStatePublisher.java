@@ -65,25 +65,20 @@ class ClientStatePublisher implements ClientStateListener {
 
     private
     Packet buildSimpleStatusPacket (ClientState clientState, boolean changeTo) {
-        Packet statusPacket = null;
-        final var simpleStatusDTO = new SimpleStatusSyncBuilder<>();
-        final var clientData = this.clientDataManager.getCommunicatorData();
         final var remoteServerId = getRemoteServerIdIfExistent();
 
         if (remoteServerId != STANDARD_SERVER_ID) {
+            final var simpleStatusDTO = new SimpleStatusSyncBuilder<>();
             simpleStatusDTO.withClientState(clientState)
-                           .withContactData(clientData)
                            .withToAdd(changeTo);
-            statusPacket = PacketCompiler.createRequest(
-                    getServerEntity(remoteServerId), simpleStatusDTO.build());
+            return completeStatusPacket(remoteServerId, simpleStatusDTO);
         }
-        return statusPacket;
+        return null;
     }
 
     private
     Packet buildExtendedStatusPacket (ClientState clientState, boolean changeTo) {
         final var extendedStatusDTO = new ExtendedStatusSyncBuilder<>();
-        final var clientData = this.clientDataManager.getCommunicatorData();
         final var contactSet = this.contactListAccess.readContacts(
                 EligibleContactEntity.CLIENT);
         final var groupSet = this.contactListAccess.readContacts(
@@ -92,13 +87,20 @@ class ClientStatePublisher implements ClientStateListener {
                                                      .getServerId();
 
         contactSet.addAll(groupSet);
-
         extendedStatusDTO.withContactIdSet(contactSet)
                          .withClientState(clientState)
-                         .withToAdd(changeTo)
-                         .withContactData(clientData);
+                         .withToAdd(changeTo);
+
+        return completeStatusPacket(recipientId, extendedStatusDTO);
+    }
+
+    private Packet completeStatusPacket(final int recipientId, final SimpleStatusSyncBuilder<?> contentBuilder){
+        final var clientData = this.clientDataManager.getCommunicatorData();
+        final var localServerId = ClientStatePublisher.serverConnectionNodes.getLocalServerConnectionData().getServerId();
+
+        contentBuilder.withContactData(clientData).withOriginatingServerId(localServerId);
         return PacketCompiler.createRequest(getServerEntity(recipientId),
-                                            extendedStatusDTO.build());
+                                            contentBuilder.build());
     }
 
     private

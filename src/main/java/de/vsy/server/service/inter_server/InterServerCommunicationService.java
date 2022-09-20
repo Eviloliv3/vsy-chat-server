@@ -326,7 +326,7 @@ class InterServerCommunicationService extends ServiceBase {
 
         if (validationString.isEmpty()) {
             final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
-            serverPacketContent.setReadingConnectionThread(getServiceId());
+            serverPacketContent.setReadingConnectionThread(super.getServiceId());
             output = nextPacket;
         } else {
             final var errorMessage = "Das Paket wurde nicht zugestellt. ";
