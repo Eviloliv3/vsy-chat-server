@@ -103,9 +103,6 @@ class TestClientRelationChanges extends ServerTestBase {
         } else {
             Assertions.fail("Keine Antwort ContactRelationRequestDTO empfangen.");
         }
-        content = new ContactRelationResponseDTO(clientTwoData, false,
-                                                 (ContactRelationRequestDTO) content);
-        clientTwo.sendResponse(content, packet);
         packet = clientOne.readPacket();
 
         if (packet != null) {
