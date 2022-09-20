@@ -4,7 +4,7 @@ import de.vsy.server.client_handling.data_management.logic.ClientStatePublisher;
 import de.vsy.server.client_handling.data_management.logic.ClientSubscriptionHandler;
 import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
-import de.vsy.server.client_handling.strategy.StateDependendPacketRetriever;
+import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 
 public
@@ -15,7 +15,7 @@ class LocalClientStateDependentLogicProvider {
     private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
     private final ClientSubscriptionHandler clientSubscriptionHandler;
     private final ClientStatePublisher clientStatePublisher;
-    private final StateDependendPacketRetriever pendingPacketRetriever;
+    private final StateDependentPacketRetriever pendingPacketRetriever;
 
     public
     LocalClientStateDependentLogicProvider (
@@ -35,7 +35,7 @@ class LocalClientStateDependentLogicProvider {
                 handlerDataAccess.getHandlerBufferManager()
                                  .getPacketBuffer(
                                          ThreadPacketBufferLabel.SERVER_BOUND)::appendPacket);
-        this.pendingPacketRetriever = new StateDependendPacketRetriever(this.clientPersistentAccess,
+        this.pendingPacketRetriever = new StateDependentPacketRetriever(this.clientPersistentAccess,
                                                                         handlerDataAccess.getHandlerBufferManager());
         addStateListeners(handlerDataAccess);
     }

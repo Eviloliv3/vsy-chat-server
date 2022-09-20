@@ -2,7 +2,6 @@ package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
-import de.vsy.server.persistent_data.PersistentDataAccess;
 import de.vsy.server.persistent_data.client_data.PendingType;
 import de.vsy.server.server.client_management.ClientState;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
@@ -17,7 +16,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public
-class StateDependendPacketRetriever implements ClientStateListener {
+class StateDependentPacketRetriever implements ClientStateListener {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final ClientPersistentDataAccessProvider persistentDataAccess;
@@ -33,8 +32,8 @@ class StateDependendPacketRetriever implements ClientStateListener {
 
 
     public
-    StateDependendPacketRetriever(final ClientPersistentDataAccessProvider persistentData,
-                                  final ThreadPacketBufferManager packetBuffers){
+    StateDependentPacketRetriever (final ClientPersistentDataAccessProvider persistentData,
+                                   final ThreadPacketBufferManager packetBuffers){
         this.persistentDataAccess = persistentData;
         this.packetBuffers = packetBuffers;
     }
@@ -42,28 +41,31 @@ class StateDependendPacketRetriever implements ClientStateListener {
     @Override
     public
     void evaluateNewState (ClientState changedState, boolean added) {
-        final var pendingPacketProvider = this.persistentDataAccess.getPendingPacketDAO();
-        final var allPendingPackets = pendingPacketProvider.readAllPendingPackets();
-        final var remainingPackets = new LinkedHashMap<String, Packet>();
 
-        for (final var currentPendingPacketMap : allPendingPackets.entrySet()) {
-            final var currentClassification = currentPendingPacketMap.getKey();
-            final var pendingMap = currentPendingPacketMap.getValue();
+        if(added){
+            final var pendingPacketProvider = this.persistentDataAccess.getPendingPacketDAO();
+            final var allPendingPackets = pendingPacketProvider.readAllPendingPackets();
+            final var remainingPackets = new LinkedHashMap<String, Packet>();
 
-            var foundStrategy = strategyEnumMap.computeIfPresent(currentClassification, (classification, strategySupplier) -> {
-                final var strategy = strategySupplier.get();
-                pendingMap.values().forEach(strategy);
-                return strategySupplier;
-                });
+            for (final var currentPendingPacketMap : allPendingPackets.entrySet()) {
+                final var currentClassification = currentPendingPacketMap.getKey();
+                final var pendingMap = currentPendingPacketMap.getValue();
+                    var foundStrategy = strategyEnumMap.computeIfPresent(
+                            currentClassification, (classification, strategySupplier) -> {
+                                final var strategy = strategySupplier.get();
+                                pendingMap.values().forEach(strategy);
+                                return strategySupplier;
+                            });
 
-            if(foundStrategy != null){
-                LOGGER.trace("Vorhandene Pakete wurden Buffern vorangestellt. PendingType: {}", currentClassification);
-            }else{
-                LOGGER.warn("Es wurde keine Strategie gefunden. PendingType: {}", currentClassification);
+                if(foundStrategy != null){
+                    LOGGER.trace("Vorhandene Pakete wurden Buffern vorangestellt. PendingType: {}", currentClassification);
+                }else{
+                    LOGGER.warn("Es wurde keine Strategie gefunden. PendingType: {}", currentClassification);
+                }
+
+                pendingPacketProvider.setPendingPackets(currentClassification,
+                                                        remainingPackets);
             }
-
-            pendingPacketProvider.setPendingPackets(currentClassification,
-                                                    remainingPackets);
         }
     }
 
