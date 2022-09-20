@@ -382,7 +382,7 @@ class InterServerCommunicationService extends ServiceBase {
                                                          Service.TYPE.REQUEST_ROUTER);
         this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND,
                                            bufferToRegister);
-        this.threadBuffers.registerPackerBuffer(
+        this.threadBuffers.registerPacketBuffer(
                 ThreadPacketBufferLabel.HANDLER_BOUND);
         bufferToRegister = new RemotePacketBuffer(
                 this.serverConnectionDataManager.getLocalServerConnectionData(),

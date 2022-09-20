@@ -73,9 +73,9 @@ class TestServiceNotStopping {
         PacketCompiler.addContentIdentificator(
                 new ContentIdentificationProviderImpl());
         PacketCompiler.addOriginatorEntityProvider(() -> getClientEntity(123456));
-        asdf.registerPackerBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
-        asdf.registerPackerBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
-        asdf.registerPackerBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+        asdf.registerPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
+        asdf.registerPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
+        asdf.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
         var d = LocalServerConnectionData.valueOf(12353, s);
         serverData.getServerConnectionDataManager()
                   .addServerReceptionConnectionData(d);

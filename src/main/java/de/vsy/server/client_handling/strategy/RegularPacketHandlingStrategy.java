@@ -106,10 +106,6 @@ class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
         while (this.connectionControl.connectionIsLive() &&
                !Thread.currentThread().isInterrupted()) {
             processStateConformPackets();
-
-            if (this.clientStateAccess.clientStateHasRisen()) {
-                appendPendingPackets();
-            }
         }
     }
 
@@ -132,7 +128,7 @@ class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
             }
 
             if (input != null) {
-                this.packetCreator.changeCurrentRequest(input);
+                this.packetCreator.setCurrentPacket(input);
 
                 try {
                     this.processor.processPacket(input);
@@ -145,83 +141,5 @@ class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
                 stateChanged = this.clientStateAccess.clientStateHasChanged();
             }
         }
-    }
-
-    /** Process pending Packet. */
-    private
-    void appendPendingPackets () {
-        final var strategies = getPendingPacketStrategies();
-        final var pendingPacketProvider = this.persistentData.getPendingPacketDAO();
-        final var allPendingPackets = pendingPacketProvider.readAllPendingPackets();
-
-        for (final var currentPendingPacketMap : allPendingPackets.entrySet()) {
-            final var currentClassification = currentPendingPacketMap.getKey();
-            final var pendingMap = currentPendingPacketMap.getValue();
-
-            if (strategies.containsKey(currentClassification)) {
-                final var pendingStrategy = strategies.get(currentClassification);
-                List<String> handledPackets = new ArrayList<>();
-
-                for (final var currentPacketMapping : pendingMap.entrySet()) {
-                    final var currentPacket = currentPacketMapping.getValue();
-
-                    if (currentPacket != null) {
-                        pendingStrategy.handlePacket(currentPacket);
-                        handledPackets.add(currentPacketMapping.getKey());
-                    }
-                }
-
-                for (final var currentHash : handledPackets) {
-                    pendingMap.remove(currentHash);
-                }
-            } else {
-                LOGGER.info(
-                        "Es gibt keine verpassten Pakete der Klassifikation \"{}\" zu verarbeiten.",
-                        currentClassification);
-            }
-
-            pendingPacketProvider.setPendingPackets(currentClassification,
-                                                    pendingMap);
-        }
-    }
-
-    /**
-     * Gets the pending Packetstrategies.
-     *
-     * @return the pending Packetstrategies
-     */
-    private
-    EnumMap<PendingType, PendingPacketHandlingStrategy> getPendingPacketStrategies () {
-        final var strategies = new EnumMap<PendingType, PendingPacketHandlingStrategy>(
-                PendingType.class);
-        strategies.put(PendingType.CLIENT_BOUND, getClientBoundStrategy());
-        strategies.put(PendingType.PROCESSOR_BOUND, getProcessingPacketStrategy());
-        return strategies;
-    }
-
-    /**
-     * Gets the forwardable Packetstrategy.
-     *
-     * @return the forwardable Packetstrategy
-     */
-    private
-    PendingPacketHandlingStrategy getClientBoundStrategy () {
-        final var clientBuffer = this.threadLocalBuffers.getPacketBuffer(
-                ThreadPacketBufferLabel.OUTSIDE_BOUND);
-
-        return clientBuffer::appendPacket;
-    }
-
-    /**
-     * Gets the processing Packetstrategy.
-     *
-     * @return the processing Packetstrategy
-     */
-    private
-    PendingPacketHandlingStrategy getProcessingPacketStrategy () {
-        final var clientBuffer = this.threadLocalBuffers.getPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
-
-        return clientBuffer::prependPacket;
     }
 }

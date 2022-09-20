@@ -116,7 +116,7 @@ class ClientStatusSynchronizationService extends ServiceBase {
         }
 
         if (input != null) {
-            this.packetCreator.changeCurrentRequest(input);
+            this.packetCreator.setCurrentPacket(input);
             this.processor.processPacket(input);
             this.packetsToSend.transmitPackets(this.dispatcher);
         }

@@ -43,13 +43,13 @@ class TestConnectionThreads {
         bufferManagerOne = new ThreadPacketBufferManager();
         bufferManagerTwo = new ThreadPacketBufferManager();
 
-        bufferManagerOne.registerPackerBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
-        bufferManagerOne.registerPackerBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
-        bufferManagerOne.registerPackerBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
+        bufferManagerOne.registerPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
+        bufferManagerOne.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+        bufferManagerOne.registerPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
 
-        bufferManagerTwo.registerPackerBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
-        bufferManagerTwo.registerPackerBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
-        bufferManagerTwo.registerPackerBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
+        bufferManagerTwo.registerPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
+        bufferManagerTwo.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+        bufferManagerTwo.registerPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
 
         try (var connectionControl = new ServerSocket(12345)) {
             var connectionSocket = Executors.newSingleThreadExecutor()

@@ -73,9 +73,9 @@ class HandlerLocalDataManager
     void createThreadPacketBuffers (PacketBuffer requestAssignmentBuffer) {
         this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND,
                                            requestAssignmentBuffer);
-        this.threadBuffers.registerPackerBuffer(
+        this.threadBuffers.registerPacketBuffer(
                 ThreadPacketBufferLabel.OUTSIDE_BOUND);
-        this.threadBuffers.registerPackerBuffer(
+        this.threadBuffers.registerPacketBuffer(
                 ThreadPacketBufferLabel.HANDLER_BOUND);
     }
 

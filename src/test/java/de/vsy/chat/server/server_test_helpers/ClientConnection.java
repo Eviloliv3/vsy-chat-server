@@ -82,11 +82,11 @@ class ClientConnection {
     private
     void setupThreadBufferManager () {
         this.bufferManager = new ThreadPacketBufferManager();
-        this.bufferManager.registerPackerBuffer(
+        this.bufferManager.registerPacketBuffer(
                 ThreadPacketBufferLabel.OUTSIDE_BOUND);
-        this.bufferManager.registerPackerBuffer(
+        this.bufferManager.registerPacketBuffer(
                 ThreadPacketBufferLabel.SERVER_BOUND);
-        this.bufferManager.registerPackerBuffer(
+        this.bufferManager.registerPacketBuffer(
                 ThreadPacketBufferLabel.HANDLER_BOUND);
     }
 

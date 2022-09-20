@@ -13,12 +13,14 @@ class ClientStateManager implements LocalClientStateProvider {
     private final Set<ClientStateListener> stateListeners;
     private final List<ClientState> currentState;
     private int previousStateCount;
+    private boolean stateChanged;
 
     public
     ClientStateManager () {
         this.stateListeners = new HashSet<>();
         this.currentState = new ArrayList<>(ClientState.values().length);
         this.previousStateCount = 0;
+        this.stateChanged = false;
     }
 
     /**
@@ -44,30 +46,24 @@ class ClientStateManager implements LocalClientStateProvider {
 
     @Override
     public
-    boolean clientStateHasRisen () {
-        final var currentStateCount = this.currentState.size();
-
-        return currentStateCount > 0 && previousStateCount <= currentStateCount;
-    }
-
-    @Override
-    public
     boolean clientStateHasChanged () {
-        return previousStateCount != this.currentState.size();
+        boolean stateWasChanged = this.stateChanged;
+        this.stateChanged = false;
+        return stateWasChanged;
     }
 
     public
     boolean changeClientState (final ClientState toChange, boolean toAdd) {
-        var stateChanged = true;
         this.previousStateCount = this.currentState.size();
 
         if (changeCurrentState(toChange, toAdd)) {
             for (final ClientStateListener listener : stateListeners) {
                 listener.evaluateNewState(toChange, toAdd);
             }
-            return stateChanged;
+            this.stateChanged = true;
+            return true;
         }
-        return !stateChanged;
+        return false;
     }
 
     private

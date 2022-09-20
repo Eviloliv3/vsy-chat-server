@@ -23,7 +23,7 @@ class ResultingPacketCreator {
      *         be base on
      */
     public
-    void changeCurrentRequest (Packet currentRequest) {
+    void setCurrentPacket (Packet currentRequest) {
         this.currentRequest = currentRequest;
     }
 

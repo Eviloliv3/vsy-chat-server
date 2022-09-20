@@ -157,7 +157,6 @@ class PersistenceDAO {
             while (this.globalLock == null && !Thread.currentThread().isInterrupted()) {
                 try {
                     this.globalLock = toLock.tryLock(0, Long.MAX_VALUE, !writeAccess);
-                    LOGGER.debug("Globale Lockfile wurde gesperrt.");
                 } catch (OverlappingFileLockException ex) {
                     LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " +
                                  "gestartet. {}: {}", ex.getClass().getSimpleName(),
@@ -176,7 +175,8 @@ class PersistenceDAO {
         }
     }
 
-    private boolean acquireLocalLock(Supplier<Boolean> lockingMethod){
+    private
+    boolean acquireLocalLock(Supplier<Boolean> lockingMethod){
         var accessAcquired = false;
 
         while(!accessAcquired && !Thread.currentThread().isInterrupted()) {
@@ -187,6 +187,7 @@ class PersistenceDAO {
             } finally {
                 this.accessLock.unlock();
             }
+            Thread.yield();
         }
 
         return accessAcquired;
@@ -202,9 +203,9 @@ class PersistenceDAO {
             this.accessLock.lock();
 
             if (writeAccess) {
-                this.releaseReadLock();
-            } else {
                 this.releaseWriteLock();
+            } else {
+                this.releaseReadLock();
             }
 
             if (this.localLock.getReadLockCount() == 0 &&
@@ -224,7 +225,6 @@ class PersistenceDAO {
 
             if (this.localLock.getReadHoldCount() > 0) {
                 this.localLock.readLock().unlock();
-                LOGGER.trace("ReadLock freigegeben.");
             }
         } finally {
             this.accessLock.unlock();
@@ -242,7 +242,6 @@ class PersistenceDAO {
                             e.getClass().getSimpleName(), asList(e.getStackTrace()));
             }
             this.globalLock = null;
-            LOGGER.trace("Global LockFile freigegeben.");
         }
     }
 
@@ -254,7 +253,6 @@ class PersistenceDAO {
 
             if (this.localLock.isWriteLockedByCurrentThread()) {
                 this.localLock.writeLock().unlock();
-                LOGGER.trace("WriteLock freigegeben.");
             }
         } finally {
             this.accessLock.unlock();
