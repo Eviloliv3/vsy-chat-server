@@ -72,6 +72,7 @@ class TestClientRelationChanges extends ServerTestBase {
         }
         Assertions.assertInstanceOf(ContactRelationResponseDTO.class, content);
     }
+    */
     @Test
     void removeContactSuccess ()
     throws IOException {
@@ -108,13 +109,12 @@ class TestClientRelationChanges extends ServerTestBase {
         packet = clientOne.readPacket();
 
         if (packet != null) {
-            content = packet.getPacketContent();
+            Assertions.assertInstanceOf(ContactRelationResponseDTO.class, packet.getPacketContent());
         } else {
             Assertions.fail("Keine Antwort ContactRelationResponseDTO empfangen.");
         }
-        Assertions.assertInstanceOf(ContactRelationResponseDTO.class, content);
     }
-
+/*
     @Test
     void contactRelationAddMissingFail () {
         PacketContent content;
@@ -128,7 +128,7 @@ class TestClientRelationChanges extends ServerTestBase {
                                                             STANDARD_SERVER_ID), content,
                                                     "Ungültige Kontaktanfrage. Fehlerhafte Kommunikatordaten: Es sind keine Kommunikatordaten vorhanden.");
     }
- */
+
 
     @Test
     void addContactOfflineFail () {
@@ -144,7 +144,7 @@ class TestClientRelationChanges extends ServerTestBase {
                                                     getClientEntity(15003), content,
                                                     "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
     }
-/*
+
     @Test
     void addContactAlreadyFriendsFail () {
         PacketContent content;

@@ -148,4 +148,9 @@ class ServerConnectionDataManager {
     boolean pendingConnectionStatus () {
         return !this.contactsArePresent;
     }
+
+    public
+    boolean noLiveServers(){
+        return this.notSynchronizedRemoteServers.isEmpty() && this.synchronizedRemoteServers.isEmpty();
+    }
 }

@@ -129,8 +129,7 @@ class ChatServer implements ClientServer {
         LOGGER.info("KlientenHandler gestoppt.");
         this.serviceControl.stopAllServices();
 
-        if (!this.serverDataModel.getServerConnectionDataManager()
-                                 .pendingConnectionStatus()) {
+        if (this.serverDataModel.getServerConnectionDataManager().noLiveServers()) {
             this.serverPersistentDataManager.getClientStateAccessManager()
                                             .removeAllClientStates();
             LOGGER.info("Server ist heruntergefahren.");
