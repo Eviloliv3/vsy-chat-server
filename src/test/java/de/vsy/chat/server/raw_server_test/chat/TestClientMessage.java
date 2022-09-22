@@ -22,6 +22,7 @@ import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.ch
 import static de.vsy.shared_transmission.shared_transmission.packet.content.status.ClientService.MESSENGER;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 public
@@ -72,7 +73,7 @@ class TestClientMessage extends ServerTestBase {
 
         super.addConnectionNextServer();
         clientOne = loginSpecificClient(FRANK_1_AUTH);
-        clientTwo = loginSpecificClient(PETER_1_AUTH);
+        clientTwo = loginSpecificClient(THOMAS_1_AUTH);
 
         changeStatus(clientOne, true);
         changeStatus(clientTwo, true);
@@ -85,7 +86,7 @@ class TestClientMessage extends ServerTestBase {
                 EligibleContactEntity.CLIENT, noContactId, "Testnachricht.");
 
         checkErrorResponse(clientOne, getClientEntity(noContactId), message,
-                           "Textnachricht wurde nicht zugestellt. 15004 ist kein Kontakt von Ihnen.");
+                           "Textnachricht wurde nicht zugestellt. 15006 ist kein Kontakt von Ihnen.");
     }
 
     private

@@ -98,7 +98,7 @@ class RelationResponseProcessor
                                                 "mit " +
                                                 contactData.getDisplayName() +
                                                 " befreundet.");
-        } else if(contactResponse.getRespondingClient().getCommunicatorId() == contactId && !desiredState){
+        } else if(contactResponse.getRespondingClient().getCommunicatorId() != contactId && !desiredState){
             throw new PacketProcessingException("Freundschaftsanfrage wurde nicht " +
                                                 "verarbeitet. Antwort auf Beendigung " +
                                                 "der Freundschaft wird automatisch erstellt.");

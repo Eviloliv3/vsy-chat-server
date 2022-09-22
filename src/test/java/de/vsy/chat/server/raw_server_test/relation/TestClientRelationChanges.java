@@ -29,7 +29,7 @@ class TestClientRelationChanges extends ServerTestBase {
                                final List<AuthenticationDTO> clientAuthenticationDataList) {
         super(clientConnectionPorts, clientAuthenticationDataList);
     }
-/*
+
     @Test
     void addContactSuccess ()
     throws IOException {
@@ -72,7 +72,7 @@ class TestClientRelationChanges extends ServerTestBase {
         }
         Assertions.assertInstanceOf(ContactRelationResponseDTO.class, content);
     }
-    */
+
     @Test
     void removeContactSuccess ()
     throws IOException {
@@ -111,7 +111,6 @@ class TestClientRelationChanges extends ServerTestBase {
             Assertions.fail("Keine Antwort ContactRelationResponseDTO empfangen.");
         }
     }
-/*
     @Test
     void contactRelationAddMissingFail () {
         PacketContent content;
@@ -169,6 +168,4 @@ class TestClientRelationChanges extends ServerTestBase {
                                                     getClientEntity(15005), content,
                                                     "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind nicht mit");
     }
-
- */
 }
