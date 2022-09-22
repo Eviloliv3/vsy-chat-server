@@ -93,9 +93,10 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                                  "auf Klientenzustaende erlangt oder der " +
                                  "Klientenzustand nicht erfolgreich geschrieben " +
                                  "werden. Gefundene Klientendaten: {}", clientData);
-                    causeMessage = "Es ist ein Fehler bei der Sicherung Ihrer " +
-                                   "Daten aufgetreten, benachrichtigen Sie bitte " +
-                                   "einen Entwickler. Sie wurden intern ausgeloggt.";
+                    causeMessage = "Sie sind entweder von einem anderen Gerät aus " +
+                                   "verbunden oder es wird bereits ein " +
+                                   " Wiederverbindungsversuch von einem anderen " +
+                                   "Gerät aus unternommen.";
                     this.clientStateManager.logoutClient();
                 }
             } else {
