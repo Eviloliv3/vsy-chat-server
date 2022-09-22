@@ -95,7 +95,7 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                                  "werden. Gefundene Klientendaten: {}", clientData);
                     causeMessage = "Sie sind entweder von einem anderen Gerät aus " +
                                    "verbunden oder es wird bereits ein " +
-                                   " Wiederverbindungsversuch von einem anderen " +
+                                   "Wiederverbindungsversuch von einem anderen " +
                                    "Gerät aus unternommen.";
                     this.clientStateManager.logoutClient();
                 }
