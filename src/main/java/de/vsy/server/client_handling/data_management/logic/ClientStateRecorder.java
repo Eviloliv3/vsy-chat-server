@@ -39,12 +39,16 @@ class ClientStateRecorder implements AuthenticationStateControl {
 
     @Override
     public
-    boolean reconnectClient (CommunicatorData clientData) {
+    ClientState reconnectClient (CommunicatorData clientData) {
         final var currentState = persistentClientStates.getClientState(
                 clientData.getCommunicatorId());
             final var clientState = currentState.getCurrentState();
-            this.localClientDataManager.setCommunicatorData(clientData);
-            return changeClientState(clientState, true);
+
+            if(!(clientState.equals(ClientState.OFFLINE))) {
+                this.localClientDataManager.setCommunicatorData(clientData);
+                changeClientState(clientState, true);
+            }
+            return clientState;
     }
 
     @Override

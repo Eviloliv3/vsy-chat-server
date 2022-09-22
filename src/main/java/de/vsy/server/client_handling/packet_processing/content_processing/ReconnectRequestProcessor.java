@@ -59,15 +59,15 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                 toProcess.getClientData());
 
         if (clientData != null) {
+            final var persistedClientState = this.clientStateManager.reconnectClient(clientData);
 
-            if (this.clientStateManager.reconnectClient(clientData)) {
-                final var persistedState = this.clientStateManager.getPersistentClientState();
+            if (!(persistedClientState.equals(ClientState.OFFLINE))) {
 
                 if (this.clientStateManager.changeReconnectionState(true)) {
 
                     if (waitForPendingBufferWatcher()) {
                         if (this.clientStateManager.changePersistentClientState(
-                                persistedState, true)) {
+                                persistedClientState, true)) {
                             this.clientStateManager.changeReconnectionState(false);
                             ThreadContext.put(LOG_FILE_CONTEXT_KEY, String.valueOf(
                                     clientData.getCommunicatorId()));
@@ -88,15 +88,14 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                                        "erneut authentifizieren.";
                     }
                 } else {
-                    if (persistedState != ClientState.OFFLINE) {
-                        LOGGER.info("Gefundener Zustand: {}", persistedState);
-                        causeMessage =
-                                "Sie sind entweder von einem anderen Gerät aus verbunden " +
-                                "oder es wird bereits ein Wiederverbindungsversuch von " +
-                                "einem anderen Gerät aus unternommen.";
-                    } else {
-                        causeMessage = "Sie sind nicht als authentifiziert registriert.";
-                    }
+                    LOGGER.error("Klientenzustand konnte nicht persistent " +
+                                 "gesichert werden. Entweder konnte kein Zugriff " +
+                                 "auf Klientenzustaende erlangt oder der " +
+                                 "Klientenzustand nicht erfolgreich geschrieben " +
+                                 "werden. Gefundene Klientendaten: {}", clientData);
+                    causeMessage = "Es ist ein Fehler bei der Sicherung Ihrer " +
+                                   "Daten aufgetreten, benachrichtigen Sie bitte " +
+                                   "einen Entwickler. Sie wurden intern ausgeloggt.";
                     this.clientStateManager.logoutClient();
                 }
             } else {

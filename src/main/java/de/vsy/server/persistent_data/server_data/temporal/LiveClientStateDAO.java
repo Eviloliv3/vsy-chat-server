@@ -81,7 +81,7 @@ class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> clientStateMap;
 
         if (!this.dataProvider.acquireAccess(false)) {
-            return new CurrentClientState(STANDARD_SERVER_ID);
+            return new CurrentClientState(clientId);
         }
         clientStateMap = getAllActiveClientStates();
         this.dataProvider.releaseAccess(false);

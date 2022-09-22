@@ -1,6 +1,7 @@
 package de.vsy.server.client_handling.data_management.logic;
 
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
+import de.vsy.server.server.client_management.ClientState;
 
 public
 interface AuthenticationStateControl extends ClientStateControl {
@@ -16,7 +17,7 @@ interface AuthenticationStateControl extends ClientStateControl {
      */
     boolean loginClient (CommunicatorData clientData);
 
-    boolean reconnectClient (CommunicatorData clientData);
+    ClientState reconnectClient (CommunicatorData clientData);
 
     /** Entfernt alle Daten, die den Klienten als authentifiziert auszeichnen. */
     void logoutClient ();
