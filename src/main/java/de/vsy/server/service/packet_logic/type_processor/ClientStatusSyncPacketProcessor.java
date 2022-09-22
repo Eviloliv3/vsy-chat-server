@@ -24,6 +24,7 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_cat
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -81,33 +82,33 @@ class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
 
             if (originatingServerId != this.serverNode.getServerId() &&
                 inputData instanceof final BaseStatusSyncDTO simpleStatus) {
-                LogManager.getLogger()
-                          .debug("BaseStatusSyncDTO gelesen: {}", simpleStatus);
+                LOGGER.debug("BaseStatusSyncDTO von entferntem Klienten gelesen: {}", simpleStatus);
                 translateState(simpleStatus, originatingServerId);
             }
 
             if (inputData instanceof ExtendedStatusSyncDTO) {
-                LogManager.getLogger()
-                          .debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
+                LOGGER.debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
                 final var clientBroadcast = getClientEntity(
                         STANDARD_CLIENT_BROADCAST_ID);
                 resultingPackets.addRequest(inputData, clientBroadcast);
             }
+            final var synchronizedServers = new HashSet<>(inputData.getSynchronizedServers());
+            synchronizedServers.add(this.serverNode.getServerId());
 
-            notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
-                    inputData.getSynchronizedServers());
+            notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(synchronizedServers);
 
             if (notSynchronizedServerData != null) {
-                LogManager.getLogger()
-                          .debug("Statussynchronisierung fuer anderen Server erstellt.");
+                LOGGER.debug("Statussynchronisierung fuer anderen Server erstellt.");
                 final var recipient = getServerEntity(
                         notSynchronizedServerData.getServerId());
                 resultingPackets.addRequest(inputData, recipient);
+            }else{
+                LOGGER.debug("Alle Liveserver haben Statusaenderung bearbeitet.");
             }
         } else {
             throw new PacketProcessingException(
-                    "Inhalt nicht vom Typ " + "ServerPacketContentImpl. Konnte " +
-                    "nicht von ClientStatusProcessor " + "verarbeitet werden.");
+                    "Inhalt nicht vom Typ ServerPacketContentImpl. Konnte " +
+                    "nicht von ClientStatusProcessor verarbeitet werden.");
         }
     }
 
