@@ -33,7 +33,6 @@ class TestClientMessage extends ServerTestBase {
                        final List<AuthenticationDTO> clientAuthenticationDataList) {
         super(clientConnectionPorts, clientAuthenticationDataList);
     }
-/*
     @Test
     void sendMessageContactNotActiveFail ()
     throws IOException {
@@ -55,8 +54,6 @@ class TestClientMessage extends ServerTestBase {
         checkErrorResponse(clientOne, getClientEntity(inactiveClientId), message,
                            "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
     }
-
- */
 
     private
     void changeStatus (ClientConnection connection, boolean changeTo) {
@@ -84,7 +81,6 @@ class TestClientMessage extends ServerTestBase {
         changeStatus(clientTwo, true);
 
         noContactId = clientTwo.getCommunicatorData().getCommunicatorId();
-        contactStatus = clientOne.readPacket();
 
         final var message = new TextMessageDTO(
                 clientOne.getCommunicatorData().getCommunicatorId(),
@@ -110,7 +106,6 @@ class TestClientMessage extends ServerTestBase {
         }
         return null;
     }
-/*
     @Test
     void sendMessageSuccess ()
     throws IOException {
@@ -156,6 +151,4 @@ class TestClientMessage extends ServerTestBase {
                     responsePacket);
         }
     }
-
- */
 }

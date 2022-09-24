@@ -61,8 +61,6 @@ class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> {
                             ClientState.AUTHENTICATED, true)) {
                         final var communicatorData = ConvertCommDataToDTO.convertFrom(
                                 clientData);
-                        ThreadContext.put(LOG_FILE_CONTEXT_KEY, String.valueOf(
-                                communicatorData.getCommunicatorId()));
                         this.contentHandler.addResponse(
                                 new LoginResponseDTO(communicatorData));
                     } else {

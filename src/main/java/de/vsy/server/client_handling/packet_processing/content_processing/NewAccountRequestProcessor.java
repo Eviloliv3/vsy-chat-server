@@ -63,8 +63,6 @@ class NewAccountRequestProcessor implements ContentProcessor<NewAccountRequestDT
                         ClientState.AUTHENTICATED, true)) {
                     final CommunicatorDTO communicatorData = ConvertCommDataToDTO.convertFrom(
                             clientData);
-                    ThreadContext.put(LOG_FILE_CONTEXT_KEY, String.valueOf(
-                            communicatorData.getCommunicatorId()));
                     this.contentHandler.addResponse(
                             new LoginResponseDTO(communicatorData));
                 } else {

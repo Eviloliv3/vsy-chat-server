@@ -69,8 +69,6 @@ class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO>
                         if (this.clientStateManager.changePersistentClientState(
                                 persistedClientState, true)) {
                             this.clientStateManager.changeReconnectionState(false);
-                            ThreadContext.put(LOG_FILE_CONTEXT_KEY, String.valueOf(
-                                    clientData.getCommunicatorId()));
                             this.contentHandler.addResponse(
                                     new ReconnectResponseDTO(true));
                         } else {
