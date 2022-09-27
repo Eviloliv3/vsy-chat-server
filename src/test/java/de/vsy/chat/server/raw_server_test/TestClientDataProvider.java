@@ -29,11 +29,11 @@ class TestClientDataProvider {
     public static final AuthenticationDTO THOMAS_1_AUTH = AuthenticationDTO.valueOf(
             "thomas1", "login");
     public static final CommunicatorDTO FRANK_1_COMM = CommunicatorDTO.valueOf(15001,
-                                                                               "Frank Chat1 Relation1_2");
+                                                                               "Frank Relation1");
     public static final CommunicatorDTO MARKUS_1_COMM = CommunicatorDTO.valueOf(
-            15002, "Markus Chat1 Relation1_3");
+            15002, "Markus Relation2");
     public static final CommunicatorDTO ADRIAN_1_COMM = CommunicatorDTO.valueOf(
-            15003, "Adrian Relation2");
+            15003, "Adrian Relation3");
     public static final CommunicatorDTO PETER_1_COMM = CommunicatorDTO.valueOf(15004,
                                                                                "Peter Relation4");
     public static final CommunicatorDTO MAX_1_COMM = CommunicatorDTO.valueOf(15005,

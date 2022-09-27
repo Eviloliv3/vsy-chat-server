@@ -115,10 +115,10 @@ class PendingClientBufferWatcher extends ThreadContextRunnable {
         final boolean hasReconnected = reconnectFlagFetcher.getFetchedValue();
 
         if (hasReconnected) {
-            LOGGER.info("Client hat sich wieder verbunden.");
+            LOGGER.info("Klient hat sich wieder verbunden.");
             this.clientStateControl.changePendingState(false);
         } else {
-            LOGGER.info("Client wurde nach Timeout ausgeloggt.");
+            LOGGER.info("Klient wurde nach Timeout ausgeloggt.");
             this.removeVolatilePendingPackets();
             this.clientStateControl.changePersistentClientState(
                     ClientState.AUTHENTICATED, false);
