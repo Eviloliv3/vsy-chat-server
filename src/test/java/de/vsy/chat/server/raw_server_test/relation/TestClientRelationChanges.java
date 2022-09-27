@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.*;
+import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
@@ -50,9 +52,9 @@ class TestClientRelationChanges extends ServerTestBase {
 
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientOneData.getCommunicatorId(),
-                                                15003, clientOneData, true);
+                                                ADRIAN_1_COMM.getCommunicatorId(), clientOneData, true);
 
-        clientOne.sendRequest(content, getClientEntity(15003));
+        clientOne.sendRequest(content, getClientEntity(ADRIAN_1_COMM.getCommunicatorId()));
         packet = clientTwo.readPacket();
 
         if (packet == null ||
@@ -93,8 +95,8 @@ class TestClientRelationChanges extends ServerTestBase {
 
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientOneData.getCommunicatorId(),
-                                                15004, clientOneData, false);
-        clientOne.sendRequest(content, getClientEntity(15004));
+                                                PETER_1_COMM.getCommunicatorId(), clientOneData, false);
+        clientOne.sendRequest(content, getClientEntity(PETER_1_COMM.getCommunicatorId()));
         packet = clientTwo.readPacket();
 
         if (packet != null) {
@@ -111,6 +113,7 @@ class TestClientRelationChanges extends ServerTestBase {
             Assertions.fail("Keine Antwort ContactRelationResponseDTO empfangen.");
         }
     }
+
     @Test
     void contactRelationAddMissingFail () {
         PacketContent content;
@@ -125,7 +128,6 @@ class TestClientRelationChanges extends ServerTestBase {
                                                     "Ungültige Kontaktanfrage. Fehlerhafte Kommunikatordaten: Es sind keine Kommunikatordaten vorhanden.");
     }
 
-
     @Test
     void addContactOfflineFail () {
         PacketContent content;
@@ -134,10 +136,10 @@ class TestClientRelationChanges extends ServerTestBase {
 
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientData.getCommunicatorId(),
-                                                15003, clientData, true);
+                                                ADRIAN_1_COMM.getCommunicatorId(), clientData, true);
 
         TestResponseSingleClient.checkErrorResponse(clientOne,
-                                                    getClientEntity(15003), content,
+                                                    getClientEntity(ADRIAN_1_COMM.getCommunicatorId()), content,
                                                     "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
     }
 
@@ -149,9 +151,9 @@ class TestClientRelationChanges extends ServerTestBase {
 
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientData.getCommunicatorId(),
-                                                15002, clientData, true);
+                                                MARKUS_1_COMM.getCommunicatorId(), clientData, true);
         TestResponseSingleClient.checkErrorResponse(clientOne,
-                                                    getClientEntity(15002), content,
+                                                    getClientEntity(MARKUS_1_COMM.getCommunicatorId()), content,
                                                     "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind bereits mit");
     }
 
@@ -163,9 +165,9 @@ class TestClientRelationChanges extends ServerTestBase {
 
         content = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                                                 clientData.getCommunicatorId(),
-                                                15005, clientData, false);
+                                                MAX_1_COMM.getCommunicatorId(), clientData, false);
         TestResponseSingleClient.checkErrorResponse(clientOne,
-                                                    getClientEntity(15005), content,
+                                                    getClientEntity(MAX_1_COMM.getCommunicatorId()), content,
                                                     "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind nicht mit");
     }
 }

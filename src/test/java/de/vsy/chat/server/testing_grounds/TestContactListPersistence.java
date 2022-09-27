@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.ADRIAN_1_COMM;
 import static de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity.CLIENT;
 
 class TestContactListPersistence {
@@ -27,6 +28,6 @@ class TestContactListPersistence {
 
     @Test
     void addContact () {
-        Assertions.assertTrue(contactlist.addContact(CLIENT, 15003));
+        Assertions.assertTrue(contactlist.addContact(CLIENT, ADRIAN_1_COMM.getCommunicatorId()));
     }
 }

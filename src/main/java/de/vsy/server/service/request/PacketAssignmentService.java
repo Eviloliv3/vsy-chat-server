@@ -173,7 +173,7 @@ class PacketAssignmentService extends ServiceBase {
                         properties.getRecipient().toString());
             }
         } else {
-            throw new PacketTransmissionException("Paket nicht zu senden.");
+            throw new PacketTransmissionException("Paket ist nicht zu senden.");
         }
     }
 

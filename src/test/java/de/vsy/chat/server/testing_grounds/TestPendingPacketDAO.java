@@ -43,11 +43,11 @@ class TestPendingPacketDAO {
         allPacketContentSamples.add(new MessengerSetupDTO(Collections.emptyMap(), Collections.emptyMap()));
         allPacketContentSamples.add(new MessengerTearDownDTO(true));
         allPacketContentSamples.add(new ContactMessengerStatusDTO(EligibleContactEntity.CLIENT, true, commDTO, Collections.emptyList()));
-        final var relationRequest = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT, commDTO.getCommunicatorId(), 15002, commDTO, true);
+        final var relationRequest = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT, commDTO.getCommunicatorId(), MARKUS_1_COMM.getCommunicatorId(), commDTO, true);
         allPacketContentSamples.add(relationRequest);
         allPacketContentSamples.add(ContactRelationResponseDTO.valueOf(relationRequest, commDTO, true));
         allPacketContentSamples.add(new ErrorDTO("error", null));
-        allPacketContentSamples.add(new TextMessageDTO(commDTO.getCommunicatorId(), EligibleContactEntity.CLIENT, 15002, "test nachricht"));
+        allPacketContentSamples.add(new TextMessageDTO(commDTO.getCommunicatorId(), EligibleContactEntity.CLIENT, MARKUS_1_COMM.getCommunicatorId(), "test nachricht"));
         allPacketContentSamples.add(new BaseStatusSyncDTO((SimpleStatusSyncBuilder)new SimpleStatusSyncBuilder<>().withToAdd(true).withClientState(
                 ClientState.ACTIVE_MESSENGER).withContactData(commDTO).withOriginatingServerId(2134)));
         allPacketContentSamples.add(new ExtendedStatusSyncDTO((ExtendedStatusSyncBuilder)new ExtendedStatusSyncBuilder<>().withContactIdSet(Collections.emptySet()).withClientState(ClientState.ACTIVE_MESSENGER).withContactData(commDTO).withOriginatingServerId(1234)));
@@ -56,7 +56,7 @@ class TestPendingPacketDAO {
 
 
         for(var content : allPacketContentSamples){
-            final var toWrite = PacketCompiler.createRequest(CommunicationEndpoint.getClientEntity(15002),content);
+            final var toWrite = PacketCompiler.createRequest(CommunicationEndpoint.getClientEntity(MARKUS_1_COMM.getCommunicatorId()),content);
             dao.appendPendingPacket(PendingType.PROCESSOR_BOUND, toWrite);
         }
         final var pendingProcessorBound = dao.readPendingPackets(PendingType.PROCESSOR_BOUND);
