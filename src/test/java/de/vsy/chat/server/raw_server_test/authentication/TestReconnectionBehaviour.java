@@ -65,7 +65,7 @@ class TestReconnectionBehaviour extends ServerTestBase {
 
         request = new ReconnectRequestDTO(clientOneCommunicatorData);
         clientTwo.sendRequest(request, getServerEntity(STANDARD_SERVER_ID));
-        //reconnectPendingClient(clientTwo, request);
+
         TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(
                                                             STANDARD_SERVER_ID), request,
                                                     "Sie sind entweder von einem anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch von einem anderen Gerät aus unternommen.");

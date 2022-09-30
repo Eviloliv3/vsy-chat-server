@@ -154,13 +154,18 @@ class PersistenceDAO {
         }
 
         if(accessAcquired){
+
             while (this.globalLock == null && !Thread.currentThread().isInterrupted()) {
                 try {
-                    this.globalLock = toLock.tryLock(0, Long.MAX_VALUE, !writeAccess);
+                    this.globalLock = toLock.lock(0, Long.MAX_VALUE, !writeAccess);
                 } catch (OverlappingFileLockException ex) {
                     LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " +
                                  "gestartet. {}: {}", ex.getClass().getSimpleName(),
                                  ex.getMessage());
+                } catch (FileLockInterruptionException fie){
+                    Thread.currentThread().interrupt();
+                    LOGGER.error("Beim Holen des globalen Locks unterbrochen.");
+                    accessAcquired = false;
                 }
             }
         }
