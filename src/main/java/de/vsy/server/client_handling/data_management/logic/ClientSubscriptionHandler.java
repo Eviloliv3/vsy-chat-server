@@ -1,5 +1,11 @@
 package de.vsy.server.client_handling.data_management.logic;
 
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.vsy.server.client_handling.data_management.ExtraClientSubscriptionProvider;
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
@@ -11,112 +17,94 @@ import de.vsy.server.server.data.access.HandlerAccessManager;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Map;
-import java.util.Set;
 
 /**
- * Auf die Bedürfnisse des Klienten/Handlers zugeschnitten. Translator wird genutzt.
+ * Auf die Bedürfnisse des Klienten/Handlers zugeschnitten. Translator wird
+ * genutzt.
  */
-public
-class ClientSubscriptionHandler implements ClientStateListener {
+public class ClientSubscriptionHandler implements ClientStateListener {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static LiveClientStateDAO persistentClientStates;
-    private static AbstractPacketCategorySubscriptionManager subscriptionHandler;
-    private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
-    private final LocalClientDataProvider localClientDataProvider;
-    private final ThreadPacketBufferManager clientBuffer;
+	private static final Logger LOGGER = LogManager.getLogger();
+	private static LiveClientStateDAO persistentClientStates;
+	private static AbstractPacketCategorySubscriptionManager subscriptionHandler;
+	private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
+	private final LocalClientDataProvider localClientDataProvider;
+	private final ThreadPacketBufferManager clientBuffer;
 
-    public
-    ClientSubscriptionHandler (
-            final ExtraClientSubscriptionProvider extraSubscriptionProvider,
-            final LocalClientDataProvider localClientDataManager,
-            final ThreadPacketBufferManager clientBuffer) {
+	public ClientSubscriptionHandler(final ExtraClientSubscriptionProvider extraSubscriptionProvider,
+			final LocalClientDataProvider localClientDataManager, final ThreadPacketBufferManager clientBuffer) {
 
-        this.extraSubscriptionProvider = extraSubscriptionProvider;
-        this.localClientDataProvider = localClientDataManager;
-        this.clientBuffer = clientBuffer;
-    }
+		this.extraSubscriptionProvider = extraSubscriptionProvider;
+		this.localClientDataProvider = localClientDataManager;
+		this.clientBuffer = clientBuffer;
+	}
 
-    public static
-    void setupStaticServerDataAccess () {
-        subscriptionHandler = HandlerAccessManager.getClientSubscriptionManager();
-        persistentClientStates = HandlerAccessManager.getClientStateAccessManager();
-    }
+	public static void setupStaticServerDataAccess() {
+		subscriptionHandler = HandlerAccessManager.getClientSubscriptionManager();
+		persistentClientStates = HandlerAccessManager.getClientStateAccessManager();
+	}
 
-    @Override
-    public
-    void evaluateNewState (final ClientState clientState, final boolean changeTo) {
-        final SubscriptionHandler subscriptionLogic;
-        final ExtraSubscriptionHandler extraSubscriptionLogic;
-        final var clientId = this.localClientDataProvider.getClientId();
-        final var threadIdMap = ClientStateTranslator.prepareClientSubscriptionMap(
-                clientState, changeTo, clientId);
-        final var extraSubscriptionMap = this.extraSubscriptionProvider.getExtraSubscriptionsForState(
-                clientState);
+	@Override
+	public void evaluateNewState(final ClientState clientState, final boolean changeTo) {
+		final SubscriptionHandler subscriptionLogic;
+		final ExtraSubscriptionHandler extraSubscriptionLogic;
+		final var clientId = this.localClientDataProvider.getClientId();
+		final var threadIdMap = ClientStateTranslator.prepareClientSubscriptionMap(clientState, changeTo, clientId);
+		final var extraSubscriptionMap = this.extraSubscriptionProvider.getExtraSubscriptionsForState(clientState);
 
-        if (changeTo) {
-            subscriptionLogic = subscriptionHandler::subscribe;
-            extraSubscriptionLogic = persistentClientStates::addExtraSubscription;
-        } else {
-            subscriptionLogic = subscriptionHandler::unsubscribe;
-            extraSubscriptionLogic = persistentClientStates::removeExtraSubscription;
-        }
+		if (changeTo) {
+			subscriptionLogic = subscriptionHandler::subscribe;
+			extraSubscriptionLogic = persistentClientStates::addExtraSubscription;
+		} else {
+			subscriptionLogic = subscriptionHandler::unsubscribe;
+			extraSubscriptionLogic = persistentClientStates::removeExtraSubscription;
+		}
 
-        if (!handleSubscribing(threadIdMap, subscriptionLogic)) {
-            LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren. Siehe TraceLog" +
-                        " fuer vollstaendigen Ablauf|WarnLog fuer Fehlerschlaege.");
-        }
+		if (!handleSubscribing(threadIdMap, subscriptionLogic)) {
+			LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren. Siehe TraceLog"
+					+ " fuer vollstaendigen Ablauf|WarnLog fuer Fehlerschlaege.");
+		}
 
-        if (!extraSubscriptionMap.isEmpty()) {
-            threadIdMap.putAll(extraSubscriptionMap);
+		if (!extraSubscriptionMap.isEmpty()) {
+			threadIdMap.putAll(extraSubscriptionMap);
 
-            if (!handleExtraSubscribing(clientId, extraSubscriptionMap,
-                                        extraSubscriptionLogic)) {
-                LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren der " +
-                            "Zusatzabos. Siehe TraceLog fuer vollstaendigen Ablauf." +
-                            " Siehe WarnLog fuer Fehlerschlaege.");
-            }
-        }
-    }
+			if (!handleExtraSubscribing(clientId, extraSubscriptionMap, extraSubscriptionLogic)) {
+				LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren der "
+						+ "Zusatzabos. Siehe TraceLog fuer vollstaendigen Ablauf."
+						+ " Siehe WarnLog fuer Fehlerschlaege.");
+			}
+		}
+	}
 
-    private
-    boolean handleSubscribing (final Map<PacketCategory, Set<Integer>> threadIdMap,
-                               final SubscriptionHandler handler) {
-        var successFul = true;
-        final var handlerBoundBuffer = this.clientBuffer.getPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
+	private boolean handleSubscribing(final Map<PacketCategory, Set<Integer>> threadIdMap,
+			final SubscriptionHandler handler) {
+		var successFul = true;
+		final var handlerBoundBuffer = this.clientBuffer.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
 
-        for (var topicEntry : threadIdMap.entrySet()) {
-            final var topic = topicEntry.getKey();
-            final var threadIdSet = topicEntry.getValue();
+		for (var topicEntry : threadIdMap.entrySet()) {
+			final var topic = topicEntry.getKey();
+			final var threadIdSet = topicEntry.getValue();
 
-            for (var currentThreadId : threadIdSet) {
-                successFul &= handler.handle(topic, currentThreadId,
-                                             handlerBoundBuffer);
-            }
-        }
-        return successFul;
-    }
+			for (var currentThreadId : threadIdSet) {
+				successFul &= handler.handle(topic, currentThreadId, handlerBoundBuffer);
+			}
+		}
+		return successFul;
+	}
 
-    private
-    boolean handleExtraSubscribing (final int clientId,
-                                    final Map<PacketCategory, Set<Integer>> extraSubscriptions,
-                                    final ExtraSubscriptionHandler extraSubscriptionLogic) {
-        var successful = true;
+	private boolean handleExtraSubscribing(final int clientId,
+			final Map<PacketCategory, Set<Integer>> extraSubscriptions,
+			final ExtraSubscriptionHandler extraSubscriptionLogic) {
+		var successful = true;
 
-        for (final var topicSubscriptionSet : extraSubscriptions.entrySet()) {
-            final var currentTopic = topicSubscriptionSet.getKey();
+		for (final var topicSubscriptionSet : extraSubscriptions.entrySet()) {
+			final var currentTopic = topicSubscriptionSet.getKey();
 
-            for (final var currentThread : topicSubscriptionSet.getValue()) {
+			for (final var currentThread : topicSubscriptionSet.getValue()) {
 
-                successful &= !extraSubscriptionLogic.handle(clientId, currentTopic,
-                                                             currentThread);
-            }
-        }
-        return successful;
-    }
+				successful &= !extraSubscriptionLogic.handle(clientId, currentTopic, currentThread);
+			}
+		}
+		return successful;
+	}
 }

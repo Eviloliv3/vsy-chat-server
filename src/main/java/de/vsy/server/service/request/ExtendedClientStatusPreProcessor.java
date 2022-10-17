@@ -1,55 +1,46 @@
 package de.vsy.server.service.request;
 
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
-import de.vsy.server.service.status_synchronization.PacketDemultiplexer;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import org.apache.logging.log4j.LogManager;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
+import org.apache.logging.log4j.LogManager;
 
-public
-class ExtendedClientStatusPreProcessor {
+import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
+import de.vsy.server.service.status_synchronization.PacketDemultiplexer;
+import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
+import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 
-    private final OutputBuffer assignmentBuffer;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptions;
+public class ExtendedClientStatusPreProcessor {
 
-    public
-    ExtendedClientStatusPreProcessor (
-            AbstractPacketCategorySubscriptionManager clientSubscriptions,
-            OutputBuffer assignmentBuffer) {
-        this.assignmentBuffer = assignmentBuffer;
-        this.clientSubscriptions = clientSubscriptions;
-    }
+	private final OutputBuffer assignmentBuffer;
+	private final AbstractPacketCategorySubscriptionManager clientSubscriptions;
 
-    public
-    PacketContent processContent (ExtendedStatusSyncDTO toProcess) {
-        Set<Packet> updatePackets;
-        Set<Integer> eligibleRecipients = new HashSet<>(toProcess.getContactIdSet());
+	public ExtendedClientStatusPreProcessor(AbstractPacketCategorySubscriptionManager clientSubscriptions,
+			OutputBuffer assignmentBuffer) {
+		this.assignmentBuffer = assignmentBuffer;
+		this.clientSubscriptions = clientSubscriptions;
+	}
 
-        eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT,
-                                                                 eligibleRecipients);
+	public PacketContent processContent(ExtendedStatusSyncDTO toProcess) {
+		Set<Packet> updatePackets;
+		Set<Integer> eligibleRecipients = new HashSet<>(toProcess.getContactIdSet());
 
-        LogManager.getLogger()
-                  .debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients,
-                         toProcess.getContactIdSet());
-        updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess,
-                                                              eligibleRecipients);
+		eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT, eligibleRecipients);
 
-        if (!updatePackets.isEmpty()) {
-            for (final Packet updatePacket : updatePackets) {
-                assignmentBuffer.prependPacket(updatePacket);
-                eligibleRecipients.remove(updatePacket.getPacketProperties()
-                                                      .getRecipient()
-                                                      .getEntityId());
-            }
-        }
-        return toProcess.getContactIdSet().isEmpty() ? null : toProcess;
-    }
+		LogManager.getLogger().debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients,
+				toProcess.getContactIdSet());
+		updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess, eligibleRecipients);
+
+		if (!updatePackets.isEmpty()) {
+			for (final Packet updatePacket : updatePackets) {
+				assignmentBuffer.prependPacket(updatePacket);
+				eligibleRecipients.remove(updatePacket.getPacketProperties().getRecipient().getEntityId());
+			}
+		}
+		return toProcess.getContactIdSet().isEmpty() ? null : toProcess;
+	}
 }

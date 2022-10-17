@@ -7,16 +7,14 @@ import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingExcep
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 
 /** The Interface ServicePacketProcessor. */
-public
-interface ServicePacketProcessor {
+public interface ServicePacketProcessor {
 
-    /**
-     * Process Packet
-     *
-     * @param input the input
-     *
-     * @throws PacketProcessingException the PacketHandling exception
-     */
-    void processPacket (Packet input)
-    throws PacketProcessingException;
+	/**
+	 * Process Packet
+	 *
+	 * @param input the input
+	 *
+	 * @throws PacketProcessingException the PacketHandling exception
+	 */
+	void processPacket(Packet input) throws PacketProcessingException;
 }

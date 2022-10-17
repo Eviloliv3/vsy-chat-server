@@ -1,93 +1,77 @@
 package de.vsy.server.server.data;
 
-import de.vsy.server.service.request.CategoryIdSubscriber;
-import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public
-class ServiceSubscriptionManager extends AbstractPacketCategorySubscriptionManager {
+import de.vsy.server.service.request.CategoryIdSubscriber;
+import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
+import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 
-    private static final ThreadLocalRandom RANDOM_NUMBER_GENERATOR;
+public class ServiceSubscriptionManager extends AbstractPacketCategorySubscriptionManager {
 
-    static {
-        RANDOM_NUMBER_GENERATOR = ThreadLocalRandom.current();
-    }
+	private static final ThreadLocalRandom RANDOM_NUMBER_GENERATOR;
 
-    public
-    ServiceSubscriptionManager () {
-        this(new ConcurrentHashMap<>());
-    }
+	static {
+		RANDOM_NUMBER_GENERATOR = ThreadLocalRandom.current();
+	}
 
-    public
-    ServiceSubscriptionManager (
-            final Map<PacketCategory, Map<Integer, CategoryIdSubscriber>> subscriptions) {
-        super(subscriptions);
-    }
+	public ServiceSubscriptionManager() {
+		this(new ConcurrentHashMap<>());
+	}
 
-    @Override
-    public
-    void publish (Packet publishedPacket)
-    throws PacketTransmissionException {
-        CategoryIdSubscriber subscriptionBuffers;
-        Map<Integer, CategoryIdSubscriber> topicSubscriptions;
-        var packetProperties = publishedPacket.getPacketProperties();
+	public ServiceSubscriptionManager(final Map<PacketCategory, Map<Integer, CategoryIdSubscriber>> subscriptions) {
+		super(subscriptions);
+	}
 
-        topicSubscriptions = super.getTopicSubscriptions(
-                packetProperties.getPacketIdentificationProvider()
-                                .getPacketCategory());
+	@Override
+	public void publish(Packet publishedPacket) throws PacketTransmissionException {
+		CategoryIdSubscriber subscriptionBuffers;
+		Map<Integer, CategoryIdSubscriber> topicSubscriptions;
+		var packetProperties = publishedPacket.getPacketProperties();
 
-        subscriptionBuffers = getRandomServiceSubscription(topicSubscriptions);
+		topicSubscriptions = super.getTopicSubscriptions(
+				packetProperties.getPacketIdentificationProvider().getPacketCategory());
 
-        if (subscriptionBuffers != null) {
-            subscriptionBuffers.publish(publishedPacket);
-        } else {
+		subscriptionBuffers = getRandomServiceSubscription(topicSubscriptions);
 
-            throw new PacketTransmissionException(
-                    "Paket wurde nicht " + "zugestellt. Kein " +
-                    "Service hinterlegt.");
-        }
-    }
+		if (subscriptionBuffers != null) {
+			subscriptionBuffers.publish(publishedPacket);
+		} else {
 
-    @Override
-    public
-    Set<Integer> getLocalThreads (PacketCategory topic, Set<Integer> idsToCheck) {
-        return super.checkThreadIds(topic, idsToCheck);
-    }
+			throw new PacketTransmissionException("Paket wurde nicht " + "zugestellt. Kein " + "Service hinterlegt.");
+		}
+	}
 
-    private
-    CategoryIdSubscriber getRandomServiceSubscription (
-            Map<Integer, CategoryIdSubscriber> topicSubscriptions) {
-        CategoryIdSubscriber chosenServiceSubscription = null;
+	@Override
+	public Set<Integer> getLocalThreads(PacketCategory topic, Set<Integer> idsToCheck) {
+		return super.checkThreadIds(topic, idsToCheck);
+	}
 
-        while (chosenServiceSubscription == null) {
-            var allCategorySubscriptions = new ArrayList<>(
-                    topicSubscriptions.entrySet());
+	private CategoryIdSubscriber getRandomServiceSubscription(Map<Integer, CategoryIdSubscriber> topicSubscriptions) {
+		CategoryIdSubscriber chosenServiceSubscription = null;
 
-            if (!allCategorySubscriptions.isEmpty()) {
-                var randomSubscription = RANDOM_NUMBER_GENERATOR.nextInt(
-                        allCategorySubscriptions.size());
-                var randomServiceSubscription = allCategorySubscriptions.get(
-                        randomSubscription);
+		while (chosenServiceSubscription == null) {
+			var allCategorySubscriptions = new ArrayList<>(topicSubscriptions.entrySet());
 
-                if (randomServiceSubscription != null) {
-                    chosenServiceSubscription = randomServiceSubscription.getValue();
+			if (!allCategorySubscriptions.isEmpty()) {
+				var randomSubscription = RANDOM_NUMBER_GENERATOR.nextInt(allCategorySubscriptions.size());
+				var randomServiceSubscription = allCategorySubscriptions.get(randomSubscription);
 
-                    if (chosenServiceSubscription == null) {
-                        topicSubscriptions.remove(
-                                randomServiceSubscription.getKey());
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-        return chosenServiceSubscription;
-    }
+				if (randomServiceSubscription != null) {
+					chosenServiceSubscription = randomServiceSubscription.getValue();
+
+					if (chosenServiceSubscription == null) {
+						topicSubscriptions.remove(randomServiceSubscription.getKey());
+					}
+				}
+			} else {
+				break;
+			}
+		}
+		return chosenServiceSubscription;
+	}
 }

@@ -1,111 +1,94 @@
 package de.vsy.server.server.server_connection;
 
-import de.vsy.server.service.RemotePacketBuffer;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
 
-public
-class RemoteServerConnectionData implements ServerConnectionDataProvider {
+import de.vsy.server.service.RemotePacketBuffer;
+import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 
-    private final int remoteServerId;
-    private final boolean leaderFlag;
-    private final Socket followerSocket;
-    private RemotePacketBuffer remoteServerConnector;
+public class RemoteServerConnectionData implements ServerConnectionDataProvider {
 
-    private
-    RemoteServerConnectionData (final int remoteServerId, final boolean leaderFlag,
-                                final Socket followerSocket) {
-        this.remoteServerId = remoteServerId;
-        this.leaderFlag = leaderFlag;
-        this.followerSocket = followerSocket;
-    }
+	private final int remoteServerId;
+	private final boolean leaderFlag;
+	private final Socket followerSocket;
+	private RemotePacketBuffer remoteServerConnector;
 
-    public static
-    RemoteServerConnectionData valueOf (final int remoteServerId,
-                                        final boolean leaderFlag,
-                                        final Socket followerSocket) {
-        if (followerSocket == null) {
-            throw new IllegalArgumentException("Kein Socket angegeben.");
-        }
-        return new RemoteServerConnectionData(remoteServerId, leaderFlag,
-                                              followerSocket);
-    }
+	private RemoteServerConnectionData(final int remoteServerId, final boolean leaderFlag,
+			final Socket followerSocket) {
+		this.remoteServerId = remoteServerId;
+		this.leaderFlag = leaderFlag;
+		this.followerSocket = followerSocket;
+	}
 
-    public
-    void setRemoteServerConnector (final RemotePacketBuffer buffer) {
-        this.remoteServerConnector = buffer;
-    }
+	public static RemoteServerConnectionData valueOf(final int remoteServerId, final boolean leaderFlag,
+			final Socket followerSocket) {
+		if (followerSocket == null) {
+			throw new IllegalArgumentException("Kein Socket angegeben.");
+		}
+		return new RemoteServerConnectionData(remoteServerId, leaderFlag, followerSocket);
+	}
 
-    public
-    PacketBuffer getRemoteServerBuffer () {
-        return this.remoteServerConnector;
-    }
+	public void setRemoteServerConnector(final RemotePacketBuffer buffer) {
+		this.remoteServerConnector = buffer;
+	}
 
-    @Override
-    public
-    String getHostname () {
-        return this.followerSocket.getInetAddress().getHostName();
-    }
+	public PacketBuffer getRemoteServerBuffer() {
+		return this.remoteServerConnector;
+	}
 
-    @Override
-    public
-    int getServerPort () {
-        return this.followerSocket.getLocalPort();
-    }
+	@Override
+	public String getHostname() {
+		return this.followerSocket.getInetAddress().getHostName();
+	}
 
-    @Override
-    public
-    int getServerId () {
-        return this.remoteServerId;
-    }
+	@Override
+	public int getServerPort() {
+		return this.followerSocket.getLocalPort();
+	}
 
-    @Override
-    public
-    boolean closeConnection ()
-    throws IOException {
-        this.followerSocket.close();
-        return this.followerSocket.isClosed();
-    }
+	@Override
+	public int getServerId() {
+		return this.remoteServerId;
+	}
 
-    @Override
-    public
-    int hashCode () {
-        var hash = 97 * Integer.hashCode(this.remoteServerId);
-        hash = hash * 97 * this.followerSocket.hashCode();
+	@Override
+	public boolean closeConnection() throws IOException {
+		this.followerSocket.close();
+		return this.followerSocket.isClosed();
+	}
 
-        if (this.remoteServerConnector != null) {
-            hash = hash * 97 * this.remoteServerConnector.hashCode();
-        } else {
-            hash = hash * Objects.hashCode(null);
-        }
-        return hash * 97 * Boolean.hashCode(this.leaderFlag);
-    }
+	@Override
+	public int hashCode() {
+		var hash = 97 * Integer.hashCode(this.remoteServerId);
+		hash = hash * 97 * this.followerSocket.hashCode();
 
-    @Override
-    public
-    boolean equals (Object otherObject) {
-        if (this == otherObject) {
-            return true;
-        }
+		if (this.remoteServerConnector != null) {
+			hash = hash * 97 * this.remoteServerConnector.hashCode();
+		} else {
+			hash = hash * Objects.hashCode(null);
+		}
+		return hash * 97 * Boolean.hashCode(this.leaderFlag);
+	}
 
-        if (otherObject instanceof final RemoteServerConnectionData otherConnection) {
-            return this.leaderFlag == otherConnection.isLeader() &&
-                   this.remoteServerId == otherConnection.getServerId() &&
-                   this.followerSocket.equals(otherConnection.getConnectionSocket());
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(Object otherObject) {
+		if (this == otherObject) {
+			return true;
+		}
 
-    public
-    boolean isLeader () {
-        return this.leaderFlag;
-    }
+		if (otherObject instanceof final RemoteServerConnectionData otherConnection) {
+			return this.leaderFlag == otherConnection.isLeader() && this.remoteServerId == otherConnection.getServerId()
+					&& this.followerSocket.equals(otherConnection.getConnectionSocket());
+		}
+		return false;
+	}
 
-    public
-    Socket getConnectionSocket () {
-        return this.followerSocket;
-    }
+	public boolean isLeader() {
+		return this.leaderFlag;
+	}
+
+	public Socket getConnectionSocket() {
+		return this.followerSocket;
+	}
 }

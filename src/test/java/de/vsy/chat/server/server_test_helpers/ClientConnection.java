@@ -1,5 +1,17 @@
 package de.vsy.chat.server.server_test_helpers;
 
+import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_AUTHENTICATION;
+import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
+
+import java.io.IOException;
+import java.net.Socket;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.vsy.server.server.data.ConnectionSpecifications;
 import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.shared_module.shared_module.packet_creation.NonStaticPacketCompiler;
@@ -18,253 +30,198 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.authenticat
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LogoutResponseDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.error.ErrorDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.net.Socket;
+public class ClientConnection {
 
-import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_AUTHENTICATION;
-import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
-import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
+	protected static final Logger LOGGER = LogManager.getLogger();
+	final int serverPort;
+	boolean hasAuthenticationData;
+	boolean authenticated;
+	CommunicatorDTO clientData;
+	AuthenticationDTO authenticationData;
+	RequestPacketCreator requester;
+	ThreadPacketBufferManager bufferManager;
+	ConnectionThreadControl connectionControl;
+	NonStaticPacketCompiler packetCompiler;
+	Socket connectionSocket;
 
-public
-class ClientConnection {
+	public ClientConnection(int serverPort) throws IOException {
+		this.serverPort = serverPort;
+		prepareNewConnection();
+	}
 
-    protected static final Logger LOGGER = LogManager.getLogger();
-    final int serverPort;
-    boolean hasAuthenticationData;
-    boolean authenticated;
-    CommunicatorDTO clientData;
-    AuthenticationDTO authenticationData;
-    RequestPacketCreator requester;
-    ThreadPacketBufferManager bufferManager;
-    ConnectionThreadControl connectionControl;
-    NonStaticPacketCompiler packetCompiler;
-    Socket connectionSocket;
+	private void prepareNewConnection() throws IOException {
+		this.hasAuthenticationData = false;
+		this.authenticated = false;
+		setupNonStaticCompiler();
+		setupThreadBufferManager();
+		this.clientData = EMPTY_COMMUNICATOR;
+		this.authenticationData = EMPTY_AUTHENTICATION;
+		this.connectionSocket = new Socket(ConnectionSpecifications.getHostname(), this.serverPort);
+		this.requester = new RequestPacketCreator(
+				this.bufferManager.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND), this.clientData);
+		this.connectionControl = new ConnectionThreadControl(this.connectionSocket, this.bufferManager);
+		this.connectionControl.initiateConnectionThreads();
+	}
 
-    public
-    ClientConnection (int serverPort)
-    throws IOException {
-        this.serverPort = serverPort;
-        prepareNewConnection();
-    }
+	private void setupNonStaticCompiler() {
+		this.packetCompiler = new NonStaticPacketCompiler();
+		this.packetCompiler.addContentIdentificator(new ServerContentIdentificationProviderImpl());
+		this.packetCompiler.addOriginatorEntityProvider(getOriginatorEntityProvider());
+	}
 
-    private
-    void prepareNewConnection ()
-    throws IOException {
-        this.hasAuthenticationData = false;
-        this.authenticated = false;
-        setupNonStaticCompiler();
-        setupThreadBufferManager();
-        this.clientData = EMPTY_COMMUNICATOR;
-        this.authenticationData = EMPTY_AUTHENTICATION;
-        this.connectionSocket = new Socket(ConnectionSpecifications.getHostname(),
-                                           this.serverPort);
-        this.requester = new RequestPacketCreator(this.bufferManager.getPacketBuffer(
-                ThreadPacketBufferLabel.OUTSIDE_BOUND), this.clientData);
-        this.connectionControl = new ConnectionThreadControl(this.connectionSocket,
-                                                             this.bufferManager);
-        this.connectionControl.initiateConnectionThreads();
-    }
+	private void setupThreadBufferManager() {
+		this.bufferManager = new ThreadPacketBufferManager();
+		this.bufferManager.registerPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
+		this.bufferManager.registerPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND);
+		this.bufferManager.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+	}
 
-    private
-    void setupNonStaticCompiler () {
-        this.packetCompiler = new NonStaticPacketCompiler();
-        this.packetCompiler.addContentIdentificator(
-                new ServerContentIdentificationProviderImpl());
-        this.packetCompiler.addOriginatorEntityProvider(
-                getOriginatorEntityProvider());
-    }
+	private OriginatingEntityProvider getOriginatorEntityProvider() {
+		return () -> CommunicationEndpoint.getClientEntity(clientData.getCommunicatorId());
+	}
 
-    private
-    void setupThreadBufferManager () {
-        this.bufferManager = new ThreadPacketBufferManager();
-        this.bufferManager.registerPacketBuffer(
-                ThreadPacketBufferLabel.OUTSIDE_BOUND);
-        this.bufferManager.registerPacketBuffer(
-                ThreadPacketBufferLabel.SERVER_BOUND);
-        this.bufferManager.registerPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
-    }
+	public void setClientData(final AuthenticationDTO clientAuthenticationData,
+			final CommunicatorDTO clientCommunicatorData) {
+		final AuthenticationDTO clientAuthentication;
+		final CommunicatorDTO clientData;
+		if (clientCommunicatorData == null || clientAuthenticationData == null) {
+			LOGGER.warn("Keine Klientendaten angegeben. Möglicherweise werden "
+					+ "nachfolgende Testergebnisse verfälscht.");
+		}
 
-    private
-    OriginatingEntityProvider getOriginatorEntityProvider () {
-        return () -> CommunicationEndpoint.getClientEntity(
-                clientData.getCommunicatorId());
-    }
+		clientAuthentication = clientAuthenticationData == null ? EMPTY_AUTHENTICATION : clientAuthenticationData;
+		clientData = clientCommunicatorData == null ? EMPTY_COMMUNICATOR : clientCommunicatorData;
 
-    public
-    void setClientData (final AuthenticationDTO clientAuthenticationData,
-                        final CommunicatorDTO clientCommunicatorData) {
-        final AuthenticationDTO clientAuthentication;
-        final CommunicatorDTO clientData;
-        if (clientCommunicatorData == null || clientAuthenticationData == null) {
-            LOGGER.warn("Keine Klientendaten angegeben. Möglicherweise werden " +
-                        "nachfolgende Testergebnisse verfälscht.");
-        }
+		this.clientData = clientData;
+		this.authenticationData = clientAuthentication;
 
-        clientAuthentication = clientAuthenticationData ==
-                               null ? EMPTY_AUTHENTICATION : clientAuthenticationData;
-        clientData = clientCommunicatorData ==
-                     null ? EMPTY_COMMUNICATOR : clientCommunicatorData;
+		if (this.clientData.getCommunicatorId() > 0) {
+			this.authenticated = true;
+		}
 
-        this.clientData = clientData;
-        this.authenticationData = clientAuthentication;
+		if (!this.authenticationData.getLogin().equals(STANDARD_EMPTY_STRING)) {
+			this.hasAuthenticationData = true;
+		}
+	}
 
-        if (this.clientData.getCommunicatorId() > 0) {
-            this.authenticated = true;
-        }
+	public Packet sendRequest(PacketContent contentToSend, CommunicationEndpoint recipient) {
+		final var request = this.packetCompiler.createRequest(recipient, contentToSend);
 
-        if (!this.authenticationData.getLogin().equals(STANDARD_EMPTY_STRING)) {
-            this.hasAuthenticationData = true;
-        }
-    }
+		this.requester.request(request);
+		return request;
+	}
 
-    public
-    Packet sendRequest (PacketContent contentToSend,
-                        CommunicationEndpoint recipient) {
-        final var request = this.packetCompiler.createRequest(recipient,
-                                                              contentToSend);
+	public Packet sendResponse(PacketContent contentToSend, Packet requestPacket) {
+		final var response = this.packetCompiler.createResponse(contentToSend, requestPacket);
 
-        this.requester.request(request);
-        return request;
-    }
+		this.requester.request(response);
+		return response;
+	}
 
-    public
-    Packet sendResponse (PacketContent contentToSend, Packet requestPacket) {
-        final var response = this.packetCompiler.createResponse(contentToSend,
-                                                                requestPacket);
+	public AuthenticationDTO getAuthenticationData() {
+		return this.authenticationData;
+	}
 
-        this.requester.request(response);
-        return response;
-    }
+	public boolean hasAuthenticationDataSet() {
+		return this.hasAuthenticationData;
+	}
 
-    public
-    AuthenticationDTO getAuthenticationData () {
-        return this.authenticationData;
-    }
+	public void resetConnection() throws IOException {
 
-    public
-    boolean hasAuthenticationDataSet () {
-        return this.hasAuthenticationData;
-    }
+		if (this.hasAuthenticationData || this.authenticated) {
+			this.connectionControl.closeConnection();
+			prepareNewConnection();
+		} else {
+			LOGGER.info("Verbindung wurde nicht gestartet.");
+		}
+	}
 
-    public
-    void resetConnection ()
-    throws IOException {
+	public boolean tryClientLogout() {
+		Packet response;
+		var logoutSuccess = false;
 
-        if (this.hasAuthenticationData || this.authenticated) {
-            this.connectionControl.closeConnection();
-            prepareNewConnection();
-        } else {
-            LOGGER.info("Verbindung wurde nicht gestartet.");
-        }
-    }
+		if (this.authenticated) {
+			requester.request(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
+					new LogoutRequestDTO(this.clientData)));
+			do {
+				response = readPacket();
+			} while (response != null && !(response.getPacketContent() instanceof LogoutResponseDTO));
 
-    public
-    boolean tryClientLogout () {
-        Packet response;
-        var logoutSuccess = false;
+			if (response != null) {
+				final var content = response.getPacketContent();
 
-        if (this.authenticated) {
-            requester.request(
-                    packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
-                                                 new LogoutRequestDTO(
-                                                         this.clientData)));
-            do {
-                response = readPacket();
-            } while (response != null &&
-                     !(response.getPacketContent() instanceof LogoutResponseDTO));
+				if (content instanceof final LogoutResponseDTO logoutResponse) {
+					logoutSuccess = logoutResponse.getLogoutState();
+					LOGGER.info("Logout erfolgreich");
+				} else {
+					LOGGER.info("{}-Logout fehlgeschlagen", this.clientData.getDisplayLabel());
+				}
+			} else {
+				LOGGER.info(
+						"Logout fehlgeschlagen. Letzte empfangene Nachricht hatte nicht Typ \"LogoutResponseDTO\".");
+			}
+		} else {
+			LOGGER.info("Logout unnötig. Es besteht keine Verbindung. ID: {}",
+					this.getCommunicatorData().getCommunicatorId());
+		}
 
-            if (response != null) {
-                final var content = response.getPacketContent();
+		return logoutSuccess;
+	}
 
-                if (content instanceof final LogoutResponseDTO logoutResponse) {
-                    logoutSuccess = logoutResponse.getLogoutState();
-                    LOGGER.info("Logout erfolgreich");
-                } else {
-                    LOGGER.info("{}-Logout fehlgeschlagen",
-                                this.clientData.getDisplayLabel());
-                }
-            } else {
-                LOGGER.info(
-                        "Logout fehlgeschlagen. Letzte empfangene Nachricht hatte nicht Typ \"LogoutResponseDTO\".");
-            }
-        } else {
-            LOGGER.info("Logout unnötig. Es besteht keine Verbindung. ID: {}",
-                        this.getCommunicatorData().getCommunicatorId());
-        }
+	public Packet readPacket() {
+		long timeout = System.currentTimeMillis() + 2000L;
+		Packet readPacket = null;
 
-        return logoutSuccess;
-    }
+		PacketBuffer handlerBoundBuffer = this.bufferManager.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+		do {
+			try {
+				readPacket = handlerBoundBuffer.getPacket();
+			} catch (InterruptedException ie) {
+				Thread.currentThread().interrupt();
+				LOGGER.info("Beim Holen des naechsten Pakets unterbrochen.");
+				break;
+			}
+		} while (readPacket == null && System.currentTimeMillis() < timeout);
+		return readPacket;
+	}
 
-    public
-    Packet readPacket () {
-        long timeout = System.currentTimeMillis() + 2000L;
-        Packet readPacket = null;
+	public CommunicatorDTO getCommunicatorData() {
+		return CommunicatorDTO.valueOf(this.clientData.getCommunicatorId(), this.clientData.getDisplayLabel());
+	}
 
-        PacketBuffer handlerBoundBuffer = this.bufferManager.getPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
-        do {
-            try {
-                readPacket = handlerBoundBuffer.getPacket();
-            } catch (InterruptedException ie) {
-                Thread.currentThread().interrupt();
-                LOGGER.info("Beim Holen des naechsten Pakets unterbrochen.");
-                break;
-            }
-        } while (readPacket == null && System.currentTimeMillis() < timeout);
-        return readPacket;
-    }
+	public boolean tryClientLogin() {
+		Packet response;
+		var loginSuccess = false;
 
-    public
-    CommunicatorDTO getCommunicatorData () {
-        return CommunicatorDTO.valueOf(this.clientData.getCommunicatorId(),
-                                       this.clientData.getDisplayLabel());
-    }
+		if (!this.authenticated && this.hasAuthenticationData) {
+			requester.request(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
+					new LoginRequestDTO(this.authenticationData)));
+			response = readPacket();
 
-    public
-    boolean tryClientLogin () {
-        Packet response;
-        var loginSuccess = false;
+			if (response != null) {
+				final var content = response.getPacketContent();
 
-        if (!this.authenticated && this.hasAuthenticationData) {
-            requester.request(
-                    packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
-                                                 new LoginRequestDTO(
-                                                         this.authenticationData)));
-            response = readPacket();
+				if (content instanceof final LoginResponseDTO loginResponse) {
+					this.authenticated = loginSuccess = true;
+					this.clientData = loginResponse.getClientData();
 
-            if (response != null) {
-                final var content = response.getPacketContent();
-
-                if (content instanceof final LoginResponseDTO loginResponse) {
-                    this.authenticated = loginSuccess = true;
-                    this.clientData = loginResponse.getClientData();
-
-                    LOGGER.info("{}-Login erfolgreich",
-                                this.clientData.getDisplayLabel());
-                } else {
-                    LOGGER.info("{}-Login fehlgeschlagen. Antworttyp " +
-                                "statt LoginResponseDTO: {}",
-                                this.authenticationData.getLogin(),
-                                content.getClass().getSimpleName());
-                    if(content instanceof ErrorDTO errorResponse){
-                        LOGGER.info(errorResponse.getErrorMessage());
-                    }
-                }
-            } else {
-                LOGGER.info("{}-Login fehlgeschlagen. Keine Antwort " + "erhalten.",
-                            this.authenticationData.getLogin());
-            }
-        } else {
-            LOGGER.info(
-                    "Login nicht möglich. Daten vorhanden: {} | Bereits eingeloggt: {}.",
-                    this.hasAuthenticationData, this.authenticated);
-        }
-        return loginSuccess;
-    }
+					LOGGER.info("{}-Login erfolgreich", this.clientData.getDisplayLabel());
+				} else {
+					LOGGER.info("{}-Login fehlgeschlagen. Antworttyp " + "statt LoginResponseDTO: {}",
+							this.authenticationData.getLogin(), content.getClass().getSimpleName());
+					if (content instanceof ErrorDTO errorResponse) {
+						LOGGER.info(errorResponse.getErrorMessage());
+					}
+				}
+			} else {
+				LOGGER.info("{}-Login fehlgeschlagen. Keine Antwort " + "erhalten.",
+						this.authenticationData.getLogin());
+			}
+		} else {
+			LOGGER.info("Login nicht möglich. Daten vorhanden: {} | Bereits eingeloggt: {}.",
+					this.hasAuthenticationData, this.authenticated);
+		}
+		return loginSuccess;
+	}
 }

@@ -4,12 +4,11 @@ import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvide
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 
-public
-interface BaseHandlingDataProvider {
+public interface BaseHandlingDataProvider {
 
-    ResultingPacketContentHandler getResultingPacketContentHandler ();
+	ResultingPacketContentHandler getResultingPacketContentHandler();
 
-    LocalClientDataProvider getLocalClientDataProvider ();
+	LocalClientDataProvider getLocalClientDataProvider();
 
-    LocalClientStateProvider getLocalClientStateProvider ();
+	LocalClientStateProvider getLocalClientStateProvider();
 }

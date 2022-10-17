@@ -1,5 +1,13 @@
 package de.vsy.server.service.inter_server;
 
+import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -14,113 +22,86 @@ import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
-import org.apache.logging.log4j.LogManager;
 
-import java.util.Map;
-import java.util.Set;
+public class RemoteClientDisconnector {
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+	private final PacketBuffer remoteServerBuffer;
+	private final ServicePacketBufferManager serviceBufferManager;
+	private final CommunicatorPersistenceDAO communicatorDataProvider;
+	private final LiveClientStateDAO clientStateProvider;
+	private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
 
-public
-class RemoteClientDisconnector {
+	public RemoteClientDisconnector(final PacketBuffer remoteServerBuffer,
+			final ServicePacketBufferManager serviceBufferManager,
+			final CommunicatorPersistenceDAO communicatorDataProvider, final LiveClientStateDAO clientStateProvider,
+			final AbstractPacketCategorySubscriptionManager clientSubscriptionManager) {
+		this.remoteServerBuffer = remoteServerBuffer;
+		this.serviceBufferManager = serviceBufferManager;
+		this.communicatorDataProvider = communicatorDataProvider;
+		this.clientStateProvider = clientStateProvider;
+		this.clientSubscriptionManager = clientSubscriptionManager;
+	}
 
-    private final PacketBuffer remoteServerBuffer;
-    private final ServicePacketBufferManager serviceBufferManager;
-    private final CommunicatorPersistenceDAO communicatorDataProvider;
-    private final LiveClientStateDAO clientStateProvider;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+	public void disconnectRemainingClients(final Map<Integer, PendingPacketDAO> clientPersistenceAccessManagers) {
 
-    public
-    RemoteClientDisconnector (final PacketBuffer remoteServerBuffer,
-                              final ServicePacketBufferManager serviceBufferManager,
-                              final CommunicatorPersistenceDAO communicatorDataProvider,
-                              final LiveClientStateDAO clientStateProvider,
-                              final AbstractPacketCategorySubscriptionManager clientSubscriptionManager) {
-        this.remoteServerBuffer = remoteServerBuffer;
-        this.serviceBufferManager = serviceBufferManager;
-        this.communicatorDataProvider = communicatorDataProvider;
-        this.clientStateProvider = clientStateProvider;
-        this.clientSubscriptionManager = clientSubscriptionManager;
-    }
+		for (final var currentClient : clientPersistenceAccessManagers.entrySet()) {
+			final var clientId = currentClient.getKey();
+			final var currentState = this.clientStateProvider.getClientState(clientId);
+			disconnectClient(clientId, currentState.getCurrentState());
+			currentClient.getValue().removeFileAccess();
+		}
+	}
 
-    public
-    void disconnectRemainingClients (
-            final Map<Integer, PendingPacketDAO> clientPersistenceAccessManagers) {
+	private void disconnectClient(int clientId, ClientState currentState) {
+		try {
+			publishState(clientId, currentState);
+		} catch (InterruptedException ie) {
+			LogManager.getLogger().error("Kein Kontaktlistenzugriff fuer "
+					+ "Klienten {}. Klientenstatus wurde Kontakten " + "nicht mitgeteilt.", clientId);
+		}
+		unsubscribeClient(clientId);
+		this.clientStateProvider.removeClientState(clientId);
+	}
 
-        for (final var currentClient : clientPersistenceAccessManagers.entrySet()) {
-            final var clientId = currentClient.getKey();
-            final var currentState = this.clientStateProvider.getClientState(
-                    clientId);
-            disconnectClient(clientId, currentState.getCurrentState());
-            currentClient.getValue().removeFileAccess();
-        }
-    }
+	private void publishState(final int clientId, final ClientState currentState) throws InterruptedException {
+		Set<Integer> contactIdList;
+		final var contactListProvider = new ContactListDAO();
 
-    private
-    void disconnectClient (int clientId, ClientState currentState) {
-        try {
-            publishState(clientId, currentState);
-        } catch (InterruptedException ie) {
-            LogManager.getLogger()
-                      .error("Kein Kontaktlistenzugriff fuer " +
-                             "Klienten {}. Klientenstatus wurde Kontakten " +
-                             "nicht mitgeteilt.", clientId);
-        }
-        unsubscribeClient(clientId);
-        this.clientStateProvider.removeClientState(clientId);
-    }
+		contactListProvider.createFileAccess(clientId);
+		contactIdList = contactListProvider.readContacts(EligibleContactEntity.CLIENT);
 
-    private
-    void publishState (final int clientId, final ClientState currentState)
-    throws InterruptedException {
-        Set<Integer> contactIdList;
-        final var contactListProvider = new ContactListDAO();
+		if (!contactIdList.isEmpty()) {
+			final var statusSyncBuilder = new ExtendedStatusSyncBuilder<>();
+			final var requestAssignmentBuffer = this.serviceBufferManager.getRandomBuffer(Service.TYPE.REQUEST_ROUTER);
 
-        contactListProvider.createFileAccess(clientId);
-        contactIdList = contactListProvider.readContacts(
-                EligibleContactEntity.CLIENT);
+			if (requestAssignmentBuffer != null) {
+				final var communicatorData = this.communicatorDataProvider.getCommunicatorData(clientId);
 
-        if (!contactIdList.isEmpty()) {
-            final var statusSyncBuilder = new ExtendedStatusSyncBuilder<>();
-            final var requestAssignmentBuffer = this.serviceBufferManager.getRandomBuffer(
-                    Service.TYPE.REQUEST_ROUTER);
+				statusSyncBuilder.withContactIdSet(contactIdList)
+						.withContactData(ConvertCommDataToDTO.convertFrom(communicatorData))
+						.withClientState(currentState).withToAdd(false);
 
-            if (requestAssignmentBuffer != null) {
-                final var communicatorData = this.communicatorDataProvider.getCommunicatorData(
-                        clientId);
+				requestAssignmentBuffer.appendPacket(
+						PacketCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID), statusSyncBuilder.build()));
+			}
+		}
+	}
 
-                statusSyncBuilder.withContactIdSet(contactIdList)
-                                 .withContactData(ConvertCommDataToDTO.convertFrom(
-                                         communicatorData))
-                                 .withClientState(currentState)
-                                 .withToAdd(false);
+	public void unsubscribeClient(final int clientId) {
+		final var subscriptionMap = ClientStateTranslator.prepareClientSubscriptionMap(ClientState.AUTHENTICATED, false,
+				clientId);
+		final var extraSubscriptionMap = this.clientStateProvider.getAllExtraSubscriptions(clientId);
 
-                requestAssignmentBuffer.appendPacket(PacketCompiler.createRequest(
-                        getServerEntity(STANDARD_SERVER_ID),
-                        statusSyncBuilder.build()));
-            }
-        }
-    }
+		for (final var subscriptionSet : subscriptionMap.entrySet()) {
+			final var topic = subscriptionSet.getKey();
+			final var threads = subscriptionSet.getValue();
 
-    public
-    void unsubscribeClient (final int clientId) {
-        final var subscriptionMap = ClientStateTranslator.prepareClientSubscriptionMap(
-                ClientState.AUTHENTICATED, false, clientId);
-        final var extraSubscriptionMap = this.clientStateProvider.getAllExtraSubscriptions(
-                clientId);
-
-        for (final var subscriptionSet : subscriptionMap.entrySet()) {
-            final var topic = subscriptionSet.getKey();
-            final var threads = subscriptionSet.getValue();
-
-            if (extraSubscriptionMap.containsKey(topic)) {
-                threads.addAll(extraSubscriptionMap.get(topic));
-            }
-            for (final var currentThread : threads) {
-                this.clientSubscriptionManager.unsubscribe(topic, currentThread,
-                                                           this.remoteServerBuffer);
-            }
-        }
-    }
+			if (extraSubscriptionMap.containsKey(topic)) {
+				threads.addAll(extraSubscriptionMap.get(topic));
+			}
+			for (final var currentThread : threads) {
+				this.clientSubscriptionManager.unsubscribe(topic, currentThread, this.remoteServerBuffer);
+			}
+		}
+	}
 }

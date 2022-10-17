@@ -5,19 +5,17 @@
 
 package de.vsy.chat.server.two_server_test;
 
-import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
-import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import static java.util.List.of;
 
 import java.util.List;
 
-import static java.util.List.of;
+import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
+import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
 
 /** @author fredward */
-public
-class TwoServerTestDataProvider {
+public class TwoServerTestDataProvider {
 
-    public static final List<Integer> CLIENT_CONNECTION_PORTS = of(7371, 7371);
-    public static final List<AuthenticationDTO> CLIENT_AUTHENTICATION_DATA_LIST = of(
-            TestClientDataProvider.FRANK_1_AUTH,
-            TestClientDataProvider.PETER_1_AUTH);
+	public static final List<Integer> CLIENT_CONNECTION_PORTS = of(7371, 7371);
+	public static final List<AuthenticationDTO> CLIENT_AUTHENTICATION_DATA_LIST = of(
+			TestClientDataProvider.FRANK_1_AUTH, TestClientDataProvider.PETER_1_AUTH);
 }

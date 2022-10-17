@@ -3,194 +3,181 @@
  */
 package de.vsy.server.persistent_data.server_data;
 
-import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
-import de.vsy.server.persistent_data.data_bean.CommunicatorData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public
-class CommunicatorPersistenceDAO implements ServerDataAccess {
+import com.fasterxml.jackson.databind.JavaType;
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO dataProvider;
+import de.vsy.server.persistent_data.PersistenceDAO;
+import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 
-    /** Instantiates a new communicator dataManagement accessLimiter provider. */
-    public
-    CommunicatorPersistenceDAO () {
+public class CommunicatorPersistenceDAO implements ServerDataAccess {
 
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.COMMUNICATORS,
-                                               getDataFormat());
-    }
+	private static final Logger LOGGER = LogManager.getLogger();
+	private final PersistenceDAO dataProvider;
 
-    /**
-     * Gets the dataManagement format.
-     *
-     * @return the dataManagement format
-     */
-    public static
-    JavaType getDataFormat () {
-        return defaultInstance().constructCollectionType(HashSet.class,
-                                                         CommunicatorData.class);
-    }
+	/** Instantiates a new communicator dataManagement accessLimiter provider. */
+	public CommunicatorPersistenceDAO() {
 
-    /**
-     * Adds the contact to list.
-     *
-     * @param commData the comm dataManagement
-     *
-     * @return true, if successful
-     */
-    public
-    boolean addCommunicator (final CommunicatorData commData) {
-        Set<CommunicatorData> communicatorList;
-        var communicatorAdded = false;
+		this.dataProvider = new PersistenceDAO(DataFileDescriptor.COMMUNICATORS, getDataFormat());
+	}
 
-        if (!this.dataProvider.acquireAccess(true)) {
-            return false;
-        }
-        communicatorList = readRegisteredCommunicators();
+	/**
+	 * Gets the dataManagement format.
+	 *
+	 * @return the dataManagement format
+	 */
+	public static JavaType getDataFormat() {
+		return defaultInstance().constructCollectionType(HashSet.class, CommunicatorData.class);
+	}
 
-        if (communicatorList.add(commData)) {
-            communicatorAdded = this.dataProvider.writeData(communicatorList);
-        } else {
-            LOGGER.error("Kommunikatordaten wurden nicht gepeichert. Es " +
-                         "existiert bereits ein Kommunikator mit demselben " +
-                         "Anzeigenamen.");
-        }
-        this.dataProvider.releaseAccess(true);
+	/**
+	 * Adds the contact to list.
+	 *
+	 * @param commData the comm dataManagement
+	 *
+	 * @return true, if successful
+	 */
+	public boolean addCommunicator(final CommunicatorData commData) {
+		Set<CommunicatorData> communicatorList;
+		var communicatorAdded = false;
 
-        if (communicatorAdded) {
-            LOGGER.info("Communicator added.");
-        }
-        return communicatorAdded;
-    }
+		if (!this.dataProvider.acquireAccess(true)) {
+			return false;
+		}
+		communicatorList = readRegisteredCommunicators();
 
-    /**
-     * Read registered clients.
-     *
-     * @return the list
-     */
-    @SuppressWarnings("unchecked")
-    public
-    Set<CommunicatorData> readRegisteredCommunicators () {
-        Object fromFile;
-        Set<CommunicatorData> readList = new HashSet<>();
+		if (communicatorList.add(commData)) {
+			communicatorAdded = this.dataProvider.writeData(communicatorList);
+		} else {
+			LOGGER.error("Kommunikatordaten wurden nicht gepeichert. Es "
+					+ "existiert bereits ein Kommunikator mit demselben " + "Anzeigenamen.");
+		}
+		this.dataProvider.releaseAccess(true);
 
-        if (!this.dataProvider.acquireAccess(false)) {
-            return readList;
-        }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+		if (communicatorAdded) {
+			LOGGER.info("Communicator added.");
+		}
+		return communicatorAdded;
+	}
 
-        if (fromFile instanceof HashSet) {
+	/**
+	 * Read registered clients.
+	 *
+	 * @return the list
+	 */
+	@SuppressWarnings("unchecked")
+	public Set<CommunicatorData> readRegisteredCommunicators() {
+		Object fromFile;
+		Set<CommunicatorData> readList = new HashSet<>();
 
-            try {
-                readList = (Set<CommunicatorData>) fromFile;
-            } catch (final ClassCastException cc) {
-                LOGGER.info(
-                        "ClassCastException beim Lesen der registrierten Clietns-Map. Die Map wird leer ausgegeben.");
-            }
-        }
-        return readList;
-    }
+		if (!this.dataProvider.acquireAccess(false)) {
+			return readList;
+		}
+		fromFile = this.dataProvider.readData();
+		this.dataProvider.releaseAccess(false);
 
-    @Override
-    public
-    void createFileAccess ()
-    throws IllegalStateException, IllegalArgumentException, InterruptedException {
-        this.dataProvider.createFileReferences();
-    }
+		if (fromFile instanceof HashSet) {
 
-    /**
-     * Removes the communicator.
-     *
-     * @param communicatorId the communicator id
-     *
-     * @return true, if successful
-     */
-    public
-    boolean removeCommunicator (final int communicatorId) {
-        var communicatorRemoved = false;
-        CommunicatorData communicatorToRemove;
+			try {
+				readList = (Set<CommunicatorData>) fromFile;
+			} catch (final ClassCastException cc) {
+				LOGGER.info(
+						"ClassCastException beim Lesen der registrierten Clietns-Map. Die Map wird leer ausgegeben.");
+			}
+		}
+		return readList;
+	}
 
-        if (!this.dataProvider.acquireAccess(true)) {
-            return false;
-        }
-        communicatorToRemove = getCommunicatorData(communicatorId);
-        communicatorRemoved = removeCommunicator(communicatorToRemove);
+	@Override
+	public void createFileAccess() throws IllegalStateException, IllegalArgumentException, InterruptedException {
+		this.dataProvider.createFileReferences();
+	}
 
-        this.dataProvider.releaseAccess(true);
+	/**
+	 * Removes the communicator.
+	 *
+	 * @param communicatorId the communicator id
+	 *
+	 * @return true, if successful
+	 */
+	public boolean removeCommunicator(final int communicatorId) {
+		var communicatorRemoved = false;
+		CommunicatorData communicatorToRemove;
 
-        return communicatorRemoved;
-    }
+		if (!this.dataProvider.acquireAccess(true)) {
+			return false;
+		}
+		communicatorToRemove = getCommunicatorData(communicatorId);
+		communicatorRemoved = removeCommunicator(communicatorToRemove);
 
-    /**
-     * Gets the communicator dataManagement.
-     *
-     * @param communicatorId the communicator id
-     *
-     * @return the communicator dataManagement
-     */
-    public
-    CommunicatorData getCommunicatorData (final int communicatorId) {
-        CommunicatorData foundCommunicator = null;
-        Set<CommunicatorData> communicatorList;
+		this.dataProvider.releaseAccess(true);
 
-        if (!this.dataProvider.acquireAccess(false)) {
-            return null;
-        }
-        communicatorList = readRegisteredCommunicators();
-        this.dataProvider.releaseAccess(false);
+		return communicatorRemoved;
+	}
 
-        for (final CommunicatorData CommunicatorData : communicatorList) {
+	/**
+	 * Gets the communicator dataManagement.
+	 *
+	 * @param communicatorId the communicator id
+	 *
+	 * @return the communicator dataManagement
+	 */
+	public CommunicatorData getCommunicatorData(final int communicatorId) {
+		CommunicatorData foundCommunicator = null;
+		Set<CommunicatorData> communicatorList;
 
-            if (CommunicatorData.getCommunicatorId() == communicatorId) {
-                foundCommunicator = CommunicatorData;
-                break;
-            }
-        }
-        return foundCommunicator;
-    }
+		if (!this.dataProvider.acquireAccess(false)) {
+			return null;
+		}
+		communicatorList = readRegisteredCommunicators();
+		this.dataProvider.releaseAccess(false);
 
-    /**
-     * Removes the contact from list.
-     *
-     * @param clientAuthData the to delete
-     *
-     * @return true, if successful
-     */
-    public
-    boolean removeCommunicator (final CommunicatorData clientAuthData) {
-        var communicatorRemoved = false;
-        Set<CommunicatorData> communicatorList;
+		for (final CommunicatorData CommunicatorData : communicatorList) {
 
-        if (!this.dataProvider.acquireAccess(true)) {
-            return false;
-        }
-        communicatorList = readRegisteredCommunicators();
-        communicatorRemoved = (communicatorList.remove(clientAuthData) &&
-                               this.dataProvider.writeData(communicatorList));
+			if (CommunicatorData.getCommunicatorId() == communicatorId) {
+				foundCommunicator = CommunicatorData;
+				break;
+			}
+		}
+		return foundCommunicator;
+	}
 
-        this.dataProvider.releaseAccess(true);
+	/**
+	 * Removes the contact from list.
+	 *
+	 * @param clientAuthData the to delete
+	 *
+	 * @return true, if successful
+	 */
+	public boolean removeCommunicator(final CommunicatorData clientAuthData) {
+		var communicatorRemoved = false;
+		Set<CommunicatorData> communicatorList;
 
-        if (communicatorRemoved) {
-            LOGGER.info("Communicator removed.");
-        }
+		if (!this.dataProvider.acquireAccess(true)) {
+			return false;
+		}
+		communicatorList = readRegisteredCommunicators();
+		communicatorRemoved = (communicatorList.remove(clientAuthData)
+				&& this.dataProvider.writeData(communicatorList));
 
-        return communicatorRemoved;
-    }
+		this.dataProvider.releaseAccess(true);
 
-    @Override
-    public
-    void removeFileAccess ()
-    throws IllegalStateException, IllegalArgumentException {
-        this.dataProvider.removeFileReferences();
-    }
+		if (communicatorRemoved) {
+			LOGGER.info("Communicator removed.");
+		}
+
+		return communicatorRemoved;
+	}
+
+	@Override
+	public void removeFileAccess() throws IllegalStateException, IllegalArgumentException {
+		this.dataProvider.removeFileReferences();
+	}
 }

@@ -1,156 +1,134 @@
 package de.vsy.server.server.server_connection;
 
-import java.io.IOException;
-import java.util.*;
-
 import static java.util.Set.copyOf;
 
-public
-class ServerConnectionDataManager {
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
-    private final LocalServerConnectionData clientReceptionConnectionData;
-    private final Queue<RemoteServerConnectionData> notSynchronizedRemoteServers;
-    private final Set<RemoteServerConnectionData> synchronizedRemoteServers;
-    private boolean contactsArePresent;
-    private LocalServerConnectionData serverReceptionConnectionData;
+public class ServerConnectionDataManager {
 
-    public
-    ServerConnectionDataManager (
-            LocalServerConnectionData clientReceptionConnectionData) {
-        this.contactsArePresent = false;
-        this.clientReceptionConnectionData = clientReceptionConnectionData;
-        this.notSynchronizedRemoteServers = new LinkedList<>();
-        this.synchronizedRemoteServers = new HashSet<>(1);
-    }
+	private final LocalServerConnectionData clientReceptionConnectionData;
+	private final Queue<RemoteServerConnectionData> notSynchronizedRemoteServers;
+	private final Set<RemoteServerConnectionData> synchronizedRemoteServers;
+	private boolean contactsArePresent;
+	private LocalServerConnectionData serverReceptionConnectionData;
 
-    public
-    boolean addServerReceptionConnectionData (
-            final LocalServerConnectionData serverConnectionData) {
-        var connectionDataSet = this.serverReceptionConnectionData == null;
+	public ServerConnectionDataManager(LocalServerConnectionData clientReceptionConnectionData) {
+		this.contactsArePresent = false;
+		this.clientReceptionConnectionData = clientReceptionConnectionData;
+		this.notSynchronizedRemoteServers = new LinkedList<>();
+		this.synchronizedRemoteServers = new HashSet<>(1);
+	}
 
-        if (connectionDataSet) {
-            this.serverReceptionConnectionData = serverConnectionData;
-        }
-        return connectionDataSet;
-    }
+	public boolean addServerReceptionConnectionData(final LocalServerConnectionData serverConnectionData) {
+		var connectionDataSet = this.serverReceptionConnectionData == null;
 
-    public
-    LocalServerConnectionData getServerReceptionConnectionData () {
-        return this.serverReceptionConnectionData;
-    }
+		if (connectionDataSet) {
+			this.serverReceptionConnectionData = serverConnectionData;
+		}
+		return connectionDataSet;
+	}
 
-    public
-    Set<RemoteServerConnectionData> getAllSynchronizedRemoteServers () {
-        return copyOf(this.synchronizedRemoteServers);
-    }
+	public LocalServerConnectionData getServerReceptionConnectionData() {
+		return this.serverReceptionConnectionData;
+	}
 
-    public
-    RemoteServerConnectionData getDistinctNodeData (final Set<Integer> serverIdSet) {
-        RemoteServerConnectionData foundServerNode = null;
+	public Set<RemoteServerConnectionData> getAllSynchronizedRemoteServers() {
+		return copyOf(this.synchronizedRemoteServers);
+	}
 
-        for (var currentNodeData : this.synchronizedRemoteServers) {
+	public RemoteServerConnectionData getDistinctNodeData(final Set<Integer> serverIdSet) {
+		RemoteServerConnectionData foundServerNode = null;
 
-            if (!serverIdSet.contains(currentNodeData.getServerId())) {
-                foundServerNode = currentNodeData;
-                break;
-            }
-        }
-        return foundServerNode;
-    }
+		for (var currentNodeData : this.synchronizedRemoteServers) {
 
-    public
-    RemoteServerConnectionData getNextNotSynchronizedConnectionData () {
-        return this.notSynchronizedRemoteServers.remove();
-    }
+			if (!serverIdSet.contains(currentNodeData.getServerId())) {
+				foundServerNode = currentNodeData;
+				break;
+			}
+		}
+		return foundServerNode;
+	}
 
-    public
-    LocalServerConnectionData getLocalServerConnectionData () {
-        return this.clientReceptionConnectionData;
-    }
+	public RemoteServerConnectionData getNextNotSynchronizedConnectionData() {
+		return this.notSynchronizedRemoteServers.remove();
+	}
 
-    public
-    boolean addSynchronizedConnectionData (
-            RemoteServerConnectionData remoteConnectionData) {
-        var serverConnectionAdded = false;
+	public LocalServerConnectionData getLocalServerConnectionData() {
+		return this.clientReceptionConnectionData;
+	}
 
-        if (remoteConnectionData != null) {
-            removeRemoteConnectionData(remoteConnectionData);
-            serverConnectionAdded = this.synchronizedRemoteServers.add(
-                    remoteConnectionData);
-        }
-        return serverConnectionAdded;
-    }
+	public boolean addSynchronizedConnectionData(RemoteServerConnectionData remoteConnectionData) {
+		var serverConnectionAdded = false;
 
-    public
-    void removeRemoteConnectionData (
-            final RemoteServerConnectionData remoteConnectionData) {
+		if (remoteConnectionData != null) {
+			removeRemoteConnectionData(remoteConnectionData);
+			serverConnectionAdded = this.synchronizedRemoteServers.add(remoteConnectionData);
+		}
+		return serverConnectionAdded;
+	}
 
-        if (remoteConnectionData != null) {
-            this.notSynchronizedRemoteServers.remove(remoteConnectionData);
-            this.synchronizedRemoteServers.remove(remoteConnectionData);
-        }
-    }
+	public void removeRemoteConnectionData(final RemoteServerConnectionData remoteConnectionData) {
 
-    public
-    boolean addNotSynchronizedConnectionData (
-            RemoteServerConnectionData serverConnectionData) {
-        var connectionAdded = false;
+		if (remoteConnectionData != null) {
+			this.notSynchronizedRemoteServers.remove(remoteConnectionData);
+			this.synchronizedRemoteServers.remove(remoteConnectionData);
+		}
+	}
 
-        if (serverConnectionData != null &&
-            !this.notSynchronizedRemoteServers.contains(serverConnectionData)) {
-            connectionAdded = this.notSynchronizedRemoteServers.add(
-                    serverConnectionData);
-        }
-        return connectionAdded;
-    }
+	public boolean addNotSynchronizedConnectionData(RemoteServerConnectionData serverConnectionData) {
+		var connectionAdded = false;
 
-    /**
-     * Schließt alle Verbindungen. Zunächst Klientenrezeption und Serverrezeption ->
-     * es kommen keine neuen Verbindungen dazu
-     */
-    public
-    void closeAllConnections () {
-        this.closeConnection(clientReceptionConnectionData);
-        this.closeConnection(this.serverReceptionConnectionData);
+		if (serverConnectionData != null && !this.notSynchronizedRemoteServers.contains(serverConnectionData)) {
+			connectionAdded = this.notSynchronizedRemoteServers.add(serverConnectionData);
+		}
+		return connectionAdded;
+	}
 
-        this.closeConnections(this.notSynchronizedRemoteServers);
-        this.closeConnections(this.synchronizedRemoteServers);
-    }
+	/**
+	 * Schließt alle Verbindungen. Zunächst Klientenrezeption und Serverrezeption ->
+	 * es kommen keine neuen Verbindungen dazu
+	 */
+	public void closeAllConnections() {
+		this.closeConnection(clientReceptionConnectionData);
+		this.closeConnection(this.serverReceptionConnectionData);
 
-    private
-    void closeConnection (ServerConnectionDataProvider connection) {
-        try {
-            connection.closeConnection();
-        } catch (IOException ioe) {
-            /* Die Verbindung wird "leise" geschlossen */
-        }
-    }
+		this.closeConnections(this.notSynchronizedRemoteServers);
+		this.closeConnections(this.synchronizedRemoteServers);
+	}
 
-    private
-    void closeConnections (Collection<RemoteServerConnectionData> toClose) {
+	private void closeConnection(ServerConnectionDataProvider connection) {
+		try {
+			connection.closeConnection();
+		} catch (IOException ioe) {
+			/* Die Verbindung wird "leise" geschlossen */
+		}
+	}
 
-        for (final var currentConnection : toClose) {
-            closeConnection(currentConnection);
-        }
-    }
+	private void closeConnections(Collection<RemoteServerConnectionData> toClose) {
 
-    public
-    void endPendingState () {
-        this.contactsArePresent = true;
-    }
+		for (final var currentConnection : toClose) {
+			closeConnection(currentConnection);
+		}
+	}
 
-    public
-    boolean remoteConnectionsLive () {
-        return this.notSynchronizedRemoteServers.isEmpty();
-    }
+	public void endPendingState() {
+		this.contactsArePresent = true;
+	}
 
-    public
-    boolean pendingConnectionStatus () {
-        return !this.contactsArePresent;
-    }
+	public boolean remoteConnectionsLive() {
+		return this.notSynchronizedRemoteServers.isEmpty();
+	}
 
-    public
-    boolean noLiveServers(){
-        return this.notSynchronizedRemoteServers.isEmpty() && this.synchronizedRemoteServers.isEmpty();
-    }
+	public boolean pendingConnectionStatus() {
+		return !this.contactsArePresent;
+	}
+
+	public boolean noLiveServers() {
+		return this.notSynchronizedRemoteServers.isEmpty() && this.synchronizedRemoteServers.isEmpty();
+	}
 }

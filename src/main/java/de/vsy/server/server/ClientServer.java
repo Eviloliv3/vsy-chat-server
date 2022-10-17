@@ -2,10 +2,9 @@ package de.vsy.server.server;
 
 import java.net.Socket;
 
-public
-interface ClientServer {
+public interface ClientServer {
 
-    void serveClient (Socket clientConnection);
+	void serveClient(Socket clientConnection);
 
-    boolean isOperable ();
+	boolean isOperable();
 }

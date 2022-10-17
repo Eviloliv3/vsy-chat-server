@@ -1,72 +1,64 @@
 package de.vsy.server.server_packet.content;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
+import static java.util.Set.copyOf;
 
 import java.io.Serial;
 import java.util.Set;
 
-import static java.util.Set.copyOf;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 
 /**
  * Wird versandt, wenn andere Klienten über einen Zustandswechsel eines Klienten
  * informiert werden müssen.
  */
 @JsonDeserialize(builder = ExtendedStatusSyncBuilder.class)
-public
-class ExtendedStatusSyncDTO extends BaseStatusSyncDTO implements ClientContactSync {
+public class ExtendedStatusSyncDTO extends BaseStatusSyncDTO implements ClientContactSync {
 
-    @Serial
-    private static final long serialVersionUID = -2447318735172645953L;
-    private Set<Integer> contactIdSet;
+	@Serial
+	private static final long serialVersionUID = -2447318735172645953L;
+	private Set<Integer> contactIdSet;
 
-    /**
-     * Instantiates a new extended status sync dataManagement.
-     *
-     * @param builder the builder
-     */
-    public
-    ExtendedStatusSyncDTO (final ExtendedStatusSyncBuilder<?> builder) {
-        super(builder);
-        this.contactIdSet = builder.getContactIdSet();
-    }
+	/**
+	 * Instantiates a new extended status sync dataManagement.
+	 *
+	 * @param builder the builder
+	 */
+	public ExtendedStatusSyncDTO(final ExtendedStatusSyncBuilder<?> builder) {
+		super(builder);
+		this.contactIdSet = builder.getContactIdSet();
+	}
 
-    @Override
-    public
-    Set<Integer> getContactIdSet () {
-        return copyOf(this.contactIdSet);
-    }
+	@Override
+	public Set<Integer> getContactIdSet() {
+		return copyOf(this.contactIdSet);
+	}
 
-    @Override
-    public
-    void setRemainingContactIds (final Set<Integer> remainingContacts) {
-        this.contactIdSet = copyOf(remainingContacts);
-    }
+	@Override
+	public void setRemainingContactIds(final Set<Integer> remainingContacts) {
+		this.contactIdSet = copyOf(remainingContacts);
+	}
 
-    @Override
-    public
-    String toString () {
-        final var objectString = new StringBuilder();
-        final var contactIListString = new StringBuilder();
+	@Override
+	public String toString() {
+		final var objectString = new StringBuilder();
+		final var contactIListString = new StringBuilder();
 
-        if (this.contactIdSet != null) {
+		if (this.contactIdSet != null) {
 
-            for (final var contactId : this.contactIdSet) {
-                contactIListString.append(contactId).append(", ");
-            }
-        }
+			for (final var contactId : this.contactIdSet) {
+				contactIListString.append(contactId).append(", ");
+			}
+		}
 
-        if (contactIListString.length() >= 3) {
-            contactIListString.setLength(contactIListString.length() - 2);
-        } else {
-            contactIListString.append("none");
-        }
-        objectString.append("\"extendedStatus\": { ")
-                    .append(super.toString())
-                    .append(", \"contactIList\": [ ")
-                    .append(contactIListString)
-                    .append(" ]")
-                    .append(" }");
-        return objectString.toString();
-    }
+		if (contactIListString.length() >= 3) {
+			contactIListString.setLength(contactIListString.length() - 2);
+		} else {
+			contactIListString.append("none");
+		}
+		objectString.append("\"extendedStatus\": { ").append(super.toString()).append(", \"contactIList\": [ ")
+				.append(contactIListString).append(" ]").append(" }");
+		return objectString.toString();
+	}
 }
