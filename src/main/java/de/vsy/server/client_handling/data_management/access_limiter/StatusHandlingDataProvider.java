@@ -4,12 +4,14 @@ import de.vsy.server.client_handling.data_management.CommunicationEntityDataProv
 import de.vsy.server.client_handling.data_management.LocalClientStateDependentLogicProvider;
 import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
 
-/** The Interface UpdateHandlingDataProvider. */
+/**
+ * The Interface UpdateHandlingDataProvider.
+ */
 public interface StatusHandlingDataProvider extends BaseHandlingDataProvider {
 
-	ClientStateControl getGlobalClientStateControl();
+  ClientStateControl getGlobalClientStateControl();
 
-	CommunicationEntityDataProvider getContactToActiveClientMapper();
+  CommunicationEntityDataProvider getContactToActiveClientMapper();
 
-	LocalClientStateDependentLogicProvider getLocalClientStateDependentLogicProvider();
+  LocalClientStateDependentLogicProvider getLocalClientStateDependentLogicProvider();
 }

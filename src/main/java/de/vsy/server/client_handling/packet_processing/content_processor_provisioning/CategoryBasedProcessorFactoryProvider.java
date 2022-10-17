@@ -6,6 +6,6 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_cat
 
 public interface CategoryBasedProcessorFactoryProvider {
 
-	ContentBasedProcessorFactory getCategoryHandlerFactory(PacketCategory category,
-			HandlerLocalDataManager threadDataAccess);
+  ContentBasedProcessorFactory getCategoryHandlerFactory(PacketCategory category,
+      HandlerLocalDataManager threadDataAccess);
 }

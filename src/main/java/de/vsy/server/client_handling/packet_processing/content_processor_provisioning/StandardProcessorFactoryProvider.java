@@ -6,21 +6,22 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_cat
 
 public class StandardProcessorFactoryProvider implements CategoryBasedProcessorFactoryProvider {
 
-	@Override
-	public ContentBasedProcessorFactory getCategoryHandlerFactory(PacketCategory category,
-			HandlerLocalDataManager threadDataAccess) {
-		ContentBasedProcessorFactory categoryFactory = null;
+  @Override
+  public ContentBasedProcessorFactory getCategoryHandlerFactory(PacketCategory category,
+      HandlerLocalDataManager threadDataAccess) {
+    ContentBasedProcessorFactory categoryFactory = null;
 
-		switch (category) {
-		case AUTHENTICATION -> categoryFactory = new AuthenticationPacketProcessorFactory(threadDataAccess);
-		case CHAT -> categoryFactory = new ChatPacketProcessorFactory(threadDataAccess);
-		case STATUS -> categoryFactory = new StatusPacketProcessorFactory(threadDataAccess);
-		case RELATION -> categoryFactory = new RelationPacketProcessorFactory(threadDataAccess);
-		case ERROR -> categoryFactory = new ErrorPacketProcessorFactory(threadDataAccess);
-		default -> {
-		}
-		// fehler loggen
-		}
-		return categoryFactory;
-	}
+    switch (category) {
+      case AUTHENTICATION ->
+          categoryFactory = new AuthenticationPacketProcessorFactory(threadDataAccess);
+      case CHAT -> categoryFactory = new ChatPacketProcessorFactory(threadDataAccess);
+      case STATUS -> categoryFactory = new StatusPacketProcessorFactory(threadDataAccess);
+      case RELATION -> categoryFactory = new RelationPacketProcessorFactory(threadDataAccess);
+      case ERROR -> categoryFactory = new ErrorPacketProcessorFactory(threadDataAccess);
+      default -> {
+      }
+      // fehler loggen
+    }
+    return categoryFactory;
+  }
 }

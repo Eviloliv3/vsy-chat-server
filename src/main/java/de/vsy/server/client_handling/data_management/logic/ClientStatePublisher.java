@@ -18,82 +18,84 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.relation.El
 
 public class ClientStatePublisher implements ClientStateListener {
 
-	private static ServerConnectionDataManager serverConnectionNodes;
-	private final LocalClientDataProvider clientDataManager;
-	private final ContactListDAO contactListAccess;
-	private final PacketDispatcher dispatcher;
+  private static ServerConnectionDataManager serverConnectionNodes;
+  private final LocalClientDataProvider clientDataManager;
+  private final ContactListDAO contactListAccess;
+  private final PacketDispatcher dispatcher;
 
-	public ClientStatePublisher(final LocalClientDataProvider clientDataManager,
-			final ContactListDAO contactListProvider, final PacketDispatcher dispatcher) {
-		this.clientDataManager = clientDataManager;
-		this.contactListAccess = contactListProvider;
-		this.dispatcher = dispatcher;
-	}
+  public ClientStatePublisher(final LocalClientDataProvider clientDataManager,
+      final ContactListDAO contactListProvider, final PacketDispatcher dispatcher) {
+    this.clientDataManager = clientDataManager;
+    this.contactListAccess = contactListProvider;
+    this.dispatcher = dispatcher;
+  }
 
-	public static void setupStaticServerDataAccess(final ServerConnectionDataManager serverConnectionDataManager) {
-		serverConnectionNodes = serverConnectionDataManager;
-	}
+  public static void setupStaticServerDataAccess(
+      final ServerConnectionDataManager serverConnectionDataManager) {
+    serverConnectionNodes = serverConnectionDataManager;
+  }
 
-	@Override
-	public void evaluateNewState(ClientState clientState, boolean changeTo) {
-		final var statusPacket = createStatusSyncPacket(clientState, changeTo);
+  @Override
+  public void evaluateNewState(ClientState clientState, boolean changeTo) {
+    final var statusPacket = createStatusSyncPacket(clientState, changeTo);
 
-		if (statusPacket != null) {
-			dispatcher.dispatchPacket(statusPacket);
-		}
-	}
+    if (statusPacket != null) {
+      dispatcher.dispatchPacket(statusPacket);
+    }
+  }
 
-	public Packet createStatusSyncPacket(ClientState clientState, boolean changeTo) {
-		Packet statePacket;
+  public Packet createStatusSyncPacket(ClientState clientState, boolean changeTo) {
+    Packet statePacket;
 
-		switch (clientState) {
-		case AUTHENTICATED -> statePacket = buildSimpleStatusPacket(clientState, changeTo);
-		case ACTIVE_MESSENGER -> statePacket = buildExtendedStatusPacket(clientState, changeTo);
-		default -> statePacket = null;
-		}
-		return statePacket;
-	}
+    switch (clientState) {
+      case AUTHENTICATED -> statePacket = buildSimpleStatusPacket(clientState, changeTo);
+      case ACTIVE_MESSENGER -> statePacket = buildExtendedStatusPacket(clientState, changeTo);
+      default -> statePacket = null;
+    }
+    return statePacket;
+  }
 
-	private Packet buildSimpleStatusPacket(ClientState clientState, boolean changeTo) {
-		final var remoteServerId = getRemoteServerIdIfExistent();
+  private Packet buildSimpleStatusPacket(ClientState clientState, boolean changeTo) {
+    final var remoteServerId = getRemoteServerIdIfExistent();
 
-		if (remoteServerId != STANDARD_SERVER_ID) {
-			final var simpleStatusDTO = new SimpleStatusSyncBuilder<>();
-			simpleStatusDTO.withClientState(clientState).withToAdd(changeTo);
-			return completeStatusPacket(remoteServerId, simpleStatusDTO);
-		}
-		return null;
-	}
+    if (remoteServerId != STANDARD_SERVER_ID) {
+      final var simpleStatusDTO = new SimpleStatusSyncBuilder<>();
+      simpleStatusDTO.withClientState(clientState).withToAdd(changeTo);
+      return completeStatusPacket(remoteServerId, simpleStatusDTO);
+    }
+    return null;
+  }
 
-	private Packet buildExtendedStatusPacket(ClientState clientState, boolean changeTo) {
-		final var extendedStatusDTO = new ExtendedStatusSyncBuilder<>();
-		final var contactSet = this.contactListAccess.readContacts(EligibleContactEntity.CLIENT);
-		final var groupSet = this.contactListAccess.readContacts(EligibleContactEntity.GROUP);
-		final var recipientId = serverConnectionNodes.getLocalServerConnectionData().getServerId();
+  private Packet buildExtendedStatusPacket(ClientState clientState, boolean changeTo) {
+    final var extendedStatusDTO = new ExtendedStatusSyncBuilder<>();
+    final var contactSet = this.contactListAccess.readContacts(EligibleContactEntity.CLIENT);
+    final var groupSet = this.contactListAccess.readContacts(EligibleContactEntity.GROUP);
+    final var recipientId = serverConnectionNodes.getLocalServerConnectionData().getServerId();
 
-		contactSet.addAll(groupSet);
-		extendedStatusDTO.withContactIdSet(contactSet).withClientState(clientState).withToAdd(changeTo);
+    contactSet.addAll(groupSet);
+    extendedStatusDTO.withContactIdSet(contactSet).withClientState(clientState).withToAdd(changeTo);
 
-		return completeStatusPacket(recipientId, extendedStatusDTO);
-	}
+    return completeStatusPacket(recipientId, extendedStatusDTO);
+  }
 
-	private Packet completeStatusPacket(final int recipientId, final SimpleStatusSyncBuilder<?> contentBuilder) {
-		final var clientData = this.clientDataManager.getCommunicatorData();
-		final var localServerId = ClientStatePublisher.serverConnectionNodes.getLocalServerConnectionData()
-				.getServerId();
+  private Packet completeStatusPacket(final int recipientId,
+      final SimpleStatusSyncBuilder<?> contentBuilder) {
+    final var clientData = this.clientDataManager.getCommunicatorData();
+    final var localServerId = ClientStatePublisher.serverConnectionNodes.getLocalServerConnectionData()
+        .getServerId();
 
-		contentBuilder.withContactData(clientData).withOriginatingServerId(localServerId);
-		return PacketCompiler.createRequest(getServerEntity(recipientId), contentBuilder.build());
-	}
+    contentBuilder.withContactData(clientData).withOriginatingServerId(localServerId);
+    return PacketCompiler.createRequest(getServerEntity(recipientId), contentBuilder.build());
+  }
 
-	private int getRemoteServerIdIfExistent() {
-		int remoteServerId = STANDARD_SERVER_ID;
-		final var localServerId = serverConnectionNodes.getLocalServerConnectionData().getServerId();
-		final var remoteServerNode = serverConnectionNodes.getDistinctNodeData(of(localServerId));
+  private int getRemoteServerIdIfExistent() {
+    int remoteServerId = STANDARD_SERVER_ID;
+    final var localServerId = serverConnectionNodes.getLocalServerConnectionData().getServerId();
+    final var remoteServerNode = serverConnectionNodes.getDistinctNodeData(of(localServerId));
 
-		if (remoteServerNode != null) {
-			remoteServerId = remoteServerNode.getServerId();
-		}
-		return remoteServerId;
-	}
+    if (remoteServerNode != null) {
+      remoteServerId = remoteServerNode.getServerId();
+    }
+    return remoteServerId;
+  }
 }

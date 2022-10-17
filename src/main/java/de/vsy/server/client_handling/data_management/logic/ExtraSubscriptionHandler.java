@@ -4,5 +4,5 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_cat
 
 public interface ExtraSubscriptionHandler {
 
-	boolean handle(final int clientId, final PacketCategory topic, final int threadId);
+  boolean handle(final int clientId, final PacketCategory topic, final int threadId);
 }

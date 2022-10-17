@@ -10,52 +10,54 @@ import de.vsy.shared_utility.standard_value.StandardIdProvider;
 
 public class ClientHandlerPacketCreator extends ResultingPacketCreator {
 
-	private final LocalClientDataProvider clientDataProvider;
+  private final LocalClientDataProvider clientDataProvider;
 
-	public ClientHandlerPacketCreator(LocalClientDataProvider clientDataProvider) {
-		this.clientDataProvider = clientDataProvider;
-	}
+  public ClientHandlerPacketCreator(LocalClientDataProvider clientDataProvider) {
+    this.clientDataProvider = clientDataProvider;
+  }
 
-	@Override
-	public Packet createRequest(PacketContent processedContent, CommunicationEndpoint recipient) {
-		if (processedContent == null) {
-			throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
-		}
-		if (recipient == null) {
-			throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
-		}
+  @Override
+  public Packet createRequest(PacketContent processedContent, CommunicationEndpoint recipient) {
+    if (processedContent == null) {
+      throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
+    }
+    if (recipient == null) {
+      throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
+    }
 
-		final var resultingContent = adjustWrapping(processedContent, true);
-		if (this.currentRequest == null) {
-			return PacketCompiler.createRequest(recipient, resultingContent);
-		} else {
-			return PacketCompiler.createFollowUpRequest(recipient, resultingContent, this.currentRequest);
-		}
-	}
+    final var resultingContent = adjustWrapping(processedContent, true);
+    if (this.currentRequest == null) {
+      return PacketCompiler.createRequest(recipient, resultingContent);
+    } else {
+      return PacketCompiler.createFollowUpRequest(recipient, resultingContent, this.currentRequest);
+    }
+  }
 
-	@Override
-	public Packet createResponse(PacketContent processedContent) {
-		final var resultingContent = adjustWrapping(processedContent, false);
-		return PacketCompiler.createResponse(resultingContent, this.currentRequest);
-	}
+  @Override
+  public Packet createResponse(PacketContent processedContent) {
+    final var resultingContent = adjustWrapping(processedContent, false);
+    return PacketCompiler.createResponse(resultingContent, this.currentRequest);
+  }
 
-	protected PacketContent adjustWrapping(final PacketContent contentToWrap, final boolean isRequest) {
-		PacketContent finalContent;
+  protected PacketContent adjustWrapping(final PacketContent contentToWrap,
+      final boolean isRequest) {
+    PacketContent finalContent;
 
-		final var clientIsSender = checkClientSender();
-		final var toWrap = (!isRequest && !clientIsSender) || (isRequest && clientIsSender);
+    final var clientIsSender = checkClientSender();
+    final var toWrap = (!isRequest && !clientIsSender) || (isRequest && clientIsSender);
 
-		if (toWrap) {
-			finalContent = wrapContent(contentToWrap);
-		} else {
-			finalContent = contentToWrap;
-		}
+    if (toWrap) {
+      finalContent = wrapContent(contentToWrap);
+    } else {
+      finalContent = contentToWrap;
+    }
 
-		return finalContent;
-	}
+    return finalContent;
+  }
 
-	protected boolean checkClientSender() {
-		final var senderId = this.currentRequest.getPacketProperties().getSender().getEntityId();
-		return senderId == this.clientDataProvider.getClientId() || senderId == StandardIdProvider.STANDARD_CLIENT_ID;
-	}
+  protected boolean checkClientSender() {
+    final var senderId = this.currentRequest.getPacketProperties().getSender().getEntityId();
+    return senderId == this.clientDataProvider.getClientId()
+        || senderId == StandardIdProvider.STANDARD_CLIENT_ID;
+  }
 }

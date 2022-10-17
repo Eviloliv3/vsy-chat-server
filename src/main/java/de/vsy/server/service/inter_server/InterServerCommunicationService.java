@@ -6,11 +6,6 @@ package de.vsy.server.service.inter_server;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static java.util.Arrays.asList;
 
-import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.server.server_connection.RemoteServerConnectionData;
@@ -40,290 +35,308 @@ import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
 import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * Service handling communication between ChatServers. Initiates server
- * synchronization on new connection. Performs semantic checks on read Packet.
- * Also creates notification in case the connection fails.
+ * Service handling communication between ChatServers. Initiates server synchronization on new
+ * connection. Performs semantic checks on read Packet. Also creates notification in case the
+ * connection fails.
  */
 public class InterServerCommunicationService extends ServiceBase {
 
-	private static final ServiceData SERVICE_SPECIFICATIONS;
-	private static final Logger LOGGER = LogManager.getLogger();
-	private final ServerConnectionDataManager serverConnectionDataManager;
-	private final UnconfirmedPacketTransmissionCache packetCache;
-	private final PacketHandlingExceptionProcessor pheProcessor;
-	private final ServerCommunicationServiceDataProvider serviceDataAccess;
-	private final ThreadPacketBufferManager threadBuffers;
-	private ConnectionThreadControl connectionControl;
-	private PacketDispatcher packetDispatcher;
-	private RemoteServerConnectionData remoteConnectionData;
-	private ProcessingInterruptProvider localInterruptor;
-	private PacketCheck validator;
+  private static final ServiceData SERVICE_SPECIFICATIONS;
+  private static final Logger LOGGER = LogManager.getLogger();
 
-	static {
-		SERVICE_SPECIFICATIONS = ServiceDataBuilder.create().withType(Service.TYPE.SERVER_TRANSFER)
-				.withName("InterServerCommunicationService")
-				.withDirection(ServiceResponseDirection.INBOUND, Service.TYPE.REQUEST_ROUTER)
-				.withDirection(ServiceResponseDirection.OUTBOUND, Service.TYPE.SERVER_TRANSFER).build();
-	}
+  static {
+    SERVICE_SPECIFICATIONS = ServiceDataBuilder.create().withType(Service.TYPE.SERVER_TRANSFER)
+        .withName("InterServerCommunicationService")
+        .withDirection(ServiceResponseDirection.INBOUND, Service.TYPE.REQUEST_ROUTER)
+        .withDirection(ServiceResponseDirection.OUTBOUND, Service.TYPE.SERVER_TRANSFER).build();
+  }
 
-	/**
-	 * Instantiates a new InterServerCommService.
-	 *
-	 * @param serviceDataAccess the service dataManagement access
-	 */
-	public InterServerCommunicationService(final ServerCommunicationServiceDataProvider serviceDataAccess) {
-		super(SERVICE_SPECIFICATIONS, serviceDataAccess.getServicePacketBufferManager(),
-				serviceDataAccess.getLocalServerConnectionData());
-		this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
-		this.serviceDataAccess = serviceDataAccess;
-		this.threadBuffers = new ThreadPacketBufferManager();
-		this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
-		this.packetCache = new UnconfirmedPacketTransmissionCache(1000);
-	}
+  private final ServerConnectionDataManager serverConnectionDataManager;
+  private final UnconfirmedPacketTransmissionCache packetCache;
+  private final PacketHandlingExceptionProcessor pheProcessor;
+  private final ServerCommunicationServiceDataProvider serviceDataAccess;
+  private final ThreadPacketBufferManager threadBuffers;
+  private ConnectionThreadControl connectionControl;
+  private PacketDispatcher packetDispatcher;
+  private RemoteServerConnectionData remoteConnectionData;
+  private ProcessingInterruptProvider localInterruptor;
+  private PacketCheck validator;
 
-	@Override
-	public void finishSetup() {
-		this.remoteConnectionData = this.serverConnectionDataManager.getNextNotSynchronizedConnectionData();
-		this.validator = new SimplePacketChecker(
-				ServerPacketTypeValidationCreator.createRegularServerPacketContentValidator());
-		this.localInterruptor = this::interruptionConditionNotMet;
+  /**
+   * Instantiates a new InterServerCommService.
+   *
+   * @param serviceDataAccess the service dataManagement access
+   */
+  public InterServerCommunicationService(
+      final ServerCommunicationServiceDataProvider serviceDataAccess) {
+    super(SERVICE_SPECIFICATIONS, serviceDataAccess.getServicePacketBufferManager(),
+        serviceDataAccess.getLocalServerConnectionData());
+    this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
+    this.serviceDataAccess = serviceDataAccess;
+    this.threadBuffers = new ThreadPacketBufferManager();
+    this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
+    this.packetCache = new UnconfirmedPacketTransmissionCache(1000);
+  }
 
-		setupThreadPacketBufferManager();
-		this.connectionControl = new ConnectionThreadControl(remoteConnectionData.getConnectionSocket(),
-				this.threadBuffers, this.packetCache, this.remoteConnectionData.isLeader());
+  @Override
+  public void finishSetup() {
+    this.remoteConnectionData = this.serverConnectionDataManager.getNextNotSynchronizedConnectionData();
+    this.validator = new SimplePacketChecker(
+        ServerPacketTypeValidationCreator.createRegularServerPacketContentValidator());
+    this.localInterruptor = this::interruptionConditionNotMet;
 
-		if (!this.connectionControl.initiateConnectionThreads()) {
-			LOGGER.error("Fehler beim Verbindungsaufbau mit entferntem Server. Verbindungsdaten:\n{}",
-					remoteConnectionData);
-			Thread.currentThread().interrupt();
-		}
-		this.packetDispatcher = new InterServerCommunicationPacketDispatcher(this.remoteConnectionData,
-				this.serviceDataAccess.getServicePacketBufferManager(), SERVICE_SPECIFICATIONS.getResponseDirections(),
-				this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
-	}
+    setupThreadPacketBufferManager();
+    this.connectionControl = new ConnectionThreadControl(remoteConnectionData.getConnectionSocket(),
+        this.threadBuffers, this.packetCache, this.remoteConnectionData.isLeader());
 
-	@Override
-	public boolean interruptionConditionNotMet() {
-		return !Thread.currentThread().isInterrupted() && this.connectionControl.connectionIsLive();
-	}
+    if (!this.connectionControl.initiateConnectionThreads()) {
+      LOGGER.error("Fehler beim Verbindungsaufbau mit entferntem Server. Verbindungsdaten:\n{}",
+          remoteConnectionData);
+      Thread.currentThread().interrupt();
+    }
+    this.packetDispatcher = new InterServerCommunicationPacketDispatcher(this.remoteConnectionData,
+        this.serviceDataAccess.getServicePacketBufferManager(),
+        SERVICE_SPECIFICATIONS.getResponseDirections(),
+        this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+  }
 
-	@Override
-	public void work() {
-		synchronizeInterServerCommService();
-		makeServiceAvailable();
-		waitForServerSynchronization();
-		continuouslyProcessInput(this.localInterruptor);
+  @Override
+  public boolean interruptionConditionNotMet() {
+    return !Thread.currentThread().isInterrupted() && this.connectionControl.connectionIsLive();
+  }
 
-		if (!this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
-			setupSubstituteService();
-		}
-	}
+  @Override
+  public void work() {
+    synchronizeInterServerCommService();
+    makeServiceAvailable();
+    waitForServerSynchronization();
+    continuouslyProcessInput(this.localInterruptor);
 
-	@Override
-	public void breakDown() {
+    if (!this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
+      setupSubstituteService();
+    }
+  }
 
-		if (this.connectionControl != null) {
-			this.connectionControl.closeConnection();
-			try {
-				this.remoteConnectionData.closeConnection();
-			} catch (IOException ioe) {
-				LOGGER.info("Fehler beim Schließen der Verbindung:\n{}", ioe.getLocalizedMessage());
-			}
-		}
-		this.serverConnectionDataManager.removeRemoteConnectionData(this.remoteConnectionData);
+  @Override
+  public void breakDown() {
 
-		this.serviceDataAccess.getServicePacketBufferManager().deregisterBuffer(getServiceType(), getServiceId(),
-				this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
-	}
+    if (this.connectionControl != null) {
+      this.connectionControl.closeConnection();
+      try {
+        this.remoteConnectionData.closeConnection();
+      } catch (IOException ioe) {
+        LOGGER.info("Fehler beim Schließen der Verbindung:\n{}", ioe.getLocalizedMessage());
+      }
+    }
+    this.serverConnectionDataManager.removeRemoteConnectionData(this.remoteConnectionData);
 
-	/** Sendet den Serverport des. */
-	private void synchronizeInterServerCommService() {
-		var synchronizationPacket = createInterServerSyncPacket();
-		final var inputBuffer = this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+    this.serviceDataAccess.getServicePacketBufferManager()
+        .deregisterBuffer(getServiceType(), getServiceId(),
+            this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+  }
 
-		this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND).appendPacket(synchronizationPacket);
+  /**
+   * Sendet den Serverport des.
+   */
+  private void synchronizeInterServerCommService() {
+    var synchronizationPacket = createInterServerSyncPacket();
+    final var inputBuffer = this.threadBuffers.getPacketBuffer(
+        ThreadPacketBufferLabel.HANDLER_BOUND);
 
-		while (interruptionConditionNotMet()) {
+    this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND)
+        .appendPacket(synchronizationPacket);
 
-			try {
-				synchronizationPacket = inputBuffer.getPacket();
-			} catch (InterruptedException ie) {
-				LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}", asList(ie.getStackTrace()));
-				Thread.currentThread().interrupt();
-				synchronizationPacket = null;
-			}
+    while (interruptionConditionNotMet()) {
 
-			if (synchronizationPacket != null) {
-				final var validatorString = validator.checkPacket(synchronizationPacket);
-				final var content = synchronizationPacket.getPacketContent();
+      try {
+        synchronizationPacket = inputBuffer.getPacket();
+      } catch (InterruptedException ie) {
+        LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}",
+            asList(ie.getStackTrace()));
+        Thread.currentThread().interrupt();
+        synchronizationPacket = null;
+      }
 
-				if (validatorString.isPresent()) {
-					LOGGER.error("Paketfehler: {}", validatorString.get());
-					continue;
-				}
+      if (synchronizationPacket != null) {
+        final var validatorString = validator.checkPacket(synchronizationPacket);
+        final var content = synchronizationPacket.getPacketContent();
 
-				if (content instanceof final InterServerCommSyncDTO synchronizationContent) {
-					completeRemoteConnectionData(synchronizationContent);
-					LOGGER.info("Verbindung aufgebaut zu {}", synchronizationContent.getServerId());
-					return;
-				}
-			}
-		}
-		LOGGER.info("Serververbindung synchronisiert.");
-	}
+        if (validatorString.isPresent()) {
+          LOGGER.error("Paketfehler: {}", validatorString.get());
+          continue;
+        }
 
-	/**
-	 * Der InterServerCommunicationService traegt seinen Buffer in
-	 * ServicePacketBufferManager ein und setzt das Service-readyFlag.
-	 */
-	private void makeServiceAvailable() {
-		final var remoteServerId = this.remoteConnectionData.getServerId();
-		this.serviceDataAccess.getServicePacketBufferManager().registerBuffer(SERVICE_SPECIFICATIONS.getServiceType(),
-				remoteServerId, this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
-		super.setReadyState();
-	}
+        if (content instanceof final InterServerCommSyncDTO synchronizationContent) {
+          completeRemoteConnectionData(synchronizationContent);
+          LOGGER.info("Verbindung aufgebaut zu {}", synchronizationContent.getServerId());
+          return;
+        }
+      }
+    }
+    LOGGER.info("Serververbindung synchronisiert.");
+  }
 
-	/**
-	 * Wartet bis der Hauptthread des Servers die Synchronisation der
-	 * Klientenzustände signalisiert oder der Service unterbrochen wird. Eine
-	 * Unterbrechung wird aufgefrischt.
-	 */
-	private void waitForServerSynchronization() {
-		LOGGER.info("Warte auf Serversynchronisation.");
-		while (this.serverConnectionDataManager.pendingConnectionStatus()) {
-			LOGGER.trace("Serversynchronisation wird erwartet.");
-			Thread.yield();
-		}
-	}
+  /**
+   * Der InterServerCommunicationService traegt seinen Buffer in ServicePacketBufferManager ein und
+   * setzt das Service-readyFlag.
+   */
+  private void makeServiceAvailable() {
+    final var remoteServerId = this.remoteConnectionData.getServerId();
+    this.serviceDataAccess.getServicePacketBufferManager()
+        .registerBuffer(SERVICE_SPECIFICATIONS.getServiceType(),
+            remoteServerId,
+            this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+    super.setReadyState();
+  }
 
-	/**
-	 * Prüft aus dem Netz eingehende Pakete und schreibt sie auf den
-	 * RequestAssignmentBuffer weiter. Die Abbruchbedingung wird als Parameter
-	 * übergeben.
-	 *
-	 * @param interrupt the interrupt
-	 */
-	private void continuouslyProcessInput(final ProcessingInterruptProvider interrupt) {
-		LOGGER.info("Verarbeite eingehende Pakete.");
-		var reinterrupt = false;
-		final var inputBuffer = this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+  /**
+   * Wartet bis der Hauptthread des Servers die Synchronisation der Klientenzustände signalisiert
+   * oder der Service unterbrochen wird. Eine Unterbrechung wird aufgefrischt.
+   */
+  private void waitForServerSynchronization() {
+    LOGGER.info("Warte auf Serversynchronisation.");
+    while (this.serverConnectionDataManager.pendingConnectionStatus()) {
+      LOGGER.trace("Serversynchronisation wird erwartet.");
+      Thread.yield();
+    }
+  }
 
-		while (interrupt.conditionNotMet()) {
+  /**
+   * Prüft aus dem Netz eingehende Pakete und schreibt sie auf den RequestAssignmentBuffer weiter.
+   * Die Abbruchbedingung wird als Parameter übergeben.
+   *
+   * @param interrupt the interrupt
+   */
+  private void continuouslyProcessInput(final ProcessingInterruptProvider interrupt) {
+    LOGGER.info("Verarbeite eingehende Pakete.");
+    var reinterrupt = false;
+    final var inputBuffer = this.threadBuffers.getPacketBuffer(
+        ThreadPacketBufferLabel.HANDLER_BOUND);
 
-			try {
-				final var input = inputBuffer.getPacket();
+    while (interrupt.conditionNotMet()) {
 
-				if (input != null) {
-					processPacket(input);
-				}
-			} catch (InterruptedException ie) {
-				LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}", asList(ie.getStackTrace()));
-				reinterrupt = true;
-			}
-		}
+      try {
+        final var input = inputBuffer.getPacket();
 
-		if (reinterrupt) {
-			Thread.currentThread().interrupt();
-		}
-		LOGGER.info("Eingehende Pakete werden nicht mehr weiter verarbeitet.");
-	}
+        if (input != null) {
+          processPacket(input);
+        }
+      } catch (InterruptedException ie) {
+        LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}",
+            asList(ie.getStackTrace()));
+        reinterrupt = true;
+      }
+    }
 
-	private void setupSubstituteService() {
-		Thread substituteThread;
+    if (reinterrupt) {
+      Thread.currentThread().interrupt();
+    }
+    LOGGER.info("Eingehende Pakete werden nicht mehr weiter verarbeitet.");
+  }
 
-		relaisConnectedServerFailure();
-		emptyInputBuffer();
-		substituteThread = new Thread(new InterServerSubstituteService(this.serviceDataAccess,
-				this.remoteConnectionData, this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND)));
-		substituteThread.start();
-	}
+  private void setupSubstituteService() {
+    Thread substituteThread;
 
-	/**
-	 * Erstellt ein Paket zur Synchronisation des genutzten Serverports.
-	 *
-	 * @return the packet
-	 */
-	private Packet createInterServerSyncPacket() {
-		final var recipient = getServerEntity(this.remoteConnectionData.getServerId());
+    relaisConnectedServerFailure();
+    emptyInputBuffer();
+    substituteThread = new Thread(new InterServerSubstituteService(this.serviceDataAccess,
+        this.remoteConnectionData,
+        this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND)));
+    substituteThread.start();
+  }
 
-		final PacketContent synchronizedContent = new InterServerCommSyncDTO(
-				this.serverConnectionDataManager.getLocalServerConnectionData().getServerId());
+  /**
+   * Erstellt ein Paket zur Synchronisation des genutzten Serverports.
+   *
+   * @return the packet
+   */
+  private Packet createInterServerSyncPacket() {
+    final var recipient = getServerEntity(this.remoteConnectionData.getServerId());
 
-		return PacketCompiler.createRequest(recipient, synchronizedContent);
-	}
+    final PacketContent synchronizedContent = new InterServerCommSyncDTO(
+        this.serverConnectionDataManager.getLocalServerConnectionData().getServerId());
 
-	void completeRemoteConnectionData(InterServerCommSyncDTO remoteServerSyncData) {
-		final var remotePacketBuffer = (RemotePacketBuffer) this.threadBuffers
-				.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
-		final var currentRemoteConnectionData = this.remoteConnectionData;
-		this.remoteConnectionData = RemoteServerConnectionData.valueOf(remoteServerSyncData.getServerId(),
-				this.remoteConnectionData.isLeader(), this.remoteConnectionData.getConnectionSocket());
+    return PacketCompiler.createRequest(recipient, synchronizedContent);
+  }
 
-		remotePacketBuffer.updateRemoteConnectionData(this.remoteConnectionData);
-		this.remoteConnectionData.setRemoteServerConnector(remotePacketBuffer);
+  void completeRemoteConnectionData(InterServerCommSyncDTO remoteServerSyncData) {
+    final var remotePacketBuffer = (RemotePacketBuffer) this.threadBuffers
+        .getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
+    final var currentRemoteConnectionData = this.remoteConnectionData;
+    this.remoteConnectionData = RemoteServerConnectionData.valueOf(
+        remoteServerSyncData.getServerId(),
+        this.remoteConnectionData.isLeader(), this.remoteConnectionData.getConnectionSocket());
 
-		this.serverConnectionDataManager.addSynchronizedConnectionData(this.remoteConnectionData);
-		this.serverConnectionDataManager.removeRemoteConnectionData(currentRemoteConnectionData);
-	}
+    remotePacketBuffer.updateRemoteConnectionData(this.remoteConnectionData);
+    this.remoteConnectionData.setRemoteServerConnector(remotePacketBuffer);
 
-	private void processPacket(final Packet nextPacket) {
-		final Packet output;
-		final var validationString = this.validator.checkPacket(nextPacket);
+    this.serverConnectionDataManager.addSynchronizedConnectionData(this.remoteConnectionData);
+    this.serverConnectionDataManager.removeRemoteConnectionData(currentRemoteConnectionData);
+  }
 
-		if (validationString.isEmpty()) {
-			final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
-			serverPacketContent.setReadingConnectionThread(super.getServiceId());
-			output = nextPacket;
-		} else {
-			final var errorMessage = "Das Paket wurde nicht zugestellt. ";
-			final var processingException = new PacketProcessingException(errorMessage + validationString.get());
-			output = this.pheProcessor.processException(processingException, nextPacket);
-		}
-		this.packetDispatcher.dispatchPacket(output);
-	}
+  private void processPacket(final Packet nextPacket) {
+    final Packet output;
+    final var validationString = this.validator.checkPacket(nextPacket);
 
-	/**
-	 * Relais connected server failure.
-	 *
-	 * @return true, if successful
-	 */
-	private boolean relaisConnectedServerFailure() {
-		Packet failureNotification;
-		final var failureContent = new ServerFailureContentBuilder()
-				.withFailedServerId(this.remoteConnectionData.getServerId()).build();
-		/*
-		 * final var recipient = CommunicationEndpoint.getServerEntity(
-		 * this.remoteConnectionData.getServerId()); final var assignmentBuffer =
-		 * this.threadBuffers.getPacketBuffer( ThreadPacketBufferLabel.SERVER_BOUND);
-		 *
-		 * if (assignmentBuffer != null) { failureNotification =
-		 * PacketCompiler.createRequest(recipient, failureContent); return
-		 * assignmentBuffer.appendPacket(failureNotification); } else { LOGGER.error(
-		 * "Verbundener Server ausgefallen. Kein Assignment PacketBuffer gefunden (Statusmeldung verfaellt)."
-		 * ); return false; }
-		 */
-		LOGGER.info("Verbindung zu entferntem Klienten wurde unterbrochen: {}", failureContent);
-		return true;
-	}
+    if (validationString.isEmpty()) {
+      final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
+      serverPacketContent.setReadingConnectionThread(super.getServiceId());
+      output = nextPacket;
+    } else {
+      final var errorMessage = "Das Paket wurde nicht zugestellt. ";
+      final var processingException = new PacketProcessingException(
+          errorMessage + validationString.get());
+      output = this.pheProcessor.processException(processingException, nextPacket);
+    }
+    this.packetDispatcher.dispatchPacket(output);
+  }
 
-	private void emptyInputBuffer() {
-		final ProcessingInterruptProvider interrupt = () -> this.threadBuffers
-				.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND).containsPackets();
+  /**
+   * Relais connected server failure.
+   *
+   * @return true, if successful
+   */
+  private boolean relaisConnectedServerFailure() {
+    Packet failureNotification;
+    final var failureContent = new ServerFailureContentBuilder()
+        .withFailedServerId(this.remoteConnectionData.getServerId()).build();
+    /*
+     * final var recipient = CommunicationEndpoint.getServerEntity(
+     * this.remoteConnectionData.getServerId()); final var assignmentBuffer =
+     * this.threadBuffers.getPacketBuffer( ThreadPacketBufferLabel.SERVER_BOUND);
+     *
+     * if (assignmentBuffer != null) { failureNotification =
+     * PacketCompiler.createRequest(recipient, failureContent); return
+     * assignmentBuffer.appendPacket(failureNotification); } else { LOGGER.error(
+     * "Verbundener Server ausgefallen. Kein Assignment PacketBuffer gefunden (Statusmeldung verfaellt)."
+     * ); return false; }
+     */
+    LOGGER.info("Verbindung zu entferntem Klienten wurde unterbrochen: {}", failureContent);
+    return true;
+  }
 
-		continuouslyProcessInput(interrupt);
-	}
+  private void emptyInputBuffer() {
+    final ProcessingInterruptProvider interrupt = () -> this.threadBuffers
+        .getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND).containsPackets();
 
-	private void setupThreadPacketBufferManager() {
-		PacketBuffer bufferToRegister;
+    continuouslyProcessInput(interrupt);
+  }
 
-		bufferToRegister = this.serviceDataAccess.getServicePacketBufferManager()
-				.getRandomBuffer(Service.TYPE.REQUEST_ROUTER);
-		this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND, bufferToRegister);
-		this.threadBuffers.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
-		bufferToRegister = new RemotePacketBuffer(this.serverConnectionDataManager.getLocalServerConnectionData(),
-				this.remoteConnectionData);
-		this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND, bufferToRegister);
-	}
+  private void setupThreadPacketBufferManager() {
+    PacketBuffer bufferToRegister;
+
+    bufferToRegister = this.serviceDataAccess.getServicePacketBufferManager()
+        .getRandomBuffer(Service.TYPE.REQUEST_ROUTER);
+    this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND, bufferToRegister);
+    this.threadBuffers.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+    bufferToRegister = new RemotePacketBuffer(
+        this.serverConnectionDataManager.getLocalServerConnectionData(),
+        this.remoteConnectionData);
+    this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND, bufferToRegister);
+  }
 }

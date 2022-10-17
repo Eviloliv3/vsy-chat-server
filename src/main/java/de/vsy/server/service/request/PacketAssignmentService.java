@@ -6,9 +6,6 @@ package de.vsy.server.service.request;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.access.PacketAssignmentServiceDataProvider;
@@ -30,132 +27,139 @@ import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
 import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
+import java.util.EnumMap;
+import java.util.Map;
 
-/** Service assigning clients' requests to the appropriate service. */
+/**
+ * Service assigning clients' requests to the appropriate service.
+ */
 public class PacketAssignmentService extends ServiceBase {
 
-	private static final ServiceData SERVICE_SPECIFICATIONS;
-	private final ServicePacketBufferManager serviceBuffers;
-	private PacketHandlingExceptionProcessor pheProcessor;
-	private PublishablePacketCreator preProcessor;
-	private CommunicationNetworkSubscriptionManager packetNetworkManager;
-	private PacketBuffer requestBuffer;
-	private PacketCheck validator;
+  private static final ServiceData SERVICE_SPECIFICATIONS;
 
-	static {
-		SERVICE_SPECIFICATIONS = ServiceDataBuilder.create().withType(Service.TYPE.REQUEST_ROUTER)
-				.withName("PacketAssignmentService")
-				.withDirection(ServiceResponseDirection.INBOUND, Service.TYPE.REQUEST_ROUTER)
-				.withDirection(ServiceResponseDirection.OUTBOUND, Service.TYPE.SERVER_TRANSFER).build();
-	}
+  static {
+    SERVICE_SPECIFICATIONS = ServiceDataBuilder.create().withType(Service.TYPE.REQUEST_ROUTER)
+        .withName("PacketAssignmentService")
+        .withDirection(ServiceResponseDirection.INBOUND, Service.TYPE.REQUEST_ROUTER)
+        .withDirection(ServiceResponseDirection.OUTBOUND, Service.TYPE.SERVER_TRANSFER).build();
+  }
 
-	/**
-	 * Instantiates a new client request assignment service.
-	 *
-	 * @param serviceDataModel the service dataManagement model
-	 */
-	public PacketAssignmentService(final PacketAssignmentServiceDataProvider serviceDataModel) {
-		super(SERVICE_SPECIFICATIONS, serviceDataModel.getServicePacketBufferManager(),
-				serviceDataModel.getLocalServerConnectionData());
-		this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
-		setupPacketNetworkManager(serviceDataModel.getServiceSubscriptionManager(),
-				serviceDataModel.getClientSubscriptionManager());
-	}
+  private final ServicePacketBufferManager serviceBuffers;
+  private PacketHandlingExceptionProcessor pheProcessor;
+  private PublishablePacketCreator preProcessor;
+  private CommunicationNetworkSubscriptionManager packetNetworkManager;
+  private PacketBuffer requestBuffer;
+  private PacketCheck validator;
 
-	/**
-	 * Setup PacketNetwork manager.
-	 *
-	 * @param serverBoundNetwork the server bound network
-	 * @param clientBoundNetwork the client bound network
-	 */
-	private void setupPacketNetworkManager(final AbstractPacketCategorySubscriptionManager serverBoundNetwork,
-			final AbstractPacketCategorySubscriptionManager clientBoundNetwork) {
-		Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> packetNetworMap;
+  /**
+   * Instantiates a new client request assignment service.
+   *
+   * @param serviceDataModel the service dataManagement model
+   */
+  public PacketAssignmentService(final PacketAssignmentServiceDataProvider serviceDataModel) {
+    super(SERVICE_SPECIFICATIONS, serviceDataModel.getServicePacketBufferManager(),
+        serviceDataModel.getLocalServerConnectionData());
+    this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
+    setupPacketNetworkManager(serviceDataModel.getServiceSubscriptionManager(),
+        serviceDataModel.getClientSubscriptionManager());
+  }
 
-		packetNetworMap = new EnumMap<>(EligibleCommunicationEntity.class);
+  /**
+   * Setup PacketNetwork manager.
+   *
+   * @param serverBoundNetwork the server bound network
+   * @param clientBoundNetwork the client bound network
+   */
+  private void setupPacketNetworkManager(
+      final AbstractPacketCategorySubscriptionManager serverBoundNetwork,
+      final AbstractPacketCategorySubscriptionManager clientBoundNetwork) {
+    Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> packetNetworMap;
 
-		packetNetworMap.put(SERVER, serverBoundNetwork);
-		packetNetworMap.put(CLIENT, clientBoundNetwork);
+    packetNetworMap = new EnumMap<>(EligibleCommunicationEntity.class);
 
-		this.packetNetworkManager = new CommunicationNetworkSubscriptionManager(packetNetworMap);
-	}
+    packetNetworMap.put(SERVER, serverBoundNetwork);
+    packetNetworMap.put(CLIENT, clientBoundNetwork);
 
-	@Override
-	public void finishSetup() {
-		final var serviceId = super.getServiceId();
-		final var identificatorValidation = ServerPacketTypeValidationCreator
-				.createRegularServerPacketContentValidator();
+    this.packetNetworkManager = new CommunicationNetworkSubscriptionManager(packetNetworMap);
+  }
 
-		this.validator = new SimplePacketChecker(identificatorValidation);
+  @Override
+  public void finishSetup() {
+    final var serviceId = super.getServiceId();
+    final var identificatorValidation = ServerPacketTypeValidationCreator
+        .createRegularServerPacketContentValidator();
 
-		this.requestBuffer = this.serviceBuffers.registerBuffer(super.getServiceType(), serviceId);
-		this.preProcessor = new ContentPreProcessor(super.serverConnectionData,
-				this.packetNetworkManager.getSubscriptionsManager(CLIENT), this.requestBuffer);
-		this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
-		super.setReadyState();
-	}
+    this.validator = new SimplePacketChecker(identificatorValidation);
 
-	@Override
-	public boolean interruptionConditionNotMet() {
-		return !Thread.currentThread().isInterrupted();
-	}
+    this.requestBuffer = this.serviceBuffers.registerBuffer(super.getServiceType(), serviceId);
+    this.preProcessor = new ContentPreProcessor(super.serverConnectionData,
+        this.packetNetworkManager.getSubscriptionsManager(CLIENT), this.requestBuffer);
+    this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
+    super.setReadyState();
+  }
 
-	@Override
-	public void work() {
-		Packet request;
+  @Override
+  public boolean interruptionConditionNotMet() {
+    return !Thread.currentThread().isInterrupted();
+  }
 
-		try {
-			request = this.requestBuffer.getPacket();
-			if (request != null) {
-				processPacket(request);
-			}
-		} catch (InterruptedException ie) {
-			ServiceBase.LOGGER.error("Beim Holen des naechsten Pakets " + "unterbrochen.");
-			Thread.currentThread().interrupt();
-		}
-	}
+  @Override
+  public void work() {
+    Packet request;
 
-	private void processPacket(final Packet nextPacket) {
-		final var validationString = validator.checkPacket(nextPacket);
+    try {
+      request = this.requestBuffer.getPacket();
+      if (request != null) {
+        processPacket(request);
+      }
+    } catch (InterruptedException ie) {
+      ServiceBase.LOGGER.error("Beim Holen des naechsten Pakets " + "unterbrochen.");
+      Thread.currentThread().interrupt();
+    }
+  }
 
-		if (validationString.isEmpty()) {
-			try {
-				publishPacket(nextPacket);
-			} catch (PacketHandlingException phe) {
-				final var errorMessage = "Das Paket wurde nicht zugestellt. " + phe.getMessage();
-				final var errorResponse = this.pheProcessor
-						.processException(new PacketTransmissionException(errorMessage), nextPacket);
+  private void processPacket(final Packet nextPacket) {
+    final var validationString = validator.checkPacket(nextPacket);
 
-				if (errorResponse != null) {
-					this.requestBuffer.prependPacket(errorResponse);
-				}
-			}
-		} else {
-			ServiceBase.LOGGER.error(validationString.get());
-		}
-	}
+    if (validationString.isEmpty()) {
+      try {
+        publishPacket(nextPacket);
+      } catch (PacketHandlingException phe) {
+        final var errorMessage = "Das Paket wurde nicht zugestellt. " + phe.getMessage();
+        final var errorResponse = this.pheProcessor
+            .processException(new PacketTransmissionException(errorMessage), nextPacket);
 
-	private void publishPacket(Packet toPublish) throws PacketProcessingException, PacketValidationException {
-		final var publishablePacket = this.preProcessor.handleDistributableContent(toPublish);
+        if (errorResponse != null) {
+          this.requestBuffer.prependPacket(errorResponse);
+        }
+      }
+    } else {
+      ServiceBase.LOGGER.error(validationString.get());
+    }
+  }
 
-		if (publishablePacket != null) {
-			final var properties = publishablePacket.getPacketProperties();
-			final var subscriptionNetwork = this.packetNetworkManager
-					.getSubscriptionsManager(properties.getRecipient().getEntity());
+  private void publishPacket(Packet toPublish)
+      throws PacketProcessingException, PacketValidationException {
+    final var publishablePacket = this.preProcessor.handleDistributableContent(toPublish);
 
-			if (subscriptionNetwork != null) {
-				subscriptionNetwork.publish(publishablePacket);
-			} else {
-				throw new PacketTransmissionException(
-						"Kein Abonnenten-Netz gefunden für: " + properties.getRecipient().toString());
-			}
-		} else {
-			throw new PacketTransmissionException("Paket ist nicht zu senden.");
-		}
-	}
+    if (publishablePacket != null) {
+      final var properties = publishablePacket.getPacketProperties();
+      final var subscriptionNetwork = this.packetNetworkManager
+          .getSubscriptionsManager(properties.getRecipient().getEntity());
 
-	@Override
-	public void breakDown() {
-		this.serviceBuffers.deregisterBuffer(getServiceType(), getServiceId(), this.requestBuffer);
-	}
+      if (subscriptionNetwork != null) {
+        subscriptionNetwork.publish(publishablePacket);
+      } else {
+        throw new PacketTransmissionException(
+            "Kein Abonnenten-Netz gefunden für: " + properties.getRecipient().toString());
+      }
+    } else {
+      throw new PacketTransmissionException("Paket ist nicht zu senden.");
+    }
+  }
+
+  @Override
+  public void breakDown() {
+    this.serviceBuffers.deregisterBuffer(getServiceType(), getServiceId(), this.requestBuffer);
+  }
 }

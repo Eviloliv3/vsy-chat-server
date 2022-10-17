@@ -12,25 +12,26 @@ import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
  */
 public class ConvertCommDataToDTO {
 
-	/** Instantiates a new convert comm dataManagement to entity. */
-	private ConvertCommDataToDTO() {
-	}
+  /**
+   * Instantiates a new convert comm dataManagement to entity.
+   */
+  private ConvertCommDataToDTO() {
+  }
 
-	/**
-	 * Convert from.
-	 *
-	 * @param commData the comm dataManagement
-	 *
-	 * @return the communication entity
-	 */
-	public static CommunicatorDTO convertFrom(final CommunicatorData commData) {
-		CommunicatorDTO communicatorData;
+  /**
+   * Convert from.
+   *
+   * @param commData the comm dataManagement
+   * @return the communication entity
+   */
+  public static CommunicatorDTO convertFrom(final CommunicatorData commData) {
+    CommunicatorDTO communicatorData;
 
-		if (commData != null) {
-			communicatorData = valueOf(commData.getCommunicatorId(), commData.getDisplayName());
-		} else {
-			communicatorData = EMPTY_COMMUNICATOR;
-		}
-		return communicatorData;
-	}
+    if (commData != null) {
+      communicatorData = valueOf(commData.getCommunicatorId(), commData.getDisplayName());
+    } else {
+      communicatorData = EMPTY_COMMUNICATOR;
+    }
+    return communicatorData;
+  }
 }

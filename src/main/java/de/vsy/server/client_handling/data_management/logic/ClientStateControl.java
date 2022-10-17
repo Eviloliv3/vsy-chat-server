@@ -4,9 +4,9 @@ import de.vsy.server.server.client_management.ClientState;
 
 public interface ClientStateControl {
 
-	ClientState getPersistentClientState();
+  ClientState getPersistentClientState();
 
-	boolean changeClientState(final ClientState clientState, final boolean changeTo);
+  boolean changeClientState(final ClientState clientState, final boolean changeTo);
 
-	boolean changePersistentClientState(ClientState clientState, final boolean changeTo);
+  boolean changePersistentClientState(ClientState clientState, final boolean changeTo);
 }

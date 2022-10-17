@@ -5,5 +5,5 @@ import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 
 public interface PublishablePacketCreator {
 
-	Packet handleDistributableContent(Packet input) throws PacketProcessingException;
+  Packet handleDistributableContent(Packet input) throws PacketProcessingException;
 }

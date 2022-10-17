@@ -2,10 +2,9 @@ package de.vsy.server.service;
 
 import static java.util.Map.copyOf;
 
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.util.EnumMap;
 import java.util.Map;
-
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 /**
  * Die zu verwendende Servicespezifikationen.
@@ -15,133 +14,136 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 @JsonPOJOBuilder
 public class ServiceData {
 
-	private final Map<ServiceResponseDirection, Service.TYPE> responseDirections;
-	private final String serviceBaseName;
-	private final Service.TYPE serviceType;
-	private int serviceId;
-	private String serviceName;
+  private final Map<ServiceResponseDirection, Service.TYPE> responseDirections;
+  private final String serviceBaseName;
+  private final Service.TYPE serviceType;
+  private int serviceId;
+  private String serviceName;
 
-	/** The Enum ServiceResponseDirection. */
-	public enum ServiceResponseDirection {
-		INBOUND, OUTBOUND
-	}
+  /**
+   * Instantiates a new service dataManagement.
+   *
+   * @param dataBuilder the dataManagement builder
+   */
+  private ServiceData(final ServiceDataBuilder dataBuilder) {
+    this.serviceType = dataBuilder.serviceType;
+    this.serviceBaseName = dataBuilder.serviceBaseName;
+    this.responseDirections = dataBuilder.responseDirections;
+  }
 
-	/**
-	 * Instantiates a new service dataManagement.
-	 *
-	 * @param dataBuilder the dataManagement builder
-	 */
-	private ServiceData(final ServiceDataBuilder dataBuilder) {
-		this.serviceType = dataBuilder.serviceType;
-		this.serviceBaseName = dataBuilder.serviceBaseName;
-		this.responseDirections = dataBuilder.responseDirections;
-	}
+  public Map<ServiceResponseDirection, Service.TYPE> getResponseDirections() {
+    return copyOf(this.responseDirections);
+  }
 
-	/** The Class ServiceDataBuilder. */
-	public static class ServiceDataBuilder {
+  public String getServiceBaseName() {
+    return this.serviceBaseName;
+  }
 
-		private Map<ServiceResponseDirection, Service.TYPE> responseDirections;
-		private String serviceBaseName;
-		private Service.TYPE serviceType;
+  public Service.TYPE getServiceType() {
+    return this.serviceType;
+  }
 
-		/** Instantiates a new service dataManagement builder. */
-		private ServiceDataBuilder() {
-		}
+  public int getServiceId() {
+    return this.serviceId;
+  }
 
-		/**
-		 * Creates the.
-		 *
-		 * @return the service dataManagement builder
-		 */
-		public static ServiceDataBuilder create() {
-			return new ServiceDataBuilder();
-		}
+  public void setServiceId(int serviceId) {
+    this.serviceId = serviceId;
+  }
 
-		/**
-		 * Builds the.
-		 *
-		 * @return the service dataManagement
-		 */
-		public ServiceData build() {
-			return new ServiceData(this);
-		}
+  public String getServiceName() {
+    return this.serviceName;
+  }
 
-		/**
-		 * With direction.
-		 *
-		 * @param direction   the direction
-		 * @param serviceType the service type
-		 *
-		 * @return the service dataManagement builder
-		 */
-		public ServiceDataBuilder withDirection(final ServiceResponseDirection direction,
-				final Service.TYPE serviceType) {
+  public void setServiceName(String serviceName) {
+    this.serviceName = serviceName;
+  }
 
-			if (direction == null) {
-				throw new IllegalArgumentException("Keine Richtung angegeben.");
-			}
+  /**
+   * The Enum ServiceResponseDirection.
+   */
+  public enum ServiceResponseDirection {
+    INBOUND, OUTBOUND
+  }
 
-			if (this.serviceType == null) {
-				throw new IllegalArgumentException("Kein Servicetyp angegeben.");
-			}
+  /**
+   * The Class ServiceDataBuilder.
+   */
+  public static class ServiceDataBuilder {
 
-			if (this.responseDirections == null) {
-				this.responseDirections = new EnumMap<>(ServiceResponseDirection.class);
-			}
-			this.responseDirections.put(direction, serviceType);
-			return this;
-		}
+    private Map<ServiceResponseDirection, Service.TYPE> responseDirections;
+    private String serviceBaseName;
+    private Service.TYPE serviceType;
 
-		/**
-		 * With name.
-		 *
-		 * @param baseName the base name
-		 *
-		 * @return the service dataManagement builder
-		 */
-		public ServiceDataBuilder withName(final String baseName) {
-			this.serviceBaseName = baseName;
-			return this;
-		}
+    /**
+     * Instantiates a new service dataManagement builder.
+     */
+    private ServiceDataBuilder() {
+    }
 
-		/**
-		 * With type.
-		 *
-		 * @param serviceType the service type
-		 *
-		 * @return the service dataManagement builder
-		 */
-		public ServiceDataBuilder withType(final Service.TYPE serviceType) {
-			this.serviceType = serviceType;
-			return this;
-		}
-	}
+    /**
+     * Creates the.
+     *
+     * @return the service dataManagement builder
+     */
+    public static ServiceDataBuilder create() {
+      return new ServiceDataBuilder();
+    }
 
-	public Map<ServiceResponseDirection, Service.TYPE> getResponseDirections() {
-		return copyOf(this.responseDirections);
-	}
+    /**
+     * Builds the.
+     *
+     * @return the service dataManagement
+     */
+    public ServiceData build() {
+      return new ServiceData(this);
+    }
 
-	public String getServiceBaseName() {
-		return this.serviceBaseName;
-	}
+    /**
+     * With direction.
+     *
+     * @param direction   the direction
+     * @param serviceType the service type
+     * @return the service dataManagement builder
+     */
+    public ServiceDataBuilder withDirection(final ServiceResponseDirection direction,
+        final Service.TYPE serviceType) {
 
-	public Service.TYPE getServiceType() {
-		return this.serviceType;
-	}
+      if (direction == null) {
+        throw new IllegalArgumentException("Keine Richtung angegeben.");
+      }
 
-	public int getServiceId() {
-		return this.serviceId;
-	}
+      if (this.serviceType == null) {
+        throw new IllegalArgumentException("Kein Servicetyp angegeben.");
+      }
 
-	public void setServiceId(int serviceId) {
-		this.serviceId = serviceId;
-	}
+      if (this.responseDirections == null) {
+        this.responseDirections = new EnumMap<>(ServiceResponseDirection.class);
+      }
+      this.responseDirections.put(direction, serviceType);
+      return this;
+    }
 
-	public String getServiceName() {
-		return this.serviceName;
-	}
+    /**
+     * With name.
+     *
+     * @param baseName the base name
+     * @return the service dataManagement builder
+     */
+    public ServiceDataBuilder withName(final String baseName) {
+      this.serviceBaseName = baseName;
+      return this;
+    }
 
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
+    /**
+     * With type.
+     *
+     * @param serviceType the service type
+     * @return the service dataManagement builder
+     */
+    public ServiceDataBuilder withType(final Service.TYPE serviceType) {
+      this.serviceType = serviceType;
+      return this;
+    }
+  }
 }

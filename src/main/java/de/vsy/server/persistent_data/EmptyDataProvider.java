@@ -8,9 +8,10 @@ import de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.S
 
 public class EmptyDataProvider extends StandardEmptyDataProvider {
 
-	public static final CommunicatorData EMPTY_COMMUNICATOR_DATA = CommunicatorData.valueOf(STANDARD_CLIENT_ID,
-			STANDARD_CLIENT_ID, STANDARD_EMPTY_STRING);
+  public static final CommunicatorData EMPTY_COMMUNICATOR_DATA = CommunicatorData.valueOf(
+      STANDARD_CLIENT_ID,
+      STANDARD_CLIENT_ID, STANDARD_EMPTY_STRING);
 
-	private EmptyDataProvider() {
-	}
+  private EmptyDataProvider() {
+  }
 }

@@ -14,39 +14,39 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.PacketConte
 
 public class ErrorPacketProcessorFactory implements ContentBasedProcessorFactory {
 
-	private final HandlerLocalDataManager threadDataAccess;
+  private final HandlerLocalDataManager threadDataAccess;
 
-	public ErrorPacketProcessorFactory(HandlerLocalDataManager threadDataAccess) {
+  public ErrorPacketProcessorFactory(HandlerLocalDataManager threadDataAccess) {
 
-		this.threadDataAccess = threadDataAccess;
-	}
+    this.threadDataAccess = threadDataAccess;
+  }
 
-	@Override
-	public PacketProcessor createTypeProcessor(final Class<? extends PacketContent> contentType) {
-		ProcessingCondition processingCondition;
-		final var type = valueOf(contentType.getSimpleName());
+  @Override
+  public PacketProcessor createTypeProcessor(final Class<? extends PacketContent> contentType) {
+    ProcessingCondition processingCondition;
+    final var type = valueOf(contentType.getSimpleName());
 
-		if (type.equals(ErrorDTO)) {
-			processingCondition = getSimpleErrorProcessingCondition();
-			return new ClientHandlerPacketProcessor<>(this.threadDataAccess.getLocalClientDataProvider(),
-					processingCondition, new ErrorContentValidator(),
-					new ErrorTransmissionProcessor(this.threadDataAccess));
-		} else {
-			return null;
-		}
-	}
+    if (type.equals(ErrorDTO)) {
+      processingCondition = getSimpleErrorProcessingCondition();
+      return new ClientHandlerPacketProcessor<>(this.threadDataAccess.getLocalClientDataProvider(),
+          processingCondition, new ErrorContentValidator(),
+          new ErrorTransmissionProcessor(this.threadDataAccess));
+    } else {
+      return null;
+    }
+  }
 
-	private ProcessingCondition getSimpleErrorProcessingCondition() {
-		return new ProcessingCondition() {
-			@Override
-			public boolean checkCondition() {
-				return true;
-			}
+  private ProcessingCondition getSimpleErrorProcessingCondition() {
+    return new ProcessingCondition() {
+      @Override
+      public boolean checkCondition() {
+        return true;
+      }
 
-			@Override
-			public String getErrorMessage() {
-				return "Diese Fehlernachricht sollte nie abgefragt werden.";
-			}
-		};
-	}
+      @Override
+      public String getErrorMessage() {
+        return "Diese Fehlernachricht sollte nie abgefragt werden.";
+      }
+    };
+  }
 }

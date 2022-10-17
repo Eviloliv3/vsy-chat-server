@@ -1,8 +1,5 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -14,64 +11,71 @@ import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingExcep
 import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginRequestDTO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginResponseDTO;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-/** PacketProcessor for login type Packet. */
+/**
+ * PacketProcessor for login type Packet.
+ */
 public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> {
 
-	private static final Logger LOGGER = LogManager.getLogger();
-	private final AuthenticationStateControl clientStateManager;
-	private final CommunicatorDataManipulator commPersistManager;
-	private final ResultingPacketContentHandler contentHandler;
+  private static final Logger LOGGER = LogManager.getLogger();
+  private final AuthenticationStateControl clientStateManager;
+  private final CommunicatorDataManipulator commPersistManager;
+  private final ResultingPacketContentHandler contentHandler;
 
-	/**
-	 * Instantiates a new login PacketHandler.
-	 *
-	 * @param threadDataAccess the thread dataManagement accessLimiter
-	 */
-	public LoginRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
+  /**
+   * Instantiates a new login PacketHandler.
+   *
+   * @param threadDataAccess the thread dataManagement accessLimiter
+   */
+  public LoginRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
 
-		this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
-		this.commPersistManager = HandlerAccessManager.getCommunicatorDataManipulator();
-		this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
-	}
+    this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
+    this.commPersistManager = HandlerAccessManager.getCommunicatorDataManipulator();
+    this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+  }
 
-	@Override
-	public void processContent(LoginRequestDTO toProcess) throws PacketProcessingException {
-		String causeMessage = null;
-		ClientState globalState;
-		final var authenticationData = toProcess.getAuthenticationData();
-		final var clientData = this.commPersistManager.getCommunicatorData(authenticationData.getLogin(),
-				authenticationData.getPassword());
+  @Override
+  public void processContent(LoginRequestDTO toProcess) throws PacketProcessingException {
+    String causeMessage = null;
+    ClientState globalState;
+    final var authenticationData = toProcess.getAuthenticationData();
+    final var clientData = this.commPersistManager.getCommunicatorData(
+        authenticationData.getLogin(),
+        authenticationData.getPassword());
 
-		if (clientData != null) {
+    if (clientData != null) {
 
-			if (this.clientStateManager.loginClient(clientData)) {
-				globalState = this.clientStateManager.getPersistentClientState();
+      if (this.clientStateManager.loginClient(clientData)) {
+        globalState = this.clientStateManager.getPersistentClientState();
 
-				if (globalState.equals(ClientState.OFFLINE)) {
+        if (globalState.equals(ClientState.OFFLINE)) {
 
-					if (this.clientStateManager.changePersistentClientState(ClientState.AUTHENTICATED, true)) {
-						final var communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
-						this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
-					} else {
-						this.clientStateManager.logoutClient();
-						causeMessage = "Es ist ein Fehler beim Eintragen Ihres "
-								+ "Authentifizierungszustandes aufgetreten. "
-								+ "(Login-global) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
-					}
-				} else {
-					causeMessage = "Sie sind bereits von einem anderen Gerät aus angemeldet.";
-				}
-			} else {
-				this.clientStateManager.logoutClient();
-				causeMessage = "Es ist ein Fehler beim Eintragen Ihres " + "Authentifizierungszustandes aufgetreten. "
-						+ "(Login-lokal) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
-			}
-		} else {
-			causeMessage = "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.";
-		}
-		if (causeMessage != null) {
-			throw new PacketProcessingException(causeMessage);
-		}
-	}
+          if (this.clientStateManager.changePersistentClientState(ClientState.AUTHENTICATED,
+              true)) {
+            final var communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
+            this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
+          } else {
+            this.clientStateManager.logoutClient();
+            causeMessage = "Es ist ein Fehler beim Eintragen Ihres "
+                + "Authentifizierungszustandes aufgetreten. "
+                + "(Login-global) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+          }
+        } else {
+          causeMessage = "Sie sind bereits von einem anderen Gerät aus angemeldet.";
+        }
+      } else {
+        this.clientStateManager.logoutClient();
+        causeMessage =
+            "Es ist ein Fehler beim Eintragen Ihres " + "Authentifizierungszustandes aufgetreten. "
+                + "(Login-lokal) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+      }
+    } else {
+      causeMessage = "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.";
+    }
+    if (causeMessage != null) {
+      throw new PacketProcessingException(causeMessage);
+    }
+  }
 }

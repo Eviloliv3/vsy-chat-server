@@ -6,9 +6,9 @@ import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler
 
 public interface BaseHandlingDataProvider {
 
-	ResultingPacketContentHandler getResultingPacketContentHandler();
+  ResultingPacketContentHandler getResultingPacketContentHandler();
 
-	LocalClientDataProvider getLocalClientDataProvider();
+  LocalClientDataProvider getLocalClientDataProvider();
 
-	LocalClientStateProvider getLocalClientStateProvider();
+  LocalClientStateProvider getLocalClientStateProvider();
 }

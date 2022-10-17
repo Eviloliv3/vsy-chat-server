@@ -6,6 +6,11 @@ package de.vsy.server.persistent_data;
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 import static java.util.Arrays.asList;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -21,430 +26,423 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 /**
- * Deserializes JSON-Strings using preset JavaTypes with the Jackson library
- * ObjectMapper. Works on a set of this.fileChannels (main and backup version of
- * the same file).
+ * Deserializes JSON-Strings using preset JavaTypes with the Jackson library ObjectMapper. Works on
+ * a set of this.fileChannels (main and backup version of the same file).
  */
 public class PersistenceDAO {
 
-	private static final String NO_DATA_FILE_PATHS_SET;
-	private static final String NO_FILE_ACCESS_ACQUIRED;
-	private static final Logger LOGGER;
-	private final JavaType dataFormat;
-	private final PersistentDataFileCreator.DataFileDescriptor fileDescriptor;
-	private final ReentrantReadWriteLock localLock;
-	private final Lock accessLock;
-	private final ObjectMapper mapper;
-	private FileLock globalLock;
-	private Path lockFilePath;
-	private Path[] filePaths;
+  private static final String NO_DATA_FILE_PATHS_SET;
+  private static final String NO_FILE_ACCESS_ACQUIRED;
+  private static final Logger LOGGER;
 
-	static {
-		LOGGER = LogManager.getLogger();
-		NO_DATA_FILE_PATHS_SET = "Noch kein Dateizugriff möglich: Referenzen ueber "
-				+ "korrekte createFileReferences({id})-Methode erstellen.";
-		NO_FILE_ACCESS_ACQUIRED = "Kein Dateizugriff möglich: Zugriffsrecht ueber "
-				+ "_acquireAccess()_-Metohode erlangen.";
-	}
+  static {
+    LOGGER = LogManager.getLogger();
+    NO_DATA_FILE_PATHS_SET = "Noch kein Dateizugriff möglich: Referenzen ueber "
+        + "korrekte createFileReferences({id})-Methode erstellen.";
+    NO_FILE_ACCESS_ACQUIRED = "Kein Dateizugriff möglich: Zugriffsrecht ueber "
+        + "_acquireAccess()_-Metohode erlangen.";
+  }
 
-	/**
-	 * Instantiates a new specialized reader base.
-	 *
-	 * @param fileDescriptor the file descriptor
-	 * @param dataFormat     the dataManagement format
-	 */
-	public PersistenceDAO(final PersistentDataFileCreator.DataFileDescriptor fileDescriptor,
-			final JavaType dataFormat) {
-		this.fileDescriptor = fileDescriptor;
-		this.dataFormat = dataFormat;
-		this.mapper = new ObjectMapper();
-		this.lockFilePath = null;
-		this.localLock = new ReentrantReadWriteLock();
-		this.accessLock = new ReentrantLock();
-		this.globalLock = null;
-		this.filePaths = null;
-		this.mapper.configure(INDENT_OUTPUT, true);
-		this.mapper.findAndRegisterModules();
-	}
+  private final JavaType dataFormat;
+  private final PersistentDataFileCreator.DataFileDescriptor fileDescriptor;
+  private final ReentrantReadWriteLock localLock;
+  private final Lock accessLock;
+  private final ObjectMapper mapper;
+  private FileLock globalLock;
+  private Path lockFilePath;
+  private Path[] filePaths;
 
-	/**
-	 * Erstellt ein RandomAccessFile Objekt fuer bestehenden lockFilePath mit
-	 * Lesbefugnissen und laesst anschliessend acquireFileLock() den exklusiven
-	 * Zugriff akquirieren
-	 *
-	 * @return true, wenn exklusiver Zugriff auf Daten erlangt wurde, false sonst.
-	 *         Zusaetzlich wird das Interrupt-Flag gesetzt, wenn: lockFilePath
-	 *         keinen gueltigen Dateipfad enthaelt, es zu einer FileLockInterruption
-	 *         kommt, eine allgemeine Interruption geworfen wird oder eine
-	 *         unerwartete IOException geworfen wird.
-	 */
-	public boolean acquireAccess(final boolean writeAccess) {
-		if (this.filePaths == null) {
-			throw new IllegalStateException(NO_DATA_FILE_PATHS_SET);
-		}
-		var accessMode = "r";
-		FileChannel lockChannel;
-		if (writeAccess) {
-			accessMode += "w";
-		}
+  /**
+   * Instantiates a new specialized reader base.
+   *
+   * @param fileDescriptor the file descriptor
+   * @param dataFormat     the dataManagement format
+   */
+  public PersistenceDAO(final PersistentDataFileCreator.DataFileDescriptor fileDescriptor,
+      final JavaType dataFormat) {
+    this.fileDescriptor = fileDescriptor;
+    this.dataFormat = dataFormat;
+    this.mapper = new ObjectMapper();
+    this.lockFilePath = null;
+    this.localLock = new ReentrantReadWriteLock();
+    this.accessLock = new ReentrantLock();
+    this.globalLock = null;
+    this.filePaths = null;
+    this.mapper.configure(INDENT_OUTPUT, true);
+    this.mapper.findAndRegisterModules();
+  }
 
-		try {
-			lockChannel = new RandomAccessFile(this.lockFilePath.toFile(), accessMode).getChannel();
-			return acquireFileLock(lockChannel, writeAccess);
-		} catch (final FileNotFoundException fnfe) {
-			Thread.currentThread().interrupt();
-			LOGGER.error("Datei nicht gefunden: {}\n{}", lockFilePath, asList(fnfe.getStackTrace()));
-		} catch (final FileLockInterruptionException flie) {
-			Thread.currentThread().interrupt();
-			LOGGER.info("FileLock konnte nicht akquiriert werden, da der Thread unterbrochen wurde.\n{}",
-					asList(flie.getStackTrace()));
-		} catch (final ClosedChannelException cce) {
-			LOGGER.error("FileLock wurde nicht akquiriert. FileChannel vorher geschlossen.");
-		} catch (InterruptedException ie) {
-			Thread.currentThread().interrupt();
-			LOGGER.error("Beim Holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
-		} catch (IOException ioe) {
-			Thread.currentThread().interrupt();
-			LOGGER.error("Unerwarteter Fehler beim Holen des Locks {}. \nUrsprung: {}", ioe.getMessage(),
-					asList(ioe.getStackTrace()));
-		}
-		return false;
-	}
+  /**
+   * Erstellt ein RandomAccessFile Objekt fuer bestehenden lockFilePath mit Lesbefugnissen und
+   * laesst anschliessend acquireFileLock() den exklusiven Zugriff akquirieren
+   *
+   * @return true, wenn exklusiver Zugriff auf Daten erlangt wurde, false sonst. Zusaetzlich wird
+   * das Interrupt-Flag gesetzt, wenn: lockFilePath keinen gueltigen Dateipfad enthaelt, es zu einer
+   * FileLockInterruption kommt, eine allgemeine Interruption geworfen wird oder eine unerwartete
+   * IOException geworfen wird.
+   */
+  public boolean acquireAccess(final boolean writeAccess) {
+    if (this.filePaths == null) {
+      throw new IllegalStateException(NO_DATA_FILE_PATHS_SET);
+    }
+    var accessMode = "r";
+    FileChannel lockChannel;
+    if (writeAccess) {
+      accessMode += "w";
+    }
 
-	/**
-	 * Acquire file lock.
-	 *
-	 * @param toLock the channel to be locked
-	 *
-	 * @throws ClosedChannelException        Signals that the underlying channel has
-	 *                                       been closed.
-	 * @throws FileLockInterruptionException Signals that thread has been
-	 *                                       interrupted while waiting for lock().
-	 * @throws InterruptedException          Signals that the Thread has been
-	 *                                       interrupted.
-	 */
-	private boolean acquireFileLock(final FileChannel toLock, final boolean writeAccess)
-			throws IOException, InterruptedException {
-		boolean accessAcquired;
+    try {
+      lockChannel = new RandomAccessFile(this.lockFilePath.toFile(), accessMode).getChannel();
+      return acquireFileLock(lockChannel, writeAccess);
+    } catch (final FileNotFoundException fnfe) {
+      Thread.currentThread().interrupt();
+      LOGGER.error("Datei nicht gefunden: {}\n{}", lockFilePath, asList(fnfe.getStackTrace()));
+    } catch (final FileLockInterruptionException flie) {
+      Thread.currentThread().interrupt();
+      LOGGER.info("FileLock konnte nicht akquiriert werden, da der Thread unterbrochen wurde.\n{}",
+          asList(flie.getStackTrace()));
+    } catch (final ClosedChannelException cce) {
+      LOGGER.error("FileLock wurde nicht akquiriert. FileChannel vorher geschlossen.");
+    } catch (InterruptedException ie) {
+      Thread.currentThread().interrupt();
+      LOGGER.error("Beim Holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
+    } catch (IOException ioe) {
+      Thread.currentThread().interrupt();
+      LOGGER.error("Unerwarteter Fehler beim Holen des Locks {}. \nUrsprung: {}", ioe.getMessage(),
+          asList(ioe.getStackTrace()));
+    }
+    return false;
+  }
 
-		if (writeAccess) {
-			accessAcquired = acquireLocalLock(this.localLock.writeLock()::tryLock);
-		} else {
-			accessAcquired = acquireLocalLock(this.localLock.readLock()::tryLock);
-		}
+  /**
+   * Acquire file lock.
+   *
+   * @param toLock the channel to be locked
+   * @throws ClosedChannelException        Signals that the underlying channel has been closed.
+   * @throws FileLockInterruptionException Signals that thread has been interrupted while waiting
+   *                                       for lock().
+   * @throws InterruptedException          Signals that the Thread has been interrupted.
+   */
+  private boolean acquireFileLock(final FileChannel toLock, final boolean writeAccess)
+      throws IOException, InterruptedException {
+    boolean accessAcquired;
 
-		if (accessAcquired) {
+    if (writeAccess) {
+      accessAcquired = acquireLocalLock(this.localLock.writeLock()::tryLock);
+    } else {
+      accessAcquired = acquireLocalLock(this.localLock.readLock()::tryLock);
+    }
 
-			while (this.globalLock == null && !Thread.currentThread().isInterrupted()) {
-				try {
-					this.globalLock = toLock.lock(0, Long.MAX_VALUE, !writeAccess);
-				} catch (OverlappingFileLockException ex) {
-					LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " + "gestartet. {}: {}",
-							ex.getClass().getSimpleName(), ex.getMessage());
-				} catch (FileLockInterruptionException fie) {
-					Thread.currentThread().interrupt();
-					LOGGER.error("Beim Holen des globalen Locks unterbrochen.");
-					accessAcquired = false;
-				}
-			}
-		}
+    if (accessAcquired) {
 
-		if (!accessAcquired || this.globalLock == null || !this.globalLock.isValid()
-				|| Thread.currentThread().isInterrupted()) {
-			LOGGER.error("Lock wurde nicht gesperrt. WriteMode: {}; LocalLock: {}; Lock: {}; Interrupted: {}",
-					writeAccess, accessAcquired, this.globalLock, Thread.currentThread().isInterrupted());
-			releaseAccess(writeAccess);
-			return false;
-		} else {
-			return true;
-		}
-	}
+      while (this.globalLock == null && !Thread.currentThread().isInterrupted()) {
+        try {
+          this.globalLock = toLock.lock(0, Long.MAX_VALUE, !writeAccess);
+        } catch (OverlappingFileLockException ex) {
+          LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " + "gestartet. {}: {}",
+              ex.getClass().getSimpleName(), ex.getMessage());
+        } catch (FileLockInterruptionException fie) {
+          Thread.currentThread().interrupt();
+          LOGGER.error("Beim Holen des globalen Locks unterbrochen.");
+          accessAcquired = false;
+        }
+      }
+    }
 
-	private boolean acquireLocalLock(Supplier<Boolean> lockingMethod) {
-		var accessAcquired = false;
+    if (!accessAcquired || this.globalLock == null || !this.globalLock.isValid()
+        || Thread.currentThread().isInterrupted()) {
+      LOGGER.error(
+          "Lock wurde nicht gesperrt. WriteMode: {}; LocalLock: {}; Lock: {}; Interrupted: {}",
+          writeAccess, accessAcquired, this.globalLock, Thread.currentThread().isInterrupted());
+      releaseAccess(writeAccess);
+      return false;
+    } else {
+      return true;
+    }
+  }
 
-		while (!accessAcquired && !Thread.currentThread().isInterrupted()) {
-			try {
-				accessLock.lock();
+  private boolean acquireLocalLock(Supplier<Boolean> lockingMethod) {
+    var accessAcquired = false;
 
-				accessAcquired = lockingMethod.get();
-			} finally {
-				this.accessLock.unlock();
-			}
-			Thread.yield();
-		}
+    while (!accessAcquired && !Thread.currentThread().isInterrupted()) {
+      try {
+        accessLock.lock();
 
-		return accessAcquired;
-	}
+        accessAcquired = lockingMethod.get();
+      } finally {
+        this.accessLock.unlock();
+      }
+      Thread.yield();
+    }
 
-	/**
-	 * Release accessLimiter.
-	 */
-	public void releaseAccess(final boolean writeAccess) {
+    return accessAcquired;
+  }
 
-		try {
-			this.accessLock.lock();
+  /**
+   * Release accessLimiter.
+   */
+  public void releaseAccess(final boolean writeAccess) {
 
-			if (writeAccess) {
-				this.releaseWriteLock();
-			} else {
-				this.releaseReadLock();
-			}
+    try {
+      this.accessLock.lock();
 
-			if (this.localLock.getReadLockCount() == 0 && !this.localLock.isWriteLocked()) {
-				releaseGlobalAccess();
-			}
-		} finally {
-			this.accessLock.unlock();
-		}
-	}
+      if (writeAccess) {
+        this.releaseWriteLock();
+      } else {
+        this.releaseReadLock();
+      }
 
-	private void releaseReadLock() {
+      if (this.localLock.getReadLockCount() == 0 && !this.localLock.isWriteLocked()) {
+        releaseGlobalAccess();
+      }
+    } finally {
+      this.accessLock.unlock();
+    }
+  }
 
-		try {
-			this.accessLock.lock();
+  private void releaseReadLock() {
 
-			if (this.localLock.getReadHoldCount() > 0) {
-				this.localLock.readLock().unlock();
-			}
-		} finally {
-			this.accessLock.unlock();
-		}
-	}
+    try {
+      this.accessLock.lock();
 
-	private void releaseGlobalAccess() {
-		if (this.globalLock != null) {
-			try {
-				final var channel = this.globalLock.channel();
-				channel.close();
-			} catch (IOException e) {
-				LOGGER.info("Dateizugang konnte nicht geöffnet werden. {}\n{}", e.getClass().getSimpleName(),
-						asList(e.getStackTrace()));
-			}
-			this.globalLock = null;
-		}
-	}
+      if (this.localLock.getReadHoldCount() > 0) {
+        this.localLock.readLock().unlock();
+      }
+    } finally {
+      this.accessLock.unlock();
+    }
+  }
 
-	private void releaseWriteLock() {
+  private void releaseGlobalAccess() {
+    if (this.globalLock != null) {
+      try {
+        final var channel = this.globalLock.channel();
+        channel.close();
+      } catch (IOException e) {
+        LOGGER.info("Dateizugang konnte nicht geöffnet werden. {}\n{}",
+            e.getClass().getSimpleName(),
+            asList(e.getStackTrace()));
+      }
+      this.globalLock = null;
+    }
+  }
 
-		try {
-			this.accessLock.lock();
+  private void releaseWriteLock() {
 
-			if (this.localLock.isWriteLockedByCurrentThread()) {
-				this.localLock.writeLock().unlock();
-			}
-		} finally {
-			this.accessLock.unlock();
-		}
-	}
+    try {
+      this.accessLock.lock();
 
-	/**
-	 * Sets the message paths.
-	 *
-	 * @throws IllegalStateException the illegal state exception
-	 */
-	public void createFileReferences() throws IllegalStateException, InterruptedException {
+      if (this.localLock.isWriteLockedByCurrentThread()) {
+        this.localLock.writeLock().unlock();
+      }
+    } finally {
+      this.accessLock.unlock();
+    }
+  }
 
-		if (!fileDescriptor.isIdRequired()) {
+  /**
+   * Sets the message paths.
+   *
+   * @throws IllegalStateException the illegal state exception
+   */
+  public void createFileReferences() throws IllegalStateException, InterruptedException {
 
-			this.createFileLockReference();
-			this.createWorkingFileReferences();
-		} else {
-			final var errorMessage = "Dateipfade konnten nicht angelegt werden. " + "Für Dateideskriptor: "
-					+ fileDescriptor + " wird eine Pfaderweiterung benötigt.";
-			throw new IllegalStateException(errorMessage);
-		}
-	}
+    if (!fileDescriptor.isIdRequired()) {
 
-	private void createFileLockReference() throws InterruptedException {
-		String directory = PersistentDataLocationCreator
-				.createDirectoryPath(PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, null);
-		this.createSingleFileReference(directory, this.fileDescriptor.getLockFilename());
-	}
+      this.createFileLockReference();
+      this.createWorkingFileReferences();
+    } else {
+      final var errorMessage =
+          "Dateipfade konnten nicht angelegt werden. " + "Für Dateideskriptor: "
+              + fileDescriptor + " wird eine Pfaderweiterung benötigt.";
+      throw new IllegalStateException(errorMessage);
+    }
+  }
 
-	private void createWorkingFileReferences() throws InterruptedException {
-		String[] directories = PersistentDataLocationCreator
-				.createDirectoryPaths(PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, null);
+  private void createFileLockReference() throws InterruptedException {
+    String directory = PersistentDataLocationCreator
+        .createDirectoryPath(PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, null);
+    this.createSingleFileReference(directory, this.fileDescriptor.getLockFilename());
+  }
 
-		if (directories != null) {
-			createMultipleFileReferences(directories, this.fileDescriptor.getDataFilename());
-		} else {
-			throw new IllegalArgumentException("Keine gueltigen Verzeichnispfade uebergeben.");
-		}
-	}
+  private void createWorkingFileReferences() throws InterruptedException {
+    String[] directories = PersistentDataLocationCreator
+        .createDirectoryPaths(PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, null);
 
-	private void createSingleFileReference(final String directory, final String filename) {
-		this.lockFilePath = PersistentDataFileCreator.createAndGetFilePath(directory, filename, LOGGER);
+    if (directories != null) {
+      createMultipleFileReferences(directories, this.fileDescriptor.getDataFilename());
+    } else {
+      throw new IllegalArgumentException("Keine gueltigen Verzeichnispfade uebergeben.");
+    }
+  }
 
-		if (this.lockFilePath == null) {
-			final var errorMessage = "Kein Datei-Lock angelegt für Deskriptor: " + fileDescriptor;
-			throw new IllegalStateException(errorMessage);
-		}
-	}
+  private void createSingleFileReference(final String directory, final String filename) {
+    this.lockFilePath = PersistentDataFileCreator.createAndGetFilePath(directory, filename, LOGGER);
 
-	private void createMultipleFileReferences(String[] directories, String filename) {
+    if (this.lockFilePath == null) {
+      final var errorMessage = "Kein Datei-Lock angelegt für Deskriptor: " + fileDescriptor;
+      throw new IllegalStateException(errorMessage);
+    }
+  }
 
-		this.filePaths = PersistentDataFileCreator.createAndGetFilePaths(directories, filename, LOGGER);
+  private void createMultipleFileReferences(String[] directories, String filename) {
 
-		if (this.filePaths == null) {
-			final var errorMessage = "Keine Dateipfade angelegt für Deskriptor: " + fileDescriptor;
-			throw new IllegalStateException(errorMessage);
-		}
-	}
+    this.filePaths = PersistentDataFileCreator.createAndGetFilePaths(directories, filename, LOGGER);
 
-	/**
-	 * Creates the filenames.
-	 *
-	 * @param pathExtension the path extension
-	 *
-	 * @throws IllegalStateException the illegal state exception
-	 */
-	public void createFileReferences(final String pathExtension) throws IllegalStateException, InterruptedException {
+    if (this.filePaths == null) {
+      final var errorMessage = "Keine Dateipfade angelegt für Deskriptor: " + fileDescriptor;
+      throw new IllegalStateException(errorMessage);
+    }
+  }
 
-		if (fileDescriptor.isIdRequired()) {
+  /**
+   * Creates the filenames.
+   *
+   * @param pathExtension the path extension
+   * @throws IllegalStateException the illegal state exception
+   */
+  public void createFileReferences(final String pathExtension)
+      throws IllegalStateException, InterruptedException {
 
-			this.createFileLockReference(pathExtension);
-			this.createWorkingFileReferences(pathExtension);
-		} else {
-			final var errorMessage = "Dateipfade konnten nicht angelegt werden. " + "Dateideskriptor: " + fileDescriptor
-					+ " wird keine Pfaderweiterung benötigt.";
-			throw new IllegalStateException(errorMessage);
-		}
-	}
+    if (fileDescriptor.isIdRequired()) {
 
-	private void createFileLockReference(final String pathExtension) throws InterruptedException {
-		String directory = PersistentDataLocationCreator
-				.createDirectoryPath(PersistentDataLocationCreator.DataOwnershipDescriptor.CLIENT, pathExtension);
-		createSingleFileReference(directory, this.fileDescriptor.getLockFilename());
-	}
+      this.createFileLockReference(pathExtension);
+      this.createWorkingFileReferences(pathExtension);
+    } else {
+      final var errorMessage =
+          "Dateipfade konnten nicht angelegt werden. " + "Dateideskriptor: " + fileDescriptor
+              + " wird keine Pfaderweiterung benötigt.";
+      throw new IllegalStateException(errorMessage);
+    }
+  }
 
-	private void createWorkingFileReferences(final String pathExtension) throws InterruptedException {
+  private void createFileLockReference(final String pathExtension) throws InterruptedException {
+    String directory = PersistentDataLocationCreator
+        .createDirectoryPath(PersistentDataLocationCreator.DataOwnershipDescriptor.CLIENT,
+            pathExtension);
+    createSingleFileReference(directory, this.fileDescriptor.getLockFilename());
+  }
 
-		if (pathExtension != null && !pathExtension.isEmpty()) {
-			String[] directories = PersistentDataLocationCreator
-					.createDirectoryPaths(PersistentDataLocationCreator.DataOwnershipDescriptor.CLIENT, pathExtension);
+  private void createWorkingFileReferences(final String pathExtension) throws InterruptedException {
 
-			if (directories != null) {
-				createMultipleFileReferences(directories, this.fileDescriptor.getDataFilename());
-			} else {
-				throw new IllegalArgumentException("Keine gueltigen Verzeichnispfade uebergeben.");
-			}
-		} else {
-			final var errorMessage = "Dateipfade konnten nicht angelegt werden. " + "Dateideskriptor: " + fileDescriptor
-					+ " wird eine Pfaderweiterung benötigt.";
-			throw new IllegalStateException(errorMessage);
-		}
-	}
+    if (pathExtension != null && !pathExtension.isEmpty()) {
+      String[] directories = PersistentDataLocationCreator
+          .createDirectoryPaths(PersistentDataLocationCreator.DataOwnershipDescriptor.CLIENT,
+              pathExtension);
 
-	/**
-	 * Tries to read from file and backup file. Returns first content found. If all
-	 * this.fileChannels are empty, null is returned.
-	 *
-	 * @return object
-	 */
-	public Object readData() {
+      if (directories != null) {
+        createMultipleFileReferences(directories, this.fileDescriptor.getDataFilename());
+      } else {
+        throw new IllegalArgumentException("Keine gueltigen Verzeichnispfade uebergeben.");
+      }
+    } else {
+      final var errorMessage =
+          "Dateipfade konnten nicht angelegt werden. " + "Dateideskriptor: " + fileDescriptor
+              + " wird eine Pfaderweiterung benötigt.";
+      throw new IllegalStateException(errorMessage);
+    }
+  }
 
-		if (this.globalLock == null) {
-			throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
-		}
+  /**
+   * Tries to read from file and backup file. Returns first content found. If all this.fileChannels
+   * are empty, null is returned.
+   *
+   * @return object
+   */
+  public Object readData() {
 
-		Object readObject = null;
-		final var lastChangedFile = this.getLatestChangedFilePath();
+    if (this.globalLock == null) {
+      throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
+    }
 
-		try {
-			String readJsonString = Files.readString(lastChangedFile);
-			readObject = mapper.readValue(readJsonString, dataFormat);
-		} catch (JsonParseException | JsonMappingException je) {
-			LOGGER.info("Gelesene Daten nicht instanziierbar: {}\n{}: {}", lastChangedFile,
-					je.getClass().getSimpleName(), je.getMessage());
-		} catch (final FileNotFoundException ex) {
-			Thread.currentThread().interrupt();
-			LOGGER.info("Datei nicht gefunden: {}\n{}", lastChangedFile, asList(ex.getStackTrace()));
-		} catch (final IOException ex) {
-			Thread.currentThread().interrupt();
-			LOGGER.info("Lesen aus Datei fehlgeschlagen: {}\n{}", lastChangedFile, asList(ex.getStackTrace()));
-		}
-		return readObject;
-	}
+    Object readObject = null;
+    final var lastChangedFile = this.getLatestChangedFilePath();
 
-	private Path getLatestChangedFilePath() {
-		Path upToDateFile = null;
-		Instant lastChangedTime = Instant.MIN;
+    try {
+      String readJsonString = Files.readString(lastChangedFile);
+      readObject = mapper.readValue(readJsonString, dataFormat);
+    } catch (JsonParseException | JsonMappingException je) {
+      LOGGER.info("Gelesene Daten nicht instanziierbar: {}\n{}: {}", lastChangedFile,
+          je.getClass().getSimpleName(), je.getMessage());
+    } catch (final FileNotFoundException ex) {
+      Thread.currentThread().interrupt();
+      LOGGER.info("Datei nicht gefunden: {}\n{}", lastChangedFile, asList(ex.getStackTrace()));
+    } catch (final IOException ex) {
+      Thread.currentThread().interrupt();
+      LOGGER.info("Lesen aus Datei fehlgeschlagen: {}\n{}", lastChangedFile,
+          asList(ex.getStackTrace()));
+    }
+    return readObject;
+  }
 
-		for (final var currentFile : this.filePaths) {
-			Instant modificationTime = Instant.ofEpochMilli(currentFile.toFile().lastModified());
+  private Path getLatestChangedFilePath() {
+    Path upToDateFile = null;
+    Instant lastChangedTime = Instant.MIN;
 
-			if (modificationTime.isAfter(lastChangedTime)) {
-				lastChangedTime = modificationTime;
-				upToDateFile = currentFile;
-			}
-		}
-		return upToDateFile;
-	}
+    for (final var currentFile : this.filePaths) {
+      Instant modificationTime = Instant.ofEpochMilli(currentFile.toFile().lastModified());
 
-	public void removeFileReferences() {
-		this.filePaths = null;
-		this.lockFilePath = null;
-	}
+      if (modificationTime.isAfter(lastChangedTime)) {
+        lastChangedTime = modificationTime;
+        upToDateFile = currentFile;
+      }
+    }
+    return upToDateFile;
+  }
 
-	/**
-	 * Overwrites file and backup file content with argument, if argument is not
-	 * null.
-	 *
-	 * @param toWrite the to write
-	 *
-	 * @return true, if successful
-	 *
-	 * @throws IllegalStateException if no data file pathNames are set
-	 */
-	public boolean writeData(final Object toWrite) {
-		if (this.globalLock == null) {
-			throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
-		}
+  public void removeFileReferences() {
+    this.filePaths = null;
+    this.lockFilePath = null;
+  }
 
-		boolean dataWritten = true;
-		final var jsonString = generateJsonFromObject(toWrite);
+  /**
+   * Overwrites file and backup file content with argument, if argument is not null.
+   *
+   * @param toWrite the to write
+   * @return true, if successful
+   * @throws IllegalStateException if no data file pathNames are set
+   */
+  public boolean writeData(final Object toWrite) {
+    if (this.globalLock == null) {
+      throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
+    }
 
-		if (jsonString != null) {
+    boolean dataWritten = true;
+    final var jsonString = generateJsonFromObject(toWrite);
 
-			for (final var currentPath : this.filePaths) {
-				try {
-					Files.writeString(currentPath, jsonString);
-				} catch (final IOException e) {
-					Thread.currentThread().interrupt();
-					LOGGER.info("Nach {} konnte nicht geschrieben werden." + "\n{}", currentPath,
-							asList(e.getStackTrace()));
-					return !dataWritten;
-				}
-			}
-			return dataWritten;
-		} else {
-			LOGGER.error("JSON-String konnte nicht erstellt werden fuer: {}", toWrite);
-		}
-		return !dataWritten;
-	}
+    if (jsonString != null) {
 
-	private String generateJsonFromObject(final Object toWrite) {
-		// TODO das hier sollte in einem eigenen Objekt (statische Methode) erstellt
-		// werden
-		// TODO am besten komplett verschlüsselt
-		try {
-			return this.mapper.writerFor(this.dataFormat).writeValueAsString(toWrite);
-		} catch (JsonProcessingException je) {
-			LOGGER.info("{}: {}", je.getClass().getSimpleName(), je.getMessage());
-		}
+      for (final var currentPath : this.filePaths) {
+        try {
+          Files.writeString(currentPath, jsonString);
+        } catch (final IOException e) {
+          Thread.currentThread().interrupt();
+          LOGGER.info("Nach {} konnte nicht geschrieben werden." + "\n{}", currentPath,
+              asList(e.getStackTrace()));
+          return !dataWritten;
+        }
+      }
+      return dataWritten;
+    } else {
+      LOGGER.error("JSON-String konnte nicht erstellt werden fuer: {}", toWrite);
+    }
+    return !dataWritten;
+  }
 
-		return null;
-	}
+  private String generateJsonFromObject(final Object toWrite) {
+    // TODO das hier sollte in einem eigenen Objekt (statische Methode) erstellt
+    // werden
+    // TODO am besten komplett verschlüsselt
+    try {
+      return this.mapper.writerFor(this.dataFormat).writeValueAsString(toWrite);
+    } catch (JsonProcessingException je) {
+      LOGGER.info("{}: {}", je.getClass().getSimpleName(), je.getMessage());
+    }
+
+    return null;
+  }
 }

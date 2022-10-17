@@ -8,30 +8,30 @@ import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 
 public class ClientDataManager implements LocalClientDataProvider {
 
-	private CommunicatorData clientData;
-	private CommunicatorDTO communicatorData;
+  private CommunicatorData clientData;
+  private CommunicatorDTO communicatorData;
 
-	public ClientDataManager() {
-		setCommunicatorData(null);
-	}
+  public ClientDataManager() {
+    setCommunicatorData(null);
+  }
 
-	@Override
-	public int getClientId() {
-		return this.clientData.getCommunicatorId();
-	}
+  @Override
+  public int getClientId() {
+    return this.clientData.getCommunicatorId();
+  }
 
-	@Override
-	public CommunicatorData getClientData() {
-		return this.clientData;
-	}
+  @Override
+  public CommunicatorData getClientData() {
+    return this.clientData;
+  }
 
-	@Override
-	public CommunicatorDTO getCommunicatorData() {
-		return this.communicatorData;
-	}
+  @Override
+  public CommunicatorDTO getCommunicatorData() {
+    return this.communicatorData;
+  }
 
-	public final void setCommunicatorData(CommunicatorData newClientData) {
-		this.clientData = newClientData != null ? newClientData : EMPTY_COMMUNICATOR_DATA;
-		this.communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
-	}
+  public final void setCommunicatorData(CommunicatorData newClientData) {
+    this.clientData = newClientData != null ? newClientData : EMPTY_COMMUNICATOR_DATA;
+    this.communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
+  }
 }

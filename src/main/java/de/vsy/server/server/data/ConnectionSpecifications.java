@@ -11,42 +11,44 @@ import java.util.List;
 
 public class ConnectionSpecifications {
 
-	private static final String HOSTNAME = "127.0.0.1";
-	/**
-	 * Die zwei maximal zu verwendenden Serverports; dienen gleichzeitig zur
-	 * Identifikation des Servers im "Servernetz".
-	 */
-	private static final List<Integer> SERVER_PORTS = new ArrayList<>(asList(7370, 7371));
-	/** Der einzelne Port zur Verbindung zwischen zwei Servern. */
-	private static final int TRANS_SERVER_PORT = 8000;
+  private static final String HOSTNAME = "127.0.0.1";
+  /**
+   * Die zwei maximal zu verwendenden Serverports; dienen gleichzeitig zur Identifikation des
+   * Servers im "Servernetz".
+   */
+  private static final List<Integer> SERVER_PORTS = new ArrayList<>(asList(7370, 7371));
+  /**
+   * Der einzelne Port zur Verbindung zwischen zwei Servern.
+   */
+  private static final int TRANS_SERVER_PORT = 8000;
 
-	private ConnectionSpecifications() {
-	}
+  private ConnectionSpecifications() {
+  }
 
-	/**
-	 * Gets the HOSTNAME.
-	 *
-	 * @return the HOSTNAME
-	 */
-	public static String getHostname() {
-		return HOSTNAME;
-	}
+  /**
+   * Gets the HOSTNAME.
+   *
+   * @return the HOSTNAME
+   */
+  public static String getHostname() {
+    return HOSTNAME;
+  }
 
-	/**
-	 * Gets the serverports.
-	 *
-	 * @return the serverports
-	 */
-	public static List<Integer> getServerports() {
-		return copyOf(SERVER_PORTS);
-	}
+  /**
+   * Gets the serverports.
+   *
+   * @return the serverports
+   */
+  public static List<Integer> getServerports() {
+    return copyOf(SERVER_PORTS);
+  }
 
-	/**
-	 * Gets the transserverport.
-	 *
-	 * @return the transserverport
-	 */
-	public static int getTransserverport() {
-		return TRANS_SERVER_PORT;
-	}
+  /**
+   * Gets the transserverport.
+   *
+   * @return the transserverport
+   */
+  public static int getTransserverport() {
+    return TRANS_SERVER_PORT;
+  }
 }

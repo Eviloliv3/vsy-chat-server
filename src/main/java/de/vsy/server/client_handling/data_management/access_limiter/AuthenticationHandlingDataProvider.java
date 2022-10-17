@@ -8,15 +8,14 @@ package de.vsy.server.client_handling.data_management.access_limiter;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 
 /**
- * Provides authentication PacketCategory handlers with dataManagement
- * accessLimiter. fredward
+ * Provides authentication PacketCategory handlers with dataManagement accessLimiter. fredward
  */
 public interface AuthenticationHandlingDataProvider extends BaseHandlingDataProvider {
 
-	/**
-	 * Gets the handler buffers.
-	 *
-	 * @return the handler buffers
-	 */
-	AuthenticationStateControl getGlobalAuthenticationStateControl();
+  /**
+   * Gets the handler buffers.
+   *
+   * @return the handler buffers
+   */
+  AuthenticationStateControl getGlobalAuthenticationStateControl();
 }

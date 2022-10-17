@@ -23,48 +23,57 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.PacketConte
 
 public class AuthenticationPacketProcessorFactory implements ContentBasedProcessorFactory {
 
-	private final HandlerLocalDataManager threadDataAccess;
+  private final HandlerLocalDataManager threadDataAccess;
 
-	public AuthenticationPacketProcessorFactory(final HandlerLocalDataManager threadDataAccess) {
-		this.threadDataAccess = threadDataAccess;
-	}
+  public AuthenticationPacketProcessorFactory(final HandlerLocalDataManager threadDataAccess) {
+    this.threadDataAccess = threadDataAccess;
+  }
 
-	@Override
-	public PacketProcessor createTypeProcessor(Class<? extends PacketContent> contentType) {
-		ProcessingCondition processingCondition;
-		var type = valueOf(contentType.getSimpleName());
+  @Override
+  public PacketProcessor createTypeProcessor(Class<? extends PacketContent> contentType) {
+    ProcessingCondition processingCondition;
+    var type = valueOf(contentType.getSimpleName());
 
-		switch (type) {
-		case LoginRequestDTO -> {
-			processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-					ProcessingConditionType.NOT_AUTHENTICATED, this.threadDataAccess.getLocalClientStateProvider());
-			return new ClientHandlerPacketProcessor<>(this.threadDataAccess.getLocalClientDataProvider(),
-					processingCondition, new LoginRequestValidator(), new LoginRequestProcessor(this.threadDataAccess));
-		}
-		case LogoutRequestDTO -> {
-			processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-					ProcessingConditionType.AUTHENTICATED, this.threadDataAccess.getLocalClientStateProvider());
-			return new ClientHandlerPacketProcessor<>(this.threadDataAccess.getLocalClientDataProvider(),
-					processingCondition, new LogoutRequestValidator(),
-					new LogoutRequestProcessor(this.threadDataAccess));
-		}
-		case NewAccountRequestDTO -> {
-			processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-					ProcessingConditionType.NOT_AUTHENTICATED, this.threadDataAccess.getLocalClientStateProvider());
-			return new ClientHandlerPacketProcessor<>(this.threadDataAccess.getLocalClientDataProvider(),
-					processingCondition, new NewAccountRequestValidator(),
-					new NewAccountRequestProcessor(this.threadDataAccess));
-		}
-		case ReconnectRequestDTO -> {
-			processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-					ProcessingConditionType.NOT_AUTHENTICATED, this.threadDataAccess.getLocalClientStateProvider());
-			return new ClientHandlerPacketProcessor<>(this.threadDataAccess.getLocalClientDataProvider(),
-					processingCondition, new ReconnectRequestValidator(),
-					new ReconnectRequestProcessor(this.threadDataAccess));
-		}
-		default -> {
-		}
-		}
-		return null;
-	}
+    switch (type) {
+      case LoginRequestDTO -> {
+        processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
+            ProcessingConditionType.NOT_AUTHENTICATED,
+            this.threadDataAccess.getLocalClientStateProvider());
+        return new ClientHandlerPacketProcessor<>(
+            this.threadDataAccess.getLocalClientDataProvider(),
+            processingCondition, new LoginRequestValidator(),
+            new LoginRequestProcessor(this.threadDataAccess));
+      }
+      case LogoutRequestDTO -> {
+        processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
+            ProcessingConditionType.AUTHENTICATED,
+            this.threadDataAccess.getLocalClientStateProvider());
+        return new ClientHandlerPacketProcessor<>(
+            this.threadDataAccess.getLocalClientDataProvider(),
+            processingCondition, new LogoutRequestValidator(),
+            new LogoutRequestProcessor(this.threadDataAccess));
+      }
+      case NewAccountRequestDTO -> {
+        processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
+            ProcessingConditionType.NOT_AUTHENTICATED,
+            this.threadDataAccess.getLocalClientStateProvider());
+        return new ClientHandlerPacketProcessor<>(
+            this.threadDataAccess.getLocalClientDataProvider(),
+            processingCondition, new NewAccountRequestValidator(),
+            new NewAccountRequestProcessor(this.threadDataAccess));
+      }
+      case ReconnectRequestDTO -> {
+        processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
+            ProcessingConditionType.NOT_AUTHENTICATED,
+            this.threadDataAccess.getLocalClientStateProvider());
+        return new ClientHandlerPacketProcessor<>(
+            this.threadDataAccess.getLocalClientDataProvider(),
+            processingCondition, new ReconnectRequestValidator(),
+            new ReconnectRequestProcessor(this.threadDataAccess));
+      }
+      default -> {
+      }
+    }
+    return null;
+  }
 }

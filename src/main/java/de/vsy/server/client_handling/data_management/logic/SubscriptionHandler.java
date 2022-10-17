@@ -5,5 +5,6 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_cat
 
 public interface SubscriptionHandler {
 
-	boolean handle(final PacketCategory topic, final int topicId, final PacketBuffer subscriptionBuffer);
+  boolean handle(final PacketCategory topic, final int topicId,
+      final PacketBuffer subscriptionBuffer);
 }

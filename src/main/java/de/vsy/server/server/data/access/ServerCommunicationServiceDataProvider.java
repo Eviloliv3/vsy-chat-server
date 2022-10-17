@@ -9,26 +9,25 @@ import de.vsy.server.server.server_connection.ServerConnectionDataManager;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
- * Ensures all dataManagement accessLimiter needed by
- * InterServerCommunicationServices is provided.
+ * Ensures all dataManagement accessLimiter needed by InterServerCommunicationServices is provided.
  */
 public interface ServerCommunicationServiceDataProvider extends ServiceBaseDataProvider {
 
-	/**
-	 * Gets the client state PersistenceDAO provider.
-	 *
-	 * @return the client state PersistenceDAO provider
-	 */
-	LiveClientStateDAO getLiveClientStateDAO();
+  /**
+   * Gets the client state PersistenceDAO provider.
+   *
+   * @return the client state PersistenceDAO provider
+   */
+  LiveClientStateDAO getLiveClientStateDAO();
 
-	/**
-	 * Gets the server connection dataManagement.
-	 *
-	 * @return the server connection dataManagement
-	 */
-	ServerConnectionDataManager getServerConnectionDataManager();
+  /**
+   * Gets the server connection dataManagement.
+   *
+   * @return the server connection dataManagement
+   */
+  ServerConnectionDataManager getServerConnectionDataManager();
 
-	ServicePacketBufferManager getServicePacketBufferManager();
+  ServicePacketBufferManager getServicePacketBufferManager();
 
-	CommunicatorPersistenceDAO getCommunicatorDataAccessor();
+  CommunicatorPersistenceDAO getCommunicatorDataAccessor();
 }

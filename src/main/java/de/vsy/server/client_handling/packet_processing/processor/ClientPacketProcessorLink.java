@@ -10,31 +10,32 @@ import de.vsy.shared_transmission.shared_transmission.packet.property.packet_ide
 
 public class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
 
-	private final PacketProcessorManager processingLogic;
+  private final PacketProcessorManager processingLogic;
 
-	public ClientPacketProcessorLink(final PacketProcessorManager processingLogic) {
-		super(null);
-		this.processingLogic = processingLogic;
-	}
+  public ClientPacketProcessorLink(final PacketProcessorManager processingLogic) {
+    super(null);
+    this.processingLogic = processingLogic;
+  }
 
-	@Override
-	public void processPacket(Packet input) throws PacketValidationException, PacketProcessingException {
-		PacketProcessor processor;
-		final var inputContent = input.getPacketContent();
-		final ContentIdentifier identifier;
-		final Class<? extends PacketContent> contentType;
+  @Override
+  public void processPacket(Packet input)
+      throws PacketValidationException, PacketProcessingException {
+    PacketProcessor processor;
+    final var inputContent = input.getPacketContent();
+    final ContentIdentifier identifier;
+    final Class<? extends PacketContent> contentType;
 
-		if (inputContent instanceof final SimpleInternalContentWrapper inputServerContent) {
-			contentType = inputServerContent.getWrappedContent().getClass();
-		} else {
-			contentType = inputContent.getClass();
-		}
-		identifier = input.getPacketProperties().getPacketIdentificationProvider();
+    if (inputContent instanceof final SimpleInternalContentWrapper inputServerContent) {
+      contentType = inputServerContent.getWrappedContent().getClass();
+    } else {
+      contentType = inputContent.getClass();
+    }
+    identifier = input.getPacketProperties().getPacketIdentificationProvider();
 
-		processor = this.processingLogic.getProcessor(identifier, contentType)
-				.orElseThrow(() -> new PacketProcessingException(
-						"Es wurde keine Verarbeitungslogik" + "für die folgende Kennzeichnung " + "gefunden"
-								+ input.getPacketProperties().getPacketIdentificationProvider()));
-		processor.processPacket(input);
-	}
+    processor = this.processingLogic.getProcessor(identifier, contentType)
+        .orElseThrow(() -> new PacketProcessingException(
+            "Es wurde keine Verarbeitungslogik" + "für die folgende Kennzeichnung " + "gefunden"
+                + input.getPacketProperties().getPacketIdentificationProvider()));
+    processor.processPacket(input);
+  }
 }
