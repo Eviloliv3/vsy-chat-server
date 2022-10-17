@@ -49,7 +49,7 @@ public class TestStatusChange extends ServerTestBase {
     packet = clientOne.readPacket();
     LOGGER.info("Erwarte Kontaktstatusbenachrichtigung. Gelesen: {}", packet);
 
-    LOGGER.info("Logout erfolgreich: {}", clientOne.tryClientLogout());
+    clientOne.tryClientLogout();
     packet = clientTwo.readPacket();
 
     LOGGER.info("erwarte Kontaktstatusbenachrichtigung. Gelesen: {}", packet);

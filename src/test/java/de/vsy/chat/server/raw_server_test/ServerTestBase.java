@@ -90,14 +90,9 @@ public class ServerTestBase {
     LOGGER.info("{}-Logoutversuch gestartet.", clientName);
     final boolean logoutSuccess;
 
-    logoutSuccess = toLogout.tryClientLogout();
-
-    if (logoutSuccess) {
-      LOGGER.info("{}-Verbindung erfolgreich beendet.", clientName);
-      this.activeClientAuthenticationData.remove(toLogout.getAuthenticationData());
-    } else {
-      LOGGER.info("Nicht ausgeloggt.");
-    }
+    toLogout.tryClientLogout();
+    LOGGER.info("{}-Verbindung erfolgreich beendet.", clientName);
+    this.activeClientAuthenticationData.remove(toLogout.getAuthenticationData());
   }
 
   /**
@@ -140,10 +135,8 @@ public class ServerTestBase {
 
     if (clientConnection != null) {
       clientConnection.setClientData(clientAuthenticationData, null);
-
-      if (clientConnection.tryClientLogin()) {
-        this.activeClientAuthenticationData.add(clientAuthenticationData);
-      }
+      clientConnection.tryClientLogin();
+      this.activeClientAuthenticationData.add(clientAuthenticationData);
     } else {
       LOGGER.error("Login-Versuch fehlgeschlagen. Keine nutzbare " + "Verbindung gefunden.");
     }

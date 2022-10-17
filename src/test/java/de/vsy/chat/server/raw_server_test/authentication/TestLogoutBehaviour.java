@@ -48,11 +48,8 @@ public class TestLogoutBehaviour extends ServerTestBase {
     boolean authSuccess;
     final var clientOne = super.getUnusedClientConnection();
     clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
-    authSuccess = clientOne.tryClientLogin();
-    Assertions.assertTrue((authSuccess));
-
-    authSuccess = clientOne.tryClientLogout();
-    Assertions.assertTrue((authSuccess), "Logout fehlgeschlagen.");
+    clientOne.tryClientLogin();
+    clientOne.tryClientLogout();
     clientOne.resetConnection();
     LOGGER.info("Test: Logout erfolgreich -- beendet");
   }

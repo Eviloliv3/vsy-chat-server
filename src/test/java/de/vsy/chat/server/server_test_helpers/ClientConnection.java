@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 
 public class ClientConnection {
 
@@ -136,7 +137,7 @@ public class ClientConnection {
     }
   }
 
-  public boolean tryClientLogout() {
+  public void tryClientLogout() {
     Packet response;
     var logoutSuccess = false;
 
@@ -164,8 +165,7 @@ public class ClientConnection {
       LOGGER.info("Logout unnötig. Es besteht keine Verbindung. ID: {}",
           this.getCommunicatorData().getCommunicatorId());
     }
-
-    return logoutSuccess;
+    Assertions.assertTrue(logoutSuccess, "Logout fehlgeschlagen. " + this.authenticationData);
   }
 
   public Packet readPacket() {
@@ -191,7 +191,7 @@ public class ClientConnection {
         this.clientData.getDisplayLabel());
   }
 
-  public boolean tryClientLogin() {
+  public void tryClientLogin() {
     Packet response;
     var loginSuccess = false;
 
@@ -223,6 +223,6 @@ public class ClientConnection {
       LOGGER.info("Login nicht möglich. Daten vorhanden: {} | Bereits eingeloggt: {}.",
           this.hasAuthenticationData, this.authenticated);
     }
-    return loginSuccess;
+    Assertions.assertTrue(loginSuccess, "Login fehlgeschlagen. " + this.authenticationData);
   }
 }

@@ -98,9 +98,7 @@ public class TestLoginBehaviour extends ServerTestBase {
     boolean loginSuccess;
     final var clientOne = super.getUnusedClientConnection();
     clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
-
-    loginSuccess = clientOne.tryClientLogin();
-    Assertions.assertTrue((loginSuccess), "Login fehlgeschlagen.");
+    clientOne.tryClientLogin();
     LOGGER.info("Test: Login falsch -> fehlerhafte Daten -- beendet");
   }
 }
