@@ -55,9 +55,21 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
     return finalContent;
   }
 
+  /**
+   * Checks whether current request came from connected client. Three distinguished cases:
+   * local client id equals packet sender id; sender id is standard client id -> client generally
+   * does not have id before authentication and no standard client id packet is sent through server
+   * infrastructure; local client id is standard client id -> no client authentication data,
+   * therefore client handler is not registered in server's packet forwarding network and the
+   * request has to have been sent from the connected client
+   * @return true if the connected client is the originator
+   */
   protected boolean checkClientSender() {
     final var senderId = this.currentRequest.getPacketProperties().getSender().getEntityId();
-    return senderId == this.clientDataProvider.getClientId()
+    final var localClientId = this.clientDataProvider.getClientId();
+    final var noClientAuthenticated = localClientId == StandardIdProvider.STANDARD_CLIENT_ID;
+    return noClientAuthenticated
+        || senderId == this.clientDataProvider.getClientId()
         || senderId == StandardIdProvider.STANDARD_CLIENT_ID;
   }
 }

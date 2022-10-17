@@ -10,6 +10,7 @@ import static de.vsy.server.persistent_data.PersistentDataLocationCreator.DataPa
 import static de.vsy.server.persistent_data.PersistentDataLocationCreator.DataPathDescriptor.SERVER_PATH;
 import static java.io.File.separator;
 import static java.lang.System.getProperty;
+import static java.lang.System.setProperty;
 
 import java.io.File;
 import java.util.EnumMap;
@@ -27,10 +28,7 @@ public class PersistentDataLocationCreator {
 
   static {
     LOGGER = LogManager.getLogger();
-    BASE_LOCATION = getProperty("user.home") + separator + "Software Development" +
-        separator + "Programming" + separator + "VSY_ChatServer" + separator
-        + "VSY_Chat_Server_Daten"
-        + separator;
+    BASE_LOCATION = getProperty("user.home") + separator + "Software Development" + separator + "Programming" + separator + "VSY_ChatServer" + separator + "VSY_Chat_Server_Daten" + separator;
     DATA_LOCATION_PREFIXES = new EnumMap<>(DataPathDescriptor.class);
     DATA_LOCATION_PREFIXES.put(BACKUP, "backup");
     DATA_LOCATION_PREFIXES.put(CLIENT_PATH, "clientData");
