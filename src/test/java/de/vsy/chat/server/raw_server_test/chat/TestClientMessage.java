@@ -88,8 +88,11 @@ public class TestClientMessage extends ServerTestBase {
 
     if (connection != null) {
       connection.setClientData(credentials, null);
-      connection.tryClientLogin();
-      return connection;
+      if(connection.tryClientLogin()) {
+        return connection;
+      }else{
+        connection.setClientData(null, null);
+      }
     } else {
       Assertions.fail("Keine freie Verbindung gefunden.");
     }

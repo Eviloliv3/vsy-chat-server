@@ -20,6 +20,7 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.authenticat
 import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
 import java.io.IOException;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -31,7 +32,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
       final List<AuthenticationDTO> clientAuthenticationDataList) {
     super(clientConnectionPorts, clientAuthenticationDataList);
   }
-
+/*
   @Test
   void reconnectionFailAlreadyLoggedIn() {
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt");
@@ -44,15 +45,18 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt -- beendet");
   }
+  */
   @Test
   void reconnectionFailReconnectionUnderway() throws InterruptedException, IOException {
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen");
     ReconnectRequestDTO request;
     final ClientConnection clientOne, clientTwo;
     final CommunicatorDTO clientOneCommunicatorData;
+    final AuthenticationDTO clientOneAuthenticationData;
 
     clientOne = super.loginNextClient();
     clientOneCommunicatorData = clientOne.getCommunicatorData();
+    clientOneAuthenticationData = clientOne.getAuthenticationData();
 
     super.addConnectionNextServer();
     clientTwo = super.getUnusedClientConnection();
@@ -65,10 +69,22 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         request,
         "anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch");
+    final var response = clientTwo.readPacket();
 
+    if(response.getPacketContent() instanceof final ReconnectResponseDTO reconnectResponse){
+      if(reconnectResponse.getReconnectionState()) {
+        clientTwo.setClientData(clientOneAuthenticationData, clientOneCommunicatorData);
+      }else{
+        Assertions.fail("Wiederverbindung fehlgeschlagen.");
+      }
+    }else{
+      Assertions.fail("Antwort ist: " + response.getPacketContent().getClass().getSimpleName() +
+          ",  erwartet wurde: " + ReconnectResponseDTO.class.getSimpleName());
+    }
     LOGGER.info(
         "Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen -- beendet");
   }
+  /*
 
   @Test
   void reconnectionFailStillLoggedIn() throws IOException {
@@ -129,7 +145,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         "Es existiert kein Account mit den von Ihnen angegebenen Daten.");
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> fehlerhafte Daten -- beendet");
   }
-
+/*
   @Test
   void reconnectionSuccess() throws InterruptedException, IOException {
     LOGGER.info("Test: Wiederverbindung erfolgreich");
@@ -149,6 +165,8 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     reconnectPendingClient(clientTwo, content);
     LOGGER.info("Test: Wiederverbindung erfolgreich -- beendet");
   }
+
+ */
 
   private void reconnectPendingClient(ClientConnection connection, ReconnectRequestDTO request) {
     connection.setClientData(null, request.getClientData());

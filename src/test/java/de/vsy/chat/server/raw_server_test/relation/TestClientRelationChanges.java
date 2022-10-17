@@ -43,7 +43,7 @@ public class TestClientRelationChanges extends ServerTestBase {
     super.addConnectionNextServer();
     clientTwo = super.getUnusedClientConnection();
     clientTwo.setClientData(TestClientDataProvider.ADRIAN_1_AUTH, null);
-    clientTwo.tryClientLogin();
+    Assertions.assertTrue(clientTwo.tryClientLogin(), "Login fehlgeschlagen.");
 
     clientOneData = clientOne.getCommunicatorData();
     clientTwoData = clientTwo.getCommunicatorData();
@@ -84,7 +84,7 @@ public class TestClientRelationChanges extends ServerTestBase {
     super.addConnectionNextServer();
     clientTwo = super.getUnusedClientConnection();
     clientTwo.setClientData(TestClientDataProvider.PETER_1_AUTH, null);
-    clientTwo.tryClientLogin();
+    Assertions.assertTrue(clientTwo.tryClientLogin(), "Login fehlgeschlagen.");
 
     clientOneData = clientOne.getCommunicatorData();
     clientTwoData = clientTwo.getCommunicatorData();

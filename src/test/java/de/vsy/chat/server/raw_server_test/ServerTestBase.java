@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 
@@ -90,7 +91,9 @@ public class ServerTestBase {
     LOGGER.info("{}-Logoutversuch gestartet.", clientName);
     final boolean logoutSuccess;
 
-    toLogout.tryClientLogout();
+    if(toLogout.tryClientLogout()){
+      LOGGER.info("{}-Logoutversuch erfolgreich.", clientName);
+    }
     LOGGER.info("{}-Verbindung erfolgreich beendet.", clientName);
     this.activeClientAuthenticationData.remove(toLogout.getAuthenticationData());
   }
@@ -135,8 +138,11 @@ public class ServerTestBase {
 
     if (clientConnection != null) {
       clientConnection.setClientData(clientAuthenticationData, null);
-      clientConnection.tryClientLogin();
-      this.activeClientAuthenticationData.add(clientAuthenticationData);
+      if(clientConnection.tryClientLogin()) {
+        this.activeClientAuthenticationData.add(clientAuthenticationData);
+      }else{
+        LOGGER.error("Login-Versuch fehlgeschlagen.");
+      }
     } else {
       LOGGER.error("Login-Versuch fehlgeschlagen. Keine nutzbare " + "Verbindung gefunden.");
     }

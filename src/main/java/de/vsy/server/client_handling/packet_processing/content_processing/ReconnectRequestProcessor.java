@@ -54,10 +54,13 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
       if (!(persistedClientState.equals(ClientState.OFFLINE))) {
 
         if (this.clientStateManager.changeReconnectionState(true)) {
+          LOGGER.info("ReconnectionFlag erfolgreich gesetzt.");
 
           if (waitForPendingBufferWatcher()) {
+            LOGGER.info("PendingBufferWatcher fertig.");
             if (this.clientStateManager.changePersistentClientState(persistedClientState, true)) {
               this.clientStateManager.changeReconnectionState(false);
+              LOGGER.info("Pendingstatus aufgehoben.");
               this.contentHandler.addResponse(new ReconnectResponseDTO(true));
             } else {
               this.clientStateManager.logoutClient();

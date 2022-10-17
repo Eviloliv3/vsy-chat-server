@@ -137,7 +137,7 @@ public class ClientConnection {
     }
   }
 
-  public void tryClientLogout() {
+  public boolean tryClientLogout() {
     Packet response;
     var logoutSuccess = false;
 
@@ -165,7 +165,7 @@ public class ClientConnection {
       LOGGER.info("Logout unnötig. Es besteht keine Verbindung. ID: {}",
           this.getCommunicatorData().getCommunicatorId());
     }
-    Assertions.assertTrue(logoutSuccess, "Logout fehlgeschlagen. " + this.authenticationData);
+    return logoutSuccess;
   }
 
   public Packet readPacket() {
@@ -191,7 +191,7 @@ public class ClientConnection {
         this.clientData.getDisplayLabel());
   }
 
-  public void tryClientLogin() {
+  public boolean tryClientLogin() {
     Packet response;
     var loginSuccess = false;
 
@@ -223,6 +223,6 @@ public class ClientConnection {
       LOGGER.info("Login nicht möglich. Daten vorhanden: {} | Bereits eingeloggt: {}.",
           this.hasAuthenticationData, this.authenticated);
     }
-    Assertions.assertTrue(loginSuccess, "Login fehlgeschlagen. " + this.authenticationData);
+    return loginSuccess;
   }
 }
