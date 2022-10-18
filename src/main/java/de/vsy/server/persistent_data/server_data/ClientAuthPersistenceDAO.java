@@ -51,7 +51,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     var idFound = false;
     Set<AuthenticationData> regClients;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return false;
     }
     regClients = readRegisteredClients();
@@ -77,7 +77,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     Object fromFile;
     Set<AuthenticationData> readList = null;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return new HashSet<>();
     }
     fromFile = this.dataProvider.readData();
@@ -116,7 +116,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     Set<AuthenticationData> readList;
     var clientAuth = AuthenticationData.valueOf(loginName, password, STANDARD_CLIENT_ID);
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return clientId;
     }
     readList = readRegisteredClients();
@@ -142,7 +142,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     var accountRemoved = false;
     Set<AuthenticationData> regClients;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     regClients = readRegisteredClients();
@@ -175,9 +175,9 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     Set<AuthenticationData> regClients;
 
     if (toAdd != null) {
-      if (!this.dataProvider.acquireAccess(true)) {
-        return false;
-      }
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+      return false;
+    }
       regClients = readRegisteredClients();
 
       for (final AuthenticationData authData : regClients) {

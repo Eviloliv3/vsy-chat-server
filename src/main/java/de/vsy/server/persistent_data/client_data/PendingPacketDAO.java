@@ -70,7 +70,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     var packetAdded = false;
     Map<String, Packet> pendingMap;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     pendingMap = readPendingPackets(classification);
@@ -98,7 +98,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
     Map<String, Packet> pendingMap;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return new LinkedHashMap<>();
     }
     allPendingPackets = readAllPendingPackets();
@@ -127,9 +127,9 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     if (toSet != null) {
       classifiedPendingPackets = new LinkedHashMap<>(toSet);
 
-      if (!this.dataProvider.acquireAccess(true)) {
-        return false;
-      }
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+      return false;
+    }
       allPendingPackets = readAllPendingPackets();
       allPendingPackets.put(classification, classifiedPendingPackets);
       packetAdded = this.dataProvider.writeData(allPendingPackets);
@@ -149,7 +149,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     EnumMap<PendingType, LinkedHashMap<String, Packet>> allPendingPackets = null;
     Object fromFile;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return new EnumMap<>(PendingType.class);
     }
     fromFile = this.dataProvider.readData();
@@ -191,7 +191,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
     LinkedHashMap<String, Packet> pendingMap;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return;
     }
     allPendingPackets = readAllPendingPackets();

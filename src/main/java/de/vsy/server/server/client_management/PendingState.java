@@ -36,7 +36,7 @@ public class PendingState {
    *
    * @return the pending state
    */
-  public synchronized boolean getPendingState() {
+  public boolean getPendingState() {
     return this.pending;
   }
 
@@ -47,7 +47,7 @@ public class PendingState {
    *
    * @param pendingState the new pending state
    */
-  public synchronized void setPendingState(final boolean pendingState) {
+  public void setPendingState(final boolean pendingState) {
     this.pending = pendingState;
   }
 
@@ -56,7 +56,7 @@ public class PendingState {
    *
    * @return the reconnecting
    */
-  public synchronized boolean getReconnecting() {
+  public boolean getReconnecting() {
     return this.reconnecting;
   }
 
@@ -65,7 +65,7 @@ public class PendingState {
    *
    * @return true, if successful
    */
-  public synchronized boolean setReconnecting(boolean reconnectState) {
+  public boolean setReconnecting(boolean reconnectState) {
     final var reconnectSet = true;
 
     if (reconnectState && this.pending && !this.reconnecting) {

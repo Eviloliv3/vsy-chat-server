@@ -63,6 +63,8 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
     clientOne.resetConnection();
 
+    Thread.sleep(100);
+
     request = new ReconnectRequestDTO(clientOneCommunicatorData);
     clientTwo.sendRequest(request, getServerEntity(STANDARD_SERVER_ID));
 

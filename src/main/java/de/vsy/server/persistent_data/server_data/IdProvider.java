@@ -53,7 +53,7 @@ public class IdProvider implements ServerDataAccess {
     Map<String, Integer> idMap;
     int newId;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+        if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return STANDARD_CLIENT_ID;
     }
     idMap = readIdMap();
@@ -80,7 +80,7 @@ public class IdProvider implements ServerDataAccess {
   Map<String, Integer> readIdMap() {
     Object fromFile;
     var readMap = new HashMap<String, Integer>();
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();

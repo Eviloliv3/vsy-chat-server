@@ -65,7 +65,7 @@ public class MessageDAO implements ClientDataAccess {
     Map<Integer, List<TextMessageDTO>> readMap;
     List<TextMessageDTO> readMessages;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return new ArrayList<>();
     }
     readMap = readAllClientMessages();
@@ -88,7 +88,7 @@ public class MessageDAO implements ClientDataAccess {
     var readMap = new HashMap<Integer, List<TextMessageDTO>>();
     Object fromFile;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -109,7 +109,7 @@ public class MessageDAO implements ClientDataAccess {
   public void removeMessages(final int contactId) {
     Map<Integer, List<TextMessageDTO>> oldMessages;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return;
     }
     oldMessages = this.readAllClientMessages();
@@ -136,9 +136,9 @@ public class MessageDAO implements ClientDataAccess {
     List<TextMessageDTO> msgHistory;
 
     if (contactId > 0 && msg != null) {
-      if (!this.dataProvider.acquireAccess(true)) {
-        return false;
-      }
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+      return false;
+    }
       oldMessages = readAllClientMessages();
       msgHistory = oldMessages.getOrDefault(contactId, new ArrayList<>());
       msgHistory.add(msg);

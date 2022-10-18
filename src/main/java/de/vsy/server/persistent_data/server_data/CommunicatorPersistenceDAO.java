@@ -46,7 +46,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     Set<CommunicatorData> communicatorList;
     var communicatorAdded = false;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     communicatorList = readRegisteredCommunicators();
@@ -75,7 +75,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     Object fromFile;
     Set<CommunicatorData> readList = new HashSet<>();
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return readList;
     }
     fromFile = this.dataProvider.readData();
@@ -109,7 +109,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     var communicatorRemoved = false;
     CommunicatorData communicatorToRemove;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     communicatorToRemove = getCommunicatorData(communicatorId);
@@ -130,7 +130,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     CommunicatorData foundCommunicator = null;
     Set<CommunicatorData> communicatorList;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return null;
     }
     communicatorList = readRegisteredCommunicators();
@@ -156,7 +156,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     var communicatorRemoved = false;
     Set<CommunicatorData> communicatorList;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     communicatorList = readRegisteredCommunicators();

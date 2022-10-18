@@ -58,7 +58,7 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> contactMap;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     contactMap = readContactMap();
@@ -92,7 +92,7 @@ public class ContactListDAO implements ClientDataAccess {
     var readMap = new EnumMap<EligibleContactEntity, Set<Integer>>(EligibleContactEntity.class);
     Object fromFile;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -114,7 +114,7 @@ public class ContactListDAO implements ClientDataAccess {
     final boolean isContact;
     final Set<Integer> contacts;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return false;
     }
     contacts = this.readContacts(contactType);
@@ -133,7 +133,7 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> readMap;
     Set<Integer> readContacts;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return new HashSet<>();
     }
     readMap = readContactMap();
@@ -157,7 +157,7 @@ public class ContactListDAO implements ClientDataAccess {
     var acquaintanceState = false;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return false;
     }
     contactSet = readContacts(contactType);
@@ -181,7 +181,7 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> contactMap;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return false;
     }
     contactMap = readContactMap();
@@ -216,7 +216,7 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> contactMap;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     contactMap = readContactMap();

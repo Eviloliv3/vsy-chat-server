@@ -48,7 +48,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         PacketCategory.class);
     final CurrentClientState currentState;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return extraSubscriptions;
     }
     currentState = getClientState(clientId);
@@ -70,7 +70,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState currentClientState;
     Map<Integer, CurrentClientState> clientStateMap;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return new CurrentClientState(STANDARD_SERVER_ID);
     }
     clientStateMap = getAllActiveClientStates();
@@ -93,7 +93,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     Map<Integer, CurrentClientState> readMap = new HashMap<>();
     Object fromFile;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -124,7 +124,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -151,7 +151,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
     var subscriptionAdded = false;
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -176,7 +176,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
     var subscriptionAdded = false;
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -206,7 +206,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
     var pendingStateChanged = false;
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -238,7 +238,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     Map<Integer, CurrentClientState> clientStateMap;
     var reconnectionAllowed = false;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -246,8 +246,11 @@ public class LiveClientStateDAO implements ServerDataAccess {
 
     if (clientState != null) {
       if (clientState.setReconnectionState(newState)) {
+        LOGGER.trace("ReconnectionState wurde auf {} gesetzt.", newState);
         clientStateMap.put(clientId, clientState);
         reconnectionAllowed = this.dataProvider.writeData(clientStateMap);
+      }else{
+        LOGGER.warn("ReconnectionState konnte nicht auf {} gesetzt werden.", newState);
       }
     }
     this.dataProvider.releaseAccess(true);
@@ -270,7 +273,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -294,7 +297,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
@@ -317,7 +320,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     Map<Integer, CurrentClientState> allClientStates;
     Map<Integer, CurrentClientState> remoteClientStates = new HashMap<>();
 
-    if (!this.dataProvider.acquireAccess(false)) {
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
       return remoteClientStates;
     }
     allClientStates = getAllActiveClientStates();
@@ -342,7 +345,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     var clientStatesRemoved = false;
     Map<Integer, CurrentClientState> clientStateMap;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = new HashMap<>();
@@ -365,7 +368,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     Map<Integer, CurrentClientState> clientStateMap;
     var clientStateRemoved = false;
 
-    if (!this.dataProvider.acquireAccess(true)) {
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
       return false;
     }
     clientStateMap = getAllActiveClientStates();
