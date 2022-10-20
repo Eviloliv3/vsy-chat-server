@@ -20,11 +20,14 @@ import de.vsy.server.server.server_connection.LocalServerConnectionData;
 import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceControl;
+import de.vsy.server.service.ServiceHealthMonitor;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +38,7 @@ public class ChatServer implements ClientServer {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final ExecutorService connectionPool;
+  private final Timer serviceMonitor;
   private ServerDataManager serverDataModel;
   private ServerPersistentDataManager serverPersistentDataManager;
   private ServiceControl serviceControl;
@@ -46,6 +50,7 @@ public class ChatServer implements ClientServer {
   public ChatServer() {
     this.connectionPool = newFixedThreadPool(10);
     Runtime.getRuntime().addShutdownHook(new Thread(this::interruptServer));
+    this.serviceMonitor = new Timer("ServiceHealthMonitor");
   }
 
   /**
@@ -102,20 +107,22 @@ public class ChatServer implements ClientServer {
   private void startServing() {
     connectionEstablisher = new ClientConnectionEstablisher(
         this.serverDataModel.getServerConnectionDataManager().getLocalServerConnectionData(), this);
-    connectionEstablisher.startAcceptingClientConnetions();
+    connectionEstablisher.startAcceptingClientConnections();
   }
 
   /**
    * Shutdown server.
    */
+  @Override
   public void shutdownServer() {
     LOGGER.info("Server wird heruntergefahren. Unterbrechungsstatus: {}",
         Thread.currentThread().isInterrupted());
+    this.serviceMonitor.cancel();
+    this.serviceMonitor.purge();
 
-    if (this.connectionEstablisher != null) {
-      this.connectionEstablisher.stopAcceptingClientConnections();
-      this.connectionPool.shutdownNow();
-    }
+    this.connectionEstablisher.changeServerHealthFlag(false);
+
+    LOGGER.info("Sockets werden geschlossen.");
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
 
     do {
@@ -184,9 +191,12 @@ public class ChatServer implements ClientServer {
   }
 
   private void setupAndStartServices() {
+    final TimerTask serviceMonitoring;
     this.serviceControl = new ServiceControl(this.serverDataModel,
         this.serverPersistentDataManager);
     this.serviceControl.startServices();
+    serviceMonitoring = new ServiceHealthMonitor(this, this.serviceControl);
+    this.serviceMonitor.scheduleAtFixedRate(serviceMonitoring, 200, 500);
 
     /* Bereits registrierte Nutzer werden registriert */
     waitForPrecedingServerConnections();
@@ -237,6 +247,9 @@ public class ChatServer implements ClientServer {
           this.shutdownServer();
         }
       } while (!connectionManager.remoteConnectionsLive());
+      LOGGER.info("Entfernte Verbindungen aufgebaut.");
+    }else{
+      LOGGER.info("Keine entfernten Verbindungen abzuwarten.");
     }
   }
 
@@ -295,11 +308,5 @@ public class ChatServer implements ClientServer {
     } else {
       LOGGER.error("null-Socket kann nicht bedient werden.");
     }
-  }
-
-  @Override
-  public boolean isOperable() {
-
-    return !Thread.currentThread().isInterrupted() && this.serviceControl.allServicesHealthy();
   }
 }

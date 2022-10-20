@@ -6,5 +6,5 @@ public interface ClientServer {
 
   void serveClient(Socket clientConnection);
 
-  boolean isOperable();
+  void shutdownServer();
 }

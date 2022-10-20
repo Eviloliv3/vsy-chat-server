@@ -6,6 +6,7 @@ package de.vsy.server.service;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.server.server.data.access.ServiceDataAccessManager;
+import de.vsy.server.service.Service.TYPE;
 import de.vsy.server.service.inter_server.InterServerCommunicationService;
 import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
@@ -42,11 +43,18 @@ public class ServiceControl {
    *
    * @return true, if successful
    */
-  public boolean allServicesHealthy() {
+  public boolean confinedServicesHealthy() {
     for (final var currentThreadSet : this.registeredServices.entrySet()) {
-      for (final var currentThread : currentThreadSet.getValue()) {
-        if (!currentThread.isAlive() || currentThread.isInterrupted()) {
-          return false;
+      final var currentServiceType = currentThreadSet.getKey();
+
+      if(!(currentServiceType.equals(TYPE.SERVER_TRANSFER))) {
+        final var currentServiceThreads = currentThreadSet.getValue();
+
+        for (final var currentThread : currentServiceThreads) {
+
+          if (!currentThread.isAlive() || currentThread.isInterrupted()) {
+            return false;
+          }
         }
       }
     }
