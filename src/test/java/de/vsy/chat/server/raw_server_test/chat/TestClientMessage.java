@@ -34,6 +34,7 @@ public class TestClientMessage extends ServerTestBase {
 
   @Test
   void sendMessageContactNotActiveFail() throws IOException {
+    LOGGER.info("Test: Nachricht Senden Fehlschlag --> Kontakt offline -- gestartet");
     final ClientConnection clientOne, clientTwo;
 
     clientOne = super.loginNextClient();
@@ -49,6 +50,7 @@ public class TestClientMessage extends ServerTestBase {
 
     checkErrorResponse(clientOne, getClientEntity(inactiveClientId), message,
         "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
+    LOGGER.info("Test: Nachricht Senden Fehlschlag --> Kontakt offline -- beendet");
   }
 
   private void changeStatus(ClientConnection connection, boolean changeTo) {
@@ -60,6 +62,7 @@ public class TestClientMessage extends ServerTestBase {
 
   @Test
   void sendMessageNoContactFail() throws IOException {
+    LOGGER.info("Test: Nachricht Senden Fehlschlag --> kein Kontakt -- gestartet");
     Packet contactStatus;
     final ClientConnection clientOne, clientTwo;
     final int noContactId;
@@ -81,6 +84,7 @@ public class TestClientMessage extends ServerTestBase {
 
     checkErrorResponse(clientOne, getClientEntity(noContactId), message,
         "Textnachricht wurde nicht zugestellt. 15006 ist kein Kontakt von Ihnen.");
+    LOGGER.info("Test: Nachricht Senden Fehlschlag --> kein Kontakt -- beendet");
   }
 
   private ClientConnection loginSpecificClient(final AuthenticationDTO credentials) {
@@ -101,6 +105,7 @@ public class TestClientMessage extends ServerTestBase {
 
   @Test
   void sendMessageSuccess() throws IOException {
+    LOGGER.info("Test: Nachricht Senden erfolgreich -- gestartet");
     Packet sentPacket, receivedPacket, responsePacket;
     final ClientConnection clientOne, clientTwo;
     final int contactId;
@@ -138,5 +143,6 @@ public class TestClientMessage extends ServerTestBase {
       Assertions.fail("Eines der erwarteten Pakete fehlt:\nGesandt: " + sentPacket + "\nEmpfangen: "
           + receivedPacket + "\nAntwort: " + responsePacket);
     }
+    LOGGER.info("Test: Nachricht Senden erfolgreich -- beendet");
   }
 }

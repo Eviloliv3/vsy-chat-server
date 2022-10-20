@@ -32,7 +32,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
       final List<AuthenticationDTO> clientAuthenticationDataList) {
     super(clientConnectionPorts, clientAuthenticationDataList);
   }
-/*
+
   @Test
   void reconnectionFailAlreadyLoggedIn() {
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt");
@@ -45,7 +45,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt -- beendet");
   }
-  */
+
   @Test
   void reconnectionFailReconnectionUnderway() throws InterruptedException, IOException {
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen");
@@ -63,7 +63,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
     clientOne.resetConnection();
 
-    Thread.sleep(100);
+    Thread.sleep(500);
 
     request = new ReconnectRequestDTO(clientOneCommunicatorData);
     clientTwo.sendRequest(request, getServerEntity(STANDARD_SERVER_ID));
@@ -86,7 +86,6 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     LOGGER.info(
         "Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen -- beendet");
   }
-  /*
 
   @Test
   void reconnectionFailStillLoggedIn() throws IOException {
@@ -147,7 +146,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         "Es existiert kein Account mit den von Ihnen angegebenen Daten.");
     LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> fehlerhafte Daten -- beendet");
   }
-/*
+
   @Test
   void reconnectionSuccess() throws InterruptedException, IOException {
     LOGGER.info("Test: Wiederverbindung erfolgreich");
@@ -167,8 +166,6 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     reconnectPendingClient(clientTwo, content);
     LOGGER.info("Test: Wiederverbindung erfolgreich -- beendet");
   }
-
- */
 
   private void reconnectPendingClient(ClientConnection connection, ReconnectRequestDTO request) {
     connection.setClientData(null, request.getClientData());

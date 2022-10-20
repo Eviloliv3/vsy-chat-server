@@ -33,6 +33,7 @@ public class TestClientRelationChanges extends ServerTestBase {
 
   @Test
   void addContactSuccess() throws IOException {
+    LOGGER.info("Test: Kontakt hinzufuegen --> erfolgreich -- gestartet");
     Packet packet;
     PacketContent content;
     final ClientConnection clientOne, clientTwo;
@@ -70,10 +71,12 @@ public class TestClientRelationChanges extends ServerTestBase {
       Assertions.fail("Keine Antwort ContactRelationResponseDTO empfangen.");
     }
     Assertions.assertInstanceOf(ContactRelationResponseDTO.class, content);
+    LOGGER.info("Test: Kontakt hinzufuegen --> erfolgreich -- beendet");
   }
 
   @Test
   void removeContactSuccess() throws IOException {
+    LOGGER.info("Test: Kontakt entfernen --> erfolgreich -- gestartet");
     Packet packet;
     PacketContent content;
     final ClientConnection clientOne, clientTwo;
@@ -108,10 +111,12 @@ public class TestClientRelationChanges extends ServerTestBase {
     } else {
       Assertions.fail("Keine Antwort ContactRelationResponseDTO empfangen.");
     }
+    LOGGER.info("Test: Kontakt entfernen --> erfolgreich -- beendet");
   }
 
   @Test
   void contactRelationAddMissingFail() {
+    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> Kontaktdaten fehlen/fehlerhaft -- gestartet");
     PacketContent content;
     final var clientOne = super.loginNextClient();
     final var clientData = clientOne.getCommunicatorData();
@@ -122,10 +127,12 @@ public class TestClientRelationChanges extends ServerTestBase {
     TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(STANDARD_SERVER_ID),
         content,
         "Ungültige Kontaktanfrage. Fehlerhafte Kommunikatordaten: Es sind keine Kommunikatordaten vorhanden.");
+    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> Kontaktdaten fehlen/fehlerhaft -- beendet");
   }
 
   @Test
   void addContactOfflineFail() {
+    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> Kontakt offline -- gestartet");
     PacketContent content;
     final var clientOne = super.loginNextClient();
     final var clientData = clientOne.getCommunicatorData();
@@ -138,10 +145,12 @@ public class TestClientRelationChanges extends ServerTestBase {
         getClientEntity(ADRIAN_1_COMM.getCommunicatorId()),
         content,
         "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
+    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> Kontakt offline -- beendet");
   }
 
   @Test
   void addContactAlreadyFriendsFail() {
+    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> bereits befreundet -- gestartet");
     PacketContent content;
     final var clientOne = super.loginNextClient();
     final var clientData = clientOne.getCommunicatorData();
@@ -152,10 +161,12 @@ public class TestClientRelationChanges extends ServerTestBase {
     TestResponseSingleClient.checkErrorResponse(clientOne,
         getClientEntity(MARKUS_1_COMM.getCommunicatorId()),
         content, "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind bereits mit");
+    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> bereits befreundet -- beendet");
   }
 
   @Test
   void removeContactNoContactFail() {
+    LOGGER.info("Test: Kontakt entfernen Fehlschlag --> nicht befreundet -- gestartet");
     PacketContent content;
     final var clientOne = super.loginNextClient();
     final var clientData = clientOne.getCommunicatorData();
@@ -166,5 +177,6 @@ public class TestClientRelationChanges extends ServerTestBase {
     TestResponseSingleClient.checkErrorResponse(clientOne,
         getClientEntity(MAX_1_COMM.getCommunicatorId()), content,
         "Freundschaftsanfrage wurde nicht verarbeitet. Sie sind nicht mit");
+    LOGGER.info("Test: Kontakt entfernen Fehlschlag --> nicht befreundet -- beendet");
   }
 }

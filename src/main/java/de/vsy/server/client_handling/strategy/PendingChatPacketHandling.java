@@ -27,7 +27,6 @@ public class PendingChatPacketHandling implements PacketHandlingStrategy {
     Thread pendingClientThread;
 
     if (this.handlerDataManager.getGlobalAuthenticationStateControl().changePendingState(true)) {
-
       pendingClientThread = new Thread(new PendingClientBufferWatcher(this.handlerDataManager));
       pendingClientThread.start();
     } else {

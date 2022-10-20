@@ -43,7 +43,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       }
       Thread.yield();
     }
-    LOGGER.info("{} gestoppt.", Thread.currentThread().getName());
+    LOGGER.info("{} gestoppt. Thread interrupt: {} / Socket closed: {}", Thread.currentThread().getName(), Thread.currentThread().isInterrupted(), watchedSocket.isClosed());
   }
 
   public Socket acceptFollowerConnection(final ServerSocket socketToWatch) {
