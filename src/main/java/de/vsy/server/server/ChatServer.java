@@ -49,7 +49,7 @@ public class ChatServer implements ClientServer {
    */
   public ChatServer() {
     this.connectionPool = newFixedThreadPool(10);
-    Runtime.getRuntime().addShutdownHook(new Thread(this::interruptServer));
+    Runtime.getRuntime().addShutdownHook(new Thread(Thread.currentThread()::interrupt));
     this.serviceMonitor = new Timer("ServiceHealthMonitor");
   }
 
@@ -63,48 +63,40 @@ public class ChatServer implements ClientServer {
     Thread.currentThread().setName("Chatserver");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
 
-    if (server.prepareServer()) {
-      server.startServing();
-      server.shutdownServer();
-    }
+    server.serve();
+    ThreadContext.clearAll();
     System.exit(0);
-  }
-
-  public void interruptServer() {
-    Thread.currentThread().interrupt();
   }
 
   /**
    * Prepare server.
    *
    * @return true, if successful
+   * @throws IllegalStateException if no ServerSocket could be initiated.
    */
-  public boolean prepareServer() {
+  private void prepareServer() {
+    String serverThreadName;
     /* ServerSocket starten, wenn Datenzugriff besteht. */
     final var localServerConnectionData = setupServerSocket();
     final var serverPrepared = localServerConnectionData != null;
 
     if (!serverPrepared) {
-      LOGGER.warn(
+      throw new IllegalStateException(
           "Keiner der vorgegebenen Ports ist mehr frei. Der Server "
               + "kann somit nicht gestartet werden.");
-      return false;
-    } else {
-      String threadName = "ChatServer[" + localServerConnectionData.getServerId() + ":"
-          + localServerConnectionData.getServerPort() + "]";
-      ThreadContext.put(LOG_FILE_CONTEXT_KEY, threadName);
-      LOGGER.info("Server wird Anfragen auf Port: {} annehmen.",
-          localServerConnectionData.getConnectionSocket().getLocalPort());
     }
+    serverThreadName = "ChatServer[" + localServerConnectionData.getServerId() + ":"
+          + localServerConnectionData.getServerPort() + "]";
+      ThreadContext.put(LOG_FILE_CONTEXT_KEY, serverThreadName);
 
     setupDataManager(localServerConnectionData);
     setupPersistentDataAccess();
     setupStaticServerDataAccess();
     setupAndStartServices();
-    return true;
   }
 
-  private void startServing() {
+  public void serve() {
+    prepareServer();
     connectionEstablisher = new ClientConnectionEstablisher(
         this.serverDataModel.getServerConnectionDataManager().getLocalServerConnectionData(), this);
     connectionEstablisher.startAcceptingClientConnections();
@@ -117,10 +109,9 @@ public class ChatServer implements ClientServer {
   public void shutdownServer() {
     LOGGER.info("Server wird heruntergefahren. Unterbrechungsstatus: {}",
         Thread.currentThread().isInterrupted());
+    this.connectionEstablisher.changeServerHealthFlag(false);
     this.serviceMonitor.cancel();
     this.serviceMonitor.purge();
-
-    this.connectionEstablisher.changeServerHealthFlag(false);
 
     LOGGER.info("Sockets werden geschlossen.");
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
@@ -134,7 +125,7 @@ public class ChatServer implements ClientServer {
 
     if (this.serverDataModel.getServerConnectionDataManager().noLiveServers()) {
       this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();
-      LOGGER.info("Server ist heruntergefahren.");
+      LOGGER.info("Klientenzustaende entfernt. Dies ist der letzte Server.");
     }
     LOGGER.info("Server wurde heruntergefahren.");
   }
@@ -155,6 +146,7 @@ public class ChatServer implements ClientServer {
 
         try {
           ServerSocket masterSocket = new ServerSocket(currentPortNumber);
+          LOGGER.info("Server wird auf Port {} Anfragen entgegen nehmen", currentPortNumber);
           localServerConnectionData = LocalServerConnectionData.valueOf(masterSocket.getLocalPort(),
               masterSocket);
           break;

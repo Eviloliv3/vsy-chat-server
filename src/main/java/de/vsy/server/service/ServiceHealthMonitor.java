@@ -9,16 +9,21 @@ public class ServiceHealthMonitor extends TimerTask {
   private static final Logger LOGGER = LogManager.getLogger();
   private final ChatServer server;
   private final ServiceControl services;
+  private boolean serverShutdownInitiated;
 
   public ServiceHealthMonitor(final ChatServer server, final ServiceControl services) {
     this.server = server;
     this.services = services;
+    this.serverShutdownInitiated = false;
   }
 
   @Override
   public void run() {
-      if(!this.services.confinedServicesHealthy()){
-        this.server.shutdownServer();
+      if(!(this.services.confinedServicesHealthy())){
+        if(!(serverShutdownInitiated)) {
+          this.server.shutdownServer();
+          serverShutdownInitiated = true;
+        }
       }
   }
 }
