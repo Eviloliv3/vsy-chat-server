@@ -113,15 +113,15 @@ public class ChatServer implements ClientServer {
     this.serviceMonitor.cancel();
     this.serviceMonitor.purge();
 
-    LOGGER.info("Sockets werden geschlossen.");
-    this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
-
     do {
       LOGGER.info("Es wird auf KlientenHandler gewartet.");
       Thread.yield();
     } while (!this.connectionPool.isTerminated());
     LOGGER.info("KlientenHandler gestoppt.");
     this.serviceControl.stopAllServices();
+
+    LOGGER.info("Sockets werden geschlossen.");
+    this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
 
     if (this.serverDataModel.getServerConnectionDataManager().noLiveServers()) {
       this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();

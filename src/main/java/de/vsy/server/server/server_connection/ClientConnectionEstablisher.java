@@ -46,12 +46,14 @@ public class ClientConnectionEstablisher {
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
           LOGGER.error("Beim Warten auf Klientenverbindung unterbrochen.");
+          break;
         } catch (ExecutionException e) {
           Thread.currentThread().interrupt();
           LOGGER.error(
               "Fehler bei der Verbindungsaufnahme von Klientenverbindungen. "
                   + "Fehlernachricht:\n{}",
               e.getMessage());
+          ;
         }
       }
       LOGGER.info("Der Server wird heruntergefahren. Es werden keine "
