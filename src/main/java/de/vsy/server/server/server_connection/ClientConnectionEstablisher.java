@@ -53,7 +53,7 @@ public class ClientConnectionEstablisher {
               "Fehler bei der Verbindungsaufnahme von Klientenverbindungen. "
                   + "Fehlernachricht:\n{}",
               e.getMessage());
-          ;
+          break;
         }
       }
       LOGGER.info("Der Server wird heruntergefahren. Es werden keine "

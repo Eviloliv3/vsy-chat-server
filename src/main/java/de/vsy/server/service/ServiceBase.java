@@ -68,14 +68,16 @@ public abstract class ServiceBase implements Service {
     LOGGER.info("{} gestartet.", this.getServiceName());
 
     finishSetup();
+    LOGGER.info("{} Setup beendet.", this.getServiceName());
 
     while (interruptionConditionNotMet()) {
       work();
     }
 
+    LOGGER.info("{} wird beendet.", this.getServiceName());
     breakDown();
-    this.clearThreadContext();
     LOGGER.info("{} beendet.", getServiceName());
+    this.clearThreadContext();
   }
 
   protected void setupThreadContext() {
