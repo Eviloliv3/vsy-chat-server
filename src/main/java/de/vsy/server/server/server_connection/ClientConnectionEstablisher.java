@@ -14,14 +14,14 @@ import org.apache.logging.log4j.Logger;
 public class ClientConnectionEstablisher {
 
   private static final Logger LOGGER = LogManager.getLogger();
-  private final AtomicBoolean serverHealthy;
+  private final AtomicBoolean serverHealthFlag;
   private final ExecutorService clientConnectionPool;
   private final ClientServer server;
   private final LocalServerConnectionData clientConnectionData;
 
   public ClientConnectionEstablisher(final LocalServerConnectionData localClientConnectionData,
       final ClientServer server) {
-    this.serverHealthy = new AtomicBoolean(true);
+    this.serverHealthFlag = new AtomicBoolean(true);
     this.clientConnectionPool = newSingleThreadExecutor();
     this.clientConnectionData = localClientConnectionData;
     this.server = server;
@@ -34,7 +34,7 @@ public class ClientConnectionEstablisher {
 
     if (clientConnectionAcceptor != null) {
 
-      while (serverHealthy.get()) {
+      while (serverHealthFlag.get()) {
         newClientConnection = this.clientConnectionPool.submit(clientConnectionAcceptor::accept);
 
         try {
@@ -60,12 +60,12 @@ public class ClientConnectionEstablisher {
           + "weiteren Klientenanfragen angenommen.");
       closeClientConnections();
     } else {
-      LOGGER.error("Es wurde kein ServerSocket zur Verbindungsaufnahme " + "bereitgestellt.");
+      LOGGER.error("Es wurde kein ServerSocket zur Verbindungsaufnahme bereitgestellt.");
     }
   }
 
   public void changeServerHealthFlag(final boolean newHealthState){
-    this.serverHealthy.set(newHealthState);
+    this.serverHealthFlag.set(newHealthState);
   }
 
   private void closeClientConnections() {

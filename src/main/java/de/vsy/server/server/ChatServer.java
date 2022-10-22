@@ -64,6 +64,7 @@ public class ChatServer implements ClientServer {
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
 
     server.serve();
+    server.shutdownServer();
     ThreadContext.clearAll();
     System.exit(0);
   }
