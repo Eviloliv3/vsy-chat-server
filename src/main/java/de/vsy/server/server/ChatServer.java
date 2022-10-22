@@ -49,7 +49,7 @@ public class ChatServer implements ClientServer {
    */
   public ChatServer() {
     this.connectionPool = newFixedThreadPool(10);
-    Runtime.getRuntime().addShutdownHook(new Thread(Thread.currentThread()::interrupt));
+    Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownServer));
     this.serviceMonitor = new Timer("ServiceHealthMonitor");
   }
 
