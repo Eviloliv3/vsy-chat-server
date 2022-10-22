@@ -67,7 +67,6 @@ public class ChatServer implements ClientServer {
     LOGGER.trace("Server wird jetzt regulaer heruntergefahren.");
     server.shutdownServer();
     ThreadContext.clearAll();
-    System.exit(0);
   }
 
   /**
