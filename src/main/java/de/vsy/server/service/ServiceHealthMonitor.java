@@ -21,6 +21,7 @@ public class ServiceHealthMonitor extends TimerTask {
   public void run() {
       if(!(this.services.confinedServicesHealthy())){
         if(!(serverShutdownInitiated)) {
+          LOGGER.info("Lokaler Service nicht mehr aktiv. Server wird heruntergefahren.");
           this.server.shutdownServer();
           serverShutdownInitiated = true;
         }
