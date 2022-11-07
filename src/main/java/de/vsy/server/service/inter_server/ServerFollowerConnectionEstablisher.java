@@ -7,6 +7,8 @@ import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import org.apache.logging.log4j.LogManager;
@@ -38,30 +40,40 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
     while (!Thread.currentThread().isInterrupted() && !watchedSocket.isClosed()) {
       final var followerSocket = acceptFollowerConnection(watchedSocket);
 
-      if (followerSocket != null) {
+      if (followerSocket != null && !followerSocket.isClosed()) {
         this.serviceCreator.createInterServerService(true, followerSocket);
       }
-      Thread.yield();
     }
     LOGGER.info("{} gestoppt. Thread interrupt: {} / Socket closed: {}", Thread.currentThread().getName(), Thread.currentThread().isInterrupted(), watchedSocket.isClosed());
   }
 
+  /**
+   * Let's single ExecutorService thread wait for new server connection and returns new connection
+   * socket. InterruptedExceptions are logged and interrupt flag is set. IOExceptions are expected
+   * and logged, but no further action is taken.
+   * @param socketToWatch the server socket that waits for new connection.
+   * @return new Socket or null if handled exception occurred.
+   * @throws RuntimeException rethrow causes: ServerSocket -> SecurityException, SocketTimeoutException,
+   * IllegalBlockingModeException; Future -> CancellationException
+   */
   public Socket acceptFollowerConnection(final ServerSocket socketToWatch) {
     Socket followerSocket = null;
 
-    try (socketToWatch) {
+    try {
       final var futureFollower = this.acceptingThread.submit(socketToWatch::accept);
       followerSocket = futureFollower.get();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      LOGGER.info("Verbindungsaufnahme mit Follower-Server wurde " + "unterbrochen.");
-    } catch (IOException ioe) {
-      Thread.currentThread().interrupt();
-      LOGGER.error("Fehler bei der Verbindungsaufnahme mit Follower-Servern. Fehlernachricht:\n{}",
-          ioe.getMessage());
+      LOGGER.error(e.getMessage(), e.getCause());
     } catch (ExecutionException ee) {
-      Thread.currentThread().interrupt();
-      LOGGER.error("Fehler beim Holen des Sockets vom Future.");
+      var cause = ee.getCause();
+
+      if(cause instanceof IOException){
+        LOGGER.error(ee.getMessage(), cause);
+      }else {
+        LOGGER.error("Fehler beim Holen des Sockets vom Future.");
+        throw new RuntimeException(ee);
+      }
     }
     return followerSocket;
   }

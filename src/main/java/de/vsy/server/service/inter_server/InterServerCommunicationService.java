@@ -94,15 +94,12 @@ public class InterServerCommunicationService extends ServiceBase {
     this.connectionControl = new ConnectionThreadControl(remoteConnectionData.getConnectionSocket(),
         this.threadBuffers, this.packetCache, this.remoteConnectionData.isLeader());
 
-    if (!this.connectionControl.initiateConnectionThreads()) {
-      LOGGER.error("Fehler beim Verbindungsaufbau mit entferntem Server. Verbindungsdaten:\n{}",
-          remoteConnectionData);
-      Thread.currentThread().interrupt();
-    }
-    this.packetDispatcher = new InterServerCommunicationPacketDispatcher(this.remoteConnectionData,
-        this.serviceDataAccess.getServicePacketBufferManager(),
-        SERVICE_SPECIFICATIONS.getResponseDirections(),
-        this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+    this.connectionControl.initiateConnectionThreads();
+    this.packetDispatcher = new InterServerCommunicationPacketDispatcher(
+          this.remoteConnectionData,
+          this.serviceDataAccess.getServicePacketBufferManager(),
+          SERVICE_SPECIFICATIONS.getResponseDirections(),
+          this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
   }
 
   @Override

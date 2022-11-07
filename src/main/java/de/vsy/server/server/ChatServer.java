@@ -71,8 +71,6 @@ public class ChatServer implements ClientServer {
 
   /**
    * Prepare server.
-   *
-   * @return true, if successful
    * @throws IllegalStateException if no ServerSocket could be initiated.
    */
   private void prepareServer() {
@@ -104,7 +102,7 @@ public class ChatServer implements ClientServer {
   }
 
   /**
-   * Shutdown server.
+   * Shutdown server
    */
   @Override
   public void shutdownServer() {
