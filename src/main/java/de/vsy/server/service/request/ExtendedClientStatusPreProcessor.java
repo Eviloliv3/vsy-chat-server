@@ -30,8 +30,6 @@ public class ExtendedClientStatusPreProcessor {
 
     eligibleRecipients = clientSubscriptions.getLocalThreads(CHAT, eligibleRecipients);
 
-    LogManager.getLogger().debug("Benachrichtigt werden: {}\n Von: {}", eligibleRecipients,
-        toProcess.getContactIdSet());
     updatePackets = PacketDemultiplexer.demultiplexPacket(toProcess, eligibleRecipients);
 
     if (!updatePackets.isEmpty()) {

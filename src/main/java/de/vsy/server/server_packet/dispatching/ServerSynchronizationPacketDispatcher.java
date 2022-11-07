@@ -48,7 +48,7 @@ public class ServerSynchronizationPacketDispatcher implements MultiplePacketDisp
       switch (recipientEntity) {
         case CLIENT -> sendInboundPacket(output);
         case SERVER -> sendOutboundPacket(output);
-        default -> LOGGER.error("Ungültige Direktion.");
+        default -> LOGGER.error("Invalid direction.");
       }
     }
   }

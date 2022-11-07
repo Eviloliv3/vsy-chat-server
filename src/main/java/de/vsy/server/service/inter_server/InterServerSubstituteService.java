@@ -83,7 +83,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
   @Override
   public void runWithContext() {
     if (finishSetup()) {
-      LOGGER.info("{} gestartet.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
+      LOGGER.info("{} started.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
 
       while (this.interrupt.conditionNotMet()) {
         processPacket();
@@ -92,7 +92,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
       this.reconnectionStateWatcher.cancel();
       clearAndRemoveBuffer();
     }
-    LOGGER.info("{} gestoppt.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
+    LOGGER.info("{} stopped.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
   }
 
   /**
@@ -124,7 +124,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
       this.interrupt = () -> Instant.now().isAfter(stopTime);
       substituteSetup = true;
     } else {
-      LOGGER.info("Es gibt keine verbundenen Klienten für Server {}",
+      LOGGER.info("No remote clients for server {} found.",
           this.remoteServerConnection.getServerId());
     }
     return substituteSetup;
@@ -151,7 +151,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
       LOGGER.error(
-          "InterServerSubstituteService beim Holen des " + "naechsten Pakets unterbrochen.");
+          "InterServerSubstituteService interrupted while waiting for next Packet.");
     }
   }
 
@@ -194,7 +194,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         this.clientPersistenceAccessManagers.put(currentClientId, pendingPacketAccessor);
       } catch (InterruptedException ie) {
         LOGGER.error(
-            "Kein Zugriff auf schwebende Pakete für Klienten: {}. Klient wird vollständig entfernt.",
+            "Interrupted while creating access to clients pending packets: {}. Client state will be removed.",
             currentClientId);
         this.clientStateProvider.removeClientState(currentClientId);
       }

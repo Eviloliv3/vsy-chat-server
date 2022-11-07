@@ -33,7 +33,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
   @Override
   public void runWithContext() {
     Thread.currentThread().setName("ServerFollowerConnectionEstablisher");
-    LOGGER.info("{} gestartet.", Thread.currentThread().getName());
+    LOGGER.info("{} started.", Thread.currentThread().getName());
     final var watchedSocket = this.serverConnectionManager.getServerReceptionConnectionData()
         .getConnectionSocket();
 
@@ -44,7 +44,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
         this.serviceCreator.createInterServerService(true, followerSocket);
       }
     }
-    LOGGER.info("{} gestoppt. Thread interrupt: {} / Socket closed: {}", Thread.currentThread().getName(), Thread.currentThread().isInterrupted(), watchedSocket.isClosed());
+    LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}", Thread.currentThread().getName(), Thread.currentThread().isInterrupted(), watchedSocket.isClosed());
   }
 
   /**
@@ -71,7 +71,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       if(cause instanceof IOException){
         LOGGER.error(ee.getMessage(), cause);
       }else {
-        LOGGER.error("Fehler beim Holen des Sockets vom Future.");
+        LOGGER.error("Exception occurred while getting new remote server socket from Future.");
         throw new RuntimeException(ee);
       }
     }

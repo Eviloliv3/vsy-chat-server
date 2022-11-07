@@ -113,7 +113,7 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
         input = buffer.getPacket();
       } catch (InterruptedException ie) {
         Thread.currentThread().interrupt();
-        LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.");
+        LOGGER.error("Interrupted while waiting for next packet.");
         break;
       }
 

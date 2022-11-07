@@ -114,13 +114,12 @@ public abstract class AbstractPacketCategorySubscriptionManager {
       subSuccessful = subscriber.addSubscription(subscriptionBuffer);
 
       if (subSuccessful) {
-        LOGGER.trace("Abonnement erfolgreich. Topic: {}; Thread: " + "{}; Buffer: {}", topic,
-            topicId,
-            subscriptionBuffer);
+        LOGGER.trace("Subscription to topic/thread {}{} successful", topic,
+            topicId);
         topicSubscriptions.put(topicId, subscriber);
         this.subscriptions.put(topic, topicSubscriptions);
       } else {
-        LOGGER.warn("Abonnement fehlgeschlagen. Topic/Thread {}/{}" + " bereits abonniert", topic,
+        LOGGER.warn("Subscription failed. Client already subscribed to topic/thread {}/{}", topic,
             topicId);
       }
     } finally {
@@ -179,10 +178,10 @@ public abstract class AbstractPacketCategorySubscriptionManager {
         unsubSuccessful = false;
       }
       if (unsubSuccessful) {
-        LOGGER.trace("Deabonnieren erfolgreich. Topic/Thread: {}/{}", topic, threadId);
+        LOGGER.trace("Desubscription of topic/thread successful: {}/{}", topic, threadId);
       } else {
         LOGGER.warn(
-            "Deabonnieren fehlgeschlagen. Es bestand kein " + "Abonnement Topic/Thread: {}/{}",
+            "Desubscription failed. Client was not subscribed to topic/thread: {}/{}",
             topic,
             threadId);
       }

@@ -113,7 +113,7 @@ public class PacketAssignmentService extends ServiceBase {
         processPacket(request);
       }
     } catch (InterruptedException ie) {
-      ServiceBase.LOGGER.error("Beim Holen des naechsten Pakets " + "unterbrochen.");
+      ServiceBase.LOGGER.error("Interrupted while waiting for next packet.");
       Thread.currentThread().interrupt();
     }
   }

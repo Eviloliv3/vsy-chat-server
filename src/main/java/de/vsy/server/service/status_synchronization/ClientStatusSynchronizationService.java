@@ -104,7 +104,7 @@ public class ClientStatusSynchronizationService extends ServiceBase {
       input = incomingBuffer.getPacket();
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.");
+      LOGGER.error("Interrupted while waiting for next Packet.");
       input = null;
     }
 

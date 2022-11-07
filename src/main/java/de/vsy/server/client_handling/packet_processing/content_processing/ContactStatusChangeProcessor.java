@@ -43,17 +43,17 @@ public class ContactStatusChangeProcessor implements ContentProcessor<ContactMes
     if (this.contactProvider.checkAcquaintance(EligibleContactEntity.CLIENT, contactId)) {
 
       if (extractedContent.getOnlineStatus()) {
-        LOGGER.info("Kontakt: {} ist online.", contactId);
+        LOGGER.info("Contact {} online.", contactId);
         final var messageHistory = this.messageReader.readClientMessages(contactId);
         this.contentHandler
             .addRequest(
                 ContactMessengerStatusDTO.addMessageHistory(extractedContent, messageHistory));
       } else {
-        LOGGER.info("Kontakt: {} ist offline.", contactId);
+        LOGGER.info("Contact {} offline.", contactId);
         this.contentHandler.addRequest(extractedContent);
       }
     } else {
-      LOGGER.info("Status-Mitteilung wird verworfen. Der Kontakt ist " + "unbekannt.");
+      LOGGER.info("Status notification will be dropped. Unknown client.");
     }
   }
 }

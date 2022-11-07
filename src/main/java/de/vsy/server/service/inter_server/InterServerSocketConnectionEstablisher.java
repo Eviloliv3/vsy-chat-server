@@ -47,7 +47,7 @@ public class InterServerSocketConnectionEstablisher implements
       try {
         this.localMasterSocket = new ServerSocket(masterSocketPort);
       } catch (IOException e) {
-        LOGGER.error("InterServerSocket konnte nicht auf " + "Port {} geoeffnet werden.",
+        LOGGER.error("Inter ServerSocket could not be created on Port {}.",
             masterSocketPort);
       }
     } while (this.localMasterSocket == null);
@@ -72,7 +72,7 @@ public class InterServerSocketConnectionEstablisher implements
           createInterServerService(false, s);
         } catch (IOException e) {
           LOGGER.error(
-              "Es konnte keine Verbindung zu entferntem " + "Server aufgebaut werden. {}:{}",
+              "Remote connection to {}:{} failed",
               hostname, testPort);
         }
       }
@@ -97,9 +97,9 @@ public class InterServerSocketConnectionEstablisher implements
     this.establishingThread.shutdownNow();
 
     do {
-      LOGGER.info("FollowerAcceptor-Thread Ende wird erwartet.");
+      LOGGER.info("Waiting for followerAcceptor thread termination.");
       Thread.yield();
     } while (!this.establishingThread.isTerminated());
-    LOGGER.info("FollowerAcceptor-Thread gestoppt.");
+    LOGGER.info("FollowerAcceptor Thread terminated.");
   }
 }

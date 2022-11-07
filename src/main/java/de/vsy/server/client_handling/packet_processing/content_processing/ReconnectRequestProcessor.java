@@ -54,13 +54,13 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
       if (!(persistedClientState.equals(ClientState.OFFLINE))) {
 
         if (this.clientStateManager.changeReconnectionState(true)) {
-          LOGGER.info("ReconnectionFlag erfolgreich gesetzt.");
+          LOGGER.info("Reconnection flag set successfully.");
 
           if (waitForPendingBufferWatcher()) {
-            LOGGER.info("PendingBufferWatcher fertig.");
+            LOGGER.info("PendingBufferWatcher terminated.");
             if (this.clientStateManager.changePersistentClientState(persistedClientState, true)) {
               this.clientStateManager.changeReconnectionState(false);
-              LOGGER.info("Pendingstatus aufgehoben.");
+              LOGGER.info("Pending state removed.");
               this.contentHandler.addResponse(new ReconnectResponseDTO(true));
             } else {
               this.clientStateManager.logoutClient();
@@ -75,11 +75,8 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
                     + "erneut authentifizieren.";
           }
         } else {
-          LOGGER.error("Klientenzustand konnte nicht persistent "
-                  + "gesichert werden. Entweder konnte kein Zugriff "
-                  + "auf Klientenzustaende erlangt oder der "
-                  + "Klientenzustand nicht erfolgreich geschrieben "
-                  + "werden. Gefundene Klientendaten: {}",
+          LOGGER.error("Client state could not be saved. Either the access of client "
+                  + "states failed or could not be written. Found client data: {}",
               clientData);
           causeMessage = "Sie sind entweder von einem anderen Gerät aus "
               + "verbunden oder es wird bereits ein "

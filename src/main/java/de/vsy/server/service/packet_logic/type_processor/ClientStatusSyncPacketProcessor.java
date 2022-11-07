@@ -77,12 +77,10 @@ public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
 
       if (originatingServerId != this.serverNode.getServerId()
           && inputData instanceof final BaseStatusSyncDTO simpleStatus) {
-        LOGGER.debug("BaseStatusSyncDTO von entferntem Klienten gelesen: {}", simpleStatus);
         translateState(simpleStatus, originatingServerId);
       }
 
       if (inputData instanceof ExtendedStatusSyncDTO) {
-        LOGGER.debug("ExtendedStatusSyncDTO gelesen: {}", inputData);
         final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
         resultingPackets.addRequest(inputData, clientBroadcast);
       }
@@ -93,15 +91,13 @@ public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
           synchronizedServers);
 
       if (notSynchronizedServerData != null) {
-        LOGGER.debug("Statussynchronisierung fuer anderen Server erstellt.");
         final var recipient = getServerEntity(notSynchronizedServerData.getServerId());
         resultingPackets.addRequest(inputData, recipient);
       } else {
-        LOGGER.debug("Alle Liveserver haben Statusaenderung bearbeitet.");
+        LOGGER.trace("No unsynchronized servers, state synchronization message will be dropped.");
       }
     } else {
-      throw new PacketProcessingException("Inhalt nicht vom Typ ServerPacketContentImpl. Konnte "
-          + "nicht von ClientStatusProcessor verarbeitet werden.");
+      throw new PacketProcessingException("Content not of type ServerPacketContentImpl.");
     }
   }
 

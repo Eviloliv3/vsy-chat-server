@@ -37,18 +37,18 @@ import org.apache.logging.log4j.ThreadContext;
 public class ChatServer implements ClientServer {
 
   private static final Logger LOGGER = LogManager.getLogger();
-  private final ExecutorService connectionPool;
+  private final ExecutorService clientConnectionPool;
   private final Timer serviceMonitor;
   private ServerDataManager serverDataModel;
   private ServerPersistentDataManager serverPersistentDataManager;
   private ServiceControl serviceControl;
-  private ClientConnectionEstablisher connectionEstablisher;
+  private ClientConnectionEstablisher clientConnectionEstablisher;
 
   /**
    * Instantiates a new chat server.
    */
   public ChatServer() {
-    this.connectionPool = newFixedThreadPool(10);
+    this.clientConnectionPool = newFixedThreadPool(10);
     Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownServer));
     this.serviceMonitor = new Timer("ServiceHealthMonitor");
   }
@@ -64,7 +64,7 @@ public class ChatServer implements ClientServer {
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
 
     server.serve();
-    LOGGER.trace("Server wird jetzt regulaer heruntergefahren.");
+    LOGGER.trace("Server will be shutdown regularly.");
     server.shutdownServer();
     ThreadContext.clearAll();
   }
@@ -96,9 +96,9 @@ public class ChatServer implements ClientServer {
 
   public void serve() {
     prepareServer();
-    connectionEstablisher = new ClientConnectionEstablisher(
+    clientConnectionEstablisher = new ClientConnectionEstablisher(
         this.serverDataModel.getServerConnectionDataManager().getLocalServerConnectionData(), this);
-    connectionEstablisher.startAcceptingClientConnections();
+    clientConnectionEstablisher.acceptClientConnections();
   }
 
   /**
@@ -106,27 +106,31 @@ public class ChatServer implements ClientServer {
    */
   @Override
   public void shutdownServer() {
-    LOGGER.info("Server wird heruntergefahren. Unterbrechungsstatus: {}",
+    LOGGER.info("Server shutdown initiated. Interruption status: {}",
         Thread.currentThread().isInterrupted());
-    this.connectionEstablisher.changeServerHealthFlag(false);
+
+    this.clientConnectionPool.shutdownNow();
+    this.serviceControl.stopAllServices();
+    LOGGER.info("Services shutdown.");
     this.serviceMonitor.cancel();
     this.serviceMonitor.purge();
+    LOGGER.info("Service monitor shutdown.");
 
-    do {
-      LOGGER.info("Es wird auf KlientenHandler gewartet.");
-      Thread.yield();
-    } while (!this.connectionPool.isTerminated());
-    LOGGER.info("KlientenHandler gestoppt.");
-    this.serviceControl.stopAllServices();
-
-    LOGGER.info("Sockets werden geschlossen.");
+    try {
+      this.clientConnectionEstablisher.stopEstablishingConnections();
+      this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
+      LOGGER.info("Client handler shutdown.");
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
+    LOGGER.info("All sockets closed.");
 
     if (this.serverDataModel.getServerConnectionDataManager().noLiveServers()) {
       this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();
-      LOGGER.info("Klientenzustaende entfernt. Dies ist der letzte Server.");
+      LOGGER.info("Last remaining registered server. Persisted client status will be removed.");
     }
-    LOGGER.info("Server wurde heruntergefahren.");
+    LOGGER.info("Server shutdown completed.");
   }
 
   /**
@@ -145,12 +149,12 @@ public class ChatServer implements ClientServer {
 
         try {
           ServerSocket masterSocket = new ServerSocket(currentPortNumber);
-          LOGGER.info("Server wird auf Port {} Anfragen entgegen nehmen", currentPortNumber);
+          LOGGER.info("Server will accept connections on port {}", currentPortNumber);
           localServerConnectionData = LocalServerConnectionData.valueOf(masterSocket.getLocalPort(),
               masterSocket);
           break;
         } catch (final IOException ioe) {
-          LOGGER.error("ServerSocket konnte nicht auf Port {} geoeffnet werden. " + "{}: {}",
+          LOGGER.error("ServerSocket could not be initiated on port {}. " + "{}: {}",
               currentPortNumber, ioe.getClass().getSimpleName(), ioe.getMessage());
         }
       }
@@ -213,10 +217,10 @@ public class ChatServer implements ClientServer {
     try (var ignored = new Socket(host, port)) {
       return listening;
     } catch (final UnknownHostException uhe) {
-      final var errorMessage = "Ungueltige Kombination von Host/Port: " + host + "/" + port + "\n";
+      final var errorMessage = "Unused combination host/port: " + host + "/" + port;
       throw new IllegalArgumentException(errorMessage, uhe);
     } catch (final IOException ioe) {
-      LOGGER.info("Kombination Host/Port: {}/{} frei.", host, port);
+      LOGGER.info("Combination host/port: {}/{} usable.", host, port);
       return !listening;
     }
   }
@@ -230,17 +234,17 @@ public class ChatServer implements ClientServer {
 
       do {
         if (waitingStart + maxWait > System.nanoTime()) {
-          LOGGER.info("Warte auf Serververbindungen.");
+          LOGGER.info("Waiting for active server connections.");
           Thread.yield();
         } else {
-          LOGGER.error("Verbindungsaufnahme zu aktiven Servern dauerte länger als {} Sekunden.",
+          LOGGER.error("Active server connection initiation took more than {} seconds.",
               TimeUnit.SECONDS);
           this.shutdownServer();
         }
       } while (!connectionManager.remoteConnectionsLive());
-      LOGGER.info("Entfernte Verbindungen aufgebaut.");
+      LOGGER.info("No connections established.");
     }else{
-      LOGGER.info("Keine entfernten Verbindungen abzuwarten.");
+      LOGGER.info("No remote connections to await.");
     }
   }
 
@@ -250,7 +254,7 @@ public class ChatServer implements ClientServer {
    * InterServerbuffer hinterlegt wird. Dasselbe passiert für alle zusätzlichen Abonnements.
    */
   private void loadRemoteClientConnections() {
-    LOGGER.info("Laden von entfernten Klienten.");
+    LOGGER.info("Remote client states will be loaded.");
 
     final var clientSubscriptions = this.serverDataModel.getClientCategorySubscriptionManager();
     final var remoteSynchronizedServerIds = this.serverDataModel.getServerConnectionDataManager()
@@ -285,7 +289,7 @@ public class ChatServer implements ClientServer {
       }
     }
     this.serverDataModel.getServerConnectionDataManager().endPendingState();
-    LOGGER.info("Laden von entfernten Klienten abgeschlossen.");
+    LOGGER.info("Remote client states loaded.");
   }
 
   @Override
@@ -294,10 +298,10 @@ public class ChatServer implements ClientServer {
     if (clientConnectionSocket != null) {
       final var requestAssignmentBuffer = this.serverDataModel.getServicePacketBufferManager()
           .getRandomBuffer(Service.TYPE.REQUEST_ROUTER);
-      this.connectionPool.execute(
+      this.clientConnectionPool.execute(
           new ClientConnectionHandler(clientConnectionSocket, requestAssignmentBuffer));
     } else {
-      LOGGER.error("null-Socket kann nicht bedient werden.");
+      LOGGER.error("null-socket cannot used to serve.");
     }
   }
 }

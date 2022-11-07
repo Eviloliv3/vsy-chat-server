@@ -117,16 +117,16 @@ public class PersistentDataLocationCreator {
       if (!directoryPath.isDirectory()) {
 
         if (!directoryPath.mkdirs()) {
-          LOGGER.error("Verzeichnis wurde nicht neu erstellt: {}", directoryPath);
+          LOGGER.error("Directory was not created: {}", directoryPath);
         } else {
           directoryCreated = true;
         }
       } else {
-        LOGGER.trace("Verzeichnis existiert bereits: {}", directoryPath);
+        LOGGER.trace("Directory already exists: {}", directoryPath);
         directoryCreated = true;
       }
     } catch (final SecurityException se) {
-      final var errorMessage = "Verzeichnis durfte nicht erstellt werden " + directoryPath + "\n"
+      final var errorMessage = "Directory creation was deemed illegal and failed: " + directoryPath + "\n"
           + se.getMessage();
       throw new InterruptedException(errorMessage);
     }

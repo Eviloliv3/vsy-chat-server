@@ -55,7 +55,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
 
   @Override
   protected void runWithContext() {
-    LOGGER.info("{}-PendingClientBufferWatcher gestartet.", this.localClientData.getClientId());
+    LOGGER.info("{}-PendingClientBufferWatcher initiated.", this.localClientData.getClientId());
     TimeBasedValueFetcher<Boolean> reconnectFlagFetcher;
     ScheduledExecutorService reconnectFlagCheck = Executors.newSingleThreadScheduledExecutor();
     Instant terminationTime = Instant.now().plusMillis(PENDING_END);
@@ -68,7 +68,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
     reconnectFlagCheck.shutdownNow();
 
     evaluateReconnectionState(reconnectFlagFetcher);
-    LOGGER.info("PendingClientBufferWatcher gestoppt.");
+    LOGGER.info("PendingClientBufferWatcher ended.");
   }
 
   /**
@@ -92,8 +92,8 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
         }
       } catch (InterruptedException ie) {
         reInterrupt = true;
-        LOGGER.warn("Watcher läuft weiter, weil alle Pakete verarbeitet "
-            + "werden müssen. Der Thread endet nach fester Zeit.");
+        LOGGER.warn("Watcher will continue working, because all packets have to be saved "
+            + "persistently. Thread will end after specified time.");
       }
     }
 
@@ -106,10 +106,10 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
     final boolean hasReconnected = reconnectFlagFetcher.getFetchedValue();
 
     if (hasReconnected) {
-      LOGGER.info("Klient hat sich wieder verbunden.");
+      LOGGER.info("Client reconnected.");
       this.clientStateControl.changePendingState(false);
     } else {
-      LOGGER.info("Klient wurde nach Timeout ausgeloggt.");
+      LOGGER.info("Client timed out, will now be logged out.");
       this.removeVolatilePendingPackets();
       this.clientStateControl.changePersistentClientState(ClientState.AUTHENTICATED, false);
       this.clientStateControl.logoutClient();

@@ -68,12 +68,12 @@ public class ServicePacketBufferManager {
       if (bufferMap != null) {
         bufferDeregistered = bufferMap.remove(bufferLabel, packetBuffer);
       } else {
-        LOGGER.info("Keine Buffer gefunden fuer Servicetyp: {}", serviceType);
+        LOGGER.info("No PacketBuffer for service type: {}", serviceType);
       }
     } finally {
       this.lock.writeLock().unlock();
     }
-    LOGGER.info("Buffer deregistered: Service - {}/Label - {}", serviceType, bufferLabel);
+    LOGGER.info("PacketBuffer deregistered: Service - {}/Label - {}", serviceType, bufferLabel);
 
     return bufferDeregistered;
   }
@@ -185,14 +185,14 @@ public class ServicePacketBufferManager {
           this.registeredBuffers.put(serviceType, serviceBufferMap);
           bufferRegistered = packetBuffer;
         } else {
-          LOGGER.info("Buffer bereits registriert Servicetyp/Hash: {}/{}", serviceType,
+          LOGGER.info("Buffer already registered service type/hash: {}/{}", serviceType,
               packetBuffer.toString());
         }
       } finally {
         this.lock.writeLock().unlock();
       }
     }
-    LOGGER.info("Buffer registered: Service - {}/Label - {}", serviceType, bufferLabel);
+    LOGGER.info("Buffer registered: service/label - {}/{}", serviceType, bufferLabel);
 
     return bufferRegistered;
   }

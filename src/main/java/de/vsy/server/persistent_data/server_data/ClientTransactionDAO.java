@@ -50,7 +50,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
     if (transactionHash != null) {
       Map<String, Boolean> allTransactions;
 
-          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return false;
     }
       allTransactions = readTransactions();
@@ -75,7 +75,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
     Map<String, Boolean> allTransactions = new HashMap<>();
     Object fromFile;
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return allTransactions;
     }
     fromFile = this.dataProvider.readData();
@@ -85,7 +85,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
       allTransactions = (Map<String, Boolean>) fromFile;
     } catch (final ClassCastException cc) {
       LOGGER.info(
-          "ClassCastException beim Lesen der Freundesliste. Die Liste wird leer ausgegeben.");
+          "{} while reading the contact list. Empty list will be returned.", cc.getClass().getSimpleName());
     }
     return allTransactions;
   }
@@ -102,7 +102,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
     if (transactionHash != null) {
       Map<String, Boolean> allTransactions;
 
-          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return false;
     }
       allTransactions = readTransactions();
@@ -131,7 +131,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
 
     final Map<String, Boolean> incompleteTransactions = new HashMap<>();
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return incompleteTransactions;
     }
     final var allTransactions = readTransactions();
@@ -161,7 +161,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
 
     if (hashToCheck != null) {
 
-      if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+      if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
         return false;
       }
       readTransactions = readTransactions();

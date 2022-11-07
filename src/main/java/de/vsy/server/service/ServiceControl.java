@@ -117,24 +117,24 @@ public class ServiceControl {
   }
 
   public void stopAllServices() {
-    LOGGER.info("Services werden gestoppt.");
+    LOGGER.info("Services termination initiated.");
     this.interServerConnectionEstablisher.stopEstabilishingConnections();
 
     for (final var serviceSet : this.registeredServices.entrySet()) {
-      LOGGER.info("{}-Services werden beendet", serviceSet.getKey());
+      LOGGER.info("{}-services termination initiated", serviceSet.getKey());
 
       for (final var currentService : serviceSet.getValue()) {
         final var threadName = currentService.getName();
-        LOGGER.info("Service wird beendet: {}", currentService.getName());
+        LOGGER.info("Service termination initiated: {}", currentService.getName());
         currentService.interrupt();
 
         do {
-          LOGGER.info("Warte noch auf {}", threadName);
+          LOGGER.info("Still waiting for {} to terminate.", threadName);
           Thread.yield();
         } while (currentService.isAlive());
       }
     }
-    LOGGER.info("Services wurden beendet.");
+    LOGGER.info("Services terminated.");
   }
 
   /**

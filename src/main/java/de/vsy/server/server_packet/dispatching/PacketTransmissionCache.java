@@ -24,7 +24,7 @@ public class PacketTransmissionCache {
     if (toTransmit != null && !this.transmissionCache.contains(toTransmit)) {
       this.transmissionCache.push(toTransmit);
     } else {
-      LOGGER.error("Paket wurde nicht hinzugefuegt. Keine null-Werte erlaubt.");
+      LOGGER.error("Packet was not added. No null values permitted.");
     }
   }
 
@@ -38,8 +38,8 @@ public class PacketTransmissionCache {
       this.transmissionCache.clear();
       this.transmissionCache.push(error);
     } else {
-      LOGGER.error("Vorhandene Paket wurden nicht entfernt. Fehlerpaket "
-          + "wurde nicht hinzugefuegt. Keine null-Werte erlaubt.");
+      LOGGER.error("Existing packets will not be removed. Error packet was not added "
+          + ". No null values permitted.");
     }
   }
 
@@ -57,7 +57,7 @@ public class PacketTransmissionCache {
       }
       this.transmissionCache.clear();
     } else {
-      LOGGER.info("Keine Pakete zu versenden. Cache ist leer.");
+      LOGGER.info("No packets to send: empty cache");
     }
   }
 }

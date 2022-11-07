@@ -31,7 +31,7 @@ public class ServerErrorPacketProcessor implements ServicePacketProcessor {
     content = input.getPacketContent();
 
     if (!(content instanceof ServerFailureDTO)) {
-      LOGGER.info("Ungültiges Datenformat.");
+      LOGGER.info("Invalid data format.");
     }
   }
 }

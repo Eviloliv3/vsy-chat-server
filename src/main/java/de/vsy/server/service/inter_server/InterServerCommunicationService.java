@@ -127,7 +127,7 @@ public class InterServerCommunicationService extends ServiceBase {
       try {
         this.remoteConnectionData.closeConnection();
       } catch (IOException ioe) {
-        LOGGER.info("Fehler beim Schließen der Verbindung:\n{}", ioe.getLocalizedMessage());
+        LOGGER.info("Error while closing connection:\n{}", ioe.getLocalizedMessage());
       }
     }
     this.serverConnectionDataManager.removeRemoteConnectionData(this.remoteConnectionData);
@@ -153,7 +153,7 @@ public class InterServerCommunicationService extends ServiceBase {
       try {
         synchronizationPacket = inputBuffer.getPacket();
       } catch (InterruptedException ie) {
-        LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}",
+        LOGGER.error("Interrupted while waiting for next packet.\n{}",
             asList(ie.getStackTrace()));
         Thread.currentThread().interrupt();
         synchronizationPacket = null;
@@ -164,18 +164,18 @@ public class InterServerCommunicationService extends ServiceBase {
         final var content = synchronizationPacket.getPacketContent();
 
         if (validatorString.isPresent()) {
-          LOGGER.error("Paketfehler: {}", validatorString.get());
+          LOGGER.error("Packet validation error: {}", validatorString.get());
           continue;
         }
 
         if (content instanceof final InterServerCommSyncDTO synchronizationContent) {
           completeRemoteConnectionData(synchronizationContent);
-          LOGGER.info("Verbindung aufgebaut zu {}", synchronizationContent.getServerId());
+          LOGGER.info("Connection created {}", synchronizationContent.getServerId());
           return;
         }
       }
     }
-    LOGGER.info("Serververbindung synchronisiert.");
+    LOGGER.info("Server connection synchronized.");
   }
 
   /**
@@ -196,9 +196,9 @@ public class InterServerCommunicationService extends ServiceBase {
    * oder der Service unterbrochen wird. Eine Unterbrechung wird aufgefrischt.
    */
   private void waitForServerSynchronization() {
-    LOGGER.info("Warte auf Serversynchronisation.");
+    LOGGER.info("Waiting for server synchronization.");
     while (this.serverConnectionDataManager.pendingConnectionStatus()) {
-      LOGGER.trace("Serversynchronisation wird erwartet.");
+      LOGGER.trace("Waiting for server synchronization.");
       Thread.yield();
     }
   }
@@ -210,7 +210,7 @@ public class InterServerCommunicationService extends ServiceBase {
    * @param interrupt the interrupt
    */
   private void continuouslyProcessInput(final ProcessingInterruptProvider interrupt) {
-    LOGGER.info("Verarbeite eingehende Pakete.");
+    LOGGER.info("Processing incoming packets.");
     var reinterrupt = false;
     final var inputBuffer = this.threadBuffers.getPacketBuffer(
         ThreadPacketBufferLabel.HANDLER_BOUND);
@@ -224,7 +224,7 @@ public class InterServerCommunicationService extends ServiceBase {
           processPacket(input);
         }
       } catch (InterruptedException ie) {
-        LOGGER.error("Beim Holen des naechsten Pakets unterbrochen.\n{}",
+        LOGGER.error("Interrupted while waiting for next packet.\n{}",
             asList(ie.getStackTrace()));
         reinterrupt = true;
       }
@@ -233,7 +233,7 @@ public class InterServerCommunicationService extends ServiceBase {
     if (reinterrupt) {
       Thread.currentThread().interrupt();
     }
-    LOGGER.info("Eingehende Pakete werden nicht mehr weiter verarbeitet.");
+    LOGGER.info("Packet processing ended.");
   }
 
   private void setupSubstituteService() {
@@ -313,7 +313,7 @@ public class InterServerCommunicationService extends ServiceBase {
      * "Verbundener Server ausgefallen. Kein Assignment PacketBuffer gefunden (Statusmeldung verfaellt)."
      * ); return false; }
      */
-    LOGGER.info("Verbindung zu entferntem Klienten wurde unterbrochen: {}", failureContent);
+    LOGGER.info("Connection to remote client interrupted: {}", failureContent);
     return true;
   }
 

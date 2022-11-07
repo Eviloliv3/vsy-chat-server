@@ -61,17 +61,15 @@ public class ClientSubscriptionHandler implements ClientStateListener {
     }
 
     if (!handleSubscribing(threadIdMap, subscriptionLogic)) {
-      LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren. Siehe TraceLog"
-          + " fuer vollstaendigen Ablauf|WarnLog fuer Fehlerschlaege.");
+      LOGGER.info("One/multiple errors while (un-)subscribing. See trace log for all errors.");
     }
 
     if (!extraSubscriptionMap.isEmpty()) {
       threadIdMap.putAll(extraSubscriptionMap);
 
       if (!handleExtraSubscribing(clientId, extraSubscriptionMap, extraSubscriptionLogic)) {
-        LOGGER.info("Einer/mehrere Fehler beim (De-)Abonnieren der "
-            + "Zusatzabos. Siehe TraceLog fuer vollstaendigen Ablauf."
-            + " Siehe WarnLog fuer Fehlerschlaege.");
+        LOGGER.info("One/multiple errors while (un-)subscribing extra subscriptions. See trace log "
+            + "for all errors.");
       }
     }
   }

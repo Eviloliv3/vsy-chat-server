@@ -65,19 +65,19 @@ public abstract class ServiceBase implements Service {
   @Override
   public void run() {
     this.setupThreadContext();
-    LOGGER.info("{} gestartet.", this.getServiceName());
+    LOGGER.info("{} started.", this.getServiceName());
 
     finishSetup();
-    LOGGER.info("{} Setup beendet.", this.getServiceName());
+    LOGGER.info("{} setup finished.", this.getServiceName());
 
     while (interruptionConditionNotMet()) {
       work();
     }
 
-    LOGGER.info("{} wird beendet.", this.getServiceName());
+    LOGGER.info("{} termination initiated.", this.getServiceName());
     breakDown();
-    LOGGER.info("{} beendet.", getServiceName());
     this.clearThreadContext();
+    LOGGER.info("{} terminated.", getServiceName());
   }
 
   protected void setupThreadContext() {

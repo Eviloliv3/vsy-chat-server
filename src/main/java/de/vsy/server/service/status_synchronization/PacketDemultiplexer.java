@@ -36,7 +36,7 @@ public class PacketDemultiplexer {
    * Demultiplex Packet
    *
    * @param toDemultiplex      the to demultiplex
-   * @param eligibleRecipients the eligible recipients
+   * @param eligibleRecipients the valid recipients
    * @return the list hier
    */
   public static Set<Packet> demultiplexPacket(final ExtendedStatusSyncDTO toDemultiplex,
@@ -53,10 +53,10 @@ public class PacketDemultiplexer {
           final var finalizedNotification = PacketCompiler.createRequest(currentRecipient,
               updatePacket);
           demultiplexedPackets.add(finalizedNotification);
-          LOGGER.info("Mitteilung erstellt für: {}", contactId);
+          LOGGER.info("Notification created for: {}", contactId);
         }
       } else {
-        LOGGER.error("Es konnten keine Pakete erstellt werden für:\n{}", toDemultiplex);
+        LOGGER.error("No status synchronization packets created for:\n{}", toDemultiplex);
       }
     }
     return demultiplexedPackets;

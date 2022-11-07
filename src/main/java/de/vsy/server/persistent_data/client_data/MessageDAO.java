@@ -65,7 +65,7 @@ public class MessageDAO implements ClientDataAccess {
     Map<Integer, List<TextMessageDTO>> readMap;
     List<TextMessageDTO> readMessages;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return new ArrayList<>();
     }
     readMap = readAllClientMessages();
@@ -88,7 +88,7 @@ public class MessageDAO implements ClientDataAccess {
     var readMap = new HashMap<Integer, List<TextMessageDTO>>();
     Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -100,7 +100,7 @@ public class MessageDAO implements ClientDataAccess {
         readMap = (HashMap<Integer, List<TextMessageDTO>>) fromFile;
       } catch (final ClassCastException cc) {
         LOGGER.info(
-            "ClassCastException beim Lesen der Nachrichten-Map. Die Nachrichten-Map wird leer ausgegeben.");
+            "{} occurred while reading the message map. Empty map will be returned.", cc.getClass().getSimpleName());
       }
     }
     return readMap;
@@ -109,7 +109,7 @@ public class MessageDAO implements ClientDataAccess {
   public void removeMessages(final int contactId) {
     Map<Integer, List<TextMessageDTO>> oldMessages;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return;
     }
     oldMessages = this.readAllClientMessages();
@@ -136,7 +136,7 @@ public class MessageDAO implements ClientDataAccess {
     List<TextMessageDTO> msgHistory;
 
     if (contactId > 0 && msg != null) {
-          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return false;
     }
       oldMessages = readAllClientMessages();

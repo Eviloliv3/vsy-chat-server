@@ -29,7 +29,7 @@ public class ContentPreProcessor implements PublishablePacketCreator {
 
     if (isLocalBroadcast(input)
         && input.getPacketContent() instanceof ExtendedStatusSyncDTO statusContent) {
-      LogManager.getLogger().debug("ExtendedStatusSync gelesen");
+      LogManager.getLogger().trace("ExtendedStatusSync gelesen");
       extendedStatusProcessor.processContent(statusContent);
     } else {
       processedPacket = input;

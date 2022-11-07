@@ -53,7 +53,7 @@ public class IdProvider implements ServerDataAccess {
     Map<String, Integer> idMap;
     int newId;
 
-        if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+        if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return STANDARD_CLIENT_ID;
     }
     idMap = readIdMap();
@@ -61,7 +61,7 @@ public class IdProvider implements ServerDataAccess {
 
     if (IdCheck.checkData(newId).isPresent()) {
       newId = 15000;
-      LOGGER.warn("IDs zurückgesetzt.");
+      LOGGER.warn("Ids were reset.");
     }
     idMap.put("client", newId + 1);
     this.dataProvider.writeData(idMap);
@@ -80,7 +80,7 @@ public class IdProvider implements ServerDataAccess {
   Map<String, Integer> readIdMap() {
     Object fromFile;
     var readMap = new HashMap<String, Integer>();
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -91,7 +91,7 @@ public class IdProvider implements ServerDataAccess {
       try {
         readMap = (HashMap<String, Integer>) fromFile;
       } catch (final ClassCastException cc) {
-        LOGGER.info("ClassCastException beim Lesen der Id-Map. Die Map wird leer ausgegeben.");
+        LOGGER.info("{} occurred while reading the id map. Empty map will be returned.");
       }
     }
     return readMap;

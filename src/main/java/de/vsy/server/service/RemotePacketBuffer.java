@@ -34,15 +34,14 @@ public class RemotePacketBuffer extends PacketBuffer {
         synchronizeLocalServerId(serverContent);
         super.appendPacket(input);
       } else {
-        LOGGER.info("Paket wird nicht angehaengt. Der entfernte Server {} hat "
-            + "dieses Paket bereits verarbeitet: {}", this.remoteConnection.getServerId(), input);
+        LOGGER.info("Packet not appended. Remote server (id: {}) already processed this packet: {}", this.remoteConnection.getServerId(), input);
       }
     } else {
       if (content == null) {
         super.appendPacket(input);
       } else {
         throw new IllegalArgumentException(
-            "Paket wird nicht gesandt. Ungesicherter Paketinhalt: " + input);
+            "Packet not appended. Unsafe PacketContent: " + input);
       }
     }
   }
@@ -58,8 +57,8 @@ public class RemotePacketBuffer extends PacketBuffer {
         super.prependPacket(input);
       } else {
         LOGGER.info(
-            "Paket wird nicht vorangestellt. Der entfernte "
-                + "Server {} hat dieses Paket bereits verarbeitet: {}",
+            "Packets not prepended. Remote server (id : {}) already processed this "
+                + "packet: {}",
             this.remoteConnection.getServerId(), input);
       }
     } else {

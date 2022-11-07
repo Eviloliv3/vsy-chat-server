@@ -58,7 +58,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
 
     if (messageToReturn || returnedMessage) {
       if (!saveMessage(extractedContent)) {
-        LOGGER.error("Fehler beim Speichern der Nachricht.\n{}", extractedContent);
+        LOGGER.error("Error occurred while saving test message.\n{}", extractedContent);
       }
     }
 

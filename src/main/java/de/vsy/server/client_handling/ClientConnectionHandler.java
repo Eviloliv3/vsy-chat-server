@@ -67,7 +67,7 @@ public class ClientConnectionHandler implements Runnable {
       }
 
       if (stateManager.checkClientState(ClientState.AUTHENTICATED)) {
-        LOGGER.info("Klient hat sich nicht abgemeldet und wird in schwebenden Zustand versetzt.");
+        LOGGER.info("Client not logged out. Therefore client state will be set to pending.");
         saveClientBoundPackets();
         clientHandling = new PendingChatPacketHandling(threadDataManager);
         clientHandling.administerStrategy();
@@ -75,9 +75,9 @@ public class ClientConnectionHandler implements Runnable {
         clearAllBuffers();
       }
       this.connectionControl.closeConnection();
-      LOGGER.info("Verbindung zum Klienten beendet.");
+      LOGGER.info("Client connection terminated.");
     } else {
-      LOGGER.info("Verbindung zum Klienten fehlgeschlagen.");
+      LOGGER.info("Client connection failed.");
     }
     finishThreadTermination();
   }
@@ -126,7 +126,7 @@ public class ClientConnectionHandler implements Runnable {
           pendingPacketAccessor.appendPendingPacket(PendingType.CLIENT_BOUND, currentPacket);
         } catch (InterruptedException e) {
           reinterrupt = true;
-          LOGGER.error("Buffer wird geleert. Interrupt wird " + "zeitweise ignoriert.");
+          LOGGER.error("PacketBuffer has to be emptied be emptied. Interrupt suspended.");
         }
       }
 

@@ -60,25 +60,24 @@ public class PersistentDataFileCreator {
           var newFileIsCreated = file.createNewFile();
 
           if (!newFileIsCreated) {
-            LOGGER.error("Datei {} sollte neu erstellt " + "werden, existierte aber schon.",
+            LOGGER.error("Tried to create file {}, but it already exists.",
                 fileReference);
           }
         } else {
-          LOGGER.trace("Datei existiert bereits: {}", fileReference);
+          LOGGER.trace("File already exists: {}", fileReference);
         }
       } else {
-        LOGGER.error("Pfad ist kein gueltiges Verzeichnis: {}", directory);
+        LOGGER.error("Path is no valid directory: {}", directory);
       }
     } catch (final SecurityException se) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Datei (Pfad: {}: {}) durfte nicht erstellt werden. (SecurityException)",
-          directoryName,
-          filename);
+      LOGGER.error("File (Path: {}: {}) creation failed. ({})",
+          directoryName, filename, se.getClass().getSimpleName());
       fileReference = null;
     } catch (final IOException ex) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Datei (Pfad: {}: {}) konnte nicht erstellt werden. (IOException)\n{}",
-          directoryName,
+      LOGGER.error("File (Path: {}: {}) creation failed. ({}) \n{}",
+          directoryName, ex.getClass().getSimpleName(),
           filename, asList(ex.getStackTrace()));
       fileReference = null;
     }

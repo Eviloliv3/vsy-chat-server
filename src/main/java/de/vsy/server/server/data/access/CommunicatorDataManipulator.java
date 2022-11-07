@@ -60,22 +60,19 @@ public class CommunicatorDataManipulator {
       if (!this.communicatorDataPersist.addCommunicator(communicatorData)) {
         this.clientAuthPersist.removeAccountData(authData.getClientId());
         LOGGER.error(
-            "Kommunikatordaten konnten nicht " + "gespeichert werden. Authentifikationsdaten "
-                + "wurden wieder entfernt");
+            "Communicator data could not be saved. Authentication data has been removed");
         communicatorData = null;
       } else {
-        LOGGER.info("Konto erfolgreich erstellt:\n{}\n{}", authData, communicatorData);
+        LOGGER.info("Account creation successful:\n{}\n{}", authData, communicatorData);
       }
     } else {
-      LOGGER.error("Authentifizierungsdaten konnten nicht " + "gespeichert werden.");
+      LOGGER.error("Authentication data could not be saved.");
     }
     return communicatorData;
   }
 
   /**
-   * Erstellt einen neuen Kommunikator, sofern eine gültige Besitzer-(/Klienten-)Id angegeben
-   * wurde.
-   *
+   * Creates a new communicator, if valid owner/client id was provided.
    * @param ownerId   the owner id
    * @param groupName the group name
    * @return the communicator dataManagement
@@ -91,12 +88,12 @@ public class CommunicatorDataManipulator {
         communicatorData = null;
       } else {
         LOGGER.error(
-            "Gruppe \"{}:{}\"wurde nicht erstellt. " + "Es gibt bereits gleichnamige Gruppe",
+            "Group \"{}:{}\" creation failed. Group with same name already exists.",
             ownerId,
             groupName);
       }
     } else {
-      LOGGER.error("Gruppe \"{}:{}\"wurde nicht erstellt. Die " + "Klienten-Id ist ungültig.",
+      LOGGER.error("Group \"{}:{}\" creation failed. Provided owner id is invalid.",
           ownerId,
           groupName);
     }

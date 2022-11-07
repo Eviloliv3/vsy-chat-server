@@ -100,19 +100,19 @@ public class PersistenceDAO {
       return acquireFileLock(lockChannel, writeAccess);
     } catch (final FileNotFoundException fnfe) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Datei nicht gefunden: {}\n{}", lockFilePath, asList(fnfe.getStackTrace()));
+      LOGGER.error("File not found: {}\n{}", lockFilePath, asList(fnfe.getStackTrace()));
     } catch (final FileLockInterruptionException flie) {
       Thread.currentThread().interrupt();
-      LOGGER.info("FileLock konnte nicht akquiriert werden, da der Thread unterbrochen wurde.\n{}",
+      LOGGER.info("FileLock could not be acquired due to thread interruption.\n{}",
           asList(flie.getStackTrace()));
     } catch (final ClosedChannelException cce) {
-      LOGGER.error("FileLock wurde nicht akquiriert. FileChannel vorher geschlossen.");
+      LOGGER.error("FileLock could not be acquired. FileChannel closed.");
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Beim Holen des Locks unterbrochen. {}", asList(ie.getStackTrace()));
+      LOGGER.error("Lock could not be acquired, due to thread interruption. {}", asList(ie.getStackTrace()));
     } catch (IOException ioe) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Unerwarteter Fehler beim Holen des Locks {}. \nUrsprung: {}", ioe.getMessage(),
+      LOGGER.error("Unexpected error during lock acquisition: {}.\nSource: {}", ioe.getMessage(),
           asList(ioe.getStackTrace()));
     }
     return false;
@@ -143,11 +143,11 @@ public class PersistenceDAO {
         try {
           this.globalLock = toLock.lock(0, Long.MAX_VALUE, !writeAccess);
         } catch (OverlappingFileLockException ex) {
-          LOGGER.trace("Datei noch gesperrt. Neuer Versuch wird " + "gestartet. {}: {}",
+          LOGGER.trace("File still locked externally. Will be attempted again {}: {}",
               ex.getClass().getSimpleName(), ex.getMessage());
         } catch (FileLockInterruptionException fie) {
           Thread.currentThread().interrupt();
-          LOGGER.error("Beim Holen des globalen Locks unterbrochen.");
+          LOGGER.error("Interrupted during global lock acquisition.");
           accessAcquired = false;
         }
       }
@@ -156,7 +156,7 @@ public class PersistenceDAO {
     if (!accessAcquired || this.globalLock == null || !this.globalLock.isValid()
         || Thread.currentThread().isInterrupted()) {
       LOGGER.error(
-          "Lock wurde nicht gesperrt. WriteMode: {}; LocalLock: {}; Lock: {}; Interrupted: {}",
+          "Lock acquisition failed. Write mode: {}; localLock: {}; lock: {}; interrupted: {}",
           writeAccess, accessAcquired, this.globalLock, Thread.currentThread().isInterrupted());
       releaseAccess(writeAccess);
       return false;
@@ -223,7 +223,7 @@ public class PersistenceDAO {
         final var channel = this.globalLock.channel();
         channel.close();
       } catch (IOException e) {
-        LOGGER.info("Dateizugang konnte nicht geöffnet werden. {}\n{}",
+        LOGGER.info("Global file access could not be closed. {}\n{}",
             e.getClass().getSimpleName(),
             asList(e.getStackTrace()));
       }
@@ -366,14 +366,14 @@ public class PersistenceDAO {
       String readJsonString = Files.readString(lastChangedFile);
       readObject = mapper.readValue(readJsonString, dataFormat);
     } catch (JsonParseException | JsonMappingException je) {
-      LOGGER.info("Gelesene Daten nicht instanziierbar: {}\n{}: {}", lastChangedFile,
+      LOGGER.info("Read data could not be instantiated: {}\n{}: {}", lastChangedFile,
           je.getClass().getSimpleName(), je.getMessage());
     } catch (final FileNotFoundException ex) {
       Thread.currentThread().interrupt();
-      LOGGER.info("Datei nicht gefunden: {}\n{}", lastChangedFile, asList(ex.getStackTrace()));
+      LOGGER.info("File could not found: {}\n{}", lastChangedFile, asList(ex.getStackTrace()));
     } catch (final IOException ex) {
       Thread.currentThread().interrupt();
-      LOGGER.info("Lesen aus Datei fehlgeschlagen: {}\n{}", lastChangedFile,
+      LOGGER.info("Reading from file failed: {}\n{}", lastChangedFile,
           asList(ex.getStackTrace()));
     }
     return readObject;
@@ -421,14 +421,14 @@ public class PersistenceDAO {
           Files.writeString(currentPath, jsonString);
         } catch (final IOException e) {
           Thread.currentThread().interrupt();
-          LOGGER.info("Nach {} konnte nicht geschrieben werden." + "\n{}", currentPath,
+          LOGGER.info("Could not write to {}." + "\n{}", currentPath,
               asList(e.getStackTrace()));
           return !dataWritten;
         }
       }
       return dataWritten;
     } else {
-      LOGGER.error("JSON-String konnte nicht erstellt werden fuer: {}", toWrite);
+      LOGGER.error("JSON-string could not be created from: {}", toWrite);
     }
     return !dataWritten;
   }

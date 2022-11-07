@@ -52,10 +52,10 @@ public class StateDependentPacketRetriever implements ClientStateListener {
             });
 
         if (foundStrategy != null) {
-          LOGGER.trace("Vorhandene Pakete wurden Buffern vorangestellt. PendingType: {}",
+          LOGGER.trace("Existing packets were prepended for PendingType: {}",
               currentClassification);
         } else {
-          LOGGER.warn("Es wurde keine Strategie gefunden. PendingType: {}", currentClassification);
+          LOGGER.warn("No strategy found for PendingType: {}", currentClassification);
         }
 
         pendingPacketProvider.setPendingPackets(currentClassification, remainingPackets);

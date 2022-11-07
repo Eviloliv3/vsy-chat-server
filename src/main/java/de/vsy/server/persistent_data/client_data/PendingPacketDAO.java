@@ -70,7 +70,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     var packetAdded = false;
     Map<String, Packet> pendingMap;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return false;
     }
     pendingMap = readPendingPackets(classification);
@@ -83,7 +83,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     this.dataProvider.releaseAccess(true);
 
     if (packetAdded) {
-      LOGGER.info("PendingPacket hinzugefügt.");
+      LOGGER.info("PendingPacket added.");
     }
     return packetAdded;
   }
@@ -98,7 +98,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
     Map<String, Packet> pendingMap;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return new LinkedHashMap<>();
     }
     allPendingPackets = readAllPendingPackets();
@@ -127,7 +127,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     if (toSet != null) {
       classifiedPendingPackets = new LinkedHashMap<>(toSet);
 
-          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return false;
     }
       allPendingPackets = readAllPendingPackets();
@@ -149,7 +149,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     EnumMap<PendingType, LinkedHashMap<String, Packet>> allPendingPackets = null;
     Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("Kein Lesezugriff moeglich.");
+        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
       return new EnumMap<>(PendingType.class);
     }
     fromFile = this.dataProvider.readData();
@@ -160,7 +160,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
         allPendingPackets = (EnumMap<PendingType, LinkedHashMap<String, Packet>>) fromFile;
       } catch (final ClassCastException cc) {
         LOGGER.info(
-            "ClassCastException beim Lesen der verpassten PacketMap. Die verpasste PacketMap wird leer ausgegeben.");
+            "{} occurred while reading the missed packet map. Empty map will be returned.", cc.getClass().getSimpleName());
       }
     }
 
@@ -191,7 +191,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
     Map<PendingType, LinkedHashMap<String, Packet>> allPendingPackets;
     LinkedHashMap<String, Packet> pendingMap;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("Kein exklusiver Schreibzugriff moeglich.");
+    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
       return;
     }
     allPendingPackets = readAllPendingPackets();

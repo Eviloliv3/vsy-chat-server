@@ -23,7 +23,7 @@ public class PendingChatPacketHandling implements PacketHandlingStrategy {
 
   @Override
   public void administerStrategy() {
-    LOGGER.info("PendingClientHandler wird vorbereitet");
+    LOGGER.info("PendingClientHandler initiation started.");
     Thread pendingClientThread;
 
     if (this.handlerDataManager.getGlobalAuthenticationStateControl().changePendingState(true)) {
