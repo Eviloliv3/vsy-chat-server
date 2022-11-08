@@ -9,6 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +42,13 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       if (followerSocket != null && !followerSocket.isClosed()) {
         this.serviceCreator.createInterServerService(true, followerSocket);
       }
+    }
+
+    try{
+      this.acceptingThread.shutdownNow();
+      this.acceptingThread.awaitTermination(1, TimeUnit.MILLISECONDS);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
     LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}",
         Thread.currentThread().getName(), Thread.currentThread().isInterrupted(),
