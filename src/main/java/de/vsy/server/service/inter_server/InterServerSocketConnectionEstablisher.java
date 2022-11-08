@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,11 +96,11 @@ public class InterServerSocketConnectionEstablisher implements
 
   public void stopEstablishingConnections() {
     this.establishingThread.shutdownNow();
-
-    do {
-      LOGGER.info("Waiting for followerAcceptor thread termination.");
-      Thread.yield();
-    } while (!this.establishingThread.isTerminated());
+    try{
+      this.establishingThread.awaitTermination(5, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
     LOGGER.info("FollowerAcceptor Thread terminated.");
   }
 
