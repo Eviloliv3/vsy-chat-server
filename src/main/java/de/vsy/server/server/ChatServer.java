@@ -71,6 +71,7 @@ public class ChatServer implements ClientServer {
 
   /**
    * Prepare server.
+   *
    * @throws IllegalStateException if no ServerSocket could be initiated.
    */
   private void prepareServer() {
@@ -85,8 +86,8 @@ public class ChatServer implements ClientServer {
               + "kann somit nicht gestartet werden.");
     }
     serverThreadName = "ChatServer[" + localServerConnectionData.getServerId() + ":"
-          + localServerConnectionData.getServerPort() + "]";
-      ThreadContext.put(LOG_FILE_CONTEXT_KEY, serverThreadName);
+        + localServerConnectionData.getServerPort() + "]";
+    ThreadContext.put(LOG_FILE_CONTEXT_KEY, serverThreadName);
 
     setupDataManager(localServerConnectionData);
     setupPersistentDataAccess();
@@ -243,7 +244,7 @@ public class ChatServer implements ClientServer {
         }
       } while (!connectionManager.remoteConnectionsLive());
       LOGGER.info("No connections established.");
-    }else{
+    } else {
       LOGGER.info("No remote connections to await.");
     }
   }

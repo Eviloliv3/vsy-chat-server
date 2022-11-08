@@ -109,7 +109,8 @@ public class PersistenceDAO {
       LOGGER.error("FileLock could not be acquired. FileChannel closed.");
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Lock could not be acquired, due to thread interruption. {}", asList(ie.getStackTrace()));
+      LOGGER.error("Lock could not be acquired, due to thread interruption. {}",
+          asList(ie.getStackTrace()));
     } catch (IOException ioe) {
       Thread.currentThread().interrupt();
       LOGGER.error("Unexpected error during lock acquisition: {}.\nSource: {}", ioe.getMessage(),

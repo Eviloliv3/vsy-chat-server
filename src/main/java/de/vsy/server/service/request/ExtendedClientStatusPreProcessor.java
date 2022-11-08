@@ -10,7 +10,6 @@ import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
 
 public class ExtendedClientStatusPreProcessor {
 

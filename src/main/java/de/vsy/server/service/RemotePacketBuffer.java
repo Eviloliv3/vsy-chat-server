@@ -34,7 +34,8 @@ public class RemotePacketBuffer extends PacketBuffer {
         synchronizeLocalServerId(serverContent);
         super.appendPacket(input);
       } else {
-        LOGGER.info("Packet not appended. Remote server (id: {}) already processed this packet: {}", this.remoteConnection.getServerId(), input);
+        LOGGER.info("Packet not appended. Remote server (id: {}) already processed this packet: {}",
+            this.remoteConnection.getServerId(), input);
       }
     } else {
       if (content == null) {

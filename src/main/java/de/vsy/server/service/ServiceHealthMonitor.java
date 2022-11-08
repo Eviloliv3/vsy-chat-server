@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class ServiceHealthMonitor extends TimerTask {
+
   private static final Logger LOGGER = LogManager.getLogger();
   private final ChatServer server;
   private final ServiceControl services;
@@ -19,12 +20,12 @@ public class ServiceHealthMonitor extends TimerTask {
 
   @Override
   public void run() {
-      if(!(this.services.confinedServicesHealthy())){
-        if(!(serverShutdownInitiated)) {
-          LOGGER.info("Local services failed. Server termination initiated.");
-          this.server.shutdownServer();
-          serverShutdownInitiated = true;
-        }
+    if (!(this.services.confinedServicesHealthy())) {
+      if (!(serverShutdownInitiated)) {
+        LOGGER.info("Local services failed. Server termination initiated.");
+        this.server.shutdownServer();
+        serverShutdownInitiated = true;
       }
+    }
   }
 }

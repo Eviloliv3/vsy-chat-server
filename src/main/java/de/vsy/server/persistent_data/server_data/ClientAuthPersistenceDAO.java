@@ -51,7 +51,8 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     var idFound = false;
     Set<AuthenticationData> regClients;
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return false;
     }
     regClients = readRegisteredClients();
@@ -77,7 +78,8 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     Object fromFile;
     Set<AuthenticationData> readList = null;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return new HashSet<>();
     }
     fromFile = this.dataProvider.readData();
@@ -88,7 +90,8 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
       try {
         readList = (HashSet<AuthenticationData>) fromFile;
       } catch (final ClassCastException cc) {
-        LOGGER.info("{} occurred while reading the registered client map. Empty map will be returned.");
+        LOGGER.info(
+            "{} occurred while reading the registered client map. Empty map will be returned.");
       }
     }
 
@@ -115,7 +118,8 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     Set<AuthenticationData> readList;
     var clientAuth = AuthenticationData.valueOf(loginName, password, STANDARD_CLIENT_ID);
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return clientId;
     }
     readList = readRegisteredClients();
@@ -141,7 +145,8 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     var accountRemoved = false;
     Set<AuthenticationData> regClients;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return false;
     }
     regClients = readRegisteredClients();
@@ -174,9 +179,10 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
     Set<AuthenticationData> regClients;
 
     if (toAdd != null) {
-          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
-      return false;
-    }
+      if (!this.dataProvider.acquireAccess(true)) {
+        LOGGER.error("No exclusive write access.");
+        return false;
+      }
       regClients = readRegisteredClients();
 
       for (final AuthenticationData authData : regClients) {

@@ -96,10 +96,10 @@ public class InterServerCommunicationService extends ServiceBase {
 
     this.connectionControl.initiateConnectionThreads();
     this.packetDispatcher = new InterServerCommunicationPacketDispatcher(
-          this.remoteConnectionData,
-          this.serviceDataAccess.getServicePacketBufferManager(),
-          SERVICE_SPECIFICATIONS.getResponseDirections(),
-          this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+        this.remoteConnectionData,
+        this.serviceDataAccess.getServicePacketBufferManager(),
+        SERVICE_SPECIFICATIONS.getResponseDirections(),
+        this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
   }
 
   @Override

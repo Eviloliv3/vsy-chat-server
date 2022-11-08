@@ -73,6 +73,7 @@ public class CommunicatorDataManipulator {
 
   /**
    * Creates a new communicator, if valid owner/client id was provided.
+   *
    * @param ownerId   the owner id
    * @param groupName the group name
    * @return the communicator dataManagement

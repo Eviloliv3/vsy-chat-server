@@ -65,7 +65,8 @@ public class MessageDAO implements ClientDataAccess {
     Map<Integer, List<TextMessageDTO>> readMap;
     List<TextMessageDTO> readMessages;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return new ArrayList<>();
     }
     readMap = readAllClientMessages();
@@ -88,7 +89,8 @@ public class MessageDAO implements ClientDataAccess {
     var readMap = new HashMap<Integer, List<TextMessageDTO>>();
     Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -100,7 +102,8 @@ public class MessageDAO implements ClientDataAccess {
         readMap = (HashMap<Integer, List<TextMessageDTO>>) fromFile;
       } catch (final ClassCastException cc) {
         LOGGER.info(
-            "{} occurred while reading the message map. Empty map will be returned.", cc.getClass().getSimpleName());
+            "{} occurred while reading the message map. Empty map will be returned.",
+            cc.getClass().getSimpleName());
       }
     }
     return readMap;
@@ -109,7 +112,8 @@ public class MessageDAO implements ClientDataAccess {
   public void removeMessages(final int contactId) {
     Map<Integer, List<TextMessageDTO>> oldMessages;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return;
     }
     oldMessages = this.readAllClientMessages();
@@ -136,9 +140,10 @@ public class MessageDAO implements ClientDataAccess {
     List<TextMessageDTO> msgHistory;
 
     if (contactId > 0 && msg != null) {
-          if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
-      return false;
-    }
+      if (!this.dataProvider.acquireAccess(true)) {
+        LOGGER.error("No exclusive write access.");
+        return false;
+      }
       oldMessages = readAllClientMessages();
       msgHistory = oldMessages.getOrDefault(contactId, new ArrayList<>());
       msgHistory.add(msg);

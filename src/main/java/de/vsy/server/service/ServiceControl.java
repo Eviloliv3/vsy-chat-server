@@ -44,10 +44,14 @@ public class ServiceControl {
    * @return true, if successful
    */
   public boolean confinedServicesHealthy() {
+    if (!this.interServerConnectionEstablisher.isEstablishingConnections()) {
+      return false;
+    }
+
     for (final var currentThreadSet : this.registeredServices.entrySet()) {
       final var currentServiceType = currentThreadSet.getKey();
 
-      if(!(currentServiceType.equals(TYPE.SERVER_TRANSFER))) {
+      if (!(currentServiceType.equals(TYPE.SERVER_TRANSFER))) {
         final var currentServiceThreads = currentThreadSet.getValue();
 
         for (final var currentThread : currentServiceThreads) {
@@ -67,6 +71,10 @@ public class ServiceControl {
   public void startServices() {
     startAssignmentThread();
     startClientStatusSynchronizationThread();
+    startInterServerConnector();
+  }
+
+  private void startInterServerConnector() {
     this.interServerConnectionEstablisher = new InterServerSocketConnectionEstablisher(
         this.serviceDataModel.getServerConnectionDataManager(), this);
     interServerConnectionEstablisher.establishConnections();
@@ -118,7 +126,7 @@ public class ServiceControl {
 
   public void stopAllServices() {
     LOGGER.info("Services termination initiated.");
-    this.interServerConnectionEstablisher.stopEstabilishingConnections();
+    this.interServerConnectionEstablisher.stopEstablishingConnections();
 
     for (final var serviceSet : this.registeredServices.entrySet()) {
       LOGGER.info("{}-services termination initiated", serviceSet.getKey());

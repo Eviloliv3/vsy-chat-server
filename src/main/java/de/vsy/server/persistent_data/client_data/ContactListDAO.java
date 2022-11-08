@@ -58,7 +58,8 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> contactMap;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return false;
     }
     contactMap = readContactMap();
@@ -92,7 +93,8 @@ public class ContactListDAO implements ClientDataAccess {
     var readMap = new EnumMap<EligibleContactEntity, Set<Integer>>(EligibleContactEntity.class);
     Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();
@@ -104,7 +106,8 @@ public class ContactListDAO implements ClientDataAccess {
         readMap = (EnumMap<EligibleContactEntity, Set<Integer>>) fromFile;
       } catch (final ClassCastException cc) {
         LOGGER.info(
-            "{} occurred while reading the contact list. Empty map will be returned.", cc.getClass().getSimpleName());
+            "{} occurred while reading the contact list. Empty map will be returned.",
+            cc.getClass().getSimpleName());
       }
     }
     return readMap;
@@ -114,7 +117,8 @@ public class ContactListDAO implements ClientDataAccess {
     final boolean isContact;
     final Set<Integer> contacts;
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return false;
     }
     contacts = this.readContacts(contactType);
@@ -133,7 +137,8 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> readMap;
     Set<Integer> readContacts;
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return new HashSet<>();
     }
     readMap = readContactMap();
@@ -157,7 +162,8 @@ public class ContactListDAO implements ClientDataAccess {
     var acquaintanceState = false;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return false;
     }
     contactSet = readContacts(contactType);
@@ -181,7 +187,8 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> contactMap;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return false;
     }
     contactMap = readContactMap();
@@ -216,7 +223,8 @@ public class ContactListDAO implements ClientDataAccess {
     Map<EligibleContactEntity, Set<Integer>> contactMap;
     Set<Integer> contactSet;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return false;
     }
     contactMap = readContactMap();

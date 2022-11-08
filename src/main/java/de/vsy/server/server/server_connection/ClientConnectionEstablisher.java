@@ -34,7 +34,8 @@ public class ClientConnectionEstablisher {
     if (clientConnectionAcceptor != null) {
 
       while (serverHealthFlag.get()) {
-        var newClientConnection = this.clientConnectionAcceptor.submit(clientConnectionAcceptor::accept);
+        var newClientConnection = this.clientConnectionAcceptor.submit(
+            clientConnectionAcceptor::accept);
 
         try {
           clientConnectionSocket = newClientConnection.get();
@@ -61,7 +62,7 @@ public class ClientConnectionEstablisher {
     }
   }
 
-  public void changeServerHealthFlag(final boolean newHealthState){
+  public void changeServerHealthFlag(final boolean newHealthState) {
     this.serverHealthFlag.set(newHealthState);
   }
 

@@ -46,7 +46,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     Set<CommunicatorData> communicatorList;
     var communicatorAdded = false;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return false;
     }
     communicatorList = readRegisteredCommunicators();
@@ -54,7 +55,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     if (communicatorList.add(commData)) {
       communicatorAdded = this.dataProvider.writeData(communicatorList);
     } else {
-      LOGGER.error("CommunicatorData was not written. Collides with existing communicator display name.");
+      LOGGER.error(
+          "CommunicatorData was not written. Collides with existing communicator display name.");
     }
     this.dataProvider.releaseAccess(true);
 
@@ -74,7 +76,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     Object fromFile;
     Set<CommunicatorData> readList = new HashSet<>();
 
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return readList;
     }
     fromFile = this.dataProvider.readData();
@@ -86,7 +89,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         readList = (Set<CommunicatorData>) fromFile;
       } catch (final ClassCastException cc) {
         LOGGER.info(
-            "{} while reading the registered client map. Empty map will be returned.", cc.getClass().getSimpleName());
+            "{} while reading the registered client map. Empty map will be returned.",
+            cc.getClass().getSimpleName());
       }
     }
     return readList;
@@ -108,7 +112,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     var communicatorRemoved = false;
     CommunicatorData communicatorToRemove;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return false;
     }
     communicatorToRemove = getCommunicatorData(communicatorId);
@@ -129,7 +134,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     CommunicatorData foundCommunicator = null;
     Set<CommunicatorData> communicatorList;
 
-    if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return null;
     }
     communicatorList = readRegisteredCommunicators();
@@ -155,7 +161,8 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
     var communicatorRemoved = false;
     Set<CommunicatorData> communicatorList;
 
-    if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return false;
     }
     communicatorList = readRegisteredCommunicators();

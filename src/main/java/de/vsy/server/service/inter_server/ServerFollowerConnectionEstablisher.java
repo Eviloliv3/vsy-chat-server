@@ -7,8 +7,6 @@ import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import org.apache.logging.log4j.LogManager;
@@ -44,17 +42,21 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
         this.serviceCreator.createInterServerService(true, followerSocket);
       }
     }
-    LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}", Thread.currentThread().getName(), Thread.currentThread().isInterrupted(), watchedSocket.isClosed());
+    LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}",
+        Thread.currentThread().getName(), Thread.currentThread().isInterrupted(),
+        watchedSocket.isClosed());
   }
 
   /**
    * Let's single ExecutorService thread wait for new server connection and returns new connection
    * socket. InterruptedExceptions are logged and interrupt flag is set. IOExceptions are expected
    * and logged, but no further action is taken.
+   *
    * @param socketToWatch the server socket that waits for new connection.
    * @return new Socket or null if handled exception occurred.
-   * @throws RuntimeException rethrow causes: ServerSocket -> SecurityException, SocketTimeoutException,
-   * IllegalBlockingModeException; Future -> CancellationException
+   * @throws RuntimeException rethrow causes: ServerSocket -> SecurityException,
+   *                          SocketTimeoutException, IllegalBlockingModeException; Future ->
+   *                          CancellationException
    */
   public Socket acceptFollowerConnection(final ServerSocket socketToWatch) {
     Socket followerSocket = null;
@@ -64,13 +66,13 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       followerSocket = futureFollower.get();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      LOGGER.error(e.getMessage(), e.getCause());
+      LOGGER.error(e.getClass().getSimpleName(), e.getCause());
     } catch (ExecutionException ee) {
       var cause = ee.getCause();
 
-      if(cause instanceof IOException){
+      if (cause instanceof IOException) {
         LOGGER.error(ee.getMessage(), cause);
-      }else {
+      } else {
         LOGGER.error("Exception occurred while getting new remote server socket from Future.");
         throw new RuntimeException(ee);
       }

@@ -93,7 +93,7 @@ public class InterServerSocketConnectionEstablisher implements
     this.serviceControl.startInterServerCommThread();
   }
 
-  public void stopEstabilishingConnections() {
+  public void stopEstablishingConnections() {
     this.establishingThread.shutdownNow();
 
     do {
@@ -101,5 +101,9 @@ public class InterServerSocketConnectionEstablisher implements
       Thread.yield();
     } while (!this.establishingThread.isTerminated());
     LOGGER.info("FollowerAcceptor Thread terminated.");
+  }
+
+  public boolean isEstablishingConnections() {
+    return !this.establishingThread.isTerminated() && !this.establishingThread.isShutdown();
   }
 }

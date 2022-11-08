@@ -53,7 +53,8 @@ public class IdProvider implements ServerDataAccess {
     Map<String, Integer> idMap;
     int newId;
 
-        if (!this.dataProvider.acquireAccess(true)) {LOGGER.error("No exclusive write access.");
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
       return STANDARD_CLIENT_ID;
     }
     idMap = readIdMap();
@@ -80,7 +81,8 @@ public class IdProvider implements ServerDataAccess {
   Map<String, Integer> readIdMap() {
     Object fromFile;
     var readMap = new HashMap<String, Integer>();
-        if (!this.dataProvider.acquireAccess(false)) {LOGGER.error("No shared read access.");
+    if (!this.dataProvider.acquireAccess(false)) {
+      LOGGER.error("No shared read access.");
       return readMap;
     }
     fromFile = this.dataProvider.readData();

@@ -22,7 +22,9 @@ public class ClientStateSubscriptions {
   private final Map<Integer, Map<ClientState, Set<Integer>>> clientSubscriptions;
   private final ReadWriteLock lock;
 
-  /** Instantiates a new client state subscriptions. */
+  /**
+   * Instantiates a new client state subscriptions.
+   */
   public ClientStateSubscriptions() {
     this.lock = new ReentrantReadWriteLock();
     this.clientSubscriptions = new HashMap<>();
@@ -33,7 +35,6 @@ public class ClientStateSubscriptions {
    *
    * @param state    the state
    * @param clientId the client id
-   *
    * @return the client subscriptions
    */
   public Set<Integer> getClientSubscriptions(final ClientState state, final int clientId) {
@@ -63,7 +64,6 @@ public class ClientStateSubscriptions {
    * @param state     the state
    * @param clientId  the client id
    * @param contactId the contact id
-   *
    * @return true, if successful
    */
   public boolean subscribe(final ClientState state, final int clientId, final int contactId) {
@@ -101,7 +101,6 @@ public class ClientStateSubscriptions {
    * @param state     the state
    * @param clientId  the client id
    * @param contactId the contact id
-   *
    * @return true, if successful
    */
   public boolean unsubscribe(final ClientState state, final int clientId, final int contactId) {
