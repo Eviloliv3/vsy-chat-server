@@ -140,6 +140,7 @@ public class ServiceControl {
           LOGGER.info("Still waiting for {} to terminate.", threadName);
           Thread.yield();
         } while (currentService.isAlive());
+        LOGGER.info("{} terminated.", threadName);
       }
     }
     LOGGER.info("Services terminated.");
