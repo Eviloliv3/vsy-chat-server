@@ -73,13 +73,13 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         "anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch");
     final var response = clientTwo.readPacket();
 
-    if(response.getPacketContent() instanceof final ReconnectResponseDTO reconnectResponse){
-      if(reconnectResponse.getReconnectionState()) {
+    if (response.getPacketContent() instanceof final ReconnectResponseDTO reconnectResponse) {
+      if (reconnectResponse.getReconnectionState()) {
         clientTwo.setClientData(clientOneAuthenticationData, clientOneCommunicatorData);
-      }else{
+      } else {
         Assertions.fail("Wiederverbindung fehlgeschlagen.");
       }
-    }else{
+    } else {
       Assertions.fail("Antwort ist: " + response.getPacketContent().getClass().getSimpleName() +
           ",  erwartet wurde: " + ReconnectResponseDTO.class.getSimpleName());
     }

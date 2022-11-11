@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/** @author Frederic Heath */
+/**
+ * @author Frederic Heath
+ */
 class TestAuthenticationDAO {
 
   final ClientAuthPersistenceDAO dataProvider = new ClientAuthPersistenceDAO();

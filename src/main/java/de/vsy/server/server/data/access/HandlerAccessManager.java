@@ -8,7 +8,7 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 
 /**
  * Provides limited accessLimiter to server managed buffers and information concerning other

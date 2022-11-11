@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/** @author Frederic Heath */
+/**
+ * @author Frederic Heath
+ */
 class TestIdDAO {
 
   final IdProvider idProvider = new IdProvider();

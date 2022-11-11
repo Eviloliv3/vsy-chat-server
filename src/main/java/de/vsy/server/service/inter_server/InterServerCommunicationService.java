@@ -3,13 +3,14 @@
  */
 package de.vsy.server.service.inter_server;
 
+import static de.vsy.server.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static java.util.Arrays.asList;
 
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server.data.access.ServerCommunicationServiceDataProvider;
-import de.vsy.server.server.server_connection.RemoteServerConnectionData;
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
@@ -56,7 +57,7 @@ public class InterServerCommunicationService extends ServiceBase {
         .withDirection(ServiceResponseDirection.OUTBOUND, Service.TYPE.SERVER_TRANSFER).build();
   }
 
-  private final ServerConnectionDataManager serverConnectionDataManager;
+  private final SocketConnectionDataManager serverConnectionDataManager;
   private final UnconfirmedPacketTransmissionCache packetCache;
   private final PacketHandlingExceptionProcessor pheProcessor;
   private final ServerCommunicationServiceDataProvider serviceDataAccess;
@@ -85,7 +86,7 @@ public class InterServerCommunicationService extends ServiceBase {
 
   @Override
   public void finishSetup() {
-    this.remoteConnectionData = this.serverConnectionDataManager.getNextNotSynchronizedConnectionData();
+    this.remoteConnectionData = this.serverConnectionDataManager.getNextSocketConnectionToInitiate();
     this.validator = new SimplePacketChecker(
         ServerPacketTypeValidationCreator.createRegularServerPacketContentValidator());
     this.localInterruptor = this::interruptionConditionNotMet;
@@ -94,12 +95,16 @@ public class InterServerCommunicationService extends ServiceBase {
     this.connectionControl = new ConnectionThreadControl(remoteConnectionData.getConnectionSocket(),
         this.threadBuffers, this.packetCache, this.remoteConnectionData.isLeader());
 
-    this.connectionControl.initiateConnectionThreads();
-    this.packetDispatcher = new InterServerCommunicationPacketDispatcher(
-        this.remoteConnectionData,
-        this.serviceDataAccess.getServicePacketBufferManager(),
-        SERVICE_SPECIFICATIONS.getResponseDirections(),
-        this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+    if (this.connectionControl.initiateConnectionThreads()) {
+      this.packetDispatcher = new InterServerCommunicationPacketDispatcher(
+          this.remoteConnectionData,
+          this.serviceDataAccess.getServicePacketBufferManager(),
+          SERVICE_SPECIFICATIONS.getResponseDirections(),
+          this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
+    } else {
+      Thread.currentThread().interrupt();
+      LOGGER.error("Connection initiation failed. {}", this.remoteConnectionData);
+    }
   }
 
   @Override
@@ -130,7 +135,7 @@ public class InterServerCommunicationService extends ServiceBase {
         LOGGER.info("Error while closing connection:\n{}", ioe.getLocalizedMessage());
       }
     }
-    this.serverConnectionDataManager.removeRemoteConnectionData(this.remoteConnectionData);
+    this.serverConnectionDataManager.removeServerConnection(this.remoteConnectionData);
 
     this.serviceDataAccess.getServicePacketBufferManager()
         .deregisterBuffer(getServiceType(), getServiceId(),
@@ -197,10 +202,13 @@ public class InterServerCommunicationService extends ServiceBase {
    */
   private void waitForServerSynchronization() {
     LOGGER.info("Waiting for server synchronization.");
-    while (this.serverConnectionDataManager.pendingConnectionStatus()) {
-      LOGGER.trace("Waiting for server synchronization.");
-      Thread.yield();
+    try {
+      this.serviceDataAccess.getServerSynchronizationManager().waitForClientSynchronization();
+    } catch (
+        InterruptedException e) {
+      throw new RuntimeException(e);
     }
+    LOGGER.info("Finished waiting for server synchronization.");
   }
 
   /**
@@ -272,8 +280,8 @@ public class InterServerCommunicationService extends ServiceBase {
     remotePacketBuffer.updateRemoteConnectionData(this.remoteConnectionData);
     this.remoteConnectionData.setRemoteServerConnector(remotePacketBuffer);
 
-    this.serverConnectionDataManager.addSynchronizedConnectionData(this.remoteConnectionData);
-    this.serverConnectionDataManager.removeRemoteConnectionData(currentRemoteConnectionData);
+    this.serverConnectionDataManager.addServerConnection(INITIATED, this.remoteConnectionData);
+    this.serverConnectionDataManager.removeServerConnection(currentRemoteConnectionData);
   }
 
   private void processPacket(final Packet nextPacket) {

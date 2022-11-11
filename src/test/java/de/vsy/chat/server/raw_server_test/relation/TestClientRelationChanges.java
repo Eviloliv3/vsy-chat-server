@@ -116,7 +116,8 @@ public class TestClientRelationChanges extends ServerTestBase {
 
   @Test
   void contactRelationAddMissingFail() {
-    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> Kontaktdaten fehlen/fehlerhaft -- gestartet");
+    LOGGER.info(
+        "Test: Kontakt hinzufuegen Fehlschlag --> Kontaktdaten fehlen/fehlerhaft -- gestartet");
     PacketContent content;
     final var clientOne = super.loginNextClient();
     final var clientData = clientOne.getCommunicatorData();
@@ -127,7 +128,8 @@ public class TestClientRelationChanges extends ServerTestBase {
     TestResponseSingleClient.checkErrorResponse(clientOne, getClientEntity(STANDARD_SERVER_ID),
         content,
         "Ungültige Kontaktanfrage. Fehlerhafte Kommunikatordaten: Es sind keine Kommunikatordaten vorhanden.");
-    LOGGER.info("Test: Kontakt hinzufuegen Fehlschlag --> Kontaktdaten fehlen/fehlerhaft -- beendet");
+    LOGGER.info(
+        "Test: Kontakt hinzufuegen Fehlschlag --> Kontaktdaten fehlen/fehlerhaft -- beendet");
   }
 
   @Test

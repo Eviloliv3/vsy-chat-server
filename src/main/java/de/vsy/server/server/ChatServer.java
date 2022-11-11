@@ -1,5 +1,6 @@
 package de.vsy.server.server;
 
+import static de.vsy.server.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
@@ -16,7 +17,7 @@ import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.server.server.data.access.HandlerAccessManager;
 import de.vsy.server.server.server_connection.ClientConnectionEstablisher;
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceControl;
@@ -127,7 +128,8 @@ public class ChatServer implements ClientServer {
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
     LOGGER.info("All sockets closed.");
 
-    if (this.serverDataModel.getServerConnectionDataManager().noLiveServers()) {
+    if (this.serverDataModel.getServerConnectionDataManager().getServerConnections(
+        INITIATED).isEmpty()) {
       this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();
       LOGGER.info("Last remaining registered server. Persisted client status will be removed.");
     }
@@ -190,9 +192,10 @@ public class ChatServer implements ClientServer {
     final TimerTask serviceMonitoring;
     this.serviceControl = new ServiceControl(this.serverDataModel,
         this.serverPersistentDataManager);
+    this.serviceControl.startInterServerConnector();
     this.serviceControl.startServices();
     serviceMonitoring = new ServiceHealthMonitor(this, this.serviceControl);
-    this.serviceMonitor.scheduleAtFixedRate(serviceMonitoring, 200, 500);
+    this.serviceMonitor.scheduleAtFixedRate(serviceMonitoring, 100, 500);
 
     /* Bereits registrierte Nutzer werden registriert */
     waitForPrecedingServerConnections();
@@ -227,26 +230,14 @@ public class ChatServer implements ClientServer {
   }
 
   private void waitForPrecedingServerConnections() {
-    final var connectionManager = this.serverDataModel.getServerConnectionDataManager();
+    LOGGER.info("Waiting for connection synchronization with existing servers started.");
 
-    if (!connectionManager.remoteConnectionsLive()) {
-      final var waitingStart = System.nanoTime();
-      final var maxWait = TimeUnit.SECONDS.convert(10, TimeUnit.NANOSECONDS);
-
-      do {
-        if (waitingStart + maxWait > System.nanoTime()) {
-          LOGGER.info("Waiting for active server connections.");
-          Thread.yield();
-        } else {
-          LOGGER.error("Active server connection initiation took more than {} seconds.",
-              TimeUnit.SECONDS);
-          this.shutdownServer();
-        }
-      } while (!connectionManager.remoteConnectionsLive());
-      LOGGER.info("No connections established.");
-    } else {
-      LOGGER.info("No remote connections to await.");
+    try {
+      this.serverDataModel.getServerConnectionDataManager().waitForUninitiatedConnections();
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
+    LOGGER.info("Connection synchronization with existing servers finished.");
   }
 
   /**
@@ -258,8 +249,7 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Remote client states will be loaded.");
 
     final var clientSubscriptions = this.serverDataModel.getClientCategorySubscriptionManager();
-    final var remoteSynchronizedServerIds = this.serverDataModel.getServerConnectionDataManager()
-        .getAllSynchronizedRemoteServers();
+    final var remoteSynchronizedServerIds = this.serverDataModel.getServerConnectionDataManager().getServerConnections(INITIATED);
     final var activeClients = this.serverPersistentDataManager.getClientStateAccessManager()
         .getAllActiveClientStates();
 
@@ -289,7 +279,7 @@ public class ChatServer implements ClientServer {
         }
       }
     }
-    this.serverDataModel.getServerConnectionDataManager().endPendingState();
+    this.serverDataModel.getServerSynchronizationManager().clientSynchronizationComplete();
     LOGGER.info("Remote client states loaded.");
   }
 

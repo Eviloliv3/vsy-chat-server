@@ -1,4 +1,4 @@
-package de.vsy.server.server.server_connection;
+package de.vsy.server.server.data.socketConnection;
 
 import java.io.IOException;
 import java.net.ServerSocket;

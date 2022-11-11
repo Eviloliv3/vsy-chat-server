@@ -8,7 +8,9 @@ import java.net.Socket;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-/** @author Frederic Heath */
+/**
+ * @author Frederic Heath
+ */
 class ServerConnectionTest {
 
   @Test

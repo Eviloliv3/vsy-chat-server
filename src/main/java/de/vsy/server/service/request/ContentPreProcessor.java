@@ -3,7 +3,7 @@ package de.vsy.server.service.request;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
 
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;

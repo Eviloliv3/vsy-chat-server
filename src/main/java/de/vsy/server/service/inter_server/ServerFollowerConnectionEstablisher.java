@@ -2,7 +2,8 @@ package de.vsy.server.service.inter_server;
 
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -17,11 +18,11 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final ExecutorService acceptingThread;
-  private final ServerConnectionDataManager serverConnectionManager;
+  private final SocketConnectionDataManager serverConnectionManager;
   private final InterServerCommunicationServiceCreator serviceCreator;
 
   public ServerFollowerConnectionEstablisher(
-      final ServerConnectionDataManager serverConnectionManager,
+      final SocketConnectionDataManager serverConnectionManager,
       final InterServerCommunicationServiceCreator serviceCreator) {
 
     this.acceptingThread = newSingleThreadExecutor();
@@ -40,11 +41,14 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       final var followerSocket = acceptFollowerConnection(watchedSocket);
 
       if (followerSocket != null && !followerSocket.isClosed()) {
-        this.serviceCreator.createInterServerService(true, followerSocket);
+        final var remoteServerConnection = RemoteServerConnectionData.valueOf(
+            followerSocket.getLocalPort(), true, followerSocket);
+        // TODO fuege hier neue verbindung den inaktiven verbindungen hinzu
+        this.serviceCreator.startInterServerCommThread();
       }
     }
 
-    try{
+    try {
       this.acceptingThread.shutdownNow();
       this.acceptingThread.awaitTermination(1, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {

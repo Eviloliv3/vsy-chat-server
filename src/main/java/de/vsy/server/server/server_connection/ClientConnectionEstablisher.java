@@ -3,6 +3,7 @@ package de.vsy.server.server.server_connection;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import de.vsy.server.server.ClientServer;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;

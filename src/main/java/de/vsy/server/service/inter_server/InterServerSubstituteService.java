@@ -11,7 +11,7 @@ import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.server.data.access.ServerCommunicationServiceDataProvider;
-import de.vsy.server.server.server_connection.RemoteServerConnectionData;
+import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;

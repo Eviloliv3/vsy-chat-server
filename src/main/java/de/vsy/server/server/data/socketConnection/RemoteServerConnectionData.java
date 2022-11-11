@@ -1,4 +1,4 @@
-package de.vsy.server.server.server_connection;
+package de.vsy.server.server.data.socketConnection;
 
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;

@@ -1,6 +1,6 @@
 package de.vsy.server.server.data.access;
 
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**

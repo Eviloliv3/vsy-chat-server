@@ -1,5 +1,6 @@
 package de.vsy.chat.server.thread_stop;
 
+import static de.vsy.server.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
@@ -7,11 +8,10 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.server.server.data.access.ServiceDataAccessManager;
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
-import de.vsy.server.server.server_connection.RemoteServerConnectionData;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.service.ServiceControl;
 import de.vsy.server.service.inter_server.InterServerCommunicationService;
-import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
 import de.vsy.server.service.inter_server.ServerFollowerConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
 import de.vsy.server.service.status_synchronization.ClientStatusSynchronizationService;
@@ -78,7 +78,7 @@ class TestServiceNotStopping {
       var sasdfasdf = new ConnectionThreadControl(client, asdf);
 
       try (var connectionSocket = future.get()) {
-        serverData.getServerConnectionDataManager().addNotSynchronizedConnectionData(
+        serverData.getServerConnectionDataManager().addServerConnection(UNINITIATED,
             RemoteServerConnectionData.valueOf(123, true, connectionSocket));
         var test = new Thread(new InterServerCommunicationService(serviceAccess));
         test.start();
@@ -116,8 +116,7 @@ class TestServiceNotStopping {
     serverData.getServerConnectionDataManager().addServerReceptionConnectionData(conn);
     var test = new Thread(
         new ServerFollowerConnectionEstablisher(serverData.getServerConnectionDataManager(),
-            new InterServerSocketConnectionEstablisher(serverData.getServerConnectionDataManager(),
-                new ServiceControl(serverData, serverPersistentDataManager))));
+            new ServiceControl(serverData, serverPersistentDataManager)));
     test.start();
     Thread.sleep(1000);
     test.interrupt();

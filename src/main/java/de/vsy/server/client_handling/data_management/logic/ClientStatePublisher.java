@@ -1,5 +1,6 @@
 package de.vsy.server.client_handling.data_management.logic;
 
+import static de.vsy.server.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.Set.of;
@@ -8,7 +9,7 @@ import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
@@ -18,7 +19,7 @@ import de.vsy.shared_transmission.shared_transmission.packet.content.relation.El
 
 public class ClientStatePublisher implements ClientStateListener {
 
-  private static ServerConnectionDataManager serverConnectionNodes;
+  private static SocketConnectionDataManager serverConnectionNodes;
   private final LocalClientDataProvider clientDataManager;
   private final ContactListDAO contactListAccess;
   private final PacketDispatcher dispatcher;
@@ -31,7 +32,7 @@ public class ClientStatePublisher implements ClientStateListener {
   }
 
   public static void setupStaticServerDataAccess(
-      final ServerConnectionDataManager serverConnectionDataManager) {
+      final SocketConnectionDataManager serverConnectionDataManager) {
     serverConnectionNodes = serverConnectionDataManager;
   }
 
@@ -91,7 +92,8 @@ public class ClientStatePublisher implements ClientStateListener {
   private int getRemoteServerIdIfExistent() {
     int remoteServerId = STANDARD_SERVER_ID;
     final var localServerId = serverConnectionNodes.getLocalServerConnectionData().getServerId();
-    final var remoteServerNode = serverConnectionNodes.getDistinctNodeData(of(localServerId));
+    final var remoteServerNode = serverConnectionNodes.getDistinctNodeData(INITIATED,
+        of(localServerId));
 
     if (remoteServerNode != null) {
       remoteServerId = remoteServerNode.getServerId();

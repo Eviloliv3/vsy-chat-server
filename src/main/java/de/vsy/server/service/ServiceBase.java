@@ -4,7 +4,8 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_SERVER_ROUTE_VALUE;
 
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +28,11 @@ public abstract class ServiceBase implements Service {
   /**
    * Flag signalisiert dem Aufrufer des Service, dass dieser Einsatzbereit ist.
    */
-  private volatile boolean serviceReadyState = false;
+  private final CountDownLatch serviceReadyState;
+
+  {
+    serviceReadyState = new CountDownLatch(1);
+  }
 
   /**
    * Instantiates a new service base.
@@ -48,8 +53,8 @@ public abstract class ServiceBase implements Service {
   }
 
   @Override
-  public final boolean getReadyState() {
-    return serviceReadyState;
+  public final void waitForServiceReadiness() throws InterruptedException {
+    serviceReadyState.await();
   }
 
   @Override
@@ -129,6 +134,6 @@ public abstract class ServiceBase implements Service {
    * Sets the ready state.
    */
   protected final void setReadyState() {
-    this.serviceReadyState = true;
+    this.serviceReadyState.countDown();
   }
 }

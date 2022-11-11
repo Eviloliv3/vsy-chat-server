@@ -5,7 +5,8 @@ package de.vsy.server.server.data.access;
 
 import de.vsy.server.persistent_data.server_data.CommunicatorPersistenceDAO;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.ServerSynchronizationManager;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
@@ -25,9 +26,10 @@ public interface ServerCommunicationServiceDataProvider extends ServiceBaseDataP
    *
    * @return the server connection dataManagement
    */
-  ServerConnectionDataManager getServerConnectionDataManager();
+  SocketConnectionDataManager getServerConnectionDataManager();
 
   ServicePacketBufferManager getServicePacketBufferManager();
 
   CommunicatorPersistenceDAO getCommunicatorDataAccessor();
+
 }

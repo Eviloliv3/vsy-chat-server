@@ -8,6 +8,7 @@ import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.server.server.data.access.ServiceDataAccessManager;
 import de.vsy.server.service.Service.TYPE;
 import de.vsy.server.service.inter_server.InterServerCommunicationService;
+import de.vsy.server.service.inter_server.InterServerCommunicationServiceCreator;
 import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
 import de.vsy.server.service.status_synchronization.ClientStatusSynchronizationService;
@@ -18,12 +19,12 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ServiceControl {
+public class ServiceControl implements InterServerCommunicationServiceCreator {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final Map<Service.TYPE, Set<Thread>> registeredServices;
   private InterServerSocketConnectionEstablisher interServerConnectionEstablisher;
-  private ServiceDataAccessManager serviceDataModel;
+  private final ServiceDataAccessManager serviceDataModel;
 
   /**
    * Instantiates a new service control.
@@ -71,11 +72,21 @@ public class ServiceControl {
   public void startServices() {
     startAssignmentThread();
     startClientStatusSynchronizationThread();
-    startInterServerConnector();
+    startInterServerCommServices();
   }
 
-  private void startInterServerConnector() {
+  private void startInterServerCommServices() {
+    var remoteConnections = this.serviceDataModel.getServerConnectionDataManager();
+
+    while(remoteConnections.uninitiatedConnectionsRemaining()){
+      startInterServerCommThread();
+    }
+
+  }
+
+  public void startInterServerConnector() {
     this.interServerConnectionEstablisher = new InterServerSocketConnectionEstablisher(
+        this.serviceDataModel.getServerSynchronizationManager(),
         this.serviceDataModel.getServerConnectionDataManager(), this);
     interServerConnectionEstablisher.establishConnections();
   }
@@ -110,10 +121,11 @@ public class ServiceControl {
     newServiceThread.start();
     this.registeredServices.put(newService.getServiceType(), sameTypeServices);
 
-    do {
-      Thread.yield();
-    } while (newServiceThread.isAlive() && !newService.getReadyState() && !Thread.currentThread()
-        .isInterrupted());
+    try{
+      newService.waitForServiceReadiness();
+    }catch(InterruptedException ie){
+      LOGGER.error("Interrupted while waiting for readiness: {}:", newService.getServiceName());
+    }
   }
 
   /**
@@ -136,10 +148,11 @@ public class ServiceControl {
         LOGGER.info("Service termination initiated: {}", currentService.getName());
         currentService.interrupt();
 
-        do {
-          LOGGER.info("Still waiting for {} to terminate.", threadName);
-          Thread.yield();
-        } while (currentService.isAlive());
+        try {
+          currentService.join(500);
+        } catch (InterruptedException e) {
+          LOGGER.error("Service shutdown failed.", e);
+        }
         LOGGER.info("{} terminated.", threadName);
       }
     }
@@ -172,12 +185,5 @@ public class ServiceControl {
       }
     }
     return false;
-  }
-
-  /**
-   * Sets the up service dataManagement manager.
-   */
-  private void setupServiceDataManager(final ServiceDataAccessManager serviceDataManager) {
-    this.serviceDataModel = serviceDataManager;
   }
 }

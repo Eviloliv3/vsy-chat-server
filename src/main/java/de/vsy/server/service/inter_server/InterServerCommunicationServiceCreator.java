@@ -1,8 +1,6 @@
 package de.vsy.server.service.inter_server;
 
-import java.net.Socket;
+public interface InterServerCommunicationServiceCreator {
 
-interface InterServerCommunicationServiceCreator {
-
-  void createInterServerService(final boolean isLeader, final Socket remoteServerConnection);
+  void startInterServerCommThread();
 }

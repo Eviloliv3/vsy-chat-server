@@ -5,8 +5,9 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.ServerSynchronizationManager;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
@@ -19,9 +20,10 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
   private final CommunicatorPersistenceDAO clientRegistry;
   private final LiveClientStateDAO persistenClientStates;
   private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
-  private final ServerConnectionDataManager serverConnectionDataManager;
+  private final SocketConnectionDataManager serverConnectionDataManager;
   private final AbstractPacketCategorySubscriptionManager serverSubscriptionManager;
   private final ServicePacketBufferManager serviceBuffers;
+  private final ServerSynchronizationManager serverSynchronizationManager;
 
   /**
    * Instantiates a new registration dataManagement manager.
@@ -37,6 +39,7 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
     this.serverConnectionDataManager = serverDataAccess.getServerConnectionDataManager();
     this.serverSubscriptionManager = serverDataAccess.getServiceSubscriptionManager();
     this.serviceBuffers = serverDataAccess.getServicePacketBufferManager();
+    this.serverSynchronizationManager = serverDataAccess.getServerSynchronizationManager();
   }
 
   @Override
@@ -50,7 +53,7 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
   }
 
   @Override
-  public ServerConnectionDataManager getServerConnectionDataManager() {
+  public SocketConnectionDataManager getServerConnectionDataManager() {
     return this.serverConnectionDataManager;
   }
 
@@ -77,5 +80,10 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
   @Override
   public LocalServerConnectionData getLocalServerConnectionData() {
     return this.serverConnectionDataManager.getLocalServerConnectionData();
+  }
+
+  @Override
+  public ServerSynchronizationManager getServerSynchronizationManager(){
+    return this.serverSynchronizationManager;
   }
 }

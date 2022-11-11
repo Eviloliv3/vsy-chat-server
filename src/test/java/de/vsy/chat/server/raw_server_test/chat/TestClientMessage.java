@@ -92,9 +92,9 @@ public class TestClientMessage extends ServerTestBase {
 
     if (connection != null) {
       connection.setClientData(credentials, null);
-      if(connection.tryClientLogin()) {
+      if (connection.tryClientLogin()) {
         return connection;
-      }else{
+      } else {
         connection.setClientData(null, null);
       }
     } else {

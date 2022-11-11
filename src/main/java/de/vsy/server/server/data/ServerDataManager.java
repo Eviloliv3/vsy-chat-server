@@ -3,8 +3,7 @@
  */
 package de.vsy.server.server.data;
 
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
@@ -12,7 +11,8 @@ import de.vsy.server.service.ServicePacketBufferManager;
  */
 public class ServerDataManager {
 
-  private final ServerConnectionDataManager serverNodeManager;
+  private final ServerSynchronizationManager serverSynchronization;
+  private final SocketConnectionDataManager serverNodeManager;
   private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
   private final AbstractPacketCategorySubscriptionManager serviceSubscriptionManager;
   private final ServicePacketBufferManager servicePacketBufferManager;
@@ -21,13 +21,14 @@ public class ServerDataManager {
    * Instantiates a new server dataManagement manager.
    */
   public ServerDataManager(final LocalServerConnectionData localServerConnectionData) {
-    this.serverNodeManager = new ServerConnectionDataManager(localServerConnectionData);
     this.clientSubscriptionManager = new ClientSubscriptionManager();
     this.serviceSubscriptionManager = new ServiceSubscriptionManager();
     this.servicePacketBufferManager = new ServicePacketBufferManager();
+    this.serverNodeManager = new SocketConnectionDataManager(localServerConnectionData);
+    this.serverSynchronization = new ServerSynchronizationManager(this.serverNodeManager);
   }
 
-  public ServerConnectionDataManager getServerConnectionDataManager() {
+  public SocketConnectionDataManager getServerConnectionDataManager() {
     return this.serverNodeManager;
   }
 
@@ -41,5 +42,9 @@ public class ServerDataManager {
 
   public AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager() {
     return this.serviceSubscriptionManager;
+  }
+
+  public ServerSynchronizationManager getServerSynchronizationManager(){
+    return this.serverSynchronization;
   }
 }

@@ -1,11 +1,13 @@
 package de.vsy.server.service.inter_server;
 
+import static de.vsy.server.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import de.vsy.server.server.data.ConnectionSpecifications;
-import de.vsy.server.server.server_connection.LocalServerConnectionData;
-import de.vsy.server.server.server_connection.RemoteServerConnectionData;
-import de.vsy.server.server.server_connection.ServerConnectionDataManager;
+import de.vsy.server.server.data.ServerSynchronizationManager;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.service.ServiceControl;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,27 +17,38 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class InterServerSocketConnectionEstablisher implements
-    InterServerCommunicationServiceCreator {
+public class InterServerSocketConnectionEstablisher {
 
   private static final Logger LOGGER = LogManager.getLogger();
+  private final ServerSynchronizationManager serverSynchronization;
   private final ExecutorService establishingThread;
   private final ServiceControl serviceControl;
-  private final ServerConnectionDataManager serverConnectionDataManager;
+  private final SocketConnectionDataManager serverConnectionDataManager;
   private ServerSocket localMasterSocket;
 
   public InterServerSocketConnectionEstablisher(
-      final ServerConnectionDataManager serverConnectionDataManager,
+      final ServerSynchronizationManager serverSynchronization,
+      final SocketConnectionDataManager serverConnectionDataManager,
       final ServiceControl serviceControl) {
+    this.serverSynchronization = serverSynchronization;
     this.serverConnectionDataManager = serverConnectionDataManager;
     this.serviceControl = serviceControl;
     this.establishingThread = newSingleThreadExecutor();
   }
 
+  /**
+   * ChatServer laesst InterServerSocketConnectionEstablisher laden → Liveserver werden synchron
+   * geladen, Verbindung aber asynchron initialisiert und synchronisiert =>
+   * InterServerCommunicationService wartet nach Initialisierung auf Laden entfernter Kontakte →
+   * ChatServer wartet auf Initialisierung von entfernten Verbindungen ChatServer laedt entfernt
+   * verbundene Kontakte
+   * <p>
+   * - Problem: Liveserversockets werden synchron hinzugefuegt, aber asynchron entfernt → in
+   * separates Set im connectToAllOperableServers hinzufuegen und dann pruefen → wo?
+   */
   public void establishConnections() {
     setupServerSocket();
     connectToAllOperableServers();
-
     startFollowerConnections();
   }
 
@@ -69,8 +82,10 @@ public class InterServerSocketConnectionEstablisher implements
       if (testPort != localMasterPort) {
 
         try {
-          final var s = new Socket(hostname, testPort);
-          createInterServerService(false, s);
+          final var remoteServer = new Socket(hostname, testPort);
+          this.serverConnectionDataManager.addServerConnection(UNINITIATED,
+              RemoteServerConnectionData
+                  .valueOf(remoteServer.getLocalPort(), false, remoteServer));
         } catch (IOException e) {
           LOGGER.error(
               "Remote connection to {}:{} failed",
@@ -82,21 +97,13 @@ public class InterServerSocketConnectionEstablisher implements
 
   private void startFollowerConnections() {
     final var followerConnectionEstablisher = new ServerFollowerConnectionEstablisher(
-        this.serverConnectionDataManager, this);
+        this.serverConnectionDataManager, serviceControl);
     this.establishingThread.submit(followerConnectionEstablisher);
-  }
-
-  @Override
-  public void createInterServerService(final boolean isLeader,
-      final Socket remoteServerConnection) {
-    this.serverConnectionDataManager.addNotSynchronizedConnectionData(RemoteServerConnectionData
-        .valueOf(remoteServerConnection.getLocalPort(), isLeader, remoteServerConnection));
-    this.serviceControl.startInterServerCommThread();
   }
 
   public void stopEstablishingConnections() {
     this.establishingThread.shutdownNow();
-    try{
+    try {
       this.establishingThread.awaitTermination(5, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);

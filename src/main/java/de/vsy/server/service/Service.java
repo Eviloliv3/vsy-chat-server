@@ -13,7 +13,7 @@ public interface Service extends Runnable {
    *
    * @return the ready state
    */
-  boolean getReadyState();
+  void waitForServiceReadiness() throws InterruptedException;
 
   /**
    * Gets the service name.
