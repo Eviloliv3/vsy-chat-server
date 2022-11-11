@@ -1,9 +1,11 @@
 package de.vsy.server.service.inter_server;
 
+import static de.vsy.server.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server.data.SocketConnectionDataManager;
+import de.vsy.server.server.data.socketConnection.SocketConnectionState;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,7 +45,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       if (followerSocket != null && !followerSocket.isClosed()) {
         final var remoteServerConnection = RemoteServerConnectionData.valueOf(
             followerSocket.getLocalPort(), true, followerSocket);
-        // TODO fuege hier neue verbindung den inaktiven verbindungen hinzu
+        this.serverConnectionManager.addServerConnection(UNINITIATED, remoteServerConnection);
         this.serviceCreator.startInterServerCommThread();
       }
     }
