@@ -87,6 +87,12 @@ public class InterServerCommunicationService extends ServiceBase {
   @Override
   public void finishSetup() {
     this.remoteConnectionData = this.serverConnectionDataManager.getNextSocketConnectionToInitiate();
+
+    if (this.remoteConnectionData == null){
+      Thread.currentThread().interrupt();
+      LOGGER.error("No connection data found. {} interrupt flag set.", Thread.currentThread().getName());
+      return;
+    }
     this.validator = new SimplePacketChecker(
         ServerPacketTypeValidationCreator.createRegularServerPacketContentValidator());
     this.localInterruptor = this::interruptionConditionNotMet;

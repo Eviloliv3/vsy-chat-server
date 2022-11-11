@@ -73,17 +73,17 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
       otherStates.remove(state);
 
       for (var currentState : otherStates) {
-        final var currentConnectionSet = this.remoteServerConnections.get(currentState);
-        currentConnectionSet.remove(connection);
+
+        if(this.remoteServerConnections.get(currentState).remove(connection))
+          break;
       }
 
-      if (this.remoteServerConnections.get(UNINITIATED).isEmpty()) {
-        this.noUninitiated.signal();
-      }else if (!connectionQueue.contains(connection)){
+      if (!connectionQueue.contains(connection))
         return connectionQueue.add(connection);
-      }
       return false;
     } finally {
+      if (this.remoteServerConnections.get(UNINITIATED).isEmpty())
+        this.noUninitiated.signal();
       this.lock.writeLock().unlock();
     }
   }
