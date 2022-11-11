@@ -185,13 +185,13 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   @Override
   public void waitForUninitiatedConnections() throws InterruptedException {
     try {
-      this.lock.readLock().lock();
+      this.lock.writeLock().lock();
       while(this.remoteServerConnections.get(UNINITIATED).isEmpty() &&
           !Thread.currentThread().isInterrupted()) {
         this.noUninitiated.await();
       }
     } finally {
-      this.lock.readLock().unlock();
+      this.lock.writeLock().unlock();
     }
   }
 }
