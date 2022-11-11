@@ -191,7 +191,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   public void waitForUninitiatedConnections() throws InterruptedException {
     try {
       this.lock.writeLock().lock();
-      while(this.remoteServerConnections.get(UNINITIATED).isEmpty() &&
+      while(!this.remoteServerConnections.get(UNINITIATED).isEmpty() &&
           !Thread.currentThread().isInterrupted()) {
         this.noUninitiated.await();
       }

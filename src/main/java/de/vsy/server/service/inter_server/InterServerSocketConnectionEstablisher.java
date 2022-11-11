@@ -96,8 +96,8 @@ public class InterServerSocketConnectionEstablisher {
               hostname, testPort);
         }
       }
-      LOGGER.info("Finished establishing connections with preexisting chat servers.");
     }
+    LOGGER.info("Finished establishing connections with preexisting chat servers.");
   }
 
   private void startFollowerConnections() {
