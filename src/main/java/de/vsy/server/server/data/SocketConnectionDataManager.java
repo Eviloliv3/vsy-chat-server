@@ -78,7 +78,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
       }
 
       if (this.remoteServerConnections.get(UNINITIATED).isEmpty()) {
-        this.noUninitiated.notify();
+        this.noUninitiated.signal();
       }else if (!connectionQueue.contains(connection)){
         return connectionQueue.add(connection);
       }
