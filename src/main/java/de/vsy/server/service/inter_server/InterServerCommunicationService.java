@@ -91,6 +91,7 @@ public class InterServerCommunicationService extends ServiceBase {
     if (this.remoteConnectionData == null){
       Thread.currentThread().interrupt();
       LOGGER.error("No connection data found. {} interrupt flag set.", Thread.currentThread().getName());
+      setReadyState();
       return;
     }
     this.validator = new SimplePacketChecker(
