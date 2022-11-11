@@ -69,7 +69,7 @@ public abstract class ServiceBase implements Service {
 
   @Override
   public void run() {
-    this.setupThreadContext();
+    setupThreadContext();
     LOGGER.info("{} started.", this.getServiceName());
 
     finishSetup();
@@ -81,8 +81,8 @@ public abstract class ServiceBase implements Service {
 
     LOGGER.info("{} termination initiated.", this.getServiceName());
     breakDown();
-    this.clearThreadContext();
     LOGGER.info("{} terminated.", getServiceName());
+    clearThreadContext();
   }
 
   protected void setupThreadContext() {
