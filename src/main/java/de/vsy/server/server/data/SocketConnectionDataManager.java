@@ -4,18 +4,22 @@ import static de.vsy.server.server.data.socketConnection.SocketConnectionState.I
 import static de.vsy.server.server.data.socketConnection.SocketConnectionState.PENDING;
 import static de.vsy.server.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static java.util.Arrays.asList;
-import static java.util.Set.copyOf;
+import static java.util.List.copyOf;
 
 import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server.data.socketConnection.ServerConnectionDataProvider;
 import de.vsy.server.server.data.socketConnection.SocketConnectionState;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -29,14 +33,14 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   private final ReadWriteLock lock;
   private final Condition noUninitiated;
   private final LocalServerConnectionData clientReceptionConnectionData;
-  private final Map<SocketConnectionState, Set<RemoteServerConnectionData>> remoteServerConnections;
+  private final Map<SocketConnectionState, Queue<RemoteServerConnectionData>> remoteServerConnections;
   private LocalServerConnectionData serverReceptionConnectionData;
 
   {
     this.remoteServerConnections = new EnumMap<>(SocketConnectionState.class);
-    this.remoteServerConnections.put(INITIATED, new LinkedHashSet<>());
-    this.remoteServerConnections.put(PENDING, new LinkedHashSet<>());
-    this.remoteServerConnections.put(UNINITIATED, new LinkedHashSet<>());
+    this.remoteServerConnections.put(INITIATED, new LinkedList<>());
+    this.remoteServerConnections.put(PENDING, new LinkedList<>());
+    this.remoteServerConnections.put(UNINITIATED, new LinkedList<>());
   }
 
   public SocketConnectionDataManager(LocalServerConnectionData clientReceptionConnectionData) {
@@ -63,7 +67,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
       final RemoteServerConnectionData connection) {
     try {
       this.lock.writeLock().lock();
-      var connectionSet = this.remoteServerConnections.get(state);
+      var connectionQueue = this.remoteServerConnections.get(state);
       Set<SocketConnectionState> otherStates = new HashSet<>(
           asList(SocketConnectionState.values()));
       otherStates.remove(state);
@@ -75,8 +79,10 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
       if (this.remoteServerConnections.get(UNINITIATED).isEmpty()) {
         this.noUninitiated.notify();
+      }else if (!connectionQueue.contains(connection)){
+        return connectionQueue.add(connection);
       }
-      return connectionSet.add(connection);
+      return false;
     } finally {
       this.lock.writeLock().unlock();
     }
@@ -113,18 +119,13 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   public RemoteServerConnectionData getNextSocketConnectionToInitiate() {
     try {
       this.lock.readLock().lock();
-      final var uninitiatedConnections = this.remoteServerConnections.get(UNINITIATED);
-      if (uninitiatedConnections.isEmpty()) {
-        return null;
-      } else {
-        return uninitiatedConnections.iterator().next();
-      }
+      return this.remoteServerConnections.get(UNINITIATED).peek();
     } finally {
       this.lock.readLock().unlock();
     }
   }
 
-  public Set<RemoteServerConnectionData> getServerConnections(SocketConnectionState state) {
+  public Collection<RemoteServerConnectionData> getServerConnections(SocketConnectionState state) {
     try {
       this.lock.readLock().lock();
       return copyOf(this.remoteServerConnections.get(state));

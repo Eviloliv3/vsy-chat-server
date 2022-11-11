@@ -249,13 +249,13 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Remote client states will be loaded.");
 
     final var clientSubscriptions = this.serverDataModel.getClientCategorySubscriptionManager();
-    final var remoteSynchronizedServerIds = this.serverDataModel.getServerConnectionDataManager().getServerConnections(INITIATED);
+    final var synchronizedConnections = this.serverDataModel.getServerConnectionDataManager().getServerConnections(INITIATED);
     final var activeClients = this.serverPersistentDataManager.getClientStateAccessManager()
         .getAllActiveClientStates();
 
     if (!activeClients.isEmpty()) {
 
-      for (final var remoteServerData : remoteSynchronizedServerIds) {
+      for (final var remoteServerData : synchronizedConnections) {
         final var remoteServerId = remoteServerData.getServerId();
         final var remoteServerBuffer = remoteServerData.getRemoteServerBuffer();
 
