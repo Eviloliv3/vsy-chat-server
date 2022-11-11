@@ -53,6 +53,7 @@ public class InterServerSocketConnectionEstablisher {
   }
 
   private void setupServerSocket() {
+    LOGGER.info("Trying to setup ServerSocket for inter server connection purposes.");
     LocalServerConnectionData serverReceptionConnection;
     var masterSocketPort = ConnectionSpecifications.getTransserverport();
 
@@ -68,9 +69,11 @@ public class InterServerSocketConnectionEstablisher {
     serverReceptionConnection = LocalServerConnectionData.valueOf(masterSocketPort,
         this.localMasterSocket);
     this.serverConnectionDataManager.addServerReceptionConnectionData(serverReceptionConnection);
+    LOGGER.info("Done setting up ServerSocket for inter server connection purposes.");
   }
 
   private void connectToAllOperableServers() {
+    LOGGER.info("Trying to establish connections with preexisting chat servers.");
     final var interServerPort = ConnectionSpecifications.getTransserverport();
     final var hostname = ConnectionSpecifications.getHostname();
     final var localMasterPort = this.localMasterSocket.getLocalPort();
@@ -86,29 +89,33 @@ public class InterServerSocketConnectionEstablisher {
           this.serverConnectionDataManager.addServerConnection(UNINITIATED,
               RemoteServerConnectionData
                   .valueOf(remoteServer.getLocalPort(), false, remoteServer));
+          LOGGER.info("Remote connection established: {}:{}.", hostname, testPort);
         } catch (IOException e) {
-          LOGGER.error(
+          LOGGER.warn(
               "Remote connection to {}:{} failed",
               hostname, testPort);
         }
       }
+      LOGGER.info("Finished establishing connections with preexisting chat servers.");
     }
   }
 
   private void startFollowerConnections() {
+    LOGGER.info("ServerConnectionEstablisher thread initiated.");
     final var followerConnectionEstablisher = new ServerFollowerConnectionEstablisher(
         this.serverConnectionDataManager, serviceControl);
     this.establishingThread.submit(followerConnectionEstablisher);
   }
 
   public void stopEstablishingConnections() {
+    LOGGER.info("ServerConnectionEstablisher thread termination initiated.");
     this.establishingThread.shutdownNow();
     try {
       this.establishingThread.awaitTermination(5, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-    LOGGER.info("FollowerAcceptor Thread terminated.");
+    LOGGER.info("ServerConnectionEstablisher thread terminated.");
   }
 
   public boolean isEstablishingConnections() {
