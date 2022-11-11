@@ -119,7 +119,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   public RemoteServerConnectionData getNextSocketConnectionToInitiate() {
     try {
       this.lock.readLock().lock();
-      return this.remoteServerConnections.get(UNINITIATED).peek();
+      return this.remoteServerConnections.get(UNINITIATED).remove();
     } finally {
       this.lock.readLock().unlock();
     }
