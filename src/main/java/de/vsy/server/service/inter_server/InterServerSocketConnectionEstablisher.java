@@ -62,7 +62,7 @@ public class InterServerSocketConnectionEstablisher {
       try {
         this.localMasterSocket = new ServerSocket(masterSocketPort);
       } catch (IOException e) {
-        LOGGER.error("Inter ServerSocket could not be created on Port {}.",
+        LOGGER.error("InterServerSocket could not be created on Port {}.",
             masterSocketPort);
       }
     } while (this.localMasterSocket == null);

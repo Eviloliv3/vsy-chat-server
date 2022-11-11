@@ -15,7 +15,6 @@ public class ServerSynchronizationManager {
   }
 
   public void waitForClientSynchronization() throws InterruptedException {
-
       this.clientSynchronization.await();
   }
 

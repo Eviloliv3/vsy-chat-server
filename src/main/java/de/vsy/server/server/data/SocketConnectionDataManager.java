@@ -102,7 +102,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
         }
       }
     } finally {
-      this.lock.writeLock().lock();
+      this.lock.writeLock().unlock();
     }
     return connectionRemoved;
   }

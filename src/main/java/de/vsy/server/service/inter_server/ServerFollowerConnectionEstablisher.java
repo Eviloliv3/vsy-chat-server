@@ -52,7 +52,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
 
     try {
       this.acceptingThread.shutdownNow();
-      this.acceptingThread.awaitTermination(1, TimeUnit.MILLISECONDS);
+      this.acceptingThread.awaitTermination(100, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
