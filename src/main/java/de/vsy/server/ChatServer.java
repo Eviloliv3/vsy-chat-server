@@ -32,6 +32,7 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -97,11 +98,18 @@ public class ChatServer implements ClientServer {
     setupAndStartServices();
   }
 
-  public void serve() {
+  public void serve()  {
     prepareServer();
     clientConnectionEstablisher = new ClientConnectionEstablisher(
         this.serverDataModel.getServerConnectionDataManager().getLocalServerConnectionData(), this);
-    clientConnectionEstablisher.acceptClientConnections();
+    ExecutorService s = Executors.newSingleThreadExecutor();
+    s.submit(clientConnectionEstablisher::acceptClientConnections);
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+    System.exit(0);
   }
 
   /**

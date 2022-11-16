@@ -34,7 +34,6 @@ public class ClientConnectionEstablisher {
             this.server.serveClient(clientConnectionSocket);
           }
         } catch (IOException ioe) {
-          Thread.currentThread().interrupt();
           LOGGER.error("{} occurred while waiting for a new client connection -> {}",
               ioe.getClass().getSimpleName(), ioe.getMessage());
           break;
