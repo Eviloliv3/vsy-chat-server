@@ -8,10 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
-public class ServerInterruptibleWhileDebugging extends ChatServer implements Runnable{
+public class ServerInterruptibleWhileDebugging extends ChatServer implements Runnable {
+
   private static final Logger LOGGER = LogManager.getLogger();
 
-  public static void main(String[] args){
+  public static void main(String[] args) {
     Thread serverThread = new Thread(new ServerInterruptibleWhileDebugging());
     Thread serverInterruptor = new Thread(new ThreadContextRunnable() {
       @Override
@@ -22,7 +23,8 @@ public class ServerInterruptibleWhileDebugging extends ChatServer implements Run
           throw new RuntimeException(e);
         }
         serverThread.interrupt();
-        System.out.println("Deed is done.");}
+        System.out.println("Deed is done.");
+      }
 
     }
     );

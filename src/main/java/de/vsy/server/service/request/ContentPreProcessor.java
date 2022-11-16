@@ -5,26 +5,23 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_C
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 
 public class ContentPreProcessor implements PublishablePacketCreator {
 
-  private final LocalServerConnectionData localServerData;
   private final ExtendedClientStatusPreProcessor extendedStatusProcessor;
 
   public ContentPreProcessor(final LocalServerConnectionData localServerData,
       AbstractPacketCategorySubscriptionManager clientSubscriptions,
       OutputBuffer assignmentBuffer) {
-    this.localServerData = localServerData;
     extendedStatusProcessor = new ExtendedClientStatusPreProcessor(clientSubscriptions,
         assignmentBuffer);
   }
 
   @Override
-  public Packet handleDistributableContent(Packet input) throws PacketProcessingException {
+  public Packet handleDistributableContent(Packet input) {
     Packet processedPacket = null;
 
     if (isLocalBroadcast(input)

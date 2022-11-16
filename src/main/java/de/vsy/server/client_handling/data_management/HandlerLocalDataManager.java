@@ -92,7 +92,6 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
     return this.clientDataManager;
   }
 
-  @Override
   public LocalClientStateProvider getLocalClientStateProvider() {
     return this.clientStateManager;
   }

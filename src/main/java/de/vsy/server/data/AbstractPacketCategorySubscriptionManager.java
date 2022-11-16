@@ -53,46 +53,6 @@ public abstract class AbstractPacketCategorySubscriptionManager {
   public abstract void publish(final Packet publishedPacket) throws PacketTransmissionException;
 
   /**
-   * Adds the topic.
-   *
-   * @param topic this topic name
-   * @return true, if successful
-   */
-  public boolean addTopic(final PacketCategory topic) {
-
-    try {
-      this.lock.writeLock().lock();
-
-      if (!this.subscriptions.containsKey(topic)) {
-        return this.subscriptions.put(topic, new HashMap<>()) == null;
-      }
-    } finally {
-      this.lock.writeLock().unlock();
-    }
-    return false;
-  }
-
-  /**
-   * Removes the topic.
-   *
-   * @param topic the topic name
-   * @return true, if successful
-   */
-  public boolean removeTopic(final PacketCategory topic) {
-
-    try {
-      this.lock.writeLock().lock();
-
-      if (!this.subscriptions.containsKey(topic)) {
-        return this.subscriptions.remove(topic) != null;
-      }
-    } finally {
-      this.lock.writeLock().unlock();
-    }
-    return false;
-  }
-
-  /**
    * Subscribe.
    *
    * @param topic              the topic name

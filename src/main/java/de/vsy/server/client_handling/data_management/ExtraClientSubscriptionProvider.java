@@ -2,8 +2,8 @@ package de.vsy.server.client_handling.data_management;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 
-import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.client_management.ClientState;
+import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.EnumMap;

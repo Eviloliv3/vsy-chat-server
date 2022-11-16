@@ -2,8 +2,8 @@ package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
-import de.vsy.server.persistent_data.client_data.PendingType;
 import de.vsy.server.client_management.ClientState;
+import de.vsy.server.persistent_data.client_data.PendingType;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;

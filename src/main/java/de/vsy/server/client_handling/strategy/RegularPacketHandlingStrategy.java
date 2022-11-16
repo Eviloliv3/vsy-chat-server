@@ -1,7 +1,6 @@
 package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
 import de.vsy.server.client_handling.packet_processing.content_processor_provisioning.StandardProcessorFactoryProvider;
 import de.vsy.server.client_handling.packet_processing.processor.ClientPacketProcessorLink;
@@ -9,7 +8,6 @@ import de.vsy.server.client_handling.packet_processing.processor.PacketContextCh
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
 import de.vsy.server.client_handling.packet_processing.processor.PacketSyntaxCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
-import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
 import de.vsy.server.server_packet.dispatching.ClientPacketDispatcher;
 import de.vsy.server.server_packet.dispatching.MultiplePacketDispatcher;
 import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
@@ -36,13 +34,11 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final LocalClientStateProvider clientStateAccess;
-  private final LocalClientDataProvider clientDataProvider;
   private final ConnectionThreadControl connectionControl;
   private final ResultingPacketCreator packetCreator;
   private final ResultingPacketContentHandler contentHandler;
   private final PacketTransmissionCache packetsToDispatch;
   private final MultiplePacketDispatcher dispatcher;
-  private final ClientPersistentDataAccessProvider persistentData;
   private final ThreadPacketBufferManager threadLocalBuffers;
   private PacketProcessor processor;
 
@@ -58,11 +54,8 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
     this.packetsToDispatch = threadDataAccess.getPacketTransmissionCache();
     this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
     this.clientStateAccess = threadDataAccess.getLocalClientStateProvider();
-    this.clientDataProvider = threadDataAccess.getLocalClientDataProvider();
     this.connectionControl = connectionControl;
     this.threadLocalBuffers = threadDataAccess.getHandlerBufferManager();
-    this.persistentData = threadDataAccess.getLocalClientStateDependentLogicProvider()
-        .getClientPersistentAccess();
 
     this.dispatcher = new ClientPacketDispatcher(threadDataAccess.getLocalClientDataProvider(),
         this.threadLocalBuffers);

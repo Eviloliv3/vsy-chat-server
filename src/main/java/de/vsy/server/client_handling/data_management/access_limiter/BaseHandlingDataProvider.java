@@ -10,5 +10,4 @@ public interface BaseHandlingDataProvider {
 
   LocalClientDataProvider getLocalClientDataProvider();
 
-  LocalClientStateProvider getLocalClientStateProvider();
 }

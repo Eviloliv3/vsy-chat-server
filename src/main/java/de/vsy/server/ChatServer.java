@@ -17,8 +17,8 @@ import de.vsy.server.data.ServerDataManager;
 import de.vsy.server.data.ServerPersistentDataManager;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
-import de.vsy.server.server_connection.ClientServer;
 import de.vsy.server.server_connection.ClientConnectionEstablisher;
+import de.vsy.server.server_connection.ClientServer;
 import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceControl;
@@ -59,7 +59,7 @@ public class ChatServer implements ClientServer {
    *
    * @param args the arguments
    */
-  public static void main(final String[] args)  {
+  public static void main(final String[] args) {
     final var server = new ChatServer();
     Runtime.getRuntime().addShutdownHook(new Thread(server::shutdownServer));
     Thread.currentThread().setName("Chatserver");
@@ -111,12 +111,8 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Server shutdown initiated. Interruption status: {}",
         Thread.interrupted());
 
-    try {
-      this.clientConnectionEstablisher.stopEstablishingConnections();
-      LOGGER.info("Client connection establisher terminated.");
-    } catch (InterruptedException ie) {
-      throw new RuntimeException(ie);
-    }
+    this.clientConnectionEstablisher.stopEstablishingConnections();
+    LOGGER.info("Client connection establisher terminated.");
     this.clientConnectionPool.shutdownNow();
     LOGGER.info("Client handler pool shutdown initiated.");
     this.serviceMonitor.cancel();
@@ -125,10 +121,10 @@ public class ChatServer implements ClientServer {
     this.serviceControl.stopAllServices();
     LOGGER.info("Services shutdown.");
 
-    try{
+    try {
       this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
       LOGGER.info("Client handler pool shutdown.");
-    }catch(InterruptedException ie){
+    } catch (InterruptedException ie) {
       throw new RuntimeException(ie);
     }
 

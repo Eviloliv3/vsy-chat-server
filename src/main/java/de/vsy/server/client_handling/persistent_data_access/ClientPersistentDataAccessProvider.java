@@ -2,11 +2,11 @@ package de.vsy.server.client_handling.persistent_data_access;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.persistent_data.client_data.ClientDataAccess;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
-import de.vsy.server.client_management.ClientState;
 import java.util.ArrayList;
 import java.util.List;
 

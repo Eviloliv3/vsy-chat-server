@@ -4,9 +4,9 @@ import static java.util.Arrays.asList;
 import static java.util.List.copyOf;
 
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
-import de.vsy.server.data.socketConnection.SocketConnectionState;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.data.socketConnection.ServerConnectionDataProvider;
+import de.vsy.server.data.socketConnection.SocketConnectionState;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -116,7 +116,8 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   public RemoteServerConnectionData getNextSocketConnectionToInitiate() {
     try {
       this.lock.writeLock().lock();
-      var nextConnection = this.remoteServerConnections.get(SocketConnectionState.UNINITIATED).peek();
+      var nextConnection = this.remoteServerConnections.get(SocketConnectionState.UNINITIATED)
+          .peek();
 
       if (nextConnection != null) {
         addServerConnection(SocketConnectionState.PENDING, nextConnection);

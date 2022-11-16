@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 public class InterServerSocketConnectionEstablisher {
 
   private static final Logger LOGGER = LogManager.getLogger();
-  private final ServerSynchronizationManager serverSynchronization;
   private final ExecutorService establishingThread;
   private final ServiceControl serviceControl;
   private final SocketConnectionDataManager serverConnectionDataManager;
@@ -30,7 +29,6 @@ public class InterServerSocketConnectionEstablisher {
       final ServerSynchronizationManager serverSynchronization,
       final SocketConnectionDataManager serverConnectionDataManager,
       final ServiceControl serviceControl) {
-    this.serverSynchronization = serverSynchronization;
     this.serverConnectionDataManager = serverConnectionDataManager;
     this.serviceControl = serviceControl;
     this.establishingThread = newSingleThreadExecutor();

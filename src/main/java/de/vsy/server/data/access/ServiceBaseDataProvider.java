@@ -1,8 +1,8 @@
 package de.vsy.server.data.access;
 
-import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.ServerSynchronizationManager;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 
 public interface ServiceBaseDataProvider {
 

@@ -6,9 +6,9 @@ package de.vsy.server.service.request;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
 
-import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.PacketAssignmentServiceDataProvider;
+import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.CommunicationNetworkSubscriptionManager;
 import de.vsy.server.service.Service;
@@ -21,7 +21,6 @@ import de.vsy.shared_module.shared_module.exception_processing.PacketHandlingExc
 import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketValidationException;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
 import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
@@ -134,7 +133,7 @@ public class PacketAssignmentService extends ServiceBase {
   }
 
   private void publishPacket(Packet toPublish)
-      throws PacketProcessingException, PacketValidationException {
+      throws PacketProcessingException {
     final var publishablePacket = this.preProcessor.handleDistributableContent(toPublish);
 
     if (publishablePacket != null) {

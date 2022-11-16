@@ -80,7 +80,6 @@ public class IdProvider implements ServerDataAccess {
    *
    * @return the map
    */
-  @SuppressWarnings("unchecked")
   private IdProviderPool readIdProvider() {
     IdProviderPool noPool = null;
     Object fromFile;

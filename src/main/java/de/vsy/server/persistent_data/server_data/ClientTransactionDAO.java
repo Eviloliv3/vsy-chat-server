@@ -146,7 +146,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
       final var completionState = transaction.getValue();
 
       if (completionState != null && !completionState) {
-        incompleteTransactions.put(transaction.getKey(), completionState);
+        incompleteTransactions.put(transaction.getKey(), false);
       }
     }
     return incompleteTransactions;

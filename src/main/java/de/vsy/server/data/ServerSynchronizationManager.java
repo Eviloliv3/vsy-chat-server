@@ -5,7 +5,7 @@ import java.util.concurrent.CountDownLatch;
 public class ServerSynchronizationManager {
 
   private final CountDownLatch clientSynchronization;
-  private SocketInitiationCheck uninitiatedServers;
+  private final SocketInitiationCheck uninitiatedServers;
 
   public ServerSynchronizationManager(final SocketInitiationCheck uninitiatedServers) {
     this.clientSynchronization = new CountDownLatch(1);

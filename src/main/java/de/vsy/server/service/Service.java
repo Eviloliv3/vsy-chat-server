@@ -9,9 +9,7 @@ package de.vsy.server.service;
 public interface Service extends Runnable {
 
   /**
-   * Gets the ready state.
-   *
-   * @return the ready state
+   * Waits for service readiness.
    */
   void waitForServiceReadiness() throws InterruptedException;
 

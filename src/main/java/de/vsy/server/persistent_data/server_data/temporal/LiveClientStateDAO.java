@@ -4,11 +4,11 @@ import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 import com.fasterxml.jackson.databind.JavaType;
+import de.vsy.server.client_management.ClientState;
+import de.vsy.server.client_management.CurrentClientState;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.server.persistent_data.server_data.ServerDataAccess;
-import de.vsy.server.client_management.ClientState;
-import de.vsy.server.client_management.CurrentClientState;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.EnumMap;
 import java.util.HashMap;
