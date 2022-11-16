@@ -2,7 +2,7 @@ package de.vsy.server.service.status_synchronization;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;

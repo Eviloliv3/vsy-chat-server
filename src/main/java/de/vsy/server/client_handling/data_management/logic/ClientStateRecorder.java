@@ -4,8 +4,8 @@ import de.vsy.server.client_handling.data_management.bean.ClientDataManager;
 import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.client_management.ClientState;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 
 public class ClientStateRecorder implements AuthenticationStateControl {
 

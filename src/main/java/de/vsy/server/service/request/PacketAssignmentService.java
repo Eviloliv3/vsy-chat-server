@@ -7,8 +7,8 @@ import static de.vsy.shared_transmission.shared_transmission.packet.property.com
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
 
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.server.server.data.access.PacketAssignmentServiceDataProvider;
+import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.access.PacketAssignmentServiceDataProvider;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.CommunicationNetworkSubscriptionManager;
 import de.vsy.server.service.Service;

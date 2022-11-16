@@ -1,7 +1,7 @@
 package de.vsy.server.server_packet.content;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 import java.io.Serial;

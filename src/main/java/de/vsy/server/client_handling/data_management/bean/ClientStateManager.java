@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.data_management.bean;
 
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;

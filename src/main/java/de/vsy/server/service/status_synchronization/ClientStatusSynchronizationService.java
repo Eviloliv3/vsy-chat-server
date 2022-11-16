@@ -5,8 +5,8 @@ package de.vsy.server.service.status_synchronization;
 
 import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.STATUS;
 
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
+import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
 import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
 import de.vsy.server.server_packet.dispatching.ServerSynchronizationPacketDispatcher;

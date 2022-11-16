@@ -6,7 +6,7 @@ import static de.vsy.shared_transmission.shared_transmission.packet.property.com
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
 
-import de.vsy.server.server.data.ConnectionSpecifications;
+import de.vsy.server.data.ConnectionSpecifications;
 import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.shared_module.shared_module.packet_creation.NonStaticPacketCompiler;
 import de.vsy.shared_module.shared_module.packet_creation.OriginatingEntityProvider;

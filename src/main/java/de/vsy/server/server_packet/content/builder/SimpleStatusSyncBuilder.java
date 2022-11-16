@@ -1,7 +1,7 @@
 package de.vsy.server.server_packet.content.builder;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.server_packet.content.BaseStatusSyncDTO;
 import de.vsy.shared_module.shared_module.data_element_validation.BeanChecker;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;

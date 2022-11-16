@@ -1,6 +1,6 @@
 package de.vsy.server.exception_processing;
 
-import de.vsy.server.server.data.access.HandlerAccessManager;
+import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;

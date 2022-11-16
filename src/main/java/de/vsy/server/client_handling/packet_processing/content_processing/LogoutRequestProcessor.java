@@ -7,7 +7,7 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_
 
 import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;

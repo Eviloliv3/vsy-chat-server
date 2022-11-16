@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.data_management.logic;
 
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 
 public interface ClientStateControl {
 

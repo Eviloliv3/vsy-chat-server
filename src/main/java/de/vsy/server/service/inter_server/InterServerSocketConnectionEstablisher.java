@@ -1,13 +1,13 @@
 package de.vsy.server.service.inter_server;
 
-import static de.vsy.server.server.data.socketConnection.SocketConnectionState.UNINITIATED;
+import static de.vsy.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
-import de.vsy.server.server.data.ConnectionSpecifications;
-import de.vsy.server.server.data.ServerSynchronizationManager;
-import de.vsy.server.server.data.SocketConnectionDataManager;
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
-import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.data.ConnectionSpecifications;
+import de.vsy.server.data.ServerSynchronizationManager;
+import de.vsy.server.data.SocketConnectionDataManager;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.service.ServiceControl;
 import java.io.IOException;
 import java.net.ServerSocket;

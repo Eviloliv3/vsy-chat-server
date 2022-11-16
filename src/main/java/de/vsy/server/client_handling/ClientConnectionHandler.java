@@ -13,7 +13,7 @@ import de.vsy.server.client_handling.strategy.PacketHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PendingChatPacketHandling;
 import de.vsy.server.client_handling.strategy.RegularPacketHandlingStrategy;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;

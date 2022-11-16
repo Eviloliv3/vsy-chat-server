@@ -4,7 +4,7 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_SERVER_ROUTE_VALUE;
 
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;

@@ -7,7 +7,7 @@ import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvide
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_transmission.shared_transmission.packet.Packet;

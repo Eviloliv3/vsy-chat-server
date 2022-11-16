@@ -4,10 +4,10 @@ import de.vsy.server.client_handling.data_management.ExtraClientSubscriptionProv
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server.client_management.ClientStateTranslator;
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.server.server.data.access.HandlerAccessManager;
+import de.vsy.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientStateTranslator;
+import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;

@@ -1,8 +1,8 @@
 package de.vsy.server.client_handling.packet_processing;
 
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
-import de.vsy.server.server.data.access.HandlerAccessManager;
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.data.access.HandlerAccessManager;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_exception.PacketValidationException;

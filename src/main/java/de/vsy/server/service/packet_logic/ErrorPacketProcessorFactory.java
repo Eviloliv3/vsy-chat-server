@@ -1,6 +1,6 @@
 package de.vsy.server.service.packet_logic;
 
-import de.vsy.server.server.data.access.ErrorHandlingServiceDataProvider;
+import de.vsy.server.data.access.ErrorHandlingServiceDataProvider;
 import de.vsy.server.server_packet.packet_properties.packet_type.ServerErrorType;
 import de.vsy.server.service.packet_logic.type_processor.ServerErrorPacketProcessor;
 import de.vsy.shared_transmission.shared_transmission.packet.property.packet_type.PacketType;

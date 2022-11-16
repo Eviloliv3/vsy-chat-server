@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.data_management.logic;
 
-import static de.vsy.server.server.data.socketConnection.SocketConnectionState.INITIATED;
+import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.Set.of;
@@ -8,8 +8,8 @@ import static java.util.Set.of;
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
-import de.vsy.server.server.client_management.ClientState;
-import de.vsy.server.server.data.SocketConnectionDataManager;
+import de.vsy.server.client_management.ClientState;
+import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;

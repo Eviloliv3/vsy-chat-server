@@ -1,15 +1,15 @@
 package de.vsy.chat.server.thread_stop;
 
-import static de.vsy.server.server.data.socketConnection.SocketConnectionState.UNINITIATED;
+import static de.vsy.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
-import de.vsy.server.server.data.ServerDataManager;
-import de.vsy.server.server.data.ServerPersistentDataManager;
-import de.vsy.server.server.data.access.ServiceDataAccessManager;
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
-import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.data.ServerDataManager;
+import de.vsy.server.data.ServerPersistentDataManager;
+import de.vsy.server.data.access.ServiceDataAccessManager;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.service.ServiceControl;
 import de.vsy.server.service.inter_server.InterServerCommunicationService;
 import de.vsy.server.service.inter_server.ServerFollowerConnectionEstablisher;

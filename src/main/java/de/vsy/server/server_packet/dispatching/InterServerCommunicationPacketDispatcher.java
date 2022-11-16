@@ -1,6 +1,6 @@
 package de.vsy.server.server_packet.dispatching;
 
-import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceData;
 import de.vsy.server.service.ServicePacketBufferManager;

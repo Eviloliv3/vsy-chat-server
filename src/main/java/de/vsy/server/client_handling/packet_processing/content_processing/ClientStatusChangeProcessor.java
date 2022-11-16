@@ -5,7 +5,7 @@ import de.vsy.server.client_handling.data_management.access_limiter.StatusHandli
 import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;

@@ -3,19 +3,19 @@
  */
 package de.vsy.server.service.packet_logic.type_processor;
 
-import static de.vsy.server.server.data.socketConnection.SocketConnectionState.INITIATED;
+import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server.client_management.ClientStateTranslator;
-import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.server.server.data.SocketConnectionDataManager;
-import de.vsy.server.server.data.access.ClientStatusRegistrationServiceDataProvider;
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
-import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.client_management.ClientStateTranslator;
+import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.SocketConnectionDataManager;
+import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server_packet.content.BaseStatusSyncDTO;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;

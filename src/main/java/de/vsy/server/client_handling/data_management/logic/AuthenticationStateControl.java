@@ -1,7 +1,7 @@
 package de.vsy.server.client_handling.data_management.logic;
 
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
-import de.vsy.server.server.client_management.ClientState;
+import de.vsy.server.client_management.ClientState;
 
 public interface AuthenticationStateControl extends ClientStateControl {
 

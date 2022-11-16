@@ -3,14 +3,14 @@
  */
 package de.vsy.server.service.inter_server;
 
-import static de.vsy.server.server.data.socketConnection.SocketConnectionState.INITIATED;
+import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static java.util.Arrays.asList;
 
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
-import de.vsy.server.server.data.SocketConnectionDataManager;
-import de.vsy.server.server.data.access.ServerCommunicationServiceDataProvider;
-import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
+import de.vsy.server.data.SocketConnectionDataManager;
+import de.vsy.server.data.access.ServerCommunicationServiceDataProvider;
+import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;

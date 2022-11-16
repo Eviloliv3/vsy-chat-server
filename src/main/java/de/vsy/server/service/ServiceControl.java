@@ -3,9 +3,9 @@
  */
 package de.vsy.server.service;
 
-import de.vsy.server.server.data.ServerDataManager;
-import de.vsy.server.server.data.ServerPersistentDataManager;
-import de.vsy.server.server.data.access.ServiceDataAccessManager;
+import de.vsy.server.data.ServerDataManager;
+import de.vsy.server.data.ServerPersistentDataManager;
+import de.vsy.server.data.access.ServiceDataAccessManager;
 import de.vsy.server.service.Service.TYPE;
 import de.vsy.server.service.inter_server.InterServerCommunicationService;
 import de.vsy.server.service.inter_server.InterServerCommunicationServiceCreator;

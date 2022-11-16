@@ -1,6 +1,6 @@
 package de.vsy.server.service;
 
-import de.vsy.server.server.ChatServer;
+import de.vsy.server.ChatServer;
 import java.util.TimerTask;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
