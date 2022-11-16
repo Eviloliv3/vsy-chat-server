@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="error">
+<Configuration status="trace">
     <Properties>
         <Property name="isThreadContextMapInheritable">true</Property>
         <Property name="stdPattern">%d{HH:mm:ss.SSS} [%-3level] %c{1}:%L [%t:%tid] - %msg%n</Property>
