@@ -111,6 +111,12 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Server shutdown initiated. Interruption status: {}",
         Thread.interrupted());
 
+    try {
+      this.clientConnectionEstablisher.stopEstablishingConnections();
+      LOGGER.info("Client connection establisher terminated.");
+    } catch (InterruptedException ie) {
+      throw new RuntimeException(ie);
+    }
     this.clientConnectionPool.shutdownNow();
     LOGGER.info("Client handler pool shutdown initiated.");
     this.serviceMonitor.cancel();
@@ -118,13 +124,6 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Service monitor shutdown.");
     this.serviceControl.stopAllServices();
     LOGGER.info("Services shutdown.");
-
-    try {
-      this.clientConnectionEstablisher.stopEstablishingConnections();
-      LOGGER.info("Client connection establisher terminated.");
-    } catch (InterruptedException ie) {
-      throw new RuntimeException(ie);
-    }
 
     try{
       this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
