@@ -66,7 +66,7 @@ public class ChatServer implements ClientServer {
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();
     LOGGER.trace("Server will be shutdown regularly.");
-    server.shutdownServer();
+    //server.shutdownServer();
     ThreadContext.clearAll();
   }
 
