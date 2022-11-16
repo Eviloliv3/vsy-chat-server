@@ -111,7 +111,7 @@ public class InterServerSocketConnectionEstablisher {
     LOGGER.info("ServerConnectionEstablisher thread termination initiated.");
     this.establishingThread.shutdownNow();
     try {
-      this.establishingThread.awaitTermination(5, TimeUnit.SECONDS);
+      this.establishingThread.awaitTermination(500, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

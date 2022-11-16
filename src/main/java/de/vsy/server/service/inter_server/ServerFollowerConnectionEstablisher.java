@@ -84,7 +84,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       var cause = ee.getCause();
 
       if (cause instanceof IOException) {
-        LOGGER.error(ee.getMessage(), cause);
+        LOGGER.error("{}: {} / {}",ee.getClass().getSimpleName(), ee.getMessage(), cause);
       } else {
         LOGGER.error("Exception occurred while getting new remote server socket from Future.");
         throw new RuntimeException(ee);

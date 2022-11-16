@@ -13,8 +13,6 @@ public class ServerInterruptibleWhileDebugging extends ChatServer implements Run
 
   public static void main(String[] args){
     Thread serverThread = new Thread(new ServerInterruptibleWhileDebugging());
-    Thread.currentThread().setName("Chatserver");
-    ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     Thread serverInterruptor = new Thread(new ThreadContextRunnable() {
       @Override
       protected void runWithContext() {
@@ -23,7 +21,8 @@ public class ServerInterruptibleWhileDebugging extends ChatServer implements Run
         } catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
-        serverThread.interrupt();System.out.println("Deed is done.");}
+        serverThread.interrupt();
+        System.out.println("Deed is done.");}
 
     }
     );
@@ -37,7 +36,6 @@ public class ServerInterruptibleWhileDebugging extends ChatServer implements Run
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
-    ThreadContext.clearAll();
   }
 
   @Override
