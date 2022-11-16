@@ -106,9 +106,8 @@ public class InterServerSocketConnectionEstablisher {
   }
 
   public void stopEstablishingConnections() {
-    LOGGER.info("ServerConnectionEstablisher thread will be terminated:{}", Thread.currentThread().isInterrupted());
-    this.establishingThread.shutdownNow();
     LOGGER.info("ServerConnectionEstablisher thread termination initiated.");
+    this.establishingThread.shutdownNow();
     try {
       this.establishingThread.awaitTermination(500, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {

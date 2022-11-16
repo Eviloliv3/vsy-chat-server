@@ -63,7 +63,7 @@ public class ChatServer implements ClientServer {
    */
   public static void main(final String[] args) {
     final var server = new ChatServer();
-    Runtime.getRuntime().addShutdownHook(new Thread(()->{try{server.shutdownServer();}catch(RuntimeException re){LOGGER.error("{}:{}\n{}", re.getClass().getSimpleName(), re.getMessage(), asList(re.getStackTrace()));}}));
+    Runtime.getRuntime().addShutdownHook(new Thread(()->{try{server.shutdownServer();}catch(RuntimeException re){LOGGER.error("{}:{}\n{}", re.getClass().getSimpleName(), re.getMessage(), asList(re.getStackTrace()));LogManager.shutdown();}}));
     Thread.currentThread().setName("Chatserver");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();
