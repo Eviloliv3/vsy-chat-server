@@ -117,7 +117,7 @@ public class InterServerCommunicationService extends ServiceBase {
 
   @Override
   public boolean interruptionConditionNotMet() {
-    return !Thread.currentThread().isInterrupted() && this.connectionControl.connectionIsLive();
+    return super.interruptionConditionNotMet() && this.connectionControl.connectionIsLive();
   }
 
   @Override

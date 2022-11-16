@@ -99,11 +99,6 @@ public class PacketAssignmentService extends ServiceBase {
   }
 
   @Override
-  public boolean interruptionConditionNotMet() {
-    return !Thread.currentThread().isInterrupted();
-  }
-
-  @Override
   public void work() {
     Packet request;
 

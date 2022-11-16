@@ -141,7 +141,6 @@ public class ServiceControl implements InterServerCommunicationServiceCreator {
     this.interServerConnectionEstablisher.stopEstablishingConnections();
 
     for (final var serviceSet : this.registeredServices.entrySet()) {
-      LOGGER.info("{}-services termination initiated", serviceSet.getKey());
 
       for (final var currentService : serviceSet.getValue()) {
         final var threadName = currentService.getName();

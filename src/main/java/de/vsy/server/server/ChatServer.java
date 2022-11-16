@@ -23,6 +23,7 @@ import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceControl;
 import de.vsy.server.service.ServiceHealthMonitor;
 import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -112,26 +113,34 @@ public class ChatServer implements ClientServer {
         Thread.currentThread().isInterrupted());
 
     this.clientConnectionPool.shutdownNow();
-    this.serviceControl.stopAllServices();
-    LOGGER.info("Services shutdown.");
+    LOGGER.info("Client handler pool shutdown initiated.");
     this.serviceMonitor.cancel();
     this.serviceMonitor.purge();
     LOGGER.info("Service monitor shutdown.");
+    this.serviceControl.stopAllServices();
+    LOGGER.info("Services shutdown.");
 
     try {
       this.clientConnectionEstablisher.stopEstablishingConnections();
-      this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
-      LOGGER.info("Client handler shutdown.");
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      LOGGER.info("Client connection establisher terminated.");
+    } catch (InterruptedException ie) {
+      throw new RuntimeException(ie);
     }
+
+    try{
+      this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
+      LOGGER.info("Client handler pool shutdown.");
+    }catch(InterruptedException ie){
+      throw new RuntimeException(ie);
+    }
+
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
     LOGGER.info("All sockets closed.");
 
     if (this.serverDataModel.getServerConnectionDataManager().getServerConnections(
         INITIATED).isEmpty()) {
       this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();
-      LOGGER.info("Last remaining registered server. Persisted client status will be removed.");
+      LOGGER.info("Last remaining registered server. Persisted client states will be removed.");
     }
     LOGGER.info("Server shutdown completed.");
   }

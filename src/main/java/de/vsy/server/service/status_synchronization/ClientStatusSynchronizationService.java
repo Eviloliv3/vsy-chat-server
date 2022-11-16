@@ -84,16 +84,6 @@ public class ClientStatusSynchronizationService extends ServiceBase {
   }
 
   /**
-   * Checks if is interruption condition met.
-   *
-   * @return true, if is interruption condition met
-   */
-  @Override
-  public boolean interruptionConditionNotMet() {
-    return !Thread.currentThread().isInterrupted();
-  }
-
-  /**
    * Work.
    */
   @Override
