@@ -18,15 +18,12 @@ import org.apache.logging.log4j.Logger;
 public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
 
   private static final Logger LOGGER = LogManager.getLogger();
-  private final ExecutorService acceptingThread;
   private final SocketConnectionDataManager serverConnectionManager;
   private final InterServerCommunicationServiceCreator serviceCreator;
 
   public ServerFollowerConnectionEstablisher(
       final SocketConnectionDataManager serverConnectionManager,
       final InterServerCommunicationServiceCreator serviceCreator) {
-
-    this.acceptingThread = newSingleThreadExecutor();
     this.serviceCreator = serviceCreator;
     this.serverConnectionManager = serverConnectionManager;
   }
@@ -48,14 +45,6 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
         this.serviceCreator.startInterServerCommThread();
       }
     }
-    this.acceptingThread.shutdownNow();
-
-    try {
-      this.acceptingThread.awaitTermination(100, TimeUnit.MILLISECONDS);
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      LOGGER.error("Interrupted while waiting for ServerFollowerAccepting thread to terminate.");
-    }
     LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}",
         Thread.currentThread().getName(), Thread.currentThread().isInterrupted(),
         watchedSocket.isClosed());
@@ -68,29 +57,14 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
    *
    * @param socketToWatch the server socket that waits for new connection.
    * @return new Socket or null if handled exception occurred.
-   * @throws RuntimeException rethrow causes: ServerSocket -> SecurityException,
-   *                          SocketTimeoutException, IllegalBlockingModeException; Future ->
-   *                          CancellationException
    */
   public Socket acceptFollowerConnection(final ServerSocket socketToWatch) {
-    Socket followerSocket = null;
 
     try {
-      final var futureFollower = this.acceptingThread.submit(socketToWatch::accept);
-      followerSocket = futureFollower.get();
-    } catch (InterruptedException e) {
-      Thread.currentThread().interrupt();
-      LOGGER.error(e.getClass().getSimpleName());
-    } catch (ExecutionException ee) {
-      var cause = ee.getCause();
-
-      if (cause instanceof IOException) {
-        LOGGER.error("{}: {} / {}", ee.getClass().getSimpleName(), ee.getMessage(), cause);
-      } else {
-        LOGGER.error("Exception occurred while getting new remote server socket from Future.");
-        throw new RuntimeException(ee);
-      }
+      return socketToWatch.accept();
+    } catch (IOException e) {
+      LOGGER.error("{} occurred while waiting for server connection.", e.getClass().getSimpleName());
+      return null;
     }
-    return followerSocket;
   }
 }
