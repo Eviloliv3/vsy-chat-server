@@ -48,12 +48,13 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
         this.serviceCreator.startInterServerCommThread();
       }
     }
+    this.acceptingThread.shutdownNow();
 
     try {
-      this.acceptingThread.shutdownNow();
       this.acceptingThread.awaitTermination(100, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      Thread.currentThread().interrupt();
+      LOGGER.error("Interrupted while waiting for ServerFollowerAccepting thread to terminate.");
     }
     LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}",
         Thread.currentThread().getName(), Thread.currentThread().isInterrupted(),

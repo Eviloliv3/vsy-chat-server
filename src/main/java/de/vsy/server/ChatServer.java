@@ -126,7 +126,7 @@ public class ChatServer implements ClientServer {
       this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
       LOGGER.info("Client handler pool shutdown.");
     } catch (InterruptedException ie) {
-      throw new RuntimeException(ie);
+      LOGGER.error("Interrupted while waiting for client handler pool to terminate.");
     }
 
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
@@ -239,7 +239,8 @@ public class ChatServer implements ClientServer {
     try {
       this.serverDataModel.getServerConnectionDataManager().waitForUninitiatedConnections();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      Thread.currentThread().interrupt();
+      LOGGER.error("Interrupted while waiting for preceeding server connections to be established.");
     }
     LOGGER.info("Connection synchronization with existing servers finished.");
   }

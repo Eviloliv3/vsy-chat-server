@@ -213,7 +213,8 @@ public class InterServerCommunicationService extends ServiceBase {
     try {
       this.serviceDataAccess.getServerSynchronizationManager().waitForClientSynchronization();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      Thread.currentThread().interrupt();
+      LOGGER.error("Interrupted while waiting for server to synchronize client states.");
     }
     LOGGER.info("Finished waiting for server synchronization.");
   }
