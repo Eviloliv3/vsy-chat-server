@@ -51,7 +51,6 @@ public class ChatServer implements ClientServer {
    */
   public ChatServer() {
     this.clientConnectionPool = newFixedThreadPool(10);
-    Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownServer));
     this.serviceMonitor = new Timer("ServiceHealthMonitor");
   }
 
@@ -62,6 +61,7 @@ public class ChatServer implements ClientServer {
    */
   public static void main(final String[] args)  {
     final var server = new ChatServer();
+    Runtime.getRuntime().addShutdownHook(new Thread(server::shutdownServer));
     Thread.currentThread().setName("Chatserver");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();

@@ -38,7 +38,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
     final var watchedSocket = this.serverConnectionManager.getServerReceptionConnectionData()
         .getConnectionSocket();
 
-    while (!Thread.currentThread().isInterrupted() && !watchedSocket.isClosed()) {
+    while (!Thread.interrupted() && !watchedSocket.isClosed()) {
       final var followerSocket = acceptFollowerConnection(watchedSocket);
 
       if (followerSocket != null && !followerSocket.isClosed()) {
@@ -79,7 +79,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
       followerSocket = futureFollower.get();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      LOGGER.error(e.getClass().getSimpleName(), e.getCause());
+      LOGGER.error(e.getClass().getSimpleName());
     } catch (ExecutionException ee) {
       var cause = ee.getCause();
 
