@@ -5,6 +5,7 @@ import static de.vsy.shared_transmission.shared_transmission.packet.property.com
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_SERVER_ROUTE_VALUE;
+import static java.util.Arrays.asList;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import de.vsy.server.client_handling.ClientConnectionHandler;
@@ -61,7 +62,7 @@ public class ChatServer implements ClientServer {
    */
   public static void main(final String[] args) {
     final var server = new ChatServer();
-    Runtime.getRuntime().addShutdownHook(new Thread(server::shutdownServer));
+    Runtime.getRuntime().addShutdownHook(new Thread(()->{try{server.shutdownServer();}catch(RuntimeException re){LOGGER.error("{}:{}\n{}", re.getClass().getSimpleName(), re.getMessage(), asList(re.getStackTrace()));}}));
     Thread.currentThread().setName("Chatserver");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();
