@@ -22,12 +22,14 @@ public interface ServiceBaseDataProvider {
 
   /**
    * Gets the local server connection data
+   *
    * @return the local server connection data
    */
   LocalServerConnectionData getLocalServerConnectionData();
 
   /**
    * Gets an object providing synchronization methods.
+   *
    * @return the server synchronization manager
    */
   ServerSynchronizationManager getServerSynchronizationManager();

@@ -6,8 +6,8 @@ import de.vsy.server.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.server.server.data.ServerSynchronizationManager;
-import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server.data.SocketConnectionDataManager;
+import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
@@ -83,7 +83,7 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
   }
 
   @Override
-  public ServerSynchronizationManager getServerSynchronizationManager(){
+  public ServerSynchronizationManager getServerSynchronizationManager() {
     return this.serverSynchronizationManager;
   }
 }

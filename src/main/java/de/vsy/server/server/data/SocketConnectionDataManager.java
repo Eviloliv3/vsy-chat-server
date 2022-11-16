@@ -11,12 +11,9 @@ import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server.data.socketConnection.ServerConnectionDataProvider;
 import de.vsy.server.server.data.socketConnection.SocketConnectionState;
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.Deque;
 import java.util.EnumMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -74,16 +71,19 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
       for (var currentState : otherStates) {
 
-        if(this.remoteServerConnections.get(currentState).remove(connection))
+        if (this.remoteServerConnections.get(currentState).remove(connection)) {
           break;
+        }
       }
 
-      if (!connectionQueue.contains(connection))
+      if (!connectionQueue.contains(connection)) {
         return connectionQueue.add(connection);
+      }
       return false;
     } finally {
-      if (this.remoteServerConnections.get(UNINITIATED).isEmpty())
+      if (this.remoteServerConnections.get(UNINITIATED).isEmpty()) {
         this.noUninitiated.signal();
+      }
       this.lock.writeLock().unlock();
     }
   }
@@ -107,11 +107,11 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     return connectionRemoved;
   }
 
-  public boolean uninitiatedConnectionsRemaining(){
-    try{
+  public boolean uninitiatedConnectionsRemaining() {
+    try {
       this.lock.readLock().lock();
       return !this.remoteServerConnections.get(UNINITIATED).isEmpty();
-    }finally{
+    } finally {
       this.lock.readLock().unlock();
     }
   }
@@ -121,8 +121,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
       this.lock.writeLock().lock();
       var nextConnection = this.remoteServerConnections.get(UNINITIATED).peek();
 
-      if(nextConnection != null)
+      if (nextConnection != null) {
         addServerConnection(PENDING, nextConnection);
+      }
       return nextConnection;
     } finally {
       this.lock.writeLock().unlock();
@@ -191,7 +192,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
   public void waitForUninitiatedConnections() throws InterruptedException {
     try {
       this.lock.writeLock().lock();
-      while(!this.remoteServerConnections.get(UNINITIATED).isEmpty() &&
+      while (!this.remoteServerConnections.get(UNINITIATED).isEmpty() &&
           !Thread.currentThread().isInterrupted()) {
         this.noUninitiated.await();
       }

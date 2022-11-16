@@ -15,6 +15,7 @@ import org.apache.logging.log4j.ThreadContext;
  * The Interface Service.
  */
 public abstract class ServiceBase implements Service {
+
   protected static final Logger LOGGER = LogManager.getLogger();
   private static final AtomicInteger SERVICE_ID_PROVIDER;
 

@@ -44,7 +44,7 @@ public class ServerDataManager {
     return this.serviceSubscriptionManager;
   }
 
-  public ServerSynchronizationManager getServerSynchronizationManager(){
+  public ServerSynchronizationManager getServerSynchronizationManager() {
     return this.serverSynchronization;
   }
 }

@@ -9,14 +9,13 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_C
 import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
-import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
-import java.util.HashMap;
-import java.util.Map;
+import de.vsy.server.persistent_data.server_data.temporal.IdProviderPool;
+import de.vsy.server.persistent_data.server_data.temporal.IdType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Creates new uniqü client ids by reading the last unused id from a file, incrementing and
+ * Creates new unique client ids by reading the last unused id from a file, incrementing and
  * rewriting the incremented id. The read id is returned to the calling object.
  */
 public class IdProvider implements ServerDataAccess {
@@ -36,7 +35,7 @@ public class IdProvider implements ServerDataAccess {
    */
   public static JavaType getDataFormat() {
     final var factory = defaultInstance();
-    return factory.constructMapType(HashMap.class, String.class, Integer.class);
+    return factory.constructType(IdProviderPool.class);
   }
 
   @Override
@@ -49,27 +48,31 @@ public class IdProvider implements ServerDataAccess {
    *
    * @return the new communicator id
    */
-  public int getNewId() {
-    Map<String, Integer> idMap;
+  public int getNewId(IdType forType) {
+    IdProviderPool idPool;
     int newId;
 
     if (!this.dataProvider.acquireAccess(true)) {
       LOGGER.error("No exclusive write access.");
       return STANDARD_CLIENT_ID;
     }
-    idMap = readIdMap();
-    newId = idMap.get("client");
-
-    if (IdCheck.checkData(newId).isPresent()) {
-      newId = 15000;
-      LOGGER.warn("Ids were reset.");
-    }
-    idMap.put("client", newId + 1);
-    this.dataProvider.writeData(idMap);
-
+    idPool = readIdProvider();
+    newId = idPool.getNextId(forType);
+    this.dataProvider.writeData(idPool);
     this.dataProvider.releaseAccess(true);
-
     return newId;
+  }
+
+  public void returnId(IdType type, int idToReturn) {
+    IdProviderPool idPool;
+
+    if (!this.dataProvider.acquireAccess(true)) {
+      LOGGER.error("No exclusive write access.");
+    }
+    idPool = readIdProvider();
+    idPool.returnUnusedId(type, idToReturn);
+    this.dataProvider.writeData(idPool);
+    this.dataProvider.releaseAccess(true);
   }
 
   /**
@@ -78,25 +81,20 @@ public class IdProvider implements ServerDataAccess {
    * @return the map
    */
   @SuppressWarnings("unchecked")
-  Map<String, Integer> readIdMap() {
+  private IdProviderPool readIdProvider() {
+    IdProviderPool noPool = null;
     Object fromFile;
-    var readMap = new HashMap<String, Integer>();
     if (!this.dataProvider.acquireAccess(false)) {
       LOGGER.error("No shared read access.");
-      return readMap;
+      return null;
     }
     fromFile = this.dataProvider.readData();
     this.dataProvider.releaseAccess(false);
 
-    if (fromFile instanceof HashMap) {
-
-      try {
-        readMap = (HashMap<String, Integer>) fromFile;
-      } catch (final ClassCastException cc) {
-        LOGGER.info("{} occurred while reading the id map. Empty map will be returned.");
-      }
+    if (fromFile instanceof final IdProviderPool idPool) {
+      return idPool;
     }
-    return readMap;
+    return null;
   }
 
   @Override

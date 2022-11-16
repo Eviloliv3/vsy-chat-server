@@ -1,11 +1,9 @@
 package de.vsy.server.server.data;
 
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
 
 public class ServerSynchronizationManager {
+
   private final CountDownLatch clientSynchronization;
   private SocketInitiationCheck uninitiatedServers;
 
@@ -15,7 +13,7 @@ public class ServerSynchronizationManager {
   }
 
   public void waitForClientSynchronization() throws InterruptedException {
-      this.clientSynchronization.await();
+    this.clientSynchronization.await();
   }
 
   public void clientSynchronizationComplete() {

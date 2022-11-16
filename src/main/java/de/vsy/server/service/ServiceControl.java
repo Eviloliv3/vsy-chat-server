@@ -23,8 +23,8 @@ public class ServiceControl implements InterServerCommunicationServiceCreator {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final Map<Service.TYPE, Set<Thread>> registeredServices;
-  private InterServerSocketConnectionEstablisher interServerConnectionEstablisher;
   private final ServiceDataAccessManager serviceDataModel;
+  private InterServerSocketConnectionEstablisher interServerConnectionEstablisher;
 
   /**
    * Instantiates a new service control.
@@ -78,7 +78,7 @@ public class ServiceControl implements InterServerCommunicationServiceCreator {
   private void startInterServerCommServices() {
     var remoteConnections = this.serviceDataModel.getServerConnectionDataManager();
 
-    while(remoteConnections.uninitiatedConnectionsRemaining()){
+    while (remoteConnections.uninitiatedConnectionsRemaining()) {
       startInterServerCommThread();
     }
 
@@ -121,9 +121,9 @@ public class ServiceControl implements InterServerCommunicationServiceCreator {
     newServiceThread.start();
     this.registeredServices.put(newService.getServiceType(), sameTypeServices);
 
-    try{
+    try {
       newService.waitForServiceReadiness();
-    }catch(InterruptedException ie){
+    } catch (InterruptedException ie) {
       LOGGER.error("Interrupted while waiting for readiness: {}:", newService.getServiceName());
     }
   }

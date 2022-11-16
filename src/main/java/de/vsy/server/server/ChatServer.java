@@ -16,8 +16,8 @@ import de.vsy.server.server.data.ConnectionSpecifications;
 import de.vsy.server.server.data.ServerDataManager;
 import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.server.server.data.access.HandlerAccessManager;
-import de.vsy.server.server.server_connection.ClientConnectionEstablisher;
 import de.vsy.server.server.data.socketConnection.LocalServerConnectionData;
+import de.vsy.server.server.server_connection.ClientConnectionEstablisher;
 import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationProviderImpl;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceControl;
@@ -249,7 +249,8 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Remote client states will be loaded.");
 
     final var clientSubscriptions = this.serverDataModel.getClientCategorySubscriptionManager();
-    final var synchronizedConnections = this.serverDataModel.getServerConnectionDataManager().getServerConnections(INITIATED);
+    final var synchronizedConnections = this.serverDataModel.getServerConnectionDataManager()
+        .getServerConnections(INITIATED);
     final var activeClients = this.serverPersistentDataManager.getClientStateAccessManager()
         .getAllActiveClientStates();
 

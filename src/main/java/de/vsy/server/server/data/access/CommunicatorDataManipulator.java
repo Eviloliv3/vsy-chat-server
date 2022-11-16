@@ -8,6 +8,7 @@ import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.server_data.ClientAuthPersistenceDAO;
 import de.vsy.server.persistent_data.server_data.CommunicatorPersistenceDAO;
 import de.vsy.server.persistent_data.server_data.IdProvider;
+import de.vsy.server.persistent_data.server_data.temporal.IdType;
 import de.vsy.server.server.data.ServerPersistentDataManager;
 import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -50,7 +51,7 @@ public class CommunicatorDataManipulator {
       final String displayName) {
     AuthenticationData authData;
     CommunicatorData communicatorData = null;
-    final var clientId = this.idPersist.getNewId();
+    final var clientId = this.idPersist.getNewId(IdType.CLIENT);
 
     authData = AuthenticationData.valueOf(loginName, password, clientId);
 
@@ -82,7 +83,7 @@ public class CommunicatorDataManipulator {
     CommunicatorData communicatorData = null;
 
     if (this.clientAuthPersist.checkClientId(ownerId)) {
-      final var groupId = this.idPersist.getNewId();
+      final var groupId = this.idPersist.getNewId(IdType.GROUP);
       communicatorData = CommunicatorData.valueOf(groupId, ownerId, groupName);
 
       if (!this.communicatorDataPersist.addCommunicator(communicatorData)) {

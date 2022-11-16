@@ -8,9 +8,9 @@ import static de.vsy.shared_transmission.shared_transmission.packet.property.com
 import static java.util.Arrays.asList;
 
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
+import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.server.data.socketConnection.RemoteServerConnectionData;
-import de.vsy.server.server.data.SocketConnectionDataManager;
 import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
@@ -88,9 +88,10 @@ public class InterServerCommunicationService extends ServiceBase {
   public void finishSetup() {
     this.remoteConnectionData = this.serverConnectionDataManager.getNextSocketConnectionToInitiate();
 
-    if (this.remoteConnectionData == null){
+    if (this.remoteConnectionData == null) {
       Thread.currentThread().interrupt();
-      LOGGER.error("No connection data found. {} interrupt flag set.", Thread.currentThread().getName());
+      LOGGER.error("No connection data found. {} interrupt flag set.",
+          Thread.currentThread().getName());
       super.setReadyState();
       return;
     }
