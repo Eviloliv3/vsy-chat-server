@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="error">
+    <shutdownHook>disable</shutdownHook>
     <Properties>
         <Property name="shutdownHookEnabled">false</Property>
         <Property name="isThreadContextMapInheritable">true</Property>

@@ -102,14 +102,7 @@ public class ChatServer implements ClientServer {
     prepareServer();
     clientConnectionEstablisher = new ClientConnectionEstablisher(
         this.serverDataModel.getServerConnectionDataManager().getLocalServerConnectionData(), this);
-    ExecutorService s = Executors.newSingleThreadExecutor();
-    s.submit(clientConnectionEstablisher::acceptClientConnections);
-    try {
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-    System.exit(0);
+    clientConnectionEstablisher.acceptClientConnections();
   }
 
   /**
