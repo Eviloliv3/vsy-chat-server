@@ -69,7 +69,11 @@ public class ClientConnectionEstablisher {
   public void stopEstablishingConnections() throws InterruptedException {
     this.clientConnectionAcceptor.shutdownNow();
     LOGGER.info("Client connection thread termination initiated.");
-    this.clientConnectionAcceptor.awaitTermination(500, TimeUnit.MILLISECONDS);
+    try {
+      this.clientConnectionAcceptor.awaitTermination(100, TimeUnit.MILLISECONDS);
+    }catch(InterruptedException ie){
+      LOGGER.error("stopEstablishingConnections encountered: {}", ie.getClass().getSimpleName());
+      }
     LOGGER.info("Client connection thread terminated.");
   }
 }
