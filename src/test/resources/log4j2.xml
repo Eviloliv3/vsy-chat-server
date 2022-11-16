@@ -29,8 +29,8 @@
             The value dynamically determines the name of the log file. -->
                 <Route>
                     <RollingRandomAccessFile name="Rolling-${ctx:logFilename}"
-                      filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd HH:mm:ss}/${ctx:logFilename}.log"
-                      filePattern="logs/${ctx:routeDir}/${date:yyyy-MM-dd HH:mm:ss}/${ctx:logFilename}-%i.log.gz">
+                      filename="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}.log"
+                      filePattern="logs/${ctx:routeDir}/${date:yyyy-MM-dd}/${ctx:logFilename}-%i.log.gz">
                         <PatternLayout pattern="${stdPattern}"/>
                         <Policies>
                             <SizeBasedTriggeringPolicy size="10 MB"/>
