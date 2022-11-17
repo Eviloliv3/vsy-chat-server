@@ -80,7 +80,6 @@ public class ServerPersistentDataManager {
   public void removePersistentAccess() {
 
     for (final ServerDataAccess currentProvider : this.accessController) {
-
       if (currentProvider != null) {
         currentProvider.removeFileAccess();
       }

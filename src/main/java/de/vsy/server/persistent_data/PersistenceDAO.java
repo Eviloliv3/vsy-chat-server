@@ -391,6 +391,8 @@ public class PersistenceDAO {
   }
 
   public void removeFileReferences() {
+    this.releaseAccess(true);
+    this.releaseAccess(false);
     this.filePaths = null;
     this.lockFilePath = null;
   }

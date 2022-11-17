@@ -138,6 +138,8 @@ public class ChatServer implements ClientServer {
       this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();
       LOGGER.info("Last remaining registered server. Persisted client states will be removed.");
     }
+    serverPersistentDataManager.removePersistentAccess();
+    LOGGER.info("Persistent data access removed.");
     LOGGER.info("Server shutdown completed.");
   }
 
