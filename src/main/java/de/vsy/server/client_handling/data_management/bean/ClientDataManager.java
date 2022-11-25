@@ -4,7 +4,7 @@ import static de.vsy.server.persistent_data.EmptyDataProvider.EMPTY_COMMUNICATOR
 
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
 public class ClientDataManager implements LocalClientDataProvider {
 

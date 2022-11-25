@@ -5,7 +5,7 @@ import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.Packet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

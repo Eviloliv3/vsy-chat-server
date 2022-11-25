@@ -8,9 +8,9 @@ import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvide
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.shared_transmission.shared_transmission.packet.content.chat.TextMessageDTO;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_processing.ContentProcessor;
+import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_utility.id_manipulation.IdComparator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

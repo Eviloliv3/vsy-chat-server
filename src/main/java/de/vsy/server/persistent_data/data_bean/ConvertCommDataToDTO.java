@@ -1,9 +1,9 @@
 package de.vsy.server.persistent_data.data_bean;
 
-import static de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO.valueOf;
-import static de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
+import static de.vsy.shared_transmission.dto.CommunicatorDTO.valueOf;
+import static de.vsy.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
 
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
 /**
  * The Class ConvertCommDataToDTO.

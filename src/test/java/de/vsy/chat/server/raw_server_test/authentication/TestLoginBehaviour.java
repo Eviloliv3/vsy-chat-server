@@ -1,6 +1,6 @@
 package de.vsy.chat.server.raw_server_test.authentication;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
 
@@ -9,9 +9,9 @@ import de.vsy.chat.server.raw_server_test.ServerTestBase;
 import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
 import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
-import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginRequestDTO;
+import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.authentication.LoginRequestDTO;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

@@ -3,7 +3,7 @@ package de.vsy.chat.server.raw_server_test;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
-import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;

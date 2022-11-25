@@ -2,7 +2,7 @@ package de.vsy.server.server_packet.content.builder;
 
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.PacketContent;
 
 /**
  * The Class SimpleInternalContentBuilder.

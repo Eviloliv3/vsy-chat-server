@@ -1,10 +1,10 @@
 package de.vsy.server.client_handling.packet_processing.processor;
 
 import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketValidationException;
-import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_exception.PacketValidationException;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_transmission.packet.Packet;
 
 public class PacketContextCheckLink extends AbstractPacketProcessorLink {
 

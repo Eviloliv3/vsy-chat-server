@@ -6,7 +6,7 @@ package de.vsy.server.persistent_data.data_bean;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
+import de.vsy.shared_module.data_element_validation.IdCheck;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Optional;

@@ -2,8 +2,8 @@ package de.vsy.server.server_packet.packet_creation;
 
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 
 public class ResultingPacketContentHandler {
 

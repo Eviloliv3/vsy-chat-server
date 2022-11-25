@@ -7,7 +7,7 @@ import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_properties.packet_type.ServerStatusType;
 import de.vsy.server.service.packet_logic.type_processor.ClientStatusSyncPacketProcessor;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_type.PacketType;
+import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -2,7 +2,7 @@ package de.vsy.server.persistent_data.manipulation_utility;
 
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 
 public class RelationManipulator {
 

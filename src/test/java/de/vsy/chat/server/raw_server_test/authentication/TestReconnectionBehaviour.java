@@ -5,7 +5,7 @@
 
 package de.vsy.chat.server.raw_server_test.authentication;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
@@ -13,11 +13,11 @@ import de.vsy.chat.server.raw_server_test.ServerTestBase;
 import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
 import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
-import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectRequestDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.authentication.ReconnectRequestDTO;
+import de.vsy.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
 import java.io.IOException;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;

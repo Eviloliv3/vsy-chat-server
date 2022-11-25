@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;

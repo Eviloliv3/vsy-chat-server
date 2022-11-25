@@ -3,8 +3,8 @@ package de.vsy.server.service.packet_logic.type_processor;
 import de.vsy.server.data.access.ErrorHandlingServiceDataProvider;
 import de.vsy.server.server_packet.content.ServerFailureDTO;
 import de.vsy.server.service.packet_logic.ServicePacketProcessor;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.PacketContent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

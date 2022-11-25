@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.strategy;
 
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.Packet;
 
 /**
  * The Interface PendingPacketHandlingStrategy.

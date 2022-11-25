@@ -1,9 +1,13 @@
 package de.vsy.chat.server.server_test_helpers;
 
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.content.error.ErrorDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.junit.jupiter.api.Assertions;
 
 public class TestResponseSingleClient {

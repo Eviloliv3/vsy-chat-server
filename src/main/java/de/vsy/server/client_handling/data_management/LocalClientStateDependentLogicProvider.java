@@ -5,7 +5,7 @@ import de.vsy.server.client_handling.data_management.logic.ClientSubscriptionHan
 import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
 import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 
 public class LocalClientStateDependentLogicProvider {
 

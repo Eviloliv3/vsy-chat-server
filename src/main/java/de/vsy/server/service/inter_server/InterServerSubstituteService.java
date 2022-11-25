@@ -16,12 +16,12 @@ import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationC
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.processor.InterServerSubstitutePacketProcessorLink;
-import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
-import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
-import de.vsy.shared_module.shared_module.thread_manipulation.ProcessingInterruptProvider;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_exception.PacketHandlingException;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.packet_validation.SimplePacketChecker;
+import de.vsy.shared_module.thread_manipulation.ProcessingInterruptProvider;
+import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -88,6 +88,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
       while (this.interrupt.conditionNotMet()) {
         processPacket();
       }
+
       this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
       this.reconnectionStateWatcher.cancel();
       clearAndRemoveBuffer();

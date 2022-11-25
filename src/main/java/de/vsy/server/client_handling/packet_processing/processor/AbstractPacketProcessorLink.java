@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.packet_processing.processor;
 
-import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
 
 public abstract class AbstractPacketProcessorLink implements PacketProcessor {
 

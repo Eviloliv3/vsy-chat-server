@@ -8,7 +8,7 @@ package de.vsy.chat.server.two_server_test;
 import static java.util.List.of;
 
 import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
-import de.vsy.shared_transmission.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import java.util.List;
 
 /**

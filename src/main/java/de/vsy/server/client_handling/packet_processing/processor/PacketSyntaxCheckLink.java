@@ -1,10 +1,10 @@
 package de.vsy.server.client_handling.packet_processing.processor;
 
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketValidationException;
-import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
-import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_exception.PacketValidationException;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.packet_validation.PacketCheck;
+import de.vsy.shared_transmission.packet.Packet;
 
 public class PacketSyntaxCheckLink extends AbstractPacketProcessorLink {
 

@@ -2,10 +2,10 @@ package de.vsy.server.server_packet.packet_creation;
 
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 
 public class ServerStatusSyncPacketCreator extends ResultingPacketCreator {
 

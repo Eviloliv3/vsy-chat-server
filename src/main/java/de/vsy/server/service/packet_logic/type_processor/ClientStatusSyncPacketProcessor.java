@@ -4,8 +4,8 @@
 package de.vsy.server.service.packet_logic.type_processor;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
@@ -23,9 +23,9 @@ import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.ServicePacketProcessor;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

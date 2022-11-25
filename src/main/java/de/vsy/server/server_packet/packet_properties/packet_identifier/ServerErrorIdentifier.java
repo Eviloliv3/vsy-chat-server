@@ -1,10 +1,10 @@
 package de.vsy.server.server_packet.packet_properties.packet_identifier;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.ERROR;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.ERROR;
 
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_identifier.ContentIdentifierImpl;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_type.PacketType;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdentifierImpl;
+import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
 import java.io.Serial;
 
 /**

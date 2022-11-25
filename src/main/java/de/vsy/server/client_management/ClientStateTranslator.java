@@ -1,13 +1,13 @@
 package de.vsy.server.client_management;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.ERROR;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.RELATION;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.STATUS;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.ERROR;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.RELATION;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.STATUS;
 import static java.util.Collections.emptyMap;
 import static java.util.Set.of;
 
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;

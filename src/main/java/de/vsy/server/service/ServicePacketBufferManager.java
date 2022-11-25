@@ -3,7 +3,7 @@
  */
 package de.vsy.server.service;
 
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.PacketBuffer;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;

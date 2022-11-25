@@ -8,7 +8,7 @@ import static java.util.Collections.unmodifiableSet;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import de.vsy.server.server_packet.content.builder.ServerPacketContentBuilder;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.PacketContent;
 import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;

@@ -2,11 +2,11 @@ package de.vsy.server.data;
 
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.request.CategoryIdSubscriber;
-import de.vsy.shared_module.shared_module.data_element_validation.IdCheck;
-import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_module.data_element_validation.IdCheck;
+import de.vsy.shared_module.packet_exception.PacketTransmissionException;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;

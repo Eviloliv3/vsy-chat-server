@@ -1,6 +1,6 @@
 package de.vsy.chat.server.testing_grounds;
 
-import static de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO.valueOf;
+import static de.vsy.shared_transmission.dto.CommunicatorDTO.valueOf;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 import de.vsy.server.client_management.ClientState;

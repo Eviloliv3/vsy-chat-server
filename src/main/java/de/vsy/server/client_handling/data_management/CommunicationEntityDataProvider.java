@@ -3,13 +3,13 @@
  */
 package de.vsy.server.client_handling.data_management;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import java.util.HashSet;
 import java.util.Set;
 

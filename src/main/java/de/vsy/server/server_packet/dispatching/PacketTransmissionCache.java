@@ -1,6 +1,6 @@
 package de.vsy.server.server_packet.dispatching;
 
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.Packet;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.apache.logging.log4j.LogManager;

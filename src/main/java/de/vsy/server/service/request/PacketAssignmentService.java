@@ -3,8 +3,8 @@
  */
 package de.vsy.server.service.request;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
+import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
+import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
 
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.PacketAssignmentServiceDataProvider;
@@ -17,15 +17,15 @@ import de.vsy.server.service.ServiceData;
 import de.vsy.server.service.ServiceData.ServiceDataBuilder;
 import de.vsy.server.service.ServiceData.ServiceResponseDirection;
 import de.vsy.server.service.ServicePacketBufferManager;
-import de.vsy.shared_module.shared_module.exception_processing.PacketHandlingExceptionProcessor;
-import de.vsy.shared_module.shared_module.packet_exception.PacketHandlingException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketTransmissionException;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.shared_module.packet_validation.PacketCheck;
-import de.vsy.shared_module.shared_module.packet_validation.SimplePacketChecker;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
+import de.vsy.shared_module.exception_processing.PacketHandlingExceptionProcessor;
+import de.vsy.shared_module.packet_exception.PacketHandlingException;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_exception.PacketTransmissionException;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_validation.PacketCheck;
+import de.vsy.shared_module.packet_validation.SimplePacketChecker;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 import java.util.EnumMap;
 import java.util.Map;
 

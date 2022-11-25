@@ -3,9 +3,9 @@ package de.vsy.server.client_handling.packet_processing.processor;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 
 public abstract class ResultingPacketCreator {
 

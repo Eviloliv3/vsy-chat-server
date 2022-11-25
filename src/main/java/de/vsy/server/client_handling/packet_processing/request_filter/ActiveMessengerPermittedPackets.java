@@ -1,9 +1,9 @@
 package de.vsy.server.client_handling.packet_processing.request_filter;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 import static java.util.List.of;
 
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.List;
 
 /**

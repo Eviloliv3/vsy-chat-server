@@ -3,8 +3,8 @@ package de.vsy.server.service.packet_logic.processor;
 import de.vsy.server.client_handling.packet_processing.processor.AbstractPacketProcessorLink;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_transmission.packet.Packet;
 import java.util.Map;
 
 public class InterServerSubstitutePacketProcessorLink extends AbstractPacketProcessorLink {

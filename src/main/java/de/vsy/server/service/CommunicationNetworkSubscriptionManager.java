@@ -1,7 +1,7 @@
 package de.vsy.server.service;
 
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
+import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

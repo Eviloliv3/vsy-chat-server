@@ -1,8 +1,10 @@
 package de.vsy.server.service.inter_server;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.server.persistent_data.client_data.PendingType.PROCESSOR_BOUND;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
+import de.vsy.server.client_handling.strategy.VolatilePacketIdentifier;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.ClientStateTranslator;
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
@@ -14,9 +16,9 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 import java.util.Map;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
@@ -46,9 +48,11 @@ public class RemoteClientDisconnector {
 
     for (final var currentClient : clientPersistenceAccessManagers.entrySet()) {
       final var clientId = currentClient.getKey();
-      final var currentState = this.clientStateProvider.getClientState(clientId);
-      disconnectClient(clientId, currentState.getCurrentState());
-      currentClient.getValue().removeFileAccess();
+      final var currentClientState = this.clientStateProvider.getClientState(clientId);
+      final var currentPendingAccess = currentClient.getValue();
+      disconnectClient(clientId, currentClientState.getCurrentState());
+      removeVolatilePackets(currentPendingAccess);
+      currentPendingAccess.removeFileAccess();
     }
   }
 
@@ -61,6 +65,12 @@ public class RemoteClientDisconnector {
     }
     unsubscribeClient(clientId);
     this.clientStateProvider.removeClientState(clientId);
+  }
+
+  private void removeVolatilePackets(PendingPacketDAO pendingPacketAccess){
+    var pendingPacketMap = pendingPacketAccess.readPendingPackets(PROCESSOR_BOUND);
+    pendingPacketMap.values().removeIf(VolatilePacketIdentifier::checkPacketVolatiliy);
+    pendingPacketAccess.setPendingPackets(PROCESSOR_BOUND, pendingPacketMap);
   }
 
   private void publishState(final int clientId, final ClientState currentState)

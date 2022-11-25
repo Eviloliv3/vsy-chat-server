@@ -4,9 +4,9 @@ import de.vsy.server.client_handling.data_management.access_limiter.StatusHandli
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
-import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.shared_transmission.shared_transmission.packet.content.status.ContactMessengerStatusDTO;
+import de.vsy.shared_module.packet_processing.ContentProcessor;
+import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.packet.content.status.ContactMessengerStatusDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

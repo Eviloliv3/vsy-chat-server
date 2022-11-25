@@ -2,9 +2,9 @@ package de.vsy.server.client_handling.packet_processing.content_processor_provis
 
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
 import de.vsy.server.client_management.ClientState;
-import de.vsy.shared_module.shared_module.packet_processing.HandlerProcessingCondition;
-import de.vsy.shared_module.shared_module.packet_processing.ProcessingCondition;
-import de.vsy.shared_module.shared_module.packet_processing.ProcessingConditionType;
+import de.vsy.shared_module.packet_processing.HandlerProcessingCondition;
+import de.vsy.shared_module.packet_processing.ProcessingCondition;
+import de.vsy.shared_module.packet_processing.ProcessingConditionType;
 import java.util.function.Predicate;
 
 public class ContentProcessingConditionProvider {

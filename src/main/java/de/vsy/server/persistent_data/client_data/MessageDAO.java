@@ -9,7 +9,7 @@ import static java.lang.String.valueOf;
 import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
-import de.vsy.shared_transmission.shared_transmission.packet.content.chat.TextMessageDTO;
+import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

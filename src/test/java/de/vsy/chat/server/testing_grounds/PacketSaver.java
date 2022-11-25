@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.server.persistent_data.client_data.ClientDataAccess;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

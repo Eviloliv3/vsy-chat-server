@@ -10,7 +10,7 @@ import de.vsy.server.persistent_data.server_data.ClientAuthPersistenceDAO;
 import de.vsy.server.persistent_data.server_data.CommunicatorPersistenceDAO;
 import de.vsy.server.persistent_data.server_data.IdProvider;
 import de.vsy.server.persistent_data.server_data.temporal.IdType;
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.apache.logging.log4j.LogManager;

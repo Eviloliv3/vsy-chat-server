@@ -4,14 +4,14 @@ import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvide
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_exception.PacketValidationException;
-import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.shared_module.shared_module.packet_processing.PacketProcessor;
-import de.vsy.shared_module.shared_module.packet_processing.ProcessingCondition;
-import de.vsy.shared_module.shared_module.packet_validation.content_validation.PacketContentValidator;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_exception.PacketValidationException;
+import de.vsy.shared_module.packet_processing.ContentProcessor;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.packet_processing.ProcessingCondition;
+import de.vsy.shared_module.packet_validation.content_validation.PacketContentValidator;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.PacketContent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

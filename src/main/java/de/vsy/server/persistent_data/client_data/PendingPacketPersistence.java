@@ -1,6 +1,6 @@
 package de.vsy.server.persistent_data.client_data;
 
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.Packet;
 
 /**
  * The Interface PendingPacketDAO.

@@ -7,7 +7,7 @@ import static java.util.List.copyOf;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_management.ClientState;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;

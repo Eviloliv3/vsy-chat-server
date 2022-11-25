@@ -3,7 +3,7 @@
  */
 package de.vsy.chat.server.server_test_helpers;
 
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
 /**
  * Interface for simple client dataManagement accessLimiter throughout the application.

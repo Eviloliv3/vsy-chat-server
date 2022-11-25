@@ -1,7 +1,7 @@
 package de.vsy.server;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_SERVER_ROUTE_VALUE;
@@ -24,7 +24,7 @@ import de.vsy.server.server_packet.packet_creation.ServerContentIdentificationPr
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceControl;
 import de.vsy.server.service.ServiceHealthMonitor;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.packet_creation.PacketCompiler;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

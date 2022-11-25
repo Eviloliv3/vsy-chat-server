@@ -5,7 +5,7 @@ import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.packet_properties.packet_identifier.ServerUpdateIdentifier;
 import de.vsy.server.server_packet.packet_properties.packet_type.ServerStatusType;
-import de.vsy.shared_module.shared_module.packet_creation.identification_provider.AbstractIdentificationProvider;
+import de.vsy.shared_module.packet_creation.identification_provider.AbstractIdentificationProvider;
 
 public class ServerStatusIdentificationProvider extends AbstractIdentificationProvider {
 

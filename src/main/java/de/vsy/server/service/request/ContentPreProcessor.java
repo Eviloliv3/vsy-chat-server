@@ -5,8 +5,8 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_C
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
-import de.vsy.shared_module.shared_module.packet_management.OutputBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_management.OutputBuffer;
+import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 
 public class ContentPreProcessor implements PublishablePacketCreator {

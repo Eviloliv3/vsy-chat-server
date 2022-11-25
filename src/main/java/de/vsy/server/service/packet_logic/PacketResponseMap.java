@@ -3,11 +3,11 @@
  */
 package de.vsy.server.service.packet_logic;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
+import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
+import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;
 
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 import java.util.EnumMap;
 import java.util.Map;
 

@@ -22,9 +22,9 @@ import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
 import de.vsy.server.server_packet.packet_creation.ClientHandlerPacketCreator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 
 /**
  * Manages most dataManagement and dataManagement accessLimiter granting objects concerning a

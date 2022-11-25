@@ -1,9 +1,9 @@
 package de.vsy.server.server_packet.packet_creation;
 
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
-import de.vsy.shared_module.shared_module.packet_creation.ContentIdentificationProviderImpl;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_identifier.ContentIdentifier;
+import de.vsy.shared_module.packet_creation.ContentIdentificationProviderImpl;
+import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdentifier;
 
 public class ServerContentIdentificationProviderImpl extends ContentIdentificationProviderImpl {
 

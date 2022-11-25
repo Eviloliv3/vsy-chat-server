@@ -1,7 +1,7 @@
 package de.vsy.server.server_packet.content;
 
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
-import de.vsy.shared_transmission.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.PacketContent;
 import java.io.Serial;
 
 /**

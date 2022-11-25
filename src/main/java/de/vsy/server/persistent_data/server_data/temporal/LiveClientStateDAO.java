@@ -9,7 +9,7 @@ import de.vsy.server.client_management.CurrentClientState;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.server.persistent_data.server_data.ServerDataAccess;
-import de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory;
+import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;

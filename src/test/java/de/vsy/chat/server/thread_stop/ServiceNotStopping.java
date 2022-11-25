@@ -1,7 +1,7 @@
 package de.vsy.chat.server.thread_stop;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.UNINITIATED;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
@@ -15,11 +15,11 @@ import de.vsy.server.service.inter_server.InterServerCommunicationService;
 import de.vsy.server.service.inter_server.ServerFollowerConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
 import de.vsy.server.service.status_synchronization.ClientStatusSynchronizationService;
-import de.vsy.shared_module.shared_module.packet_creation.ContentIdentificationProviderImpl;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferManager;
-import de.vsy.shared_module.shared_module.packet_transmission.ConnectionThreadControl;
+import de.vsy.shared_module.packet_creation.ContentIdentificationProviderImpl;
+import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
+import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

@@ -7,10 +7,10 @@ import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
-import de.vsy.shared_module.shared_module.packet_exception.PacketProcessingException;
-import de.vsy.shared_module.shared_module.packet_processing.ContentProcessor;
-import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginRequestDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.authentication.LoginResponseDTO;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_processing.ContentProcessor;
+import de.vsy.shared_transmission.packet.content.authentication.LoginRequestDTO;
+import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

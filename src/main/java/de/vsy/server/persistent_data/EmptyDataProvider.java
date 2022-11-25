@@ -4,7 +4,7 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_C
 import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
 
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
-import de.vsy.shared_transmission.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider;
+import de.vsy.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider;
 
 public class EmptyDataProvider extends StandardEmptyDataProvider {
 

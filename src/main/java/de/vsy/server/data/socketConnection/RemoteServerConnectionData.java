@@ -1,7 +1,7 @@
 package de.vsy.server.data.socketConnection;
 
 import de.vsy.server.service.RemotePacketBuffer;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.PacketBuffer;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;

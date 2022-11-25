@@ -8,9 +8,9 @@ import de.vsy.server.client_handling.data_management.logic.AuthenticationStateCo
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.shared_module.packet_management.ThreadPacketBufferLabel;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_transmissionule.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
+import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_utility.async_value_acquisition.TimeBasedValueFetcher;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.time.Instant;

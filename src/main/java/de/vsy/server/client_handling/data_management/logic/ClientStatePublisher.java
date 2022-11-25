@@ -1,7 +1,7 @@
 package de.vsy.server.client_handling.data_management.logic;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static java.util.Set.of;
 
@@ -13,9 +13,9 @@ import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
 import de.vsy.server.server_packet.dispatching.PacketDispatcher;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 
 public class ClientStatePublisher implements ClientStateListener {
 

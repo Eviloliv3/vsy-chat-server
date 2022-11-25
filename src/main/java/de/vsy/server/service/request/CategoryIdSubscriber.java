@@ -1,7 +1,7 @@
 package de.vsy.server.service.request;
 
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_transmission.packet.Packet;
 import java.util.HashSet;
 import java.util.Set;
 

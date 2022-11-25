@@ -1,14 +1,14 @@
 package de.vsy.chat.server.testing_grounds;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.shared_module.shared_module.packet_creation.PacketCompiler;
-import de.vsy.shared_transmission.shared_transmission.dto.CommunicatorDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
-import de.vsy.shared_transmission.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
+import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

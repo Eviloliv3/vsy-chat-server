@@ -3,8 +3,8 @@ package de.vsy.server.service;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_transmission.packet.Packet;
 
 /**
  * Prueft ob Paketinhalt bereits vom entfernten Server verarbeitet wurde und stoppt den versandt

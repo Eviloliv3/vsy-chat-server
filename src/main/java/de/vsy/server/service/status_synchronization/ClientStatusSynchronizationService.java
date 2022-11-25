@@ -3,7 +3,7 @@
  */
 package de.vsy.server.service.status_synchronization;
 
-import static de.vsy.shared_transmission.shared_transmission.packet.property.packet_category.PacketCategory.STATUS;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.STATUS;
 
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
@@ -19,8 +19,8 @@ import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.ClientStatusPacketProcessorFactory;
 import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.processor.ServicePacketProcessor;
-import de.vsy.shared_module.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_transmission.shared_transmission.packet.Packet;
+import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
