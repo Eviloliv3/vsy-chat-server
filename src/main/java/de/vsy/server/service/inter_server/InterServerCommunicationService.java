@@ -15,7 +15,7 @@ import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
 import de.vsy.server.server_packet.dispatching.InterServerCommunicationPacketDispatcher;
-import de.vsy.server.server_packet.dispatching.PacketDispatcher;
+import de.vsy.shared_module.packet_management.PacketDispatcher;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.Service;

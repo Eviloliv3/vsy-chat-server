@@ -6,6 +6,7 @@ package de.vsy.server.server_packet.dispatching;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceData;
 import de.vsy.server.service.ServicePacketBufferManager;
+import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;

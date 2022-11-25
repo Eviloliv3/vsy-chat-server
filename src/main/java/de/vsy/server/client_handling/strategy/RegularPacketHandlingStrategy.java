@@ -6,11 +6,11 @@ import de.vsy.server.client_handling.packet_processing.content_processor_provisi
 import de.vsy.server.client_handling.packet_processing.processor.ClientPacketProcessorLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketContextCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
-import de.vsy.server.client_handling.packet_processing.processor.PacketSyntaxCheckLink;
+import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.server_packet.dispatching.ClientPacketDispatcher;
-import de.vsy.server.server_packet.dispatching.MultiplePacketDispatcher;
-import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
+import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
+import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.shared_module.packet_exception.PacketHandlingException;

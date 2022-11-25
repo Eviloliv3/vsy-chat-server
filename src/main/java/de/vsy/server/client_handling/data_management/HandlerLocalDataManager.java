@@ -19,7 +19,7 @@ import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
 import de.vsy.server.client_handling.data_management.logic.ClientStateRecorder;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.data.access.HandlerAccessManager;
-import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
+import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.server.server_packet.packet_creation.ClientHandlerPacketCreator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_management.PacketBuffer;

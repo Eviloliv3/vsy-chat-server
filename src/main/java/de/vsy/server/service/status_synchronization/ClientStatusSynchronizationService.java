@@ -7,8 +7,8 @@ import static de.vsy.shared_transmission.packet.property.packet_category.PacketC
 
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
-import de.vsy.server.server_packet.dispatching.PacketDispatcher;
-import de.vsy.server.server_packet.dispatching.PacketTransmissionCache;
+import de.vsy.shared_module.packet_management.PacketDispatcher;
+import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.server.server_packet.dispatching.ServerSynchronizationPacketDispatcher;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_creation.ServerStatusSyncPacketCreator;

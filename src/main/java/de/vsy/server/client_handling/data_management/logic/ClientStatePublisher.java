@@ -12,7 +12,7 @@ import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
-import de.vsy.server.server_packet.dispatching.PacketDispatcher;
+import de.vsy.shared_module.packet_management.PacketDispatcher;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
