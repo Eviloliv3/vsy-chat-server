@@ -10,10 +10,10 @@ import de.vsy.server.client_handling.packet_processing.processor.ClientPacketPro
 import de.vsy.server.client_handling.packet_processing.processor.PacketContextCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
+import de.vsy.server.server_packet.dispatching.ClientPacketDispatcher;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.shared_module.packet_exception.PacketHandlingException;
-import de.vsy.shared_module.packet_management.ClientPacketDispatcher;
 import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
 import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
