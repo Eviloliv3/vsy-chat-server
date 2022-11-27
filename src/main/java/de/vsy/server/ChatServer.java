@@ -32,7 +32,6 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -63,7 +62,15 @@ public class ChatServer implements ClientServer {
    */
   public static void main(final String[] args) {
     final var server = new ChatServer();
-    Runtime.getRuntime().addShutdownHook(new Thread(()->{try{server.shutdownServer();}catch(RuntimeException re){LOGGER.error("{}:{}\n{}", re.getClass().getSimpleName(), re.getMessage(), asList(re.getStackTrace()));LogManager.shutdown();}}));
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      try {
+        server.shutdownServer();
+      } catch (RuntimeException re) {
+        LOGGER.error("{}:{}\n{}", re.getClass().getSimpleName(), re.getMessage(),
+            asList(re.getStackTrace()));
+        LogManager.shutdown();
+      }
+    }));
     Thread.currentThread().setName("Chatserver");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();
@@ -98,7 +105,7 @@ public class ChatServer implements ClientServer {
     setupAndStartServices();
   }
 
-  public void serve()  {
+  public void serve() {
     prepareServer();
     clientConnectionEstablisher = new ClientConnectionEstablisher(
         this.serverDataModel.getServerConnectionDataManager().getLocalServerConnectionData(), this);
@@ -243,7 +250,8 @@ public class ChatServer implements ClientServer {
       this.serverDataModel.getServerConnectionDataManager().waitForUninitiatedConnections();
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
-      LOGGER.error("Interrupted while waiting for preceeding server connections to be established.");
+      LOGGER.error(
+          "Interrupted while waiting for preceeding server connections to be established.");
     }
     LOGGER.info("Connection synchronization with existing servers finished.");
   }

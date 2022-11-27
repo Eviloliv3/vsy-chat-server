@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashSet;

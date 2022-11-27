@@ -67,7 +67,7 @@ public class RemoteClientDisconnector {
     this.clientStateProvider.removeClientState(clientId);
   }
 
-  private void removeVolatilePackets(PendingPacketDAO pendingPacketAccess){
+  private void removeVolatilePackets(PendingPacketDAO pendingPacketAccess) {
     var pendingPacketMap = pendingPacketAccess.readPendingPackets(PROCESSOR_BOUND);
     pendingPacketMap.values().removeIf(VolatilePacketIdentifier::checkPacketVolatiliy);
     pendingPacketAccess.setPendingPackets(PROCESSOR_BOUND, pendingPacketMap);

@@ -6,25 +6,25 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_S
 import static java.util.Set.of;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server_packet.content.builder.ExtendedStatusSyncBuilder;
 import de.vsy.server.server_packet.content.builder.SimpleStatusSyncBuilder;
-import de.vsy.shared_module.packet_management.PacketDispatcher;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
+import de.vsy.shared_module.packet_management.PacketDispatcher;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 
 public class ClientStatePublisher implements ClientStateListener {
 
   private static SocketConnectionDataManager serverConnectionNodes;
-  private final LocalClientDataProvider clientDataManager;
+  private final ClientDataProvider clientDataManager;
   private final ContactListDAO contactListAccess;
   private final PacketDispatcher dispatcher;
 
-  public ClientStatePublisher(final LocalClientDataProvider clientDataManager,
+  public ClientStatePublisher(final ClientDataProvider clientDataManager,
       final ContactListDAO contactListProvider, final PacketDispatcher dispatcher) {
     this.clientDataManager = clientDataManager;
     this.contactListAccess = contactListProvider;

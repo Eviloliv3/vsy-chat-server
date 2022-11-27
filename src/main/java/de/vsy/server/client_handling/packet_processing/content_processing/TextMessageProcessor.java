@@ -4,11 +4,11 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.access_limiter.ChatHandlingDataProvider;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_utility.id_manipulation.IdComparator;
@@ -21,7 +21,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
   private final ContactListDAO contactListAccess;
   private final MessageDAO messageWriter;
   private final ResultingPacketContentHandler resultingPacketCache;
-  private final LocalClientDataProvider localClientData;
+  private final ClientDataProvider localClientData;
 
   /**
    * Instantiates a new message PacketHandler.

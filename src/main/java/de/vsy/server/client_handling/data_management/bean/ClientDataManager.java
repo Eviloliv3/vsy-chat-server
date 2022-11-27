@@ -4,9 +4,10 @@ import static de.vsy.server.persistent_data.EmptyDataProvider.EMPTY_COMMUNICATOR
 
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
-public class ClientDataManager implements LocalClientDataProvider {
+public class ClientDataManager implements ClientDataProvider {
 
   private CommunicatorData clientData;
   private CommunicatorDTO communicatorData;
@@ -18,11 +19,6 @@ public class ClientDataManager implements LocalClientDataProvider {
   @Override
   public int getClientId() {
     return this.clientData.getCommunicatorId();
-  }
-
-  @Override
-  public CommunicatorData getClientData() {
-    return this.clientData;
   }
 
   @Override

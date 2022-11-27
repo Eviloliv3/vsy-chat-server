@@ -12,17 +12,17 @@ import de.vsy.server.client_handling.data_management.access_limiter.RelationHand
 import de.vsy.server.client_handling.data_management.access_limiter.StatusHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.bean.ClientDataManager;
 import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
 import de.vsy.server.client_handling.data_management.logic.ClientStateRecorder;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.data.access.HandlerAccessManager;
-import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.server.server_packet.packet_creation.ClientHandlerPacketCreator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 
@@ -88,7 +88,7 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
   }
 
   @Override
-  public LocalClientDataProvider getLocalClientDataProvider() {
+  public ClientDataProvider getLocalClientDataProvider() {
     return this.clientDataManager;
   }
 

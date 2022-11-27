@@ -1,12 +1,12 @@
 package de.vsy.server.client_handling.persistent_data_access;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.persistent_data.client_data.ClientDataAccess;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
     ClientStateListener,
     RelationHandlingPersistenceAccess, UpdateHandlingPersistentAccess {
 
-  private final LocalClientDataProvider localClientData;
+  private final ClientDataProvider localClientData;
   private final ContactListDAO contactDataProvider;
   private final MessageDAO messageDataProvider;
   private final PendingPacketDAO pendingPacketAccessor;
@@ -29,7 +29,7 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
    *
    * @param localClientData the local client dataManagement
    */
-  public ClientPersistentDataAccessProvider(final LocalClientDataProvider localClientData) {
+  public ClientPersistentDataAccessProvider(final ClientDataProvider localClientData) {
     this.dataAccessible = false;
     this.persistenceDAOList = new ArrayList<>();
 

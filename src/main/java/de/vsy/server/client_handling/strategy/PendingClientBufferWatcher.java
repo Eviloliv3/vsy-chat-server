@@ -3,11 +3,11 @@ package de.vsy.server.client_handling.strategy;
 import static java.util.Arrays.asList;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_transmission.packet.Packet;
@@ -35,7 +35,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
   private final CountDownLatch terminationLatch;
   private final PendingPacketDAO pendingPacketAccessor;
   private final AuthenticationStateControl clientStateControl;
-  private final LocalClientDataProvider localClientData;
+  private final ClientDataProvider localClientData;
 
   /**
    * Instantiates a new pending client buffer watcher.

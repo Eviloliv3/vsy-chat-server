@@ -2,10 +2,10 @@ package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.CommunicationEntityDataProvider;
 import de.vsy.server.client_handling.data_management.access_limiter.RelationHandlingDataProvider;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_utility.id_manipulation.IdComparator;
@@ -20,7 +20,7 @@ public class RelationRequestProcessor implements ContentProcessor<ContactRelatio
   private static final Logger LOGGER = LogManager.getLogger();
   private final CommunicationEntityDataProvider contactMapper;
   private final ContactListDAO contactProvider;
-  private final LocalClientDataProvider localClientDataManager;
+  private final ClientDataProvider localClientDataManager;
   private final ResultingPacketContentHandler contentHandler;
 
   /**

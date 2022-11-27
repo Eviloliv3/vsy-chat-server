@@ -1,6 +1,5 @@
 package de.vsy.chat.server.raw_server_test.authentication;
 
-import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_transmission.dto.authentication.PersonalData.valueOf;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
@@ -10,12 +9,6 @@ import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
 import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
-import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.shared_transmission.dto.authentication.PersonalData;
-import de.vsy.shared_transmission.dto.builder.AccountCreationDTOBuilder;
-import de.vsy.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
-import de.vsy.shared_transmission.packet.content.authentication.NewAccountRequestDTO;
 import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import de.vsy.shared_transmission.dto.authentication.PersonalData;
 import de.vsy.shared_transmission.dto.builder.AccountCreationDTOBuilder;

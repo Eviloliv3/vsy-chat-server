@@ -1,7 +1,6 @@
 package de.vsy.server.service.inter_server;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.UNINITIATED;
-import static java.util.concurrent.Executors.newSingleThreadExecutor;
 
 import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
@@ -9,9 +8,6 @@ import de.vsy.shared_utility.logging.ThreadContextRunnable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,7 +59,8 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
     try {
       return socketToWatch.accept();
     } catch (IOException e) {
-      LOGGER.error("{} occurred while waiting for server connection.", e.getClass().getSimpleName());
+      LOGGER.error("{} occurred while waiting for server connection.",
+          e.getClass().getSimpleName());
       return null;
     }
   }

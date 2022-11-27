@@ -1,8 +1,8 @@
 package de.vsy.server.server_packet.packet_creation;
 
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
@@ -10,9 +10,9 @@ import de.vsy.shared_utility.standard_value.StandardIdProvider;
 
 public class ClientHandlerPacketCreator extends ResultingPacketCreator {
 
-  private final LocalClientDataProvider clientDataProvider;
+  private final ClientDataProvider clientDataProvider;
 
-  public ClientHandlerPacketCreator(LocalClientDataProvider clientDataProvider) {
+  public ClientHandlerPacketCreator(ClientDataProvider clientDataProvider) {
     this.clientDataProvider = clientDataProvider;
   }
 

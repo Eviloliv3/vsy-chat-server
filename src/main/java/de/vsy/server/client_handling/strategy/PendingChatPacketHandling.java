@@ -31,7 +31,7 @@ public class PendingChatPacketHandling implements PacketHandlingStrategy {
       pendingClientThread.start();
     } else {
       LOGGER.error("Global pending state could not be set for: {}",
-          this.handlerDataManager.getLocalClientDataProvider().getClientData());
+          this.handlerDataManager.getLocalClientDataProvider().getCommunicatorData());
     }
   }
 }

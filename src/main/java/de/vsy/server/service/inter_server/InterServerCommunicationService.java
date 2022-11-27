@@ -15,7 +15,6 @@ import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
 import de.vsy.server.server_packet.dispatching.InterServerCommunicationPacketDispatcher;
-import de.vsy.shared_module.packet_management.PacketDispatcher;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.Service;
@@ -27,6 +26,7 @@ import de.vsy.shared_module.exception_processing.PacketHandlingExceptionProcesso
 import de.vsy.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.PacketDispatcher;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;

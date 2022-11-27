@@ -1,22 +1,25 @@
 package de.vsy.server.client_handling.strategy;
 
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.OUTSIDE_BOUND;
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.SERVER_BOUND;
+
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
 import de.vsy.server.client_handling.packet_processing.content_processor_provisioning.StandardProcessorFactoryProvider;
 import de.vsy.server.client_handling.packet_processing.processor.ClientPacketProcessorLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketContextCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
-import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
-import de.vsy.server.server_packet.dispatching.ClientPacketDispatcher;
-import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
-import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
 import de.vsy.shared_module.packet_exception.PacketHandlingException;
+import de.vsy.shared_module.packet_management.ClientPacketDispatcher;
+import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
+import de.vsy.shared_module.packet_management.PacketTransmissionCache;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import de.vsy.shared_module.packet_validation.SemanticPacketValidator;
 import de.vsy.shared_module.packet_validation.SimplePacketChecker;
@@ -58,7 +61,8 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
     this.threadLocalBuffers = threadDataAccess.getHandlerBufferManager();
 
     this.dispatcher = new ClientPacketDispatcher(threadDataAccess.getLocalClientDataProvider(),
-        this.threadLocalBuffers);
+        this.threadLocalBuffers.getPacketBuffer(OUTSIDE_BOUND),
+        this.threadLocalBuffers.getPacketBuffer(SERVER_BOUND));
     setupProcessor(threadDataAccess);
   }
 

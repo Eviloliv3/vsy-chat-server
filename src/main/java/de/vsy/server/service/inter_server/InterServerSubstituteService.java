@@ -6,7 +6,6 @@ package de.vsy.server.service.inter_server;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static java.lang.Thread.interrupted;
 
-import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
 import de.vsy.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
@@ -19,6 +18,7 @@ import de.vsy.server.service.packet_logic.processor.InterServerSubstitutePacketP
 import de.vsy.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.packet_processing.PacketProcessor;
+import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
 import de.vsy.shared_module.packet_validation.SimplePacketChecker;
 import de.vsy.shared_module.thread_manipulation.ProcessingInterruptProvider;
 import de.vsy.shared_transmission.packet.Packet;

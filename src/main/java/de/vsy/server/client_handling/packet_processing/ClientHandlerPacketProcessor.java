@@ -1,11 +1,11 @@
 package de.vsy.server.client_handling.packet_processing;
 
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.packet_exception.PacketValidationException;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_module.packet_processing.ProcessingCondition;
@@ -22,9 +22,9 @@ public class ClientHandlerPacketProcessor<T extends PacketContent> implements Pa
   protected final PacketContentValidator<T> contentValidator;
   protected final ContentProcessor<T> contentProcessor;
   protected final LocalServerConnectionData serverConnectionData;
-  protected final LocalClientDataProvider localClientDataManager;
+  protected final ClientDataProvider localClientDataManager;
 
-  public ClientHandlerPacketProcessor(final LocalClientDataProvider clientData,
+  public ClientHandlerPacketProcessor(final ClientDataProvider clientData,
       final ProcessingCondition condition,
       final PacketContentValidator<T> contentValidator,
       final ContentProcessor<T> contentProcessor) {

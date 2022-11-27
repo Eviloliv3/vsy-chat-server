@@ -2,12 +2,12 @@ package de.vsy.server.client_handling.data_management.logic;
 
 import de.vsy.server.client_handling.data_management.ExtraClientSubscriptionProvider;
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
-import de.vsy.server.client_handling.data_management.bean.LocalClientDataProvider;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.ClientStateTranslator;
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
+import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
@@ -25,11 +25,11 @@ public class ClientSubscriptionHandler implements ClientStateListener {
   private static LiveClientStateDAO persistentClientStates;
   private static AbstractPacketCategorySubscriptionManager subscriptionHandler;
   private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
-  private final LocalClientDataProvider localClientDataProvider;
+  private final ClientDataProvider localClientDataProvider;
   private final ThreadPacketBufferManager clientBuffer;
 
   public ClientSubscriptionHandler(final ExtraClientSubscriptionProvider extraSubscriptionProvider,
-      final LocalClientDataProvider localClientDataManager,
+      final ClientDataProvider localClientDataManager,
       final ThreadPacketBufferManager clientBuffer) {
 
     this.extraSubscriptionProvider = extraSubscriptionProvider;

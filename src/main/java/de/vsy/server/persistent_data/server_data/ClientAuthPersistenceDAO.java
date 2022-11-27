@@ -91,7 +91,8 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         readList = (HashSet<AuthenticationData>) fromFile;
       } catch (final ClassCastException cc) {
         LOGGER.info(
-            "{} occurred while reading the registered client map. Empty map will be returned.", cc.getClass().getSimpleName());
+            "{} occurred while reading the registered client map. Empty map will be returned.",
+            cc.getClass().getSimpleName());
       }
     }
 
