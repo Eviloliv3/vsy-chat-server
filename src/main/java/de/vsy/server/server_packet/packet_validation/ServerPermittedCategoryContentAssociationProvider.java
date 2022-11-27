@@ -33,15 +33,15 @@ import java.util.Set;
 /**
  * The Class ServerPacketContentTypeValidationCreator.
  */
-public class ServerPacketTypeValidationCreator {
+public class ServerPermittedCategoryContentAssociationProvider {
 
-  private ServerPacketTypeValidationCreator() {
+  private ServerPermittedCategoryContentAssociationProvider() {
   }
 
   /**
-   * Setup regular server Packetcontent validator.
+   * Setup regular server PacketContent validator.
    *
-   * @return the server Packetcontent type validator
+   * @return the server PacketContent type validator
    */
   public static SemanticPacketValidator createRegularServerPacketContentValidator() {
     SemanticPacketValidator semanticValidator = new SemanticPacketValidator();

@@ -11,7 +11,7 @@ import de.vsy.server.client_handling.packet_processing.processor.PacketContextCh
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
-import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
+import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_module.packet_management.ClientPacketDispatcher;
 import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
@@ -23,7 +23,7 @@ import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import de.vsy.shared_module.packet_validation.SemanticPacketValidator;
 import de.vsy.shared_module.packet_validation.SimplePacketChecker;
-import de.vsy.shared_module.packet_validation.content_validation.ClientPacketTypeValidationCreator;
+import de.vsy.shared_module.packet_validation.content_validation.ClientPacketSemanticsValidationCreator;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
 import org.apache.logging.log4j.LogManager;
@@ -77,13 +77,11 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
   }
 
   private SemanticPacketValidator setupValidator() {
-    SemanticPacketValidator packetValidator = ClientPacketTypeValidationCreator
-        .createRegularPacketContentValidator();
-    var regularServerValidation = ServerPacketTypeValidationCreator.setupRegularServerPacketContentValidation();
+    SemanticPacketValidator packetValidator = ClientPacketSemanticsValidationCreator.createSemanticValidator();
+    var serverPacketValidation = ServerPermittedCategoryContentAssociationProvider.setupRegularServerPacketContentValidation();
 
-    for (var categoryValidator : regularServerValidation.entrySet()) {
-      packetValidator.addCategoryAssociations(categoryValidator.getKey(),
-          categoryValidator.getValue());
+    for (var associationSet : serverPacketValidation.entrySet()) {
+      packetValidator.addCategoryAssociations(associationSet.getKey(), associationSet.getValue());
     }
     return packetValidator;
   }

@@ -11,7 +11,7 @@ import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
+import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.processor.InterServerSubstitutePacketProcessorLink;
@@ -117,7 +117,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
           new InterServerSubstitutePacketProcessorLink(this.clientPersistenceAccessManagers,
               this.requestBuffer),
           new SimplePacketChecker(
-              ServerPacketTypeValidationCreator.createRegularServerPacketContentValidator()));
+              ServerPermittedCategoryContentAssociationProvider.createRegularServerPacketContentValidator()));
       this.reconnectionStateWatcher.schedule(
           new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 500,
           1000);

@@ -15,7 +15,7 @@ import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
 import de.vsy.server.server_packet.dispatching.InterServerCommunicationPacketDispatcher;
-import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
+import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceBase;
@@ -96,7 +96,7 @@ public class InterServerCommunicationService extends ServiceBase {
       return;
     }
     this.validator = new SimplePacketChecker(
-        ServerPacketTypeValidationCreator.createRegularServerPacketContentValidator());
+        ServerPermittedCategoryContentAssociationProvider.createRegularServerPacketContentValidator());
     this.localInterruptor = this::interruptionConditionNotMet;
 
     setupThreadPacketBufferManager();

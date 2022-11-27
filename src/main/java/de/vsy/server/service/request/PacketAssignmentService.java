@@ -9,7 +9,7 @@ import static de.vsy.shared_transmission.packet.property.communicator.EligibleCo
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
 import de.vsy.server.data.access.PacketAssignmentServiceDataProvider;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
-import de.vsy.server.server_packet.packet_validation.ServerPacketTypeValidationCreator;
+import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.server.service.CommunicationNetworkSubscriptionManager;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServiceBase;
@@ -85,7 +85,7 @@ public class PacketAssignmentService extends ServiceBase {
   @Override
   public void finishSetup() {
     final var serviceId = super.getServiceId();
-    final var identificatorValidation = ServerPacketTypeValidationCreator
+    final var identificatorValidation = ServerPermittedCategoryContentAssociationProvider
         .createRegularServerPacketContentValidator();
 
     this.validator = new SimplePacketChecker(identificatorValidation);
