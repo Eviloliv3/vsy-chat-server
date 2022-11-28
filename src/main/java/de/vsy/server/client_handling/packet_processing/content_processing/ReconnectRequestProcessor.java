@@ -75,6 +75,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
                     + "erneut authentifizieren.";
           }
         } else {
+          //TODO Klient versucht den Neustart wahrscheinlich zu frueh?
           LOGGER.error("Client state could not be saved. Either the access of client "
                   + "states failed or could not be written. Found client data: {}",
               clientData);

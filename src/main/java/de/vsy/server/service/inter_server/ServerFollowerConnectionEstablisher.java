@@ -41,9 +41,8 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
         this.serviceCreator.startInterServerCommThread();
       }
     }
-    LOGGER.info("{} stopped. Thread interrupted: {} / socket closed: {}",
-        Thread.currentThread().getName(), Thread.currentThread().isInterrupted(),
-        watchedSocket.isClosed());
+    LOGGER.info("{} stopped. Socket closed: {}",
+        Thread.currentThread().getName(), watchedSocket.isClosed());
   }
 
   /**

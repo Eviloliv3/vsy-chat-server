@@ -62,7 +62,7 @@ public class ClientConnectionHandler implements Runnable {
       clientHandling = new RegularPacketHandlingStrategy(this.threadDataManager,
           this.connectionControl);
 
-      while (this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
+      while (this.connectionControl.connectionIsLive() && !Thread.interrupted()) {
         clientHandling.administerStrategy();
       }
 
