@@ -1,5 +1,6 @@
 package de.vsy.server.data;
 
+import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static java.util.Arrays.asList;
 import static java.util.List.copyOf;
 
@@ -32,7 +33,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
   {
     this.remoteServerConnections = new EnumMap<>(SocketConnectionState.class);
-    this.remoteServerConnections.put(SocketConnectionState.INITIATED, new LinkedList<>());
+    this.remoteServerConnections.put(INITIATED, new LinkedList<>());
     this.remoteServerConnections.put(SocketConnectionState.PENDING, new LinkedList<>());
     this.remoteServerConnections.put(SocketConnectionState.UNINITIATED, new LinkedList<>());
   }
@@ -135,6 +136,22 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     } finally {
       this.lock.readLock().unlock();
     }
+  }
+
+  public RemoteServerConnectionData getLiveServerConnection(final int wantedServerId){
+    this.lock.readLock().lock();
+
+    try{
+      final var initiatedConnectedServers = this.remoteServerConnections.get(INITIATED);
+      for(final var remoteServer : initiatedConnectedServers){
+        if(remoteServer.getServerId() == wantedServerId){
+          return remoteServer;
+        }
+      }
+    } finally {
+      this.lock.readLock().unlock();
+    }
+    return null;
   }
 
   public RemoteServerConnectionData getDistinctNodeData(final SocketConnectionState state,

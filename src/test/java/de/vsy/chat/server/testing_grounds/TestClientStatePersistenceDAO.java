@@ -6,6 +6,9 @@ package de.vsy.chat.server.testing_grounds;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 import de.vsy.server.client_management.ClientState;
+import de.vsy.server.data.ServerDataManager;
+import de.vsy.server.data.SocketConnectionDataManager;
+import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +20,8 @@ import org.junit.jupiter.api.Test;
  */
 class TestClientStatePersistenceDAO {
 
-  final LiveClientStateDAO statePersist = new LiveClientStateDAO();
+  final LiveClientStateDAO statePersist = new LiveClientStateDAO(new SocketConnectionDataManager(
+      LocalServerConnectionData.valueOf(-1, null)));
 
   @BeforeEach
   void createAccess() throws InterruptedException {

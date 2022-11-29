@@ -1,7 +1,6 @@
 package de.vsy.server.client_management;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
@@ -17,7 +16,8 @@ import java.util.Set;
 public class CurrentClientState {
 
   private final Map<PacketCategory, Set<Integer>> extraSubscriptions;
-  private final PendingState pendingState;
+  private boolean pendingState;
+  private boolean reconnectState;
   private ClientState currentState;
   private int serverId;
 
@@ -27,7 +27,7 @@ public class CurrentClientState {
    * @param serverId the server port
    */
   public CurrentClientState(final int serverId) {
-    this(ClientState.OFFLINE, new PendingState(), serverId, new EnumMap<>(PacketCategory.class));
+    this(ClientState.OFFLINE, false, false, serverId, new EnumMap<>(PacketCategory.class));
   }
 
   /**
@@ -40,11 +40,13 @@ public class CurrentClientState {
    */
   @JsonCreator
   public CurrentClientState(@JsonProperty("currentState") final ClientState currentState,
-      @JsonProperty("pendingState") final PendingState pendingState,
+      @JsonProperty("pendingState") final boolean pendingState,
+      @JsonProperty("reconnectState") final boolean reconnectState,
       @JsonProperty("serverId") final int serverId,
       @JsonProperty("extraSubscriptions") final Map<PacketCategory, Set<Integer>> extraChatSubs) {
     this.currentState = currentState;
     this.pendingState = pendingState;
+    this.reconnectState = reconnectState;
     this.serverId = serverId;
     this.extraSubscriptions = extraChatSubs;
   }
@@ -112,36 +114,8 @@ public class CurrentClientState {
    *
    * @return the pending state
    */
-  @JsonIgnore
-  public boolean getPendingFlag() {
-    return this.pendingState.getPendingState();
-  }
-
-  /**
-   * Sets the pending flag.
-   *
-   * @param newFlag the new pending flag
-   */
-  public void setPendingFlag(final boolean newFlag) {
-    this.pendingState.setPendingState(newFlag);
-  }
-
-  /**
-   * Gets the pending flag.
-   *
-   * @return the pending flag
-   */
-  public PendingState getPendingState() {
-    return this.pendingState;
-  }
-
-  /**
-   * Gets the reconnection permit.
-   *
-   * @return the reconnection permit
-   */
-  public boolean setReconnectionState(final boolean newState) {
-    return this.pendingState.setReconnecting(newState);
+  public boolean getPendingState() {
+    return this.reconnectState;
   }
 
   /**
@@ -149,9 +123,8 @@ public class CurrentClientState {
    *
    * @return the reconnection state
    */
-  @JsonIgnore
-  public boolean getReconnectionState() {
-    return this.pendingState.getReconnecting();
+  public boolean getReconnectState() {
+    return this.reconnectState;
   }
 
   /**
@@ -161,5 +134,36 @@ public class CurrentClientState {
    */
   public int getServerId() {
     return this.serverId;
+  }
+
+  /**
+   * Schwebezustand eines Klienten wird gesetzt. Der Wiederverbindungszustand wird zurückgesetzt.
+   * Ein verbundener Klient (pending == false) kann nicht wiederverbunden werden. Ein frisch
+   * schwebender (pending == true) kann nicht gleichzeitig wiederverbunden werden.
+   *
+   * @param pendingState the new pending state
+   */
+  public void setPendingState(final boolean pendingState) {
+    this.pendingState = pendingState;
+  }
+
+  /**
+   * Sets global client reconnect state true or false if reconnect state is false and pending is also true.
+   * @param reconnectState the desired global client reconnect state
+   * @return true, if argument is false or global reconnect state is false and global pending is true; false otherwise
+   */
+  public boolean setReconnectState(boolean reconnectState) {
+    final var reconnectSet = true;
+
+    if (reconnectState && (this.pendingState && !this.reconnectState)) {
+      this.reconnectState = true;
+      return reconnectSet;
+    } else {
+      if (!reconnectState) {
+        this.reconnectState = false;
+        return reconnectSet;
+      }
+    }
+    return !reconnectSet;
   }
 }

@@ -6,6 +6,7 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_S
 import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.CurrentClientState;
+import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.persistent_data.PersistenceDAO;
 import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
 import de.vsy.server.persistent_data.server_data.ServerDataAccess;
@@ -23,13 +24,14 @@ import org.apache.logging.log4j.Logger;
 public class LiveClientStateDAO implements ServerDataAccess {
 
   private static final Logger LOGGER = LogManager.getLogger();
+  private final SocketConnectionDataManager serverConnections;
   private final PersistenceDAO dataProvider;
 
   /**
    * Instantiiert einen neuen Zugriffsanbieter für persistent gespeicherte Klientenzustände.
    */
-  public LiveClientStateDAO() {
-
+  public LiveClientStateDAO(final SocketConnectionDataManager serverConnections) {
+    this.serverConnections = serverConnections;
     this.dataProvider = new PersistenceDAO(DataFileDescriptor.ACTIVE_CLIENTS, getDataFormat());
   }
 
@@ -221,7 +223,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     clientState = clientStateMap.get(clientId);
 
     if (clientState != null) {
-      clientState.setPendingFlag(pendingState);
+      clientState.setPendingState(pendingState);
       clientStateMap.put(clientId, clientState);
       pendingStateChanged = this.dataProvider.writeData(clientStateMap);
     } else {
@@ -244,7 +246,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
   public boolean changeReconnectionState(final int clientId, boolean newState) {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
-    var reconnectionAllowed = false;
+    var reconnectStateSet = false;
 
     if (!this.dataProvider.acquireAccess(true)) {
       LOGGER.error("No exclusive write access.");
@@ -254,16 +256,45 @@ public class LiveClientStateDAO implements ServerDataAccess {
     clientState = clientStateMap.get(clientId);
 
     if (clientState != null) {
-      if (clientState.setReconnectionState(newState)) {
-        LOGGER.trace("ReconnectionState changed to {}.", newState);
+      reconnectStateSet = clientState.setReconnectState(newState);
+
+      if (reconnectStateSet) {
+        LOGGER.trace("Reconnection state set to {}.", newState);
         clientStateMap.put(clientId, clientState);
-        reconnectionAllowed = this.dataProvider.writeData(clientStateMap);
+        reconnectStateSet = this.dataProvider.writeData(clientStateMap);
       } else {
-        LOGGER.warn("ReconnectionState could not be changed to {}.", newState);
+        if(trySetRemoteClientPending(clientState)) {
+          LOGGER.trace("Pending state set to true, new reconnection state change will be attempted.");
+          changeReconnectionState(clientId, newState);
+        }
       }
+    }else {
+      LOGGER.trace("No client state found.");
     }
     this.dataProvider.releaseAccess(true);
-    return reconnectionAllowed;
+    return reconnectStateSet;
+  }
+
+  private boolean trySetRemoteClientPending(CurrentClientState clientState){
+    final var clientNotPending = !clientState.getPendingState();
+
+    if (clientNotPending) {
+      final var clientServerId = clientState.getServerId();
+      final var clientRemoteConnected =
+          clientServerId != this.serverConnections.getLocalServerConnectionData().getServerId();
+      final var remoteServerOffline =
+          this.serverConnections.getLiveServerConnection(clientServerId) == null;
+
+      if(clientRemoteConnected && remoteServerOffline){
+        clientState.setPendingState(true);
+        return true;
+      }else {
+        LOGGER.trace("PendingState not changed to true; client remote connected: {}; remote server offline: {}", clientRemoteConnected, remoteServerOffline);
+      }
+    }else{
+      LOGGER.trace("PendingState not change. Client already pending.");
+    }
+    return false;
   }
 
   @Override
@@ -291,7 +322,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     clientState = clientStateMap.get(clientId);
 
     if (clientState != null) {
-      clientPending = clientState.getPendingFlag();
+      clientPending = clientState.getPendingState();
     }
     return clientPending;
   }
@@ -316,7 +347,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
     clientState = clientStateMap.get(clientId);
 
     if (clientState != null) {
-      clientPending = clientState.getReconnectionState();
+      clientPending = clientState.getReconnectState();
     }
     return clientPending;
   }

@@ -10,20 +10,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Verwaltet Lese-/Schreibeinheiten für Zugriff auf servereigene Daten.
+ * Manages read and write objects referencing global server data.
  */
 public class ServerPersistentDataManager {
 
   /**
-   * Speichert während der Serverlaufzeit Klientenzustände.
+   * Grants access to persistent global client states.
    */
   public final LiveClientStateDAO clientStateAccessManager;
   /**
-   * Gewährt Zugriff auf Daten zur Authentifizierung von Klienten.
+   * Grants access to persistent global client authentication data.
    */
   public final ClientAuthPersistenceDAO authenticationAccessManager;
   /**
-   * Gewährt Zugriff auf chatbezogene (Identiäts-)Daten.
+   * Grants access to persistent global client representation data.
    */
   public final CommunicatorPersistenceDAO communicationEntityAccessManager;
   public final IdProvider idProvider;
@@ -31,13 +31,13 @@ public class ServerPersistentDataManager {
   private final List<ServerDataAccess> accessController;
 
   /**
-   * Instantiates a new server persistant dataManagement manager.
+   * Instantiates a new server persistent dataManagement manager.
    */
-  public ServerPersistentDataManager() {
+  public ServerPersistentDataManager(final SocketConnectionDataManager serverConnections) {
     this.accessController = new ArrayList<>();
 
     this.idProvider = new IdProvider();
-    this.clientStateAccessManager = new LiveClientStateDAO();
+    this.clientStateAccessManager = new LiveClientStateDAO(serverConnections);
     this.transactionAccessManager = new ClientTransactionDAO();
     this.authenticationAccessManager = new ClientAuthPersistenceDAO();
     this.communicationEntityAccessManager = new CommunicatorPersistenceDAO();

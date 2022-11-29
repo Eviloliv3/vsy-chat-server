@@ -184,7 +184,7 @@ public class ChatServer implements ClientServer {
   }
 
   private void setupPersistentDataAccess() {
-    this.serverPersistentDataManager = new ServerPersistentDataManager();
+    this.serverPersistentDataManager = new ServerPersistentDataManager(this.serverDataModel.getServerConnectionDataManager());
     this.serverPersistentDataManager.initiatePersistentAccess();
   }
 
