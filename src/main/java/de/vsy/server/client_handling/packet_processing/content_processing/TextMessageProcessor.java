@@ -62,7 +62,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
       }
     }
 
-    if (!receptionState || iAmOriginator) {
+    if (iAmOriginator) {
       this.resultingPacketCache.addRequest(extractedContent);
     }
 
