@@ -52,7 +52,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
   private final ServicePacketBufferManager serviceBuffers;
   private final RemoteClientDisconnector clientDisconnector;
   private PacketProcessor processor;
-  private ProcessingInterruptProvider interrupt;
+  private ProcessingInterruptProvider shutdownCondition;
   private PacketBuffer requestBuffer;
 
   /**
@@ -85,7 +85,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     if (finishSetup()) {
       LOGGER.info("{} started.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
 
-      while (this.interrupt.conditionNotMet()) {
+      while (this.shutdownCondition.conditionNotMet()) {
         processPacket();
       }
 
@@ -122,7 +122,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
           new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 500,
           1000);
       stopTime = Instant.now().plusMillis(25000);
-      this.interrupt = () -> Instant.now().isAfter(stopTime);
+      this.shutdownCondition = () -> !(Instant.now().isAfter(stopTime));
       substituteSetup = true;
     } else {
       LOGGER.info("No remote clients for server {} found.",
