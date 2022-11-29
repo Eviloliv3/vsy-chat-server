@@ -121,7 +121,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
       this.reconnectionStateWatcher.schedule(
           new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 500,
           1000);
-      stopTime = Instant.now().plusMillis(25000);
+      stopTime = Instant.now().plusMillis(250000);
       this.shutdownCondition = () -> !(Instant.now().isAfter(stopTime));
       substituteSetup = true;
     } else {
