@@ -35,11 +35,7 @@ public class ServerSynchronizationPacketDispatcher implements MultiplePacketDisp
     }
   }
 
-  /**
-   * @param output the packet to dispatch
-   * @throws IllegalArgumentException wenn Paket null, Properties null, oder Empfänger null,
-   *                                  EmpfängerEntität null
-   */
+
   @Override
   public void dispatchPacket(final Packet output) {
     final var recipientEntity = getRecipientEntity(output);
@@ -62,22 +58,22 @@ public class ServerSynchronizationPacketDispatcher implements MultiplePacketDisp
       if (recipient != null) {
         recipientEntity = recipient.getEntity();
       } else {
-        throw new IllegalArgumentException("Kein Empfänger angegeben.");
+        throw new IllegalArgumentException("No recipient specified.");
       }
     } else {
-      throw new IllegalArgumentException("Kein Paket zum Versenden übergeben.");
+      throw new IllegalArgumentException("No Packet specified.");
     }
     return recipientEntity;
   }
 
   /**
-   * Regelt den Versand eines, an den Klienten gerichteten Paketes.
+   * Dispatches client bound Packets.
    *
-   * @param output Das Paket vom Typ Packet dass versandt wird.
+   * @param output Packet
    */
   protected void sendInboundPacket(final Packet output) {
     if (output == null) {
-      throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+      throw new IllegalArgumentException("No Packet specified.");
     }
     PacketBuffer buffer;
 
@@ -90,13 +86,13 @@ public class ServerSynchronizationPacketDispatcher implements MultiplePacketDisp
   }
 
   /**
-   * Regelt den Versand eines, an den Server gerichteten, Paketes.
+   * Dispatches server bound Packets.
    *
-   * @param output Das Paket vom Typ Packet dass versandt wird.
+   * @param output Packet
    */
   protected void sendOutboundPacket(final Packet output) {
     if (output == null) {
-      throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+      throw new IllegalArgumentException("No Packet specified.");
     }
     PacketBuffer buffer;
 

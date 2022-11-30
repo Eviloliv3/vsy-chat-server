@@ -7,10 +7,7 @@ import de.vsy.shared_module.data_element_validation.BeanChecker;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
 /**
- * The Class SimpleStatusSyncBuilder.
- *
- * @author Frederic Heath
- */
+ * The Class SimpleStatusSyncBuilder.*/
 @JsonPOJOBuilder
 public class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>> extends
     ServerPacketContentBuilder<T> {
@@ -60,7 +57,7 @@ public class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>> exten
    */
   public SimpleStatusSyncBuilder<T> withClientState(final ClientState clientState) {
     if (clientState == null) {
-      throw new IllegalArgumentException("Kein Klientenzustand angegeben.");
+      throw new IllegalArgumentException("No ClientState specified.");
     }
     this.clientState = clientState;
     return getInstanciable();

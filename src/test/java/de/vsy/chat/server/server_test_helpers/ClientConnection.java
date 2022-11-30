@@ -64,7 +64,7 @@ public class ClientConnection {
 
   private void setupNonStaticCompiler() {
     this.packetCompiler = new NonStaticPacketCompiler();
-    this.packetCompiler.addContentIdentificator(new ServerContentIdentificationProviderImpl());
+    this.packetCompiler.addContentIdentificationProvider(new ServerContentIdentificationProviderImpl());
     this.packetCompiler.addOriginatorEntityProvider(getOriginatorEntityProvider());
   }
 
@@ -99,7 +99,7 @@ public class ClientConnection {
       this.authenticated = true;
     }
 
-    if (!this.authenticationData.getLogin().equals(STANDARD_EMPTY_STRING)) {
+    if (!this.authenticationData.getUsername().equals(STANDARD_EMPTY_STRING)) {
       this.hasAuthenticationData = true;
     }
   }
@@ -209,14 +209,14 @@ public class ClientConnection {
           LOGGER.info("{}-Login erfolgreich", this.clientData.getDisplayLabel());
         } else {
           LOGGER.info("{}-Login fehlgeschlagen. Antworttyp " + "statt LoginResponseDTO: {}",
-              this.authenticationData.getLogin(), content.getClass().getSimpleName());
+              this.authenticationData.getUsername(), content.getClass().getSimpleName());
           if (content instanceof ErrorDTO errorResponse) {
             LOGGER.info(errorResponse.getErrorMessage());
           }
         }
       } else {
         LOGGER.info("{}-Login fehlgeschlagen. Keine Antwort " + "erhalten.",
-            this.authenticationData.getLogin());
+            this.authenticationData.getUsername());
       }
     } else {
       LOGGER.info("Login nicht möglich. Daten vorhanden: {} | Bereits eingeloggt: {}.",

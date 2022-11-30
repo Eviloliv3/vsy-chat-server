@@ -7,7 +7,7 @@ import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
- * Basisverwaltungseinheit aller serverbezogenen Daten.
+ * Manages all server specific data.
  */
 public class ServerDataManager {
 

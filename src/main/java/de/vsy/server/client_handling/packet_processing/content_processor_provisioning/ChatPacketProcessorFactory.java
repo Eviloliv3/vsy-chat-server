@@ -16,7 +16,7 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.chat.ChatContent;
 
 /**
- * A factory for creating chat category handler objects. Frederic Heath
+ * A factory for creating chat category handler objects. 
  */
 public class ChatPacketProcessorFactory implements ContentBasedProcessorFactory {
 

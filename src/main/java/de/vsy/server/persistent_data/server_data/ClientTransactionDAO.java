@@ -13,10 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * The Class ClientTransactionDAO.
- *
- * @author Frederic Heath
- */
+ * The Class ClientTransactionDAO.*/
 public class ClientTransactionDAO implements ServerDataAccess {
 
   private static final Logger LOGGER = LogManager.getLogger();
@@ -30,7 +27,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */
@@ -127,7 +124,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the all incomplete transactions.
+   * Returns the all incomplete transactions.
    *
    * @return the all incomplete transactions
    */

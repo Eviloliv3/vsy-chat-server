@@ -51,9 +51,9 @@ public class PermittedPacketCategoryCheck implements ClientStateListener {
   }
 
   /**
-   * Gets the permitted Packetcategories.
+   * Returns the permitted PacketCategories.
    *
-   * @return the permitted Packetcategories
+   * @return List<PacketCategory>
    */
   public List<PacketCategory> getPermittedPacketCategories() {
     return copyOf(this.permittedPackets);

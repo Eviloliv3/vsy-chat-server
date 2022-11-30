@@ -9,14 +9,14 @@ import de.vsy.server.service.ServicePacketBufferManager;
 public interface PacketAssignmentServiceDataProvider extends ServiceBaseDataProvider {
 
   /**
-   * Gets the server connection dataManagement.
+   * Returns the server connection dataManagement.
    *
    * @return the server connection dataManagement
    */
   LocalServerConnectionData getLocalServerNodeData();
 
   /**
-   * Gets the service PacketBuffer manager.
+   * Returns the service PacketBuffer manager.
    *
    * @return the service PacketBuffer manager
    */

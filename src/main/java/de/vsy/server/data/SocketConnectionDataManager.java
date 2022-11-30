@@ -192,7 +192,7 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     try {
       connection.closeConnection();
     } catch (IOException ioe) {
-      /* Die Verbindung wird "leise" geschlossen */
+      /* Connection closes silently */
     }
   }
 

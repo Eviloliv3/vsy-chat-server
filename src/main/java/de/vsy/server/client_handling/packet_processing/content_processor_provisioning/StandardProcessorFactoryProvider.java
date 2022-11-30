@@ -9,19 +9,16 @@ public class StandardProcessorFactoryProvider implements CategoryBasedProcessorF
   @Override
   public ContentBasedProcessorFactory getCategoryHandlerFactory(PacketCategory category,
       HandlerLocalDataManager threadDataAccess) {
-    ContentBasedProcessorFactory categoryFactory = null;
-
-    switch (category) {
-      case AUTHENTICATION ->
-          categoryFactory = new AuthenticationPacketProcessorFactory(threadDataAccess);
-      case CHAT -> categoryFactory = new ChatPacketProcessorFactory(threadDataAccess);
-      case STATUS -> categoryFactory = new StatusPacketProcessorFactory(threadDataAccess);
-      case RELATION -> categoryFactory = new RelationPacketProcessorFactory(threadDataAccess);
-      case ERROR -> categoryFactory = new ErrorPacketProcessorFactory(threadDataAccess);
-      default -> {
-      }
-      // fehler loggen
+    if(category == null){
+      return null;
     }
-    return categoryFactory;
+
+    return switch (category) {
+      case AUTHENTICATION -> new AuthenticationPacketProcessorFactory(threadDataAccess);
+      case CHAT -> new ChatPacketProcessorFactory(threadDataAccess);
+      case STATUS -> new StatusPacketProcessorFactory(threadDataAccess);
+      case RELATION -> new RelationPacketProcessorFactory(threadDataAccess);
+      case ERROR -> new ErrorPacketProcessorFactory(threadDataAccess);
+    };
   }
 }

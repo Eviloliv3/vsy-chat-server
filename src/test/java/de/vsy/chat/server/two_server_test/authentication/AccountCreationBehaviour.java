@@ -13,7 +13,7 @@ import de.vsy.chat.server.raw_server_test.authentication.TestAccountCreationBeha
 import org.apache.logging.log4j.ThreadContext;
 
 /**
- * @author fredward
+ 
  */
 public class AccountCreationBehaviour extends TestAccountCreationBehaviour {
 

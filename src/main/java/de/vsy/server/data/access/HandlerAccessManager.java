@@ -12,7 +12,7 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 
 /**
  * Provides limited accessLimiter to server managed buffers and information concerning other
- * connected clients. Zugriffsfassade für KlientenProcessor auf servereigene Daten.
+ * connected clients.
  */
 public class HandlerAccessManager {
 

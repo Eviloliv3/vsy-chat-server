@@ -10,14 +10,14 @@ import de.vsy.server.service.ServicePacketBufferManager;
 public interface ClientStatusRegistrationServiceDataProvider extends ServiceBaseDataProvider {
 
   /**
-   * Gets the server connection dataManagement.
+   * Returns the server connection dataManagement.
    *
    * @return the server connection dataManagement
    */
   SocketConnectionDataManager getServerConnectionDataManager();
 
   /**
-   * Gets the service PacketBuffer manager.
+   * Returns the service PacketBuffer manager.
    *
    * @return the service PacketBuffer manager
    */

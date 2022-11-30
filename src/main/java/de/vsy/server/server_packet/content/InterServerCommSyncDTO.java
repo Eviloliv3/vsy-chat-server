@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Paketdaten zur erstmaligen Synchronisation eines zweiten Servers.
+ * Contains local server's data to be transferred to another server, for synchronization purposes.
  */
 public class InterServerCommSyncDTO extends ServerPacketContentImpl {
 
@@ -44,7 +44,7 @@ public class InterServerCommSyncDTO extends ServerPacketContentImpl {
   }
 
   /**
-   * Gets the server port.
+   * Returns the server port.
    *
    * @return the server port
    */

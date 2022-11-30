@@ -32,7 +32,7 @@ public class PendingState {
   }
 
   /**
-   * Gets the pending state.
+   * Returns the pending state.
    *
    * @return the pending state
    */
@@ -52,7 +52,7 @@ public class PendingState {
   }
 
   /**
-   * Gets the reconnecting.
+   * Returns the reconnecting.
    *
    * @return the reconnecting
    */

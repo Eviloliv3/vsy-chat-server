@@ -46,37 +46,37 @@ public class CommunicatorData implements Serializable {
       @JsonProperty("displayName") final String displayName) {
 
     if (IdCheck.checkData(communicatorId).isPresent() || IdCheck.checkData(ownerId).isPresent()) {
-      throw new IllegalArgumentException("Ungültige Id: " + communicatorId + " oder " + ownerId);
+      throw new IllegalArgumentException("Invalid id: " + communicatorId + " or " + ownerId);
     }
 
     if (displayName == null) {
-      throw new IllegalArgumentException("Kein Anzeigename (null)");
+      throw new IllegalArgumentException("No display name.");
     }
     return new CommunicatorData(communicatorId, ownerId, displayName);
   }
 
   /**
-   * Gets the entity id.
+   * Returns the entity id.
    *
-   * @return the entity id
+   * @return int
    */
   public int getCommunicatorId() {
     return communicatorId;
   }
 
   /**
-   * Gets the owner id.
+   * Returns the owner id.
    *
-   * @return the owner id
+   * @return int
    */
   public int getOwnerId() {
     return ownerId;
   }
 
   /**
-   * Gets the entity label.
+   * Returns the display label.
    *
-   * @return the entity label
+   * @return String
    */
   public String getDisplayName() {
     return displayName;
@@ -85,8 +85,8 @@ public class CommunicatorData implements Serializable {
   /**
    * Checks if is owner.
    *
-   * @param ownerId the owner id
-   * @return true, if is owner
+   * @param ownerId int
+   * @return true, if specified id is owner
    */
   public boolean isOwner(final int ownerId) {
     return this.ownerId == ownerId;

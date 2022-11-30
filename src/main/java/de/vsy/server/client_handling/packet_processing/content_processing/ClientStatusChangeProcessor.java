@@ -43,7 +43,7 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
     this.contactMapper = threadDataAccess.getContactToActiveClientMapper();
     this.contactProvider = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess()
-        .getContactlistDAO();
+        .getContactListDAO();
     this.messageReader = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess()
         .getMessageDAO();
@@ -70,13 +70,12 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
         this.contentHandler.addResponse(responseContent);
       } else {
         this.clientStateManager.changeClientState(ClientState.ACTIVE_MESSENGER, false);
-        causeMessage = "Es ist ein Fehler beim Eintragen Ihres "
-            + "Messengerzustandes aufgetreten. (messenger-global) "
-            + "Bitte melden Sie dies einem ChatServer-Mitarbeiter";
+        causeMessage = "An error occurred while writing your global Messenger state. Please "
+            + "contact the ChatServer support team.";
       }
     } else {
       causeMessage =
-          "Zustand konnte nicht angepasst werden. Sie sind bereits " + "im gewünschten Zustand.";
+          "Messenger state change unnecessary.";
     }
     if (causeMessage != null) {
       throw new PacketProcessingException(causeMessage);

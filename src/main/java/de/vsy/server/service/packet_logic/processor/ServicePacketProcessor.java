@@ -10,13 +10,10 @@ import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
 
 /**
- * Basic Packetprocessor using the strategy that is passed through the constructor.
+ * Basic Packet processor using the strategy that is passed through the constructor.
  */
 public class ServicePacketProcessor {
 
-  /**
-   * Servicespezifische Fabrik zur Bereitstellung von Paketverarbeitungsmechanismen.
-   */
   private final ServicePacketProcessorFactory sphf;
   private final ResultingPacketContentHandler contentHandler;
 
@@ -50,8 +47,7 @@ public class ServicePacketProcessor {
         this.contentHandler.setError(errorContent);
       }
     } else {
-      final var errorMessage = "Paket wurde nicht verarbeitet. Paket-"
-          + "Identifzierer oder -Typ nicht gefunden.";
+      final var errorMessage = "No PacketProcessor found for ContentIdentifier: "+identifier;
       final var errorContent = new ErrorDTO(errorMessage, input);
       this.contentHandler.setError(errorContent);
     }

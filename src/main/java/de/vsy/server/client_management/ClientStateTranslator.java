@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Uebernimmt das Uebersetzen eines Klientenzustandes in Abonnements.
+ * Translates client state changes into client subscriptions.
  */
 public class ClientStateTranslator {
 

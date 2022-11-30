@@ -28,7 +28,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */
@@ -125,7 +125,7 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the communicator dataManagement.
+   * Returns the communicator dataManagement.
    *
    * @param communicatorId the communicator id
    * @return the communicator dataManagement

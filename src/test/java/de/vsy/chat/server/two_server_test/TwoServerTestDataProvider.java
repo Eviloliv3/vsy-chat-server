@@ -12,7 +12,7 @@ import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import java.util.List;
 
 /**
- * @author fredward
+ 
  */
 public class TwoServerTestDataProvider {
 

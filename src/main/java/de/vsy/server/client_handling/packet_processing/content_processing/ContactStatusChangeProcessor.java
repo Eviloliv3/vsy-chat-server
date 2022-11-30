@@ -28,7 +28,7 @@ public class ContactStatusChangeProcessor implements ContentProcessor<ContactMes
   public ContactStatusChangeProcessor(final StatusHandlingDataProvider threadDataAccess) {
     this.contactProvider = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess()
-        .getContactlistDAO();
+        .getContactListDAO();
     this.messageReader = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess()
         .getMessageDAO();
@@ -37,7 +37,6 @@ public class ContactStatusChangeProcessor implements ContentProcessor<ContactMes
 
   @Override
   public void processContent(ContactMessengerStatusDTO extractedContent) {
-    LOGGER.info("Kontaktstatusanfrage gelesen: {}", extractedContent.getContactData());
     var contactId = extractedContent.getContactData().getCommunicatorId();
 
     if (this.contactProvider.checkAcquaintance(EligibleContactEntity.CLIENT, contactId)) {

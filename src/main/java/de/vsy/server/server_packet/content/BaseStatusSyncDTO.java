@@ -7,8 +7,7 @@ import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import java.io.Serial;
 
 /**
- * Wird gesandt, wenn ein zusätzlicher Server über einen Zustandswechsel eines Klienten informiert
- * werden muss.
+ * Contains client's local state, that shall be transferred to other servers.
  */
 @JsonDeserialize(builder = SimpleStatusSyncBuilder.class)
 public class BaseStatusSyncDTO extends ServerPacketContentImpl {
@@ -27,18 +26,18 @@ public class BaseStatusSyncDTO extends ServerPacketContentImpl {
   }
 
   /**
-   * Gets the client state.
+   * Returns the client state.
    *
-   * @return the client state
+   * @return ClientState
    */
   public ClientState getClientState() {
     return this.clientState;
   }
 
   /**
-   * Gets the entity id.
+   * Returns the client id.
    *
-   * @return the entity id
+   * @return CommunicatorDTO
    */
   public CommunicatorDTO getContactData() {
     return this.contactData;
@@ -52,9 +51,9 @@ public class BaseStatusSyncDTO extends ServerPacketContentImpl {
   }
 
   /**
-   * Checks if is to add.
+   * Returns addition state.
    *
-   * @return true, if is to add
+   * @return boolean
    */
   public boolean isToAdd() {
     return this.isToAdd;

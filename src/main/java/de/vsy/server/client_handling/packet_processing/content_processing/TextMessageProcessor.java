@@ -30,7 +30,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
    */
   public TextMessageProcessor(final ChatHandlingDataProvider threadDataAccess) {
     this.contactListAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
-        .getClientPersistentAccess().getContactlistDAO();
+        .getClientPersistentAccess().getContactListDAO();
     this.messageWriter = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess()
         .getMessageDAO();
@@ -40,13 +40,11 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
 
   @Override
   public void processContent(TextMessageDTO extractedContent) throws PacketProcessingException {
-    // Ein Klient koennte theoretisch einen Kontakt ohne dessen Wissen zuspamen.
-    // Die empfangenen Nahrichten wuerden erst nach der naechsten Kontaktstatus-
-    // aktualisierung einseitig angezeigt werden. Verhindert wuerde dieses Server-
-    // verhalten durch eine eingehendere Pruefung der Pakete durch den Simple-
-    // PacketChecker -> TextMessageDTO.originatorId == Properties.senderId muss
-    // dann einen gesetzten Empfangsstatus ausschließen !! An anderer Stelle
-    // ist diese Schwachstelle nicht zu schließen.
+    //TODO A client could theoretically spam a contact. The received messages would only be visible
+    // for contact after next ContactStatusChangeDTO.
+    // Could be prevented by server ->
+    // SimplePacketChecker -> TextMessageDTO.originatorId == Properties.senderId has to exclude
+    // set receptionState
     checkLegitimacy(extractedContent);
 
     final var clientId = this.localClientData.getClientId();
@@ -78,8 +76,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
 
     if (!(this.contactListAccess.checkContact(contactType, contactId))) {
       throw new PacketProcessingException(
-          "Textnachricht wurde nicht " + "zugestellt. " + contactId
-              + " ist kein Kontakt von Ihnen.");
+          "Text message was not delivered. " + contactId + " is no contact of yours.");
     }
   }
 

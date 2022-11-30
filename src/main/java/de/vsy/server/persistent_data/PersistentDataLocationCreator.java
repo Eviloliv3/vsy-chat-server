@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Simple tool for creating preset directories. fredward
+ * Simple tool for creating preset directories.
  */
 public class PersistentDataLocationCreator {
 

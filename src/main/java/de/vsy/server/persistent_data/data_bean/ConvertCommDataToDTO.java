@@ -7,8 +7,6 @@ import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
 /**
  * The Class ConvertCommDataToDTO.
- *
- * @author Frederic Heath
  */
 public class ConvertCommDataToDTO {
 

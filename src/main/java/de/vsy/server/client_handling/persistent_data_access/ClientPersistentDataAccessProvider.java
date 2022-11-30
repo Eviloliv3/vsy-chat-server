@@ -25,9 +25,9 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
   private boolean dataAccessible;
 
   /**
-   * Instantiates a new client persistant dataManagement accessLimiter.
+   * Instantiates a new client persistent dataManagement accessLimiter.
    *
-   * @param localClientData the local client dataManagement
+   * @param localClientData ClientDataProvider
    */
   public ClientPersistentDataAccessProvider(final ClientDataProvider localClientData) {
     this.dataAccessible = false;
@@ -42,7 +42,7 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
   }
 
   /**
-   * Inits the client dataManagement accessLimiter list.
+   * Initiates the client dataManagement accessLimiter list.
    */
   private void initClientDataAccessList() {
     persistenceDAOList.add(this.messageDataProvider);
@@ -93,7 +93,7 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
   }
 
   @Override
-  public ContactListDAO getContactlistDAO() {
+  public ContactListDAO getContactListDAO() {
     return this.contactDataProvider;
   }
 
@@ -103,9 +103,9 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
   }
 
   /**
-   * Gets the pending PacketaccessLimiter provider.
+   * Returns the pending packet access provider.
    *
-   * @return the pending PacketaccessLimiter provider
+   * @return PendingPacketDAO
    */
   public PendingPacketDAO getPendingPacketDAO() {
     return this.pendingPacketAccessor;

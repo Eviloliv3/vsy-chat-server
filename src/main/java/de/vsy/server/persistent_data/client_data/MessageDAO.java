@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 public class MessageDAO implements ClientDataAccess {
 
   /**
-   * Die maximale Anzahl daürhaft gespeicherter Nachrichten je Gespräch.
+   * Maximum amount of Messages that will be saved.
    */
   private static final int MAX_HISTORY_LENGTH = 50;
   private static final Logger LOGGER = LogManager.getLogger();
@@ -38,7 +38,7 @@ public class MessageDAO implements ClientDataAccess {
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */

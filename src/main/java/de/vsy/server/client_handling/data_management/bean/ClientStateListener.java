@@ -11,11 +11,9 @@ import de.vsy.server.client_management.ClientState;
 public interface ClientStateListener {
 
   /**
-   * Wertet den Zustand, im Zusammenhang mit der Information, ob er hinzugefügt oder entfernt wurde,
-   * aus.
-   *
-   * @param changedState der veränderte Zustand
-   * @param added        Zustand neu oder entfernt
+   * Let's listener evaluate client state changes.
+   * @param changedState ClientState
+   * @param added        boolean
    */
   void evaluateNewState(ClientState changedState, boolean added);
 }

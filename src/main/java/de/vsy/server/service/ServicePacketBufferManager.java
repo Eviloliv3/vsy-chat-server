@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Verwaltet alle Service-Buffer; bietet Interservicezugriff.
+ * Manages all PacketBuffers offered by services for subscription.
  */
 public class ServicePacketBufferManager {
 
@@ -79,7 +79,7 @@ public class ServicePacketBufferManager {
   }
 
   /**
-   * Gets the random buffer.
+   * Returns the random buffer.
    *
    * @param serviceType the service type
    * @return the random buffer
@@ -102,7 +102,7 @@ public class ServicePacketBufferManager {
   }
 
   /**
-   * Gets the all buffers for.
+   * Returns the all buffers for.
    *
    * @param serviceType the service type
    * @return the all buffers for
@@ -128,7 +128,7 @@ public class ServicePacketBufferManager {
   }
 
   /**
-   * Gets the specific buffer.
+   * Returns the specific buffer.
    *
    * @param serviceType the service type
    * @param bufferLabel the buffer label
@@ -164,10 +164,10 @@ public class ServicePacketBufferManager {
   /**
    * Register buffer manager.
    *
-   * @param serviceType  the service type
-   * @param bufferLabel  the buffer label
-   * @param packetBuffer the packetbuffer
-   * @return the packetbuffer
+   * @param serviceType  Service.TYPE
+   * @param bufferLabel  int
+   * @param packetBuffer PacketBuffer
+   * @return PacketBuffer
    */
   public PacketBuffer registerBuffer(final Service.TYPE serviceType, final int bufferLabel,
       final PacketBuffer packetBuffer) {

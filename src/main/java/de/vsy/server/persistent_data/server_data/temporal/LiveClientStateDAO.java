@@ -19,7 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Bietet Lese-/Schreibzugriff auf redundant gesicherte Klientenzustände in JSON-Dateien.
+ * Allows persistent CRUD operations on client states.
  */
 public class LiveClientStateDAO implements ServerDataAccess {
 
@@ -27,16 +27,13 @@ public class LiveClientStateDAO implements ServerDataAccess {
   private final SocketConnectionDataManager serverConnections;
   private final PersistenceDAO dataProvider;
 
-  /**
-   * Instantiiert einen neuen Zugriffsanbieter für persistent gespeicherte Klientenzustände.
-   */
   public LiveClientStateDAO(final SocketConnectionDataManager serverConnections) {
     this.serverConnections = serverConnections;
     this.dataProvider = new PersistenceDAO(DataFileDescriptor.ACTIVE_CLIENTS, getDataFormat());
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the java type
    */
@@ -64,7 +61,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the client state.
+   * Returns the client state.
    *
    * @param clientId the client id
    * @return the client state
@@ -88,9 +85,9 @@ public class LiveClientStateDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the all active client states.
+   * Returns the all active client states.
    *
-   * @return the ${e.g(1).rsfl()}
+   * @return Map<Integer, CurrentClientState>
    */
   @SuppressWarnings("unchecked")
   public Map<Integer, CurrentClientState> getAllActiveClientStates() {
@@ -269,7 +266,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         }
       }
     }else {
-      LOGGER.trace("No client state found.");
+      LOGGER.trace("No client state specified.");
     }
     this.dataProvider.releaseAccess(true);
     return reconnectStateSet;
@@ -303,7 +300,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the client pending state.
+   * Returns the client pending state.
    *
    * @param clientId the client id
    * @return the client pending state
@@ -328,7 +325,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the client pending state.
+   * Returns the client pending state.
    *
    * @param clientId the client id
    * @return the client pending state
@@ -353,10 +350,10 @@ public class LiveClientStateDAO implements ServerDataAccess {
   }
 
   /**
-   * Gibt nur die Zustände lokal verbundener Klienten eines bestimmtes Servers aus.
+   * Returns specified servers locally connected client states only.
    *
-   * @param serverPort the server port
-   * @return the local client states
+   * @param serverPort int
+   * @return Map<Integer, CurrentClientState>
    */
   public Map<Integer, CurrentClientState> getClientStatesForServer(final int serverPort) {
     Map<Integer, CurrentClientState> allClientStates;

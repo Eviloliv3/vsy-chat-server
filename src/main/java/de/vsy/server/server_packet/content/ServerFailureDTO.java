@@ -8,7 +8,7 @@ import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
 import java.io.Serial;
 
 /**
- * Enthaelt Informationen über Serverfehler, die intern verarbeitet werden müssen.
+ * Contains information related to server or server connection failure.
  */
 @JsonDeserialize(builder = ServerFailureContentBuilder.class)
 public class ServerFailureDTO extends ServerPacketContentImpl {

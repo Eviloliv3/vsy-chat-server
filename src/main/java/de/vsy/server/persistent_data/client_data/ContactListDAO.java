@@ -35,7 +35,7 @@ public class ContactListDAO implements ClientDataAccess {
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */

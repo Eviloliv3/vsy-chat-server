@@ -57,7 +57,7 @@ public class ServerPersistentDataManager {
   }
 
   /**
-   * Initiate persistant accessLimiter.
+   * Initiate persistent accessLimiter.
    *
    * @throws IllegalStateException    the illegal state exception
    * @throws IllegalArgumentException the illegal argument exception
@@ -75,7 +75,7 @@ public class ServerPersistentDataManager {
   }
 
   /**
-   * Removes the persistant accessLimiter.
+   * Removes the persistent accessLimiter.
    */
   public void removePersistentAccess() {
 

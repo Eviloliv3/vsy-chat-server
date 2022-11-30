@@ -45,8 +45,7 @@ public class LogoutRequestProcessor implements ContentProcessor<LogoutRequestDTO
       this.clientStateManager.logoutClient();
     } else {
       causeMessage =
-          "Es ist ein Fehler beim Eintragen Ihres " + "Authentifizierungszustandes aufgetreten. "
-              + "(Logout-global) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+          "An error occurred while writing your global logout state. Please contact the ChatServer support team.";
     }
     if (causeMessage != null) {
       throw new PacketProcessingException(causeMessage);

@@ -12,7 +12,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Can take one serverbound and one clientbound Packetto be dispatched from one process.
+ * Can take one server ound and one client bound Packet to be dispatched from one process.
  */
 public class PacketResponseMap {
 
@@ -21,19 +21,10 @@ public class PacketResponseMap {
    */
   private Map<EligibleCommunicationEntity, Packet> responseMap;
 
-  /**
-   * Instantiates a new processor Packetresponse map.
-   */
   public PacketResponseMap() {
     this(null, null);
   }
 
-  /**
-   * Instantiates a new processor Packetresponse map.
-   *
-   * @param updatePacket   the status packet
-   * @param clientResponse the client response
-   */
   public PacketResponseMap(final Packet updatePacket, final Packet clientResponse) {
     setFreshMap(updatePacket, clientResponse);
   }
@@ -51,7 +42,7 @@ public class PacketResponseMap {
   }
 
   /**
-   * Gets the client bound Packet
+   * Returns the client bound Packet
    *
    * @return the client bound packet
    */
@@ -60,7 +51,7 @@ public class PacketResponseMap {
   }
 
   /**
-   * Gets the Packet
+   * Returns the Packet
    *
    * @param direction the direction
    * @return the packet
@@ -70,7 +61,7 @@ public class PacketResponseMap {
   }
 
   /**
-   * Gets the server bound Packet
+   * Returns the server bound Packet
    *
    * @return the server bound packet
    */

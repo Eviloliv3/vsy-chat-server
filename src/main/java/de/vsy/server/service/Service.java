@@ -14,14 +14,14 @@ public interface Service extends Runnable {
   void waitForServiceReadiness() throws InterruptedException;
 
   /**
-   * Gets the service name.
+   * Returns the service name.
    *
    * @return the service name
    */
   String getServiceName();
 
   /**
-   * Gets the service type.
+   * Returns the service type.
    *
    * @return the service type
    */

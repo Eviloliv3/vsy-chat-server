@@ -5,10 +5,7 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import java.io.Serial;
 
 /**
- * The Class SimpleInternalContentWrapper.
- *
- * @author Frederic Heath
- */
+ * The Class SimpleInternalContentWrapper.*/
 public class SimpleInternalContentWrapper extends ServerPacketContentImpl {
 
   @Serial

@@ -7,10 +7,9 @@ public interface LocalClientStateProvider {
   boolean checkClientState(ClientState toCheck);
 
   /**
-   * Gibt einmal aus, ob sich der Klientenzustand veraendert hat.
+   * Returns client state changes once per change.
    *
-   * @return true, wenn sich der Klientenzustand veraendert hat, false wenn sich der Klientenzustand
-   * nicht veraendert hat ODER die Veraenderung schon einmal abgefragt wurde.
+   * @return true, if client state change since last check; false otherwise
    */
   boolean clientStateHasChanged();
 }

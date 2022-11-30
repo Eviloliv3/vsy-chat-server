@@ -4,7 +4,7 @@
 package de.vsy.server.server_packet.content;
 
 /**
- * Schnittstelle zum einfachen Eintragen und Ueberprüfen von Serversynchronisation.
+ * Interface enabling simple inter server status Packet synchronization.
  */
 public interface ServerStatusSync {
 

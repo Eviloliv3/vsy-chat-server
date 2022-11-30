@@ -33,7 +33,7 @@ public class RelationRequestProcessor implements ContentProcessor<ContactRelatio
     this.contactMapper = threadDataAccess.getContactToActiveClientMapper();
     this.contactProvider = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess()
-        .getContactlistDAO();
+        .getContactListDAO();
     this.localClientDataManager = threadDataAccess.getLocalClientDataProvider();
     this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
   }
@@ -71,12 +71,10 @@ public class RelationRequestProcessor implements ContentProcessor<ContactRelatio
 
     if (desiredState && contactsAlready) {
       final var contactData = this.contactMapper.getContactData(contactId);
-      throw new PacketProcessingException("Freundschaftsanfrage wurde nicht "
-          + "verarbeitet. Sie sind bereits mit " + contactData.getDisplayName() + " befreundet.");
+      throw new PacketProcessingException("Friendship request was no processed. You already are friends with " + contactData.getDisplayName());
     } else {
       if (!desiredState && !contactsAlready) {
-        throw new PacketProcessingException("Freundschaftsanfrage wurde nicht "
-            + "verarbeitet. Sie sind nicht mit " + contactId + " befreundet.");
+        throw new PacketProcessingException("Friendship request was not processed. " + contactId + " is no contact of yours.");
       }
     }
   }

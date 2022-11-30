@@ -33,7 +33,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */
@@ -108,16 +108,16 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
   }
 
   /**
-   * Gets the client id.
+   * Returns the client id.
    *
-   * @param loginName the login name
+   * @param username the username
    * @param password  the password
    * @return the client id
    */
-  public int getClientId(final String loginName, final String password) {
+  public int getClientId(final String username, final String password) {
     int clientId = STANDARD_CLIENT_ID;
     Set<AuthenticationData> readList;
-    var clientAuth = AuthenticationData.valueOf(loginName, password, STANDARD_CLIENT_ID);
+    var clientAuth = AuthenticationData.valueOf(username, password, STANDARD_CLIENT_ID);
 
     if (!this.dataProvider.acquireAccess(false)) {
       LOGGER.error("No shared read access.");

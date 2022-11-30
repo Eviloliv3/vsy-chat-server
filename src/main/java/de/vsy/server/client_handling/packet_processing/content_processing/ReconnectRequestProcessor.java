@@ -3,6 +3,8 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.client_management.ClientState;
@@ -64,33 +66,27 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
               this.contentHandler.addResponse(new ReconnectResponseDTO(true));
             } else {
               this.clientStateManager.logoutClient();
-              causeMessage = "Es ist ein Fehler beim Eintragen Ihres Authentifizierungszustandes "
-                  + "aufgetreten. (Reconnect-global) Bitte " + "melden Sie dies einem ChatServer-"
-                  + "Mitarbeiter";
+              causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
             }
           } else {
             this.clientStateManager.logoutClient();
             causeMessage =
-                "Wiederverbindung dauert zu lange und " + "wurde abgebrochen. Sie müssen sich "
-                    + "erneut authentifizieren.";
+                "Reconnection attempt took too much time and was cancelled. Please try logging in.";
           }
         } else {
-          //TODO Klient versucht den Neustart wahrscheinlich zu frueh?
+          //TODO client attempted to reconnect too early?
           LOGGER.error("Client state could not be saved. Either the access of client "
                   + "states failed or could not be written. Found client data: {}",
               clientData);
-          causeMessage = "Sie sind entweder von einem anderen Gerät aus "
-              + "verbunden oder es wird bereits ein "
-              + "Wiederverbindungsversuch von einem anderen "
-              + "Gerät aus unternommen.";
+          causeMessage = "You are either connected from another device or you are trying to reconnect from another device right now.";
           this.clientStateManager.logoutClient();
         }
       } else {
         this.clientStateManager.logoutClient();
-        causeMessage = "Sie sind nicht als authentifiziert registriert.";
+        causeMessage = "You are not registered as authenticated..";
       }
     } else {
-      causeMessage = "Es existiert kein Account mit den von Ihnen angegebenen Daten.";
+      causeMessage = "There is no account with your credentials.";
     }
     if (causeMessage != null) {
       throw new PacketProcessingException(causeMessage);
@@ -115,8 +111,15 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
     pendingFlagCheck.scheduleWithFixedDelay(pendingFlagFetcher, 50, 30, TimeUnit.MILLISECONDS);
 
     try {
+      final boolean pendingFlagCheckDown;
       latch.await();
       pendingFlagCheck.shutdownNow();
+      pendingFlagCheckDown = pendingFlagCheck.awaitTermination(5, SECONDS);
+      if(pendingFlagCheckDown){
+        LOGGER.trace("PendingFlagCheck shutdown successfully.");
+      }else{
+        LOGGER.error("PendingFlagCheck shutdown unexpectedly took more than 5 seconds.");
+      }
       pendingFlagRemoved = !pendingFlagFetcher.getFetchedValue();
     } catch (InterruptedException ie) {
       Thread.currentThread().interrupt();

@@ -60,8 +60,7 @@ public class RemoteClientDisconnector {
     try {
       publishState(clientId, currentState);
     } catch (InterruptedException ie) {
-      LogManager.getLogger().error("Kein Kontaktlistenzugriff fuer "
-          + "Klienten {}. Klientenstatus wurde Kontakten " + "nicht mitgeteilt.", clientId);
+      LogManager.getLogger().error("No contact list access could be acquired for {}. Client state was not published.", clientId);
     }
     unsubscribeClient(clientId);
     this.clientStateProvider.removeClientState(clientId);
@@ -69,7 +68,7 @@ public class RemoteClientDisconnector {
 
   private void removeVolatilePackets(PendingPacketDAO pendingPacketAccess) {
     var pendingPacketMap = pendingPacketAccess.readPendingPackets(PROCESSOR_BOUND);
-    pendingPacketMap.values().removeIf(VolatilePacketIdentifier::checkPacketVolatiliy);
+    pendingPacketMap.values().removeIf(VolatilePacketIdentifier::checkPacketVolatility);
     pendingPacketAccess.setPendingPackets(PROCESSOR_BOUND, pendingPacketMap);
   }
 

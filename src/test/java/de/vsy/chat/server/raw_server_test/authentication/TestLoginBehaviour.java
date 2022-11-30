@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author fredward
+ 
  */
 public class TestLoginBehaviour extends ServerTestBase {
 
@@ -40,7 +40,7 @@ public class TestLoginBehaviour extends ServerTestBase {
     super.addConnectionNextServer();
     clientTwo = super.getUnusedClientConnection();
 
-    content = new LoginRequestDTO(clientOneAuth.getLogin(), clientOneAuth.getPassword());
+    content = new LoginRequestDTO(clientOneAuth.getUsername(), clientOneAuth.getPassword());
 
     TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID),
         content,
@@ -83,7 +83,7 @@ public class TestLoginBehaviour extends ServerTestBase {
 
     clientOne = super.loginNextClient();
     clientOneAuthenticationData = clientOne.getAuthenticationData();
-    content = new LoginRequestDTO(clientOneAuthenticationData.getLogin(),
+    content = new LoginRequestDTO(clientOneAuthenticationData.getUsername(),
         clientOneAuthenticationData.getPassword());
 
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),

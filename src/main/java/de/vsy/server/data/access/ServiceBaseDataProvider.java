@@ -7,21 +7,21 @@ import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 public interface ServiceBaseDataProvider {
 
   /**
-   * Gets the client subscription manager.
+   * Returns the client subscription manager.
    *
    * @return the client subscription manager
    */
   AbstractPacketCategorySubscriptionManager getClientSubscriptionManager();
 
   /**
-   * Gets the server subscription manager.
+   * Returns the server subscription manager.
    *
    * @return the server subscription manager
    */
   AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager();
 
   /**
-   * Gets the local server connection data
+   * Returns the local server connection data
    *
    * @return the local server connection data
    */

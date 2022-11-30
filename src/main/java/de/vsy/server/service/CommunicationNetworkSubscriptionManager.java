@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Verwaltungseinheit für alle Abonnements, service- und klientseitig.
+ * Manages subscriptions for publish/subscribe system.
  */
 public class CommunicationNetworkSubscriptionManager {
 
@@ -45,10 +45,10 @@ public class CommunicationNetworkSubscriptionManager {
   }
 
   /**
-   * Gets the subscriptions manager.
+   * Returns the subscription manager.
    *
    * @param entity the entity
-   * @return the subscriptions manager
+   * @return AbstractPacketCategorySubscriptionManager
    */
   public AbstractPacketCategorySubscriptionManager getSubscriptionsManager(
       final EligibleCommunicationEntity entity) {

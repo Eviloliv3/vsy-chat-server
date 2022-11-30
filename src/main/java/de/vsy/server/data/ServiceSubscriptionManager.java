@@ -43,7 +43,7 @@ public class ServiceSubscriptionManager extends AbstractPacketCategorySubscripti
     } else {
 
       throw new PacketTransmissionException(
-          "Paket wurde nicht " + "zugestellt. Kein " + "Service hinterlegt.");
+          "Packet could not be delivered. No service available.");
     }
   }
 

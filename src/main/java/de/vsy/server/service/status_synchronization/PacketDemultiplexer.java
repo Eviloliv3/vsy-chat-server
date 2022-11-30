@@ -35,8 +35,8 @@ public class PacketDemultiplexer {
   /**
    * Demultiplex Packet
    *
-   * @param toDemultiplex      the to demultiplex
-   * @param eligibleRecipients the valid recipients
+   * @param toDemultiplex      Packet
+   * @param eligibleRecipients Set<Integer>
    * @return the list hier
    */
   public static Set<Packet> demultiplexPacket(final ExtendedStatusSyncDTO toDemultiplex,

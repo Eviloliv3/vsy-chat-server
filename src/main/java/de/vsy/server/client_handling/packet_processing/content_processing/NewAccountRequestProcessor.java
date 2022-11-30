@@ -41,7 +41,7 @@ public class NewAccountRequestProcessor implements ContentProcessor<NewAccountRe
   public void processContent(NewAccountRequestDTO toProcess) throws PacketProcessingException {
     String causeMessage = null;
     var newAccount = toProcess.getAccountCreationData();
-    var clientData = clientRegistry.createNewAccount(newAccount.getAuthenticationData().getLogin(),
+    var clientData = clientRegistry.createNewAccount(newAccount.getAuthenticationData().getUsername(),
         newAccount.getAuthenticationData().getPassword(),
         (newAccount.getPersonalData().getForename() + " " + newAccount.getPersonalData()
             .getSurname()));
@@ -55,18 +55,15 @@ public class NewAccountRequestProcessor implements ContentProcessor<NewAccountRe
           this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
         } else {
           this.clientStateManager.logoutClient();
-          causeMessage = "Es ist ein Fehler beim Eintragen Ihres "
-              + "Authentifizierungszustandes aufgetreten. "
-              + "(Login-global) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+          causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
         }
       } else {
         this.clientStateManager.logoutClient();
         causeMessage =
-            "Es ist ein Fehler beim Eintragen Ihres " + "Authentifizierungszustandes aufgetreten. "
-                + "(Login-lokal) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+            "An error occurred while writing your local login state. Please contact the ChatServer support team.";
       }
     } else {
-      causeMessage = "Es gibt bereits einen Account mit den, von Ihnen, eingegebenen Login-Daten.";
+      causeMessage = "No account was created. There is an existing account with the provided login data.";
     }
     if (causeMessage != null) {
       throw new PacketProcessingException(causeMessage);

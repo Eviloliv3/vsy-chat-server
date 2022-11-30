@@ -8,8 +8,7 @@ import java.io.Serial;
 import java.util.Set;
 
 /**
- * Wird versandt, wenn andere Klienten über einen Zustandswechsel eines Klienten informiert werden
- * müssen.
+ * Contains state that shall be transferred to other connected servers, as well as clients
  */
 @JsonDeserialize(builder = ExtendedStatusSyncBuilder.class)
 public class ExtendedStatusSyncDTO extends BaseStatusSyncDTO implements ClientContactSync {

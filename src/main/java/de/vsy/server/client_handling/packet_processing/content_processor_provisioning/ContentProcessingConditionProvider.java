@@ -19,18 +19,18 @@ public class ContentProcessingConditionProvider {
       case NOT_AUTHENTICATED ->
           new HandlerProcessingCondition<>(Predicate.not(clientStateProvider::checkClientState),
               ClientState.AUTHENTICATED,
-              "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
+              "Request not processed. You are authenticated already.");
       case AUTHENTICATED -> new HandlerProcessingCondition<>(clientStateProvider::checkClientState,
           ClientState.AUTHENTICATED,
-          "Anfrage nicht bearbeitet. Sie sind noch nicht authentifiziert.");
+          "Request not processed. You are not authenticated.");
       case ACTIVE_MESSENGER ->
           new HandlerProcessingCondition<>(clientStateProvider::checkClientState,
               ClientState.AUTHENTICATED,
-              "Anfrage nicht bearbeitet. Sie sind als Messenger registriert.");
+              "Request not processed. You already are registered as Messenger.");
       case NOT_ACTIVE_MESSENGER ->
           new HandlerProcessingCondition<>(clientStateProvider::checkClientState,
               ClientState.AUTHENTICATED,
-              "Anfrage nicht bearbeitet. Sie sind nicht als Messenger registriert.");
+              "Request not processed. You are not registered as Messenger.");
     };
   }
 }

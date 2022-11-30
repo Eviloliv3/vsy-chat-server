@@ -62,7 +62,7 @@ public class ClientSubscriptionManager extends AbstractPacketCategorySubscriptio
     if (subscriptionBuffers != null) {
       subscriptionBuffers.publish(packetToPublish);
     } else {
-      throw new PacketTransmissionException("Paket wurde nicht zugestellt. Kontakt offline.");
+      throw new PacketTransmissionException("Packet could not be delivered. Contact offline.");
     }
   }
 

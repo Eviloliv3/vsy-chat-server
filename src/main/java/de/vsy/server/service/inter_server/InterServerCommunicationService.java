@@ -90,7 +90,7 @@ public class InterServerCommunicationService extends ServiceBase {
 
     if (this.remoteConnectionData == null) {
       Thread.currentThread().interrupt();
-      LOGGER.error("No connection data found. {} interrupt flag set.",
+      LOGGER.error("No connection data specified. {} interrupt flag set.",
           Thread.currentThread().getName());
       super.setReadyState();
       return;
@@ -151,7 +151,7 @@ public class InterServerCommunicationService extends ServiceBase {
   }
 
   /**
-   * Sendet den Serverport des.
+   * Sends synchronization specific data to remotely connected server.
    */
   private void synchronizeInterServerCommService() {
     var synchronizationPacket = createInterServerSyncPacket();
@@ -192,8 +192,8 @@ public class InterServerCommunicationService extends ServiceBase {
   }
 
   /**
-   * Der InterServerCommunicationService traegt seinen Buffer in ServicePacketBufferManager ein und
-   * setzt das Service-readyFlag.
+   * InterServerCommunicationService sets up its main PacketBuffer for subscription and sets its
+   * service ready flag.
    */
   private void makeServiceAvailable() {
     final var remoteServerId = this.remoteConnectionData.getServerId();
@@ -205,8 +205,7 @@ public class InterServerCommunicationService extends ServiceBase {
   }
 
   /**
-   * Wartet bis der Hauptthread des Servers die Synchronisation der Klientenzustände signalisiert
-   * oder der Service unterbrochen wird. Eine Unterbrechung wird aufgefrischt.
+   * Waits until the servers main thread completes loading client states or interruption.
    */
   private void waitForServerSynchronization() {
     LOGGER.info("Waiting for server synchronization.");
@@ -220,10 +219,10 @@ public class InterServerCommunicationService extends ServiceBase {
   }
 
   /**
-   * Prüft aus dem Netz eingehende Pakete und schreibt sie auf den RequestAssignmentBuffer weiter.
-   * Die Abbruchbedingung wird als Parameter übergeben.
+   * Checks Packets received from remotely connected server, then appends them to local
+   * RequestAssignmentBuffer. Allows custom interruption condition.
    *
-   * @param interrupt the interrupt
+   * @param interrupt ProcessingInterruptProvider
    */
   private void continuouslyProcessInput(final ProcessingInterruptProvider interrupt) {
     LOGGER.info("Processing incoming packets.");
@@ -264,9 +263,9 @@ public class InterServerCommunicationService extends ServiceBase {
   }
 
   /**
-   * Erstellt ein Paket zur Synchronisation des genutzten Serverports.
+   * Creates synchronization Packet containing local server id.
    *
-   * @return the packet
+   * @return Packet
    */
   private Packet createInterServerSyncPacket() {
     final var recipient = getServerEntity(this.remoteConnectionData.getServerId());
@@ -301,7 +300,7 @@ public class InterServerCommunicationService extends ServiceBase {
       serverPacketContent.setReadingConnectionThread(super.getServiceId());
       output = nextPacket;
     } else {
-      final var errorMessage = "Das Paket wurde nicht zugestellt. ";
+      final var errorMessage = "Packet could not be delivered. ";
       final var processingException = new PacketProcessingException(
           errorMessage + validationString.get());
       output = this.pheProcessor.processException(processingException, nextPacket);
@@ -326,7 +325,7 @@ public class InterServerCommunicationService extends ServiceBase {
      * if (assignmentBuffer != null) { failureNotification =
      * PacketCompiler.createRequest(recipient, failureContent); return
      * assignmentBuffer.appendPacket(failureNotification); } else { LOGGER.error(
-     * "Verbundener Server ausgefallen. Kein Assignment PacketBuffer gefunden (Statusmeldung verfaellt)."
+     * "Server connection failed. No request assignment PacketBuffer found (Synchronization message discarded)."
      * ); return false; }
      */
     LOGGER.info("Connection to remote client interrupted: {}", failureContent);

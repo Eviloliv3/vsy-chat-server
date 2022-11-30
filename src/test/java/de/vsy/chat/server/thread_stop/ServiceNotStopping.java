@@ -65,7 +65,7 @@ class TestServiceNotStopping {
   void TestInterServerCommunicationStoppingOnInterrupt()
       throws InterruptedException, ExecutionException, IOException {
     var asdf = new ThreadPacketBufferManager();
-    PacketCompiler.addContentIdentificator(new ContentIdentificationProviderImpl());
+    PacketCompiler.addContentIdentificationProvider(new ContentIdentificationProviderImpl());
     PacketCompiler.addOriginatorEntityProvider(() -> getClientEntity(123456));
     asdf.registerPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
     asdf.registerPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND);

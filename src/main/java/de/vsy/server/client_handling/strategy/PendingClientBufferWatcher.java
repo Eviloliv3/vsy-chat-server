@@ -1,6 +1,7 @@
 package de.vsy.server.client_handling.strategy;
 
 import static java.util.Arrays.asList;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
@@ -65,10 +66,24 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
         terminationTime, terminationLatch);
     reconnectFlagCheck.scheduleWithFixedDelay(reconnectFlagFetcher, 20, 50, TimeUnit.MILLISECONDS);
     saveIncomingPackets();
-    reconnectFlagCheck.shutdownNow();
-
+    shutdownFlagFetcher(reconnectFlagCheck);
     evaluateReconnectionState(reconnectFlagFetcher);
-    LOGGER.info("PendingClientBufferWatcher ended.");
+    LOGGER.info("{}-PendingClientBufferWatcher ended.", this.localClientData.getClientId());
+  }
+
+  private void shutdownFlagFetcher(ScheduledExecutorService reconnectFlagCheck) {
+    final boolean flagCheckDown;
+    reconnectFlagCheck.shutdownNow();
+    try {
+      flagCheckDown = reconnectFlagCheck.awaitTermination(5, SECONDS);
+      if(flagCheckDown){
+        LOGGER.trace("ReconnectionFlagCheck shutdown regularly.");
+      }else {
+        LOGGER.error("ReconnectionFlagCheck shutdown unexpectedly took more than 5 seconds and might.");
+      }
+    }catch(InterruptedException ie){
+      LOGGER.error("Interrupted while waiting for ReconnectionFlagChecker to terminate.");
+    }
   }
 
   /**
@@ -80,7 +95,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
       this.pendingPacketAccessor.createFileAccess(this.localClientData.getClientId());
     } catch (InterruptedException ie) {
       throw new IllegalStateException(
-          "Dateizugriff fehlgeschlagen.\n" + ie.getMessage() + "\n" + asList(ie.getStackTrace()));
+          "File access failed.\n" + ie.getMessage() + "\n" + asList(ie.getStackTrace()));
     }
 
     while (this.terminationLatch.getCount() == TERMINATION_LATCH_COUNT) {
@@ -130,7 +145,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
     for (var currentPacketSet : allPackets.entrySet()) {
       final var currentPacket = currentPacketSet.getValue();
 
-      if (!VolatilePacketIdentifier.checkPacketVolatiliy(currentPacket)) {
+      if (!VolatilePacketIdentifier.checkPacketVolatility(currentPacket)) {
         nonVolatilePackets.put(currentPacketSet.getKey(), currentPacket);
       }
     }

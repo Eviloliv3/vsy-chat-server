@@ -17,7 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Verwaltet die Server-lokalen Abonnements.
+ * Manages server local subscriptions.
  */
 public abstract class AbstractPacketCategorySubscriptionManager {
 
@@ -25,15 +25,12 @@ public abstract class AbstractPacketCategorySubscriptionManager {
   private final ReadWriteLock lock;
   private final Map<PacketCategory, Map<Integer, CategoryIdSubscriber>> subscriptions;
 
-  /**
-   * Instantiates a new Packettopic subscription manager.
-   */
   protected AbstractPacketCategorySubscriptionManager() {
     this(null);
   }
 
   /**
-   * Instantiates a new Packettopic subscription manager.
+   * Instantiates a new PacketCategory subscription manager.
    *
    * @param subscriptions the subscriptions
    */
@@ -89,7 +86,7 @@ public abstract class AbstractPacketCategorySubscriptionManager {
   }
 
   /**
-   * Gets the subscriptions for topic.
+   * Returns the subscriptions for topic.
    *
    * @param topic the topic name
    * @return the subscriptions for topic
@@ -138,10 +135,10 @@ public abstract class AbstractPacketCategorySubscriptionManager {
         unsubSuccessful = false;
       }
       if (unsubSuccessful) {
-        LOGGER.trace("Desubscription of topic/thread successful: {}/{}", topic, threadId);
+        LOGGER.trace("Subscription cancellation of topic/thread successful: {}/{}", topic, threadId);
       } else {
         LOGGER.warn(
-            "Desubscription failed. Client was not subscribed to topic/thread: {}/{}",
+            "Subscription cancellation failed. Client was not subscribed to topic/thread: {}/{}",
             topic,
             threadId);
       }
@@ -172,7 +169,7 @@ public abstract class AbstractPacketCategorySubscriptionManager {
   }
 
   /**
-   * Gets the threads.
+   * Returns the threads.
    *
    * @param topic the topic name
    * @return the threads

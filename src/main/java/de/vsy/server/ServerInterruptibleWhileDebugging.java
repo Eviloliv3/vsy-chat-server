@@ -43,7 +43,7 @@ public class ServerInterruptibleWhileDebugging extends ChatServer implements Run
   @Override
   public void run() {
     final var server = new ChatServer();
-    Thread.currentThread().setName("Chatserver");
+    Thread.currentThread().setName("ChatServer");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();
     LOGGER.trace("Server will be shutdown regularly.");

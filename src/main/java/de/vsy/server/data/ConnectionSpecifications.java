@@ -12,21 +12,14 @@ import java.util.List;
 public class ConnectionSpecifications {
 
   private static final String HOSTNAME = "127.0.0.1";
-  /**
-   * Die zwei maximal zu verwendenden Serverports; dienen gleichzeitig zur Identifikation des
-   * Servers im "Servernetz".
-   */
   private static final List<Integer> SERVER_PORTS = new ArrayList<>(asList(7370, 7371));
-  /**
-   * Der einzelne Port zur Verbindung zwischen zwei Servern.
-   */
-  private static final int TRANS_SERVER_PORT = 8000;
+  private static final int INTER_SERVER_PORT = 8000;
 
   private ConnectionSpecifications() {
   }
 
   /**
-   * Gets the HOSTNAME.
+   * Returns the HOSTNAME.
    *
    * @return the HOSTNAME
    */
@@ -35,20 +28,20 @@ public class ConnectionSpecifications {
   }
 
   /**
-   * Gets the serverports.
+   * Returns the server ports.
    *
-   * @return the serverports
+   * @return List<Integer>
    */
-  public static List<Integer> getServerports() {
+  public static List<Integer> getServerPorts() {
     return copyOf(SERVER_PORTS);
   }
 
   /**
-   * Gets the transserverport.
+   * Returns the server port.
    *
-   * @return the transserverport
+   * @return int
    */
-  public static int getTransserverport() {
-    return TRANS_SERVER_PORT;
+  public static int getInterServerPort() {
+    return INTER_SERVER_PORT;
   }
 }

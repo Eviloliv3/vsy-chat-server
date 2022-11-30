@@ -11,7 +11,7 @@ import de.vsy.shared_transmission.dto.CommunicatorDTO;
 public interface ClientDataProvider {
 
   /**
-   * Gets the client dataManagement.
+   * Returns the client dataManagement.
    *
    * @return the client dataManagement
    */

@@ -21,13 +21,13 @@ public class LocalClientStateDependentLogicProvider {
     this.clientPersistentAccess = new ClientPersistentDataAccessProvider(
         handlerDataAccess.getLocalClientDataProvider());
     this.extraSubscriptionProvider = new ExtraClientSubscriptionProvider(
-        this.clientPersistentAccess.getContactlistDAO());
+        this.clientPersistentAccess.getContactListDAO());
     this.clientSubscriptionHandler = new ClientSubscriptionHandler(extraSubscriptionProvider,
         handlerDataAccess.getLocalClientDataProvider(),
         handlerDataAccess.getHandlerBufferManager());
     this.clientStatePublisher = new ClientStatePublisher(
         handlerDataAccess.getLocalClientDataProvider(),
-        this.clientPersistentAccess.getContactlistDAO(), handlerDataAccess.getHandlerBufferManager()
+        this.clientPersistentAccess.getContactListDAO(), handlerDataAccess.getHandlerBufferManager()
         .getPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND)::appendPacket);
     this.pendingPacketRetriever = new StateDependentPacketRetriever(this.clientPersistentAccess,
         handlerDataAccess.getHandlerBufferManager());

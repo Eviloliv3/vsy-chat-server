@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
 
 /**
- * @author fredward
+ 
  */
 public class TestAccountCreationBehaviour extends ServerTestBase {
 

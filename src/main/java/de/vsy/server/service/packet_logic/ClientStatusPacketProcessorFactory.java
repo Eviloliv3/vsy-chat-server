@@ -47,7 +47,7 @@ public class ClientStatusPacketProcessorFactory implements ServicePacketProcesso
   }
 
   /**
-   * Gets the PacketHandler.
+   * Returns the PacketHandler.
    *
    * @param type the type
    * @return the PacketHandler

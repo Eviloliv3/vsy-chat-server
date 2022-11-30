@@ -24,7 +24,7 @@ public class RemoteServerConnectionData implements ServerConnectionDataProvider 
       final boolean leaderFlag,
       final Socket followerSocket) {
     if (followerSocket == null) {
-      throw new IllegalArgumentException("Kein Socket angegeben.");
+      throw new IllegalArgumentException("No Socket specified.");
     }
     return new RemoteServerConnectionData(remoteServerId, leaderFlag, followerSocket);
   }

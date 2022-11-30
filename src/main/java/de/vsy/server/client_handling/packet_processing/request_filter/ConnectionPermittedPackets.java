@@ -29,7 +29,7 @@ public class ConnectionPermittedPackets extends PermittedPackets {
   }
 
   /**
-   * Gets the permitted categories.
+   * Returns the permitted categories.
    *
    * @return the permitted categories
    */

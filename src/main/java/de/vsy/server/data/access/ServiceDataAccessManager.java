@@ -18,7 +18,7 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
     ErrorHandlingServiceDataProvider {
 
   private final CommunicatorPersistenceDAO clientRegistry;
-  private final LiveClientStateDAO persistenClientStates;
+  private final LiveClientStateDAO persistentClientStates;
   private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
   private final SocketConnectionDataManager serverConnectionDataManager;
   private final AbstractPacketCategorySubscriptionManager serverSubscriptionManager;
@@ -34,7 +34,7 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
   public ServiceDataAccessManager(final ServerDataManager serverDataAccess,
       final ServerPersistentDataManager serverPersistentDataManager) {
     this.clientRegistry = serverPersistentDataManager.getCommunicationEntityAccessManager();
-    this.persistenClientStates = serverPersistentDataManager.getClientStateAccessManager();
+    this.persistentClientStates = serverPersistentDataManager.getClientStateAccessManager();
     this.clientSubscriptionManager = serverDataAccess.getClientCategorySubscriptionManager();
     this.serverConnectionDataManager = serverDataAccess.getServerConnectionDataManager();
     this.serverSubscriptionManager = serverDataAccess.getServiceSubscriptionManager();
@@ -64,7 +64,7 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
 
   @Override
   public LiveClientStateDAO getLiveClientStateDAO() {
-    return this.persistenClientStates;
+    return this.persistentClientStates;
   }
 
   @Override

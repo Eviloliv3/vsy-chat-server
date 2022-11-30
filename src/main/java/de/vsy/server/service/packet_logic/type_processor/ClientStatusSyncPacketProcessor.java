@@ -60,14 +60,6 @@ public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     this.persistentClientStates = serviceDataAccess.getLiveClientStateDAO();
   }
 
-  /**
-   * Zuerst werden die Subscriptions angepasst, sofern die Nachricht von einem entfernten Server
-   * kommt. Der Server wird als synchronisiert auf den Paketdaten eingetragen. Zuletzt werden,
-   * sofern erforderlich, Klienten informiert.
-   *
-   * @param input das zu verarbeitende Paket
-   * @throws PacketProcessingException the PacketHandling exception
-   */
   @Override
   public void processPacket(final Packet input) throws PacketProcessingException {
     RemoteServerConnectionData notSynchronizedServerData;
@@ -95,7 +87,7 @@ public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
         final var recipient = getServerEntity(notSynchronizedServerData.getServerId());
         resultingPackets.addRequest(inputData, recipient);
       } else {
-        LOGGER.trace("No unsynchronized servers, state synchronization message will be dropped.");
+        LOGGER.trace("Not synchronized server set is empty, state synchronization message will be discarded.");
       }
     } else {
       throw new PacketProcessingException("Content not of type ServerPacketContentImpl.");

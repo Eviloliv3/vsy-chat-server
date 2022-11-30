@@ -41,10 +41,8 @@ public class PersistenceDAO {
 
   static {
     LOGGER = LogManager.getLogger();
-    NO_DATA_FILE_PATHS_SET = "Noch kein Dateizugriff möglich: Referenzen ueber "
-        + "korrekte createFileReferences({id})-Methode erstellen.";
-    NO_FILE_ACCESS_ACQUIRED = "Kein Dateizugriff möglich: Zugriffsrecht ueber "
-        + "_acquireAccess()_-Metohode erlangen.";
+    NO_DATA_FILE_PATHS_SET = "File access not possible: create references using createFileReferences({id}) methods.";
+    NO_FILE_ACCESS_ACQUIRED = "File access not possible: acquire access rights using_acquireAccess()_.";
   }
 
   private final JavaType dataFormat;
@@ -77,13 +75,12 @@ public class PersistenceDAO {
   }
 
   /**
-   * Erstellt ein RandomAccessFile Objekt fuer bestehenden lockFilePath mit Lesbefugnissen und
-   * laesst anschliessend acquireFileLock() den exklusiven Zugriff akquirieren
+   * Creates a RandomAccessFile for existing lockFilePath with read rights and acquires exclusive
+   * access using acquireFileLoci()
    *
-   * @return true, wenn exklusiver Zugriff auf Daten erlangt wurde, false sonst. Zusaetzlich wird
-   * das Interrupt-Flag gesetzt, wenn: lockFilePath keinen gueltigen Dateipfad enthaelt, es zu einer
-   * FileLockInterruption kommt, eine allgemeine Interruption geworfen wird oder eine unerwartete
-   * IOException geworfen wird.
+   * @return true, if exclusive access could be acquired, false otherwise. Interrupt flag might be
+   * set if: lockFilePath does not reference a valid file path; FileLockInterruption occurred;
+   * an InterruptException gets caught or an unexpected IOException get caught.
    */
   public boolean acquireAccess(final boolean writeAccess) {
     if (this.filePaths == null) {
@@ -253,8 +250,8 @@ public class PersistenceDAO {
       this.createWorkingFileReferences();
     } else {
       final var errorMessage =
-          "Dateipfade konnten nicht angelegt werden. " + "Für Dateideskriptor: "
-              + fileDescriptor + " wird eine Pfaderweiterung benötigt.";
+          "Filepath could not be created. Path extension required for file descriptor: "
+              + fileDescriptor;
       throw new IllegalStateException(errorMessage);
     }
   }
@@ -272,7 +269,7 @@ public class PersistenceDAO {
     if (directories != null) {
       createMultipleFileReferences(directories, this.fileDescriptor.getDataFilename());
     } else {
-      throw new IllegalArgumentException("Keine gueltigen Verzeichnispfade uebergeben.");
+      throw new IllegalArgumentException("Invalid directory paths.");
     }
   }
 
@@ -280,7 +277,7 @@ public class PersistenceDAO {
     this.lockFilePath = PersistentDataFileCreator.createAndGetFilePath(directory, filename, LOGGER);
 
     if (this.lockFilePath == null) {
-      final var errorMessage = "Kein Datei-Lock angelegt für Deskriptor: " + fileDescriptor;
+      final var errorMessage = "No FileLock created for descriptor: " + fileDescriptor;
       throw new IllegalStateException(errorMessage);
     }
   }
@@ -290,7 +287,7 @@ public class PersistenceDAO {
     this.filePaths = PersistentDataFileCreator.createAndGetFilePaths(directories, filename, LOGGER);
 
     if (this.filePaths == null) {
-      final var errorMessage = "Keine Dateipfade angelegt für Deskriptor: " + fileDescriptor;
+      final var errorMessage = "No file paths created for descriptor: " + fileDescriptor;
       throw new IllegalStateException(errorMessage);
     }
   }
@@ -310,8 +307,7 @@ public class PersistenceDAO {
       this.createWorkingFileReferences(pathExtension);
     } else {
       final var errorMessage =
-          "Dateipfade konnten nicht angelegt werden. " + "Dateideskriptor: " + fileDescriptor
-              + " wird keine Pfaderweiterung benötigt.";
+          "File paths could not be created. No path extension required for descriptor: " + fileDescriptor;
       throw new IllegalStateException(errorMessage);
     }
   }
@@ -333,18 +329,18 @@ public class PersistenceDAO {
       if (directories != null) {
         createMultipleFileReferences(directories, this.fileDescriptor.getDataFilename());
       } else {
-        throw new IllegalArgumentException("Keine gueltigen Verzeichnispfade uebergeben.");
+        throw new IllegalArgumentException("Invalid directory paths.");
       }
     } else {
       final var errorMessage =
-          "Dateipfade konnten nicht angelegt werden. " + "Dateideskriptor: " + fileDescriptor
-              + " wird eine Pfaderweiterung benötigt.";
+          "Filepath could not be created. Path extension required for file descriptor: "
+              + fileDescriptor;
       throw new IllegalStateException(errorMessage);
     }
   }
 
   /**
-   * Tries to read from file and backup file. Returns first content found. If all this.fileChannels
+   * Tries to read from file and backup file. Returns first content specified. If all this.fileChannels
    * are empty, null is returned.
    *
    * @return object
@@ -432,9 +428,7 @@ public class PersistenceDAO {
   }
 
   private String generateJsonFromObject(final Object toWrite) {
-    // TODO das hier sollte in einem eigenen Objekt (statische Methode) erstellt
-    // werden
-    // TODO am besten komplett verschlüsselt
+    //TODO should be outsourced to object with static access and encrypted
     try {
       return this.mapper.writerFor(this.dataFormat).writeValueAsString(toWrite);
     } catch (JsonProcessingException je) {

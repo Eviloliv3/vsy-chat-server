@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Simple tool for creating preset file types. Assuming the passed directories have already been
- * created. fredward
+ * created.
  */
 public class PersistentDataFileCreator {
 

@@ -16,9 +16,6 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Auf die Bedürfnisse des Klienten/Handlers zugeschnitten. Translator wird genutzt.
- */
 public class ClientSubscriptionHandler implements ClientStateListener {
 
   private static final Logger LOGGER = LogManager.getLogger();

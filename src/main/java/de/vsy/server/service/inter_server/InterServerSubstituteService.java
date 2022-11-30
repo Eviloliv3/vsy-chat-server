@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 
 /**
- * Service checking for pending Packetqueues that have outlived their ttl, dissolving them if
+ * Service checking for pending PacketQueues that have outlived their ttl, dissolving them if
  * necessary.
  */
 public class InterServerSubstituteService extends ThreadContextRunnable implements
@@ -125,7 +125,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
       this.shutdownCondition = () -> !(Instant.now().isAfter(stopTime));
       substituteSetup = true;
     } else {
-      LOGGER.info("No remote clients for server {} found.",
+      LOGGER.info("No remote clients for server {} specified.",
           this.remoteServerConnection.getServerId());
     }
     return substituteSetup;
@@ -180,8 +180,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
   }
 
   /**
-   * Je Klient wird der Pendingzustand eingetragen sowie ein Kanal zur persistenten Paketspeicherung
-   * erstellt.
+   * Pending state globally set and pending packet persistent access acquire  per client.
    *
    * @param pendingClientIds the pending client ids
    */

@@ -14,19 +14,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Einheit zur Ausgabe von Daten aktiver Freunde. Frederic Heath
+ * Allows for limited access to contact data and contact states.
  */
 public class CommunicationEntityDataProvider {
 
   private final AbstractPacketCategorySubscriptionManager activeContactLists;
   private final CommunicatorDataManipulator clientData;
 
-  /**
-   * Liefert ein Objekt, das Zugriff auf die Freundesliste des Clients gewährt.
-   *
-   * @param activeContactLists the active contact lists
-   * @param clientData         the client dataManagement
-   */
   public CommunicationEntityDataProvider(
       final AbstractPacketCategorySubscriptionManager activeContactLists,
       final CommunicatorDataManipulator clientData) {
@@ -35,10 +29,10 @@ public class CommunicationEntityDataProvider {
   }
 
   /**
-   * Erstellt aus einer Liste von intn eine Liste von Clientdaten.
+   * Creates a set of CommunicatorDTO from a set of Integer ids.
    *
-   * @param contactList Liste von intn, zu denen Clientdaten benötigt werden.
-   * @return Liste von Clientdaten, vom Typ Arraylist
+   * @param contactList Set<Integer> contact ids
+   * @return Set<CommunicatorDTO>
    */
   public Set<CommunicatorDTO> mapToContactData(final Set<Integer> contactList) {
     final Set<CommunicatorDTO> activeContactList = new HashSet<>();
@@ -52,20 +46,20 @@ public class CommunicationEntityDataProvider {
   }
 
   /**
-   * Gibt Clientdaten eines Freundes (bestimmt durch die Identifikationsnummer) aus.
+   * Returns corresponding CommunicatorDTO for specified id.
    *
-   * @param contactId the contact id
-   * @return Clientdaten vom Typ Contact, falls gültige Id und befreundet.
+   * @param contactId int
+   * @return CommunicatorDTO
    */
   public CommunicatorData getContactData(final int contactId) {
     return this.clientData.getCommunicatorData(contactId);
   }
 
   /**
-   * Entfernt alle Clientdaten aus einer Liste, die nicht in der Freundesliste enthalten sind.
+   * Removes all offline contacts from a set of contact ids.
    *
-   * @param activeClientIdList the contactList
-   * @return Die bereinigte List von Clientdaten
+   * @param activeClientIdList Set<Integer>
+   * @return Set<Integer>
    */
   public Set<Integer> removeOfflineContacts(final Set<Integer> activeClientIdList) {
     return this.activeContactLists.checkThreadIds(CHAT, activeClientIdList);

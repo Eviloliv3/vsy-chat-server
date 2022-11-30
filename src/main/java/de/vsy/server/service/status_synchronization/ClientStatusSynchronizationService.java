@@ -114,9 +114,9 @@ public class ClientStatusSynchronizationService extends ServiceBase {
   }
 
   /**
-   * Dispatch response Packetmap.
+   * Dispatch response PacketResponseMap.
    *
-   * @param responseMap the response map
+   * @param responseMap PacketResponseMap
    */
   private void dispatchResponsePacketMap(final PacketResponseMap responseMap) {
     Packet toDispatch;

@@ -24,9 +24,9 @@ public class PacketContextCheckLink extends AbstractPacketProcessorLink {
         .getPacketCategory();
 
     if (!this.packetCategoryCheck.checkPacketCategory(inputCategory)) {
-      var errorCause = "Pakete der Kategorie \"" + inputCategory
-          + "\" dürfen im aktuellen Zustand nicht verarbeitet werden."
-          + " Zulaessige Kategorien sind: "
+      var errorCause = "Packets of category \"" + inputCategory
+          + "\" cannot be processed in your current state."
+          + " Allowed categories are: "
           + this.packetCategoryCheck.getPermittedPacketCategories();
 
       throw new PacketValidationException(errorCause);

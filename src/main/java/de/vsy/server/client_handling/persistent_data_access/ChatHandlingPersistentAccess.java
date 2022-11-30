@@ -9,16 +9,16 @@ import de.vsy.server.persistent_data.client_data.MessageDAO;
 public interface ChatHandlingPersistentAccess {
 
   /**
-   * Gets the contactlist accessLimiter provider.
+   * Returns the contact list accessLimiter provider.
    *
-   * @return the contactlist accessLimiter provider
+   * @return ContactListDAO
    */
-  ContactListDAO getContactlistDAO();
+  ContactListDAO getContactListDAO();
 
   /**
-   * Gets the message accessLimiter provider.
+   * Returns the message accessLimiter provider.
    *
-   * @return the message accessLimiter provider
+   * @return MessageDAO
    */
   MessageDAO getMessageDAO();
 }

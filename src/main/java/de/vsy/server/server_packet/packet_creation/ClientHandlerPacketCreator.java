@@ -19,10 +19,10 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
   @Override
   public Packet createRequest(PacketContent processedContent, CommunicationEndpoint recipient) {
     if (processedContent == null) {
-      throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
+      throw new IllegalArgumentException("No PacketContent specified.");
     }
     if (recipient == null) {
-      throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
+      throw new IllegalArgumentException("No recipient specified.");
     }
 
     final var resultingContent = adjustWrapping(processedContent, true);

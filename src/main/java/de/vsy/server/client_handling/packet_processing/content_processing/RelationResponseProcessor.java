@@ -27,7 +27,7 @@ public class RelationResponseProcessor implements ContentProcessor<ContactRelati
     this.threadDataAccess = threadDataAccess;
     this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
     this.contactListAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
-        .getClientPersistentAccess().getContactlistDAO();
+        .getClientPersistentAccess().getContactListDAO();
     this.messageHistoryAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
         .getClientPersistentAccess().getMessageDAO();
   }
@@ -84,12 +84,10 @@ public class RelationResponseProcessor implements ContentProcessor<ContactRelati
       final var contactData = this.threadDataAccess.getContactToActiveClientMapper()
           .getContactData(contactId);
       throw new PacketProcessingException(
-          "Freundschaftsanfrage wurde nicht " + "verarbeitet. Sie sind bereits "
-              + "mit " + contactData.getDisplayName() + " befreundet.");
+          "Friendship response was not processed. You already are friends with " + contactData.getDisplayName());
     } else if (contactResponse.getRespondingClient().getCommunicatorId() != contactId
         && !desiredState) {
-      throw new PacketProcessingException("Freundschaftsanfrage wurde nicht "
-          + "verarbeitet. Antwort auf Beendigung " + "der Freundschaft wird automatisch erstellt.");
+      throw new PacketProcessingException("Friendship response was not processed. Your response was already created automatically.");
     }
   }
 

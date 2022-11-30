@@ -45,7 +45,7 @@ public class ErrorPacketProcessorFactory implements ContentBasedProcessorFactory
 
       @Override
       public String getErrorMessage() {
-        return "Diese Fehlernachricht sollte nie abgefragt werden.";
+        return "This error message should never be displayed, because the checkCondition() method always returns true.";
       }
     };
   }

@@ -7,6 +7,7 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_SERVER_ROUTE_VALUE;
 import static java.util.Arrays.asList;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import de.vsy.server.client_handling.ClientConnectionHandler;
 import de.vsy.server.client_handling.data_management.logic.ClientStatePublisher;
@@ -32,7 +33,6 @@ import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -71,7 +71,7 @@ public class ChatServer implements ClientServer {
         LogManager.shutdown();
       }
     }));
-    Thread.currentThread().setName("Chatserver");
+    Thread.currentThread().setName("ChatServer");
     ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, STANDARD_SERVER_ROUTE_VALUE);
     server.serve();
     LOGGER.trace("Server will be shutdown regularly.");
@@ -86,14 +86,11 @@ public class ChatServer implements ClientServer {
    */
   private void prepareServer() {
     String serverThreadName;
-    /* ServerSocket starten, wenn Datenzugriff besteht. */
     final var localServerConnectionData = setupServerSocket();
     final var serverPrepared = localServerConnectionData != null;
 
     if (!serverPrepared) {
-      throw new IllegalStateException(
-          "Keiner der vorgegebenen Ports ist mehr frei. Der Server "
-              + "kann somit nicht gestartet werden.");
+      throw new IllegalStateException("No specified port usable. Server cannot be started.");
     }
     serverThreadName = "ChatServer[" + localServerConnectionData.getServerId() + ":"
         + localServerConnectionData.getServerPort() + "]";
@@ -131,8 +128,13 @@ public class ChatServer implements ClientServer {
     LOGGER.info("Services shutdown.");
 
     try {
-      this.clientConnectionPool.awaitTermination(5, TimeUnit.SECONDS);
-      LOGGER.info("Client handler pool shutdown.");
+      var clientConnectionsDown = this.clientConnectionPool.awaitTermination(5, SECONDS);
+
+      if(clientConnectionsDown){
+        LOGGER.info("Client handler pool shutdown.");
+      }else{
+        LOGGER.error("Client connection pool shutdown unexpectedly took more than 5 seconds and may be deadlocked.");
+      }
     } catch (InterruptedException ie) {
       LOGGER.error("Interrupted while waiting for client handler pool to terminate.");
     }
@@ -157,7 +159,7 @@ public class ChatServer implements ClientServer {
    */
   private LocalServerConnectionData setupServerSocket() {
     LocalServerConnectionData localServerConnectionData = null;
-    final var serverPorts = ConnectionSpecifications.getServerports();
+    final var serverPorts = ConnectionSpecifications.getServerPorts();
     final var hostname = ConnectionSpecifications.getHostname();
 
     for (var currentPortNumber : serverPorts) {
@@ -193,7 +195,7 @@ public class ChatServer implements ClientServer {
     PacketCompiler.addOriginatorEntityProvider(
         () -> getServerEntity(
             serverConnectionDataManager.getLocalServerConnectionData().getServerId()));
-    PacketCompiler.addContentIdentificator(new ServerContentIdentificationProviderImpl());
+    PacketCompiler.addContentIdentificationProvider(new ServerContentIdentificationProviderImpl());
     HandlerAccessManager.setupStaticAccess(this.serverDataModel, this.serverPersistentDataManager);
     ClientSubscriptionHandler.setupStaticServerDataAccess();
     ClientStatePublisher.setupStaticServerDataAccess(serverConnectionDataManager);

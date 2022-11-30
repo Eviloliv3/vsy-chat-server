@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 /**
- * The Class Account. Frederic Heath
+ * The Class Account.
  */
 @JsonTypeName("communicatorData")
 public class AuthenticationData implements Serializable {
@@ -26,7 +26,7 @@ public class AuthenticationData implements Serializable {
   /**
    * Instantiates a new account.
    *
-   * @param login    the login name
+   * @param login    the username
    * @param password the password
    * @param clientId the client id
    */
@@ -50,16 +50,16 @@ public class AuthenticationData implements Serializable {
     Optional<String> checkString;
 
     if (login == null) {
-      throw new IllegalArgumentException("Kein Anzeigename (null).");
+      throw new IllegalArgumentException("No username specified.");
     }
 
     if (password == null) {
-      throw new IllegalArgumentException("Kein Passwort (null).");
+      throw new IllegalArgumentException("No password specified.");
     }
 
     checkString = IdCheck.checkData(clientId);
     if (checkString.isPresent()) {
-      throw new IllegalArgumentException("Ungültige Klienten-Id: " + checkString.get());
+      throw new IllegalArgumentException("Invalid client id: " + checkString.get());
     }
 
     return new AuthenticationData(login, password, clientId);
@@ -84,32 +84,32 @@ public class AuthenticationData implements Serializable {
 
     if (otherObject instanceof AuthenticationData otherAccount) {
       return this.clientId == otherAccount.getClientId() && this.login.equals(
-          otherAccount.getLogin())
+          otherAccount.getUsername())
           && this.password.equals(otherAccount.getPassword());
     }
     return false;
   }
 
   /**
-   * Gibt die Klienten-Id aus.
+   * Returns the client id.
    *
-   * @return die Klienten-Id
+   * @return int
    */
   public int getClientId() {
     return clientId;
   }
 
   /**
-   * Gets the login name.
+   * Returns the username.
    *
    * @return the login
    */
-  public String getLogin() {
+  public String getUsername() {
     return login;
   }
 
   /**
-   * Gets the password.
+   * Returns the password.
    *
    * @return the password
    */
@@ -138,15 +138,15 @@ public class AuthenticationData implements Serializable {
   }
 
   /**
-   * Checks if two AuthenticationData bean contains the same login name.
+   * Checks if two AuthenticationData bean contain the same username.
    *
    * @param otherAuthData the other auth dataManagement
-   * @return boolean: true, if both bean contain the same login name; false otherwise
+   * @return boolean: true, if both bean contain the same username; false otherwise
    */
   public boolean sameLogin(final AuthenticationData otherAuthData) {
 
     if (otherAuthData != null) {
-      return getLogin().equals(otherAuthData.getLogin());
+      return getUsername().equals(otherAuthData.getUsername());
     }
     return false;
   }

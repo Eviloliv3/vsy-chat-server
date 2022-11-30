@@ -17,7 +17,7 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.status.StatusContent;
 
 /**
- * A factory for creating udpate category handlers. Frederic Heath
+ * A factory for creating update category handlers.
  */
 public class StatusPacketProcessorFactory implements ContentBasedProcessorFactory {
 

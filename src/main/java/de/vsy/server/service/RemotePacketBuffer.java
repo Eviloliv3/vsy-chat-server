@@ -7,14 +7,11 @@ import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.packet.Packet;
 
 /**
- * Prueft ob Paketinhalt bereits vom entfernten Server verarbeitet wurde und stoppt den versandt
- * gegebenenfalls.
+ * Withholds Packet that already were processed by the remote server that is represented by this
+ * PacketBuffer.
  */
 public class RemotePacketBuffer extends PacketBuffer {
 
-  /**
-   * Identifiziert den Server, der mittels dieses Buffers erreicht wird.
-   */
   private final LocalServerConnectionData localConnection;
   private RemoteServerConnectionData remoteConnection;
 
@@ -67,7 +64,7 @@ public class RemotePacketBuffer extends PacketBuffer {
         super.appendPacket(input);
       } else {
         throw new IllegalArgumentException(
-            "Paket wird nicht gesandt. Ungesicherter Paketinhalt: " + input);
+            "Packet not prepended. Unsafe PacketContent: " + input);
       }
     }
   }

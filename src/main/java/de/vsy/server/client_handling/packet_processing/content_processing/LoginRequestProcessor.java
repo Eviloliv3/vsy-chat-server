@@ -42,7 +42,7 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
     ClientState globalState;
     final var authenticationData = toProcess.getAuthenticationData();
     final var clientData = this.commPersistManager.getCommunicatorData(
-        authenticationData.getLogin(),
+        authenticationData.getUsername(),
         authenticationData.getPassword());
 
     if (clientData != null) {
@@ -58,21 +58,18 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
             this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
           } else {
             this.clientStateManager.logoutClient();
-            causeMessage = "Es ist ein Fehler beim Eintragen Ihres "
-                + "Authentifizierungszustandes aufgetreten. "
-                + "(Login-global) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+            causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
           }
         } else {
-          causeMessage = "Sie sind bereits von einem anderen Gerät aus angemeldet.";
+          causeMessage = "You already are conncted from another device.";
         }
       } else {
         this.clientStateManager.logoutClient();
         causeMessage =
-            "Es ist ein Fehler beim Eintragen Ihres " + "Authentifizierungszustandes aufgetreten. "
-                + "(Login-lokal) Bitte melden Sie dies einem " + "ChatServer-Mitarbeiter";
+            "An error occurred while writing your local login state. Please contact the ChatServer support team.";
       }
     } else {
-      causeMessage = "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.";
+      causeMessage = "No account data found for your credentials.";
     }
     if (causeMessage != null) {
       throw new PacketProcessingException(causeMessage);

@@ -12,10 +12,10 @@ public class ServerStatusSyncPacketCreator extends ResultingPacketCreator {
   @Override
   public Packet createRequest(PacketContent processedContent, CommunicationEndpoint recipient) {
     if (processedContent == null) {
-      throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
+      throw new IllegalArgumentException("No PacketContent specified.");
     }
     if (recipient == null) {
-      throw new IllegalArgumentException("Kein Empfaenger uebergeben.");
+      throw new IllegalArgumentException("No recipient specified.");
     }
     final var wrappedContent = wrapIfNecessary(processedContent);
 
@@ -29,7 +29,7 @@ public class ServerStatusSyncPacketCreator extends ResultingPacketCreator {
   @Override
   public Packet createResponse(PacketContent processedContent) {
     if (processedContent == null) {
-      throw new IllegalArgumentException("Kein Paketinhalt uebergeben.");
+      throw new IllegalArgumentException("No PacketContent specified.");
     }
     final var wrappedContent = wrapIfNecessary(processedContent);
     return PacketCompiler.createResponse(wrappedContent, super.currentRequest);

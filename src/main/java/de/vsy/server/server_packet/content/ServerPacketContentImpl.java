@@ -14,8 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Interne Erweiterung des PacketContent, u.a. zur Feststellung von Ursprung (Server) bzw.
- * Synchronisation von Paketen.
+ * Server internal extension of PacketContent, allows for the single synchronization of servers.
  */
 public abstract class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
 
@@ -94,7 +93,7 @@ public abstract class ServerPacketContentImpl implements PacketContent, ServerSt
   }
 
   /**
-   * Gets the reading connection thread.
+   * Returns the reading connection thread.
    *
    * @return the reading connection thread
    */
@@ -114,7 +113,7 @@ public abstract class ServerPacketContentImpl implements PacketContent, ServerSt
   }
 
   /**
-   * Gets the synchronized servers.
+   * Returns the synchronized servers.
    *
    * @return the synchronized servers
    */

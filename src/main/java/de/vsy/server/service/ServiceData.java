@@ -6,11 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.util.EnumMap;
 import java.util.Map;
 
-/**
- * Die zu verwendende Servicespezifikationen.
- *
- * @author Frederic Heath
- */
 @JsonPOJOBuilder
 public class ServiceData {
 
@@ -82,18 +77,18 @@ public class ServiceData {
     }
 
     /**
-     * Creates the.
+     * Creates the ServiceDataBuilder.
      *
-     * @return the service dataManagement builder
+     * @return ServiceDataBuilder
      */
     public static ServiceDataBuilder create() {
       return new ServiceDataBuilder();
     }
 
     /**
-     * Builds the.
+     * Builds the ServiceData
      *
-     * @return the service dataManagement
+     * @return ServiceData
      */
     public ServiceData build() {
       return new ServiceData(this);
@@ -110,11 +105,11 @@ public class ServiceData {
         final Service.TYPE serviceType) {
 
       if (direction == null) {
-        throw new IllegalArgumentException("Keine Richtung angegeben.");
+        throw new IllegalArgumentException("No direction specified.");
       }
 
       if (this.serviceType == null) {
-        throw new IllegalArgumentException("Kein Servicetyp angegeben.");
+        throw new IllegalArgumentException("No service type specified.");
       }
 
       if (this.responseDirections == null) {

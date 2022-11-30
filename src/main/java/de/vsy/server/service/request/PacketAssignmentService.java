@@ -72,23 +72,23 @@ public class PacketAssignmentService extends ServiceBase {
   private void setupPacketNetworkManager(
       final AbstractPacketCategorySubscriptionManager serverBoundNetwork,
       final AbstractPacketCategorySubscriptionManager clientBoundNetwork) {
-    Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> packetNetworMap;
+    Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> packetNetworkMap;
 
-    packetNetworMap = new EnumMap<>(EligibleCommunicationEntity.class);
+    packetNetworkMap = new EnumMap<>(EligibleCommunicationEntity.class);
 
-    packetNetworMap.put(SERVER, serverBoundNetwork);
-    packetNetworMap.put(CLIENT, clientBoundNetwork);
+    packetNetworkMap.put(SERVER, serverBoundNetwork);
+    packetNetworkMap.put(CLIENT, clientBoundNetwork);
 
-    this.packetNetworkManager = new CommunicationNetworkSubscriptionManager(packetNetworMap);
+    this.packetNetworkManager = new CommunicationNetworkSubscriptionManager(packetNetworkMap);
   }
 
   @Override
   public void finishSetup() {
     final var serviceId = super.getServiceId();
-    final var identificatorValidation = ServerPermittedCategoryContentAssociationProvider
+    final var identificationValidation = ServerPermittedCategoryContentAssociationProvider
         .createRegularServerPacketContentValidator();
 
-    this.validator = new SimplePacketChecker(identificatorValidation);
+    this.validator = new SimplePacketChecker(identificationValidation);
 
     this.requestBuffer = this.serviceBuffers.registerBuffer(super.getServiceType(), serviceId);
     this.preProcessor = new ContentPreProcessor(super.serverConnectionData,
@@ -119,7 +119,7 @@ public class PacketAssignmentService extends ServiceBase {
       try {
         publishPacket(nextPacket);
       } catch (PacketHandlingException phe) {
-        final var errorMessage = "Das Paket wurde nicht zugestellt. " + phe.getMessage();
+        final var errorMessage = "Packet could not be delivered. " + phe.getMessage();
         final var errorResponse = this.pheProcessor
             .processException(new PacketTransmissionException(errorMessage), nextPacket);
 
@@ -145,10 +145,10 @@ public class PacketAssignmentService extends ServiceBase {
         subscriptionNetwork.publish(publishablePacket);
       } else {
         throw new PacketTransmissionException(
-            "Kein Abonnenten-Netz gefunden für: " + properties.getRecipient().toString());
+            "No subscription manager found for: " + properties.getRecipient().toString());
       }
     } else {
-      throw new PacketTransmissionException("Paket ist nicht zu senden.");
+      throw new PacketTransmissionException("Packet cannot be sent.");
     }
   }
 

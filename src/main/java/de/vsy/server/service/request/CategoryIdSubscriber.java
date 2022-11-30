@@ -29,7 +29,7 @@ public class CategoryIdSubscriber {
     if (categoryIdSubscribers != null) {
       this.subscriptionBuffers = categoryIdSubscribers;
     } else {
-      throw new IllegalArgumentException("null statt Set von PacketBuffern übergeben.");
+      throw new IllegalArgumentException("No PacketBuffer specified.");
     }
   }
 
@@ -63,7 +63,7 @@ public class CategoryIdSubscriber {
    */
   public void publish(final Packet toPublish) {
     if (toPublish == null) {
-      throw new IllegalArgumentException("Leeres Paket wird nicht gepuffert.");
+      throw new IllegalArgumentException("No Packet specified.");
     }
 
     for (var subscriptionBuffer : this.subscriptionBuffers) {

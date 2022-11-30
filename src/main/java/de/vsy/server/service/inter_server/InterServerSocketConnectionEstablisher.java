@@ -2,6 +2,7 @@ package de.vsy.server.service.inter_server;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.UNINITIATED;
 import static java.util.concurrent.Executors.newSingleThreadExecutor;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import de.vsy.server.data.ConnectionSpecifications;
 import de.vsy.server.data.ServerSynchronizationManager;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,16 +34,7 @@ public class InterServerSocketConnectionEstablisher {
     this.establishingThread = newSingleThreadExecutor();
   }
 
-  /**
-   * ChatServer laesst InterServerSocketConnectionEstablisher laden → Liveserver werden synchron
-   * geladen, Verbindung aber asynchron initialisiert und synchronisiert =>
-   * InterServerCommunicationService wartet nach Initialisierung auf Laden entfernter Kontakte →
-   * ChatServer wartet auf Initialisierung von entfernten Verbindungen ChatServer laedt entfernt
-   * verbundene Kontakte
-   * <p>
-   * - Problem: Liveserversockets werden synchron hinzugefuegt, aber asynchron entfernt → in
-   * separates Set im connectToAllOperableServers hinzufuegen und dann pruefen → wo?
-   */
+
   public void establishConnections() {
     setupServerSocket();
     connectToAllOperableServers();
@@ -53,7 +44,7 @@ public class InterServerSocketConnectionEstablisher {
   private void setupServerSocket() {
     LOGGER.info("Trying to setup ServerSocket for inter server connection purposes.");
     LocalServerConnectionData serverReceptionConnection;
-    var masterSocketPort = ConnectionSpecifications.getTransserverport();
+    var masterSocketPort = ConnectionSpecifications.getInterServerPort();
 
     do {
       masterSocketPort++;
@@ -72,11 +63,11 @@ public class InterServerSocketConnectionEstablisher {
 
   private void connectToAllOperableServers() {
     LOGGER.info("Trying to establish connections with preexisting chat servers.");
-    final var interServerPort = ConnectionSpecifications.getTransserverport();
+    final var interServerPort = ConnectionSpecifications.getInterServerPort();
     final var hostname = ConnectionSpecifications.getHostname();
     final var localMasterPort = this.localMasterSocket.getLocalPort();
 
-    for (int test = 1, maxRunningServers = ConnectionSpecifications.getServerports()
+    for (int test = 1, maxRunningServers = ConnectionSpecifications.getServerPorts()
         .size(); test <= maxRunningServers; test++) {
       final var testPort = interServerPort + test;
 
@@ -113,13 +104,18 @@ public class InterServerSocketConnectionEstablisher {
       LOGGER.error("{} during ServerSocket closing attempt.", e.getClass().getSimpleName());
     }
     try {
-      this.establishingThread.awaitTermination(500, TimeUnit.MILLISECONDS);
+      final var interServerEstablisherDown = this.establishingThread.awaitTermination(5, SECONDS);
+
+      if(interServerEstablisherDown){
+        LOGGER.info("ServerConnectionEstablisher thread terminated.");
+      }else{
+        LOGGER.error("ServerConnectionEstablisher shutdown unexpectedly took more than 5 seconds and may be deadlocked.");
+      }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       LOGGER.error(
           "Interrupted while waiting for ServerConnectionEstablisher thread to terminate.");
     }
-    LOGGER.info("ServerConnectionEstablisher thread terminated.");
   }
 
   public boolean isEstablishingConnections() {

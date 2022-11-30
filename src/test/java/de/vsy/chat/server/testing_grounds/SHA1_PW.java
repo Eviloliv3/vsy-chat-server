@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 
 /**
- * @author fredward
+ 
  */
 public class SHA1_PW {
 

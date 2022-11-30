@@ -72,7 +72,8 @@ public class ClientConnectionHandler implements Runnable {
         clientHandling = new PendingChatPacketHandling(threadDataManager);
         clientHandling.administerStrategy();
       } else {
-        clearAllBuffers();
+        LOGGER.error("!! Buffers not cleared.");
+        //clearAllBuffers();
       }
       this.connectionControl.closeConnection();
       LOGGER.info("Client connection terminated.");
@@ -136,17 +137,16 @@ public class ClientConnectionHandler implements Runnable {
     }
   }
 
+  /*
   /**
    * Try buffer clearing.
-   */
+   *
   private void clearAllBuffers() {
-    // TODO Klient hat sich abgemeldet. Also müssen noch die verbleibenden Pakete
-    // sinnvoll weiterverarbeitet oder zurückgesandt werden.
-    // nicht: ist kein Paket zu verarbeiten
+    // TODO client logged out, remaining packets should be processed in a sensible way, or sent back.
     // clearClientBoundBuffer();
     // clearHandlerBoundBuffer();
   }
-
+  */
   /**
    * Finish thread termination.
    */

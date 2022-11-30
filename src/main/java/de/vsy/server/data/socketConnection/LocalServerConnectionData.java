@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 
 /**
- * Enhält verbindungsbezogene Informationen der lokalen Serverinstanz.
+ * Contains connection related data for local server.
  */
 public class LocalServerConnectionData implements ServerConnectionDataProvider {
 
@@ -24,7 +24,7 @@ public class LocalServerConnectionData implements ServerConnectionDataProvider {
   public static LocalServerConnectionData valueOf(final int serverId,
       final ServerSocket serverSocket) {
     if (serverSocket == null) {
-      throw new IllegalArgumentException("Kein ServerSocket");
+      throw new IllegalArgumentException("No ServerSocket specified");
     }
     return new LocalServerConnectionData(serverId, serverSocket);
   }

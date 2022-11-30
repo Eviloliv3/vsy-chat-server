@@ -50,7 +50,7 @@ public class ClientHandlerPacketProcessor<T extends PacketContent> implements Pa
   /**
    * Extracts the content from Packet and unwraps the content from SimpleInternalContentWrapper, if
    * necessary. Then validates the extracted content, casts it to the required type and returns it,
-   * if no invalid data was found.
+   * if no invalid data was specified.
    *
    * @param request the request to process
    * @return content the validated Content

@@ -13,10 +13,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * The Class ClientStateSubscriptions.
- *
- * @author Frederic Heath
- */
+ * The Class ClientStateSubscriptions.*/
 public class ClientStateSubscriptions {
 
   private final Map<Integer, Map<ClientState, Set<Integer>>> clientSubscriptions;
@@ -31,7 +28,7 @@ public class ClientStateSubscriptions {
   }
 
   /**
-   * Gets the client subscriptions.
+   * Returns the client subscriptions.
    *
    * @param state    the state
    * @param clientId the client id

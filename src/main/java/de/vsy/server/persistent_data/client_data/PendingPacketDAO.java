@@ -24,16 +24,13 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
   private static final Logger LOGGER = LogManager.getLogger();
   private final PersistenceDAO dataProvider;
 
-  /**
-   * Instantiates a new pending Packetadder.
-   */
   public PendingPacketDAO() {
 
     this.dataProvider = new PersistenceDAO(DataFileDescriptor.PENDING_PACKETS, getDataFormat());
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */
@@ -65,7 +62,7 @@ public class PendingPacketDAO implements ClientDataAccess, PendingPacketPersiste
   public boolean appendPendingPacket(final PendingType classification, final Packet toAppend) {
     if (classification == null || toAppend == null) {
       throw new IllegalArgumentException(
-          "Ungueltiger Parameter. " + classification + "/" + toAppend);
+          "Invalid argument. " + classification + "/" + toAppend);
     }
     var packetAdded = false;
     Map<String, Packet> pendingMap;

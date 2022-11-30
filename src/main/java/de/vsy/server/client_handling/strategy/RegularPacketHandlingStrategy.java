@@ -30,7 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Contains Packetprocessing strategies during live connection. Pending Packet are added to the
+ * Contains Packet processing strategies during live connection. Pending Packet are added to the
  * respective Buffers. Neither remaining Packet nor pending Packet are dealt with.
  */
 public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {

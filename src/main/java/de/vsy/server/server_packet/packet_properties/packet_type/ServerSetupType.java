@@ -8,5 +8,5 @@ import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
 
 @JsonTypeName("serverSetup")
 public enum ServerSetupType implements PacketType {
-  INTERSERVER_SYNC
+  INTER_SERVER_SYNC
 }

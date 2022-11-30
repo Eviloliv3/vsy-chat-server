@@ -29,7 +29,7 @@ public class IdProvider implements ServerDataAccess {
   }
 
   /**
-   * Gets the dataManagement format.
+   * Returns the dataManagement format.
    *
    * @return the dataManagement format
    */
@@ -44,7 +44,7 @@ public class IdProvider implements ServerDataAccess {
   }
 
   /**
-   * Gets the new communicator id.
+   * Returns the new communicator id.
    *
    * @return the new communicator id
    */

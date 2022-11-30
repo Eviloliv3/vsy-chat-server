@@ -42,18 +42,18 @@ public class CommunicatorDataManipulator {
   /**
    * Creates the new account.
    *
-   * @param loginName   the login name
+   * @param username   the username
    * @param password    the password
    * @param displayName the display name
    * @return the communicator dataManagement
    */
-  public CommunicatorData createNewAccount(final String loginName, final String password,
+  public CommunicatorData createNewAccount(final String username, final String password,
       final String displayName) {
     AuthenticationData authData;
     CommunicatorData communicatorData = null;
     final var clientId = this.idPersist.getNewId(IdType.CLIENT);
 
-    authData = AuthenticationData.valueOf(loginName, password, clientId);
+    authData = AuthenticationData.valueOf(username, password, clientId);
 
     if (this.clientAuthPersist.saveAccountData(authData)) {
       communicatorData = CommunicatorData.valueOf(clientId, clientId, displayName);
@@ -126,7 +126,7 @@ public class CommunicatorDataManipulator {
   }
 
   /**
-   * Gets the client dataManagement.
+   * Returns the client dataManagement.
    *
    * @param communicatorData the communicator dataManagement
    * @return the client communicator dataManagement
@@ -153,20 +153,20 @@ public class CommunicatorDataManipulator {
   }
 
   /**
-   * Gets the client communicator dataManagement for credentials.
+   * Returns the client communicator dataManagement for credentials.
    *
-   * @param loginName the login name
+   * @param username the username
    * @param password  the password
    * @return the client communicator dataManagement
    */
-  public CommunicatorData getCommunicatorData(final String loginName, final String password) {
+  public CommunicatorData getCommunicatorData(final String username, final String password) {
     CommunicatorData communicatorData = null;
 
     try {
       this.lock.readLock().lock();
 
-      if (loginName != null && password != null) {
-        final var clientId = this.clientAuthPersist.getClientId(loginName, password);
+      if (username != null && password != null) {
+        final var clientId = this.clientAuthPersist.getClientId(username, password);
         communicatorData = this.communicatorDataPersist.getCommunicatorData(clientId);
       }
     } finally {

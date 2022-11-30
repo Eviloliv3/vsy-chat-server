@@ -25,9 +25,6 @@ public abstract class ServiceBase implements Service {
 
   protected final LocalServerConnectionData serverConnectionData;
   protected final ServiceData serviceSpecifications;
-  /**
-   * Flag signalisiert dem Aufrufer des Service, dass dieser Einsatzbereit ist.
-   */
   private final CountDownLatch serviceReadyState;
 
   {
@@ -94,12 +91,12 @@ public abstract class ServiceBase implements Service {
   }
 
   /**
-   * Schliesst die Einrichtung des Services ab.
+   * Used for final setup steps of services.
    */
   protected abstract void finishSetup();
 
   /**
-   * Abbruchbedingung für den Service.
+   * Interruption condition for service.
    *
    * @return true, if is interruption condition met
    */
@@ -108,12 +105,12 @@ public abstract class ServiceBase implements Service {
   }
 
   /**
-   * Arbeitslogik.
+   * Contains services working steps.
    */
   protected abstract void work();
 
   /**
-   * Schliesst das Beenden eines Services ab.
+   * Used for essential steps during service's shutdown.
    */
   protected abstract void breakDown();
 
@@ -122,7 +119,7 @@ public abstract class ServiceBase implements Service {
   }
 
   /**
-   * Gets the service id.
+   * Returns the service id.
    *
    * @return the service id
    */

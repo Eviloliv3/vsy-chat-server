@@ -83,7 +83,7 @@ public class CurrentClientState {
   }
 
   /**
-   * Gets the current state.
+   * Returns the current state.
    *
    * @return the current state
    */
@@ -101,7 +101,7 @@ public class CurrentClientState {
   }
 
   /**
-   * Gets the extra subscriptions.
+   * Returns the extra subscriptions.
    *
    * @return the extra subscriptions
    */
@@ -110,7 +110,7 @@ public class CurrentClientState {
   }
 
   /**
-   * Gets the pending state.
+   * Returns the pending state.
    *
    * @return the pending state
    */
@@ -119,7 +119,7 @@ public class CurrentClientState {
   }
 
   /**
-   * Gets the reconnection state.
+   * Returns the reconnection state.
    *
    * @return the reconnection state
    */
@@ -128,7 +128,7 @@ public class CurrentClientState {
   }
 
   /**
-   * Gets the server port.
+   * Returns the server port.
    *
    * @return the server port
    */
@@ -137,11 +137,8 @@ public class CurrentClientState {
   }
 
   /**
-   * Schwebezustand eines Klienten wird gesetzt. Der Wiederverbindungszustand wird zurückgesetzt.
-   * Ein verbundener Klient (pending == false) kann nicht wiederverbunden werden. Ein frisch
-   * schwebender (pending == true) kann nicht gleichzeitig wiederverbunden werden.
-   *
-   * @param pendingState the new pending state
+   * Sets the client's pending state.
+   * @param pendingState boolean
    */
   public void setPendingState(final boolean pendingState) {
     this.pendingState = pendingState;
