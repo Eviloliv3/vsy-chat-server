@@ -115,7 +115,7 @@ public class CurrentClientState {
    * @return the pending state
    */
   public boolean getPendingState() {
-    return this.reconnectState;
+    return this.pendingState;
   }
 
   /**
