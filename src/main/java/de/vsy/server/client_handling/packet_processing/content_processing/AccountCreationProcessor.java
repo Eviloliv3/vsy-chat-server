@@ -43,8 +43,8 @@ public class AccountCreationProcessor implements ContentProcessor<NewAccountRequ
     var newAccount = toProcess.getAccountCreationData();
     var clientData = clientRegistry.createNewAccount(newAccount.getAuthenticationData().getUsername(),
         newAccount.getAuthenticationData().getPassword(),
-        (newAccount.getPersonalData().getForename() + " " + newAccount.getPersonalData()
-            .getSurname()));
+        (newAccount.getPersonalData().getFirstName() + " " + newAccount.getPersonalData()
+            .getLastName()));
 
     if (clientData != null) {
 

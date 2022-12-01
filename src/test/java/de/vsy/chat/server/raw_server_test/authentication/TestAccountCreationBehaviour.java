@@ -19,6 +19,7 @@ import de.vsy.shared_transmission.packet.content.authentication.NewAccountReques
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 
 /**
  
@@ -87,8 +88,9 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
     var client = loginNextClient();
     var accountCreationBuilder = new AccountCreationDTOBuilder();
 
+    var labelComponents = FRANK_1_COMM.getDisplayLabel().split(" ");
     accountCreationBuilder.withAuthenticationData(TestClientDataProvider.FRANK_1_AUTH)
-        .withPersonalData(PersonalData.valueOf("Frank", "Relation1"));
+        .withPersonalData(PersonalData.valueOf(labelComponents[0], labelComponents[1]));
     content = new NewAccountRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(client, getServerEntity(STANDARD_SERVER_ID),
         content,
