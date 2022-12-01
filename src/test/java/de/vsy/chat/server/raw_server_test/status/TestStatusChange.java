@@ -30,7 +30,7 @@ public class TestStatusChange extends ServerTestBase {
 
   @Test
   public void changeFromMessengerStateTwoClientSuccess() throws IOException {
-    LOGGER.info("Test: Status zurücknehmen für mehrere Klienten -> erfolgreich -- gestartet");
+    LOGGER.info("Test: change status for two clients that are contacts -> success");
     Packet packet;
     PacketContent content;
     final ClientConnection clientOne, clientTwo;
@@ -41,18 +41,18 @@ public class TestStatusChange extends ServerTestBase {
 
     content = new ClientStatusChangeDTO(MESSENGER, true, clientOne.getCommunicatorData());
     checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
-    LOGGER.info("MessengerSetup 1 gelesen");
+    LOGGER.info("MessengerSetup 1 read");
     content = new ClientStatusChangeDTO(MESSENGER, true, clientTwo.getCommunicatorData());
     checkResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
-    LOGGER.info("MessengerSetup 2 gelesen");
+    LOGGER.info("MessengerSetup 2 read");
 
     packet = clientOne.readPacket();
-    LOGGER.info("Erwarte Kontaktstatusbenachrichtigung. Gelesen: {}", packet);
+    LOGGER.info("Expecting ContactMessengerStatusDTO. Read: {}", packet);
 
-    Assertions.assertTrue(clientOne.tryClientLogout(), "Logout fehlgeschlagen.");
+    Assertions.assertTrue(clientOne.tryClientLogout(), "Logout failed.");
     packet = clientTwo.readPacket();
 
-    LOGGER.info("erwarte Kontaktstatusbenachrichtigung. Gelesen: {}", packet);
+    LOGGER.info("Expecting ContactMessengerStatusDTO. Read: {}", packet);
 
     if (packet != null
         && packet.getPacketContent() instanceof ContactMessengerStatusDTO contactStatus) {
@@ -61,15 +61,15 @@ public class TestStatusChange extends ServerTestBase {
           !contactStatus.getOnlineStatus());
     } else {
       Assertions.fail(
-          ContactMessengerStatusDTO.class.getSimpleName() + " erwartet, erhalten: " + packet);
+          ContactMessengerStatusDTO.class.getSimpleName() + " expected, received: " + packet);
     }
     clientOne.resetConnection();
-    LOGGER.info("Test: Status zurücknehmen für mehrere Klienten gesetzt -> erfolgreich -- beendet");
+    LOGGER.info("Test: change status for two clients that are contacts -> success -- terminated");
   }
 
   @Test
   public void changeFromMessengerStateSingleClientSuccess() {
-    LOGGER.info("Test: Status für einzelnen Klienten aufgehoben -> erfolgreich -- gestartet");
+    LOGGER.info("Test: client messenger status removal -> success");
     Packet packet;
     PacketContent content;
     ClientConnection clientOne;
@@ -87,41 +87,41 @@ public class TestStatusChange extends ServerTestBase {
       if (packet != null) {
         content = packet.getPacketContent();
       } else {
-        Assertions.fail("Keine Antwort MessengerTearDownDTO empfangen.");
+        Assertions.fail("No response MessengerTearDownDTO received.");
       }
     } else {
-      Assertions.fail("Keine Antwort MessengerSetupDTO empfangen.");
+      Assertions.fail("No response MessengerSetupDTO received.");
     }
     Assertions.assertInstanceOf(MessengerTearDownDTO.class, content);
-    LOGGER.info("Test: Status für einzelnen Klienten aufgehoben -> erfolgreich -- beendet");
+    LOGGER.info("Test: client messenger status removal -> success -- terminated");
   }
 
   @Test
   public void changeToMessengerStateSingleClientSuccess() {
-    LOGGER.info("Test: Status für einzelnen Klienten gesetzt -> erfolgreich -- gestartet");
+    LOGGER.info("Test: client messenger status set -> success");
     PacketContent content;
     final var clientOne = super.loginNextClient();
 
     content = new ClientStatusChangeDTO(MESSENGER, true, clientOne.getCommunicatorData());
     checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
-    LOGGER.info("Test: Status für einzelnen Klienten gesetzt -> erfolgreich -- beendet");
+    LOGGER.info("Test: client messenger status set -> success -- terminated");
   }
 
   @Test
   public void changeMessengerNoStateFailed() {
-    LOGGER.info("Test: Status nicht erreichbar -> kein Status angegeben -- gestartet");
+    LOGGER.info("Test: client messenger status change -> failure: no desired status transmitted");
     ClientStatusChangeDTO content;
     final var clientOne = super.loginNextClient();
 
     content = new ClientStatusChangeDTO(null, true, clientOne.getCommunicatorData());
     checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
-        "Ungültige Klientenstatusmitteilung. Kein Servicetyp angegeben.");
-    LOGGER.info("Test: Status nicht erreichbar -> kein Status angegeben -- beendet");
+        "No service type specified.");
+    LOGGER.info("Test: client messenger status change -> failure: no desired status transmitted -- terminated");
   }
 
   @Test
   public void changeToMessengerStateTwoClientSuccess() throws IOException {
-    LOGGER.info("Test: Status für mehrere Klienten gesetzt -> erfolgreich -- gestartet");
+    LOGGER.info("Test: change messenger status for two clients that are contacts -> success");
     Packet packet;
     PacketContent content;
     final ClientConnection clientOne, clientTwo;
@@ -132,21 +132,21 @@ public class TestStatusChange extends ServerTestBase {
 
     content = new ClientStatusChangeDTO(MESSENGER, true, clientOne.getCommunicatorData());
     checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
-    LOGGER.info("MessengerSetup 1 gelesen");
+    LOGGER.info("MessengerSetup 1 read");
     content = new ClientStatusChangeDTO(MESSENGER, true, clientTwo.getCommunicatorData());
     checkResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
-    LOGGER.info("MessengerSetup 2 gelesen");
+    LOGGER.info("MessengerSetup 2 read");
 
     packet = clientOne.readPacket();
-    LOGGER.info("Erwarte Kontaktstatusbenachrichtigung. Gelesen: {}", packet);
+    LOGGER.info("Expecting ContactMessengerStatusDTO. Read: {}", packet);
 
     if (packet != null
         && packet.getPacketContent() instanceof ContactMessengerStatusDTO contactStatus) {
       Assertions.assertEquals(contactStatus.getContactData(), clientTwo.getCommunicatorData());
     } else {
       Assertions.fail(
-          ContactMessengerStatusDTO.class.getSimpleName() + " erwartet, erhalten: " + packet);
+          ContactMessengerStatusDTO.class.getSimpleName() + " expected, read: " + packet);
     }
-    LOGGER.info("Test: Status für mehrere Klienten gesetzt -> erfolgreich -- beendet");
+    LOGGER.info("Test: change messenger status for two clients that are contacts -> success -- terminated");
   }
 }

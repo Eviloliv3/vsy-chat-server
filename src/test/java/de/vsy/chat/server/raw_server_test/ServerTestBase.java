@@ -91,9 +91,9 @@ public class ServerTestBase {
     final boolean logoutSuccess;
 
     if (toLogout.tryClientLogout()) {
-      LOGGER.info("{}-Logoutversuch erfolgreich.", clientName);
+      LOGGER.info("{}-Logoutversuch successful.", clientName);
     }
-    LOGGER.info("{}-Verbindung erfolgreich beendet.", clientName);
+    LOGGER.info("{}-Verbindung successful terminated.", clientName);
     this.activeClientAuthenticationData.remove(toLogout.getAuthenticationData());
   }
 
@@ -113,7 +113,7 @@ public class ServerTestBase {
     if (clientAuthenticationData != null) {
       connection = loginNextClient(clientAuthenticationData);
     } else {
-      LOGGER.error("Login-Versuch fehlgeschlagen. Keine gueltigen " + "Logindaten gefunden.");
+      LOGGER.error("Login-Versuch failed. Keine gueltigen " + "Logindaten gefunden.");
     }
     return connection;
   }
@@ -140,10 +140,10 @@ public class ServerTestBase {
       if (clientConnection.tryClientLogin()) {
         this.activeClientAuthenticationData.add(clientAuthenticationData);
       } else {
-        LOGGER.error("Login-Versuch fehlgeschlagen.");
+        LOGGER.error("Login-Versuch failed.");
       }
     } else {
-      LOGGER.error("Login-Versuch fehlgeschlagen. Keine nutzbare " + "Verbindung gefunden.");
+      LOGGER.error("Login-Versuch failed. Keine nutzbare " + "Verbindung gefunden.");
     }
     return clientConnection;
   }

@@ -58,7 +58,7 @@ class TestServiceNotStopping {
       LOGGER.info("Warte auf AssignmentService");
     } while (test.isAlive());
     Assertions.assertFalse(test.isAlive());
-    LOGGER.info("AssignmentService beendet.");
+    LOGGER.info("AssignmentService terminated.");
   }
 
   @Test
@@ -93,7 +93,7 @@ class TestServiceNotStopping {
     }
     future.cancel(true);
     Assertions.assertTrue(future.isCancelled());
-    LOGGER.info("InterServerService beendet.");
+    LOGGER.info("InterServerService terminated.");
   }
 
   @Test
@@ -107,7 +107,7 @@ class TestServiceNotStopping {
       LOGGER.info("Warte auf AssignmentService");
     } while (test.isAlive());
     Assertions.assertFalse(test.isAlive());
-    LOGGER.info("AssignmentService beendet.");
+    LOGGER.info("AssignmentService terminated.");
   }
 
   @Test
@@ -125,6 +125,6 @@ class TestServiceNotStopping {
       LOGGER.info("Warte auf ServerFollowerEstablisher");
     } while (test.isAlive());
     Assertions.assertFalse(test.isAlive());
-    LOGGER.info("ServerFollowerEstablisher beendet.");
+    LOGGER.info("ServerFollowerEstablisher terminated.");
   }
 }

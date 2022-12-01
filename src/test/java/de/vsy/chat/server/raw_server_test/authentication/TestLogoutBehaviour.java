@@ -31,26 +31,26 @@ public class TestLogoutBehaviour extends ServerTestBase {
 
   @Test
   void logoutFailNoLogin() {
-    LOGGER.info("Test: Logout fehlgeschlagen -> nicht eingeloggt");
+    LOGGER.info("Test: logout -> failure: not authenticated");
 
     final var clientOne = super.getUnusedClientConnection();
     final var logoutContent = new LogoutRequestDTO(clientOne.getCommunicatorData());
 
     TestResponseSingleClient.checkErrorResponse(clientOne,
         CommunicationEndpoint.getServerEntity(STANDARD_SERVER_ID), logoutContent,
-        "Anfrage nicht bearbeitet. Sie sind noch nicht authentifiziert.");
-    LOGGER.info("Test: Logout fehlgeschlagen -> nicht eingeloggt -- beendet");
+        "Request not processed. You are not authenticated.");
+    LOGGER.info("Test: logout -> failure: not authenticated -- terminated");
   }
 
   @Test
   void logoutSuccess() throws IOException {
-    LOGGER.info("Test: Logout erfolgreich");
+    LOGGER.info("Test: logout successful");
     boolean authSuccess;
     final var clientOne = super.getUnusedClientConnection();
     clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
-    Assertions.assertTrue(clientOne.tryClientLogin(), "Login fehlgeschlagen.");
-    Assertions.assertTrue(clientOne.tryClientLogout(), "Logout fehlgeschlagen.");
+    Assertions.assertTrue(clientOne.tryClientLogin(), "Login failed.");
+    Assertions.assertTrue(clientOne.tryClientLogout(), "Logout failed.");
     clientOne.resetConnection();
-    LOGGER.info("Test: Logout erfolgreich -- beendet");
+    LOGGER.info("Test: logout -> success -- terminated");
   }
 }

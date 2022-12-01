@@ -34,7 +34,7 @@ public class TestClientMessage extends ServerTestBase {
 
   @Test
   void sendMessageContactNotActiveFail() throws IOException {
-    LOGGER.info("Test: Nachricht Senden Fehlschlag --> Kontakt offline -- gestartet");
+    LOGGER.info("Test: send message -> failure: contact offline");
     final ClientConnection clientOne, clientTwo;
 
     clientOne = super.loginNextClient();
@@ -46,11 +46,11 @@ public class TestClientMessage extends ServerTestBase {
     final var inactiveClientId = clientTwo.getCommunicatorData().getCommunicatorId();
 
     final var message = new TextMessageDTO(clientOne.getCommunicatorData().getCommunicatorId(),
-        EligibleContactEntity.CLIENT, inactiveClientId, "Testnachricht.");
+        EligibleContactEntity.CLIENT, inactiveClientId, "test message");
 
     checkErrorResponse(clientOne, getClientEntity(inactiveClientId), message,
-        "Das Paket wurde nicht zugestellt. Paket wurde nicht zugestellt. Kontakt offline.");
-    LOGGER.info("Test: Nachricht Senden Fehlschlag --> Kontakt offline -- beendet");
+        "Packet could not be delivered. Contact offline.");
+    LOGGER.info("Test: send message -> failure: contact offline -- terminated");
   }
 
   private void changeStatus(ClientConnection connection, boolean changeTo) {
@@ -62,7 +62,7 @@ public class TestClientMessage extends ServerTestBase {
 
   @Test
   void sendMessageNoContactFail() throws IOException {
-    LOGGER.info("Test: Nachricht Senden Fehlschlag --> kein Kontakt -- gestartet");
+    LOGGER.info("Test: send message -> not a contact");
     Packet contactStatus;
     final ClientConnection clientOne, clientTwo;
     final int noContactId;
@@ -80,11 +80,11 @@ public class TestClientMessage extends ServerTestBase {
     noContactId = clientTwo.getCommunicatorData().getCommunicatorId();
 
     final var message = new TextMessageDTO(clientOne.getCommunicatorData().getCommunicatorId(),
-        EligibleContactEntity.CLIENT, noContactId, "Testnachricht.");
+        EligibleContactEntity.CLIENT, noContactId, "test message");
 
     checkErrorResponse(clientOne, getClientEntity(noContactId), message,
-        "Textnachricht wurde nicht zugestellt. 15006 ist kein Kontakt von Ihnen.");
-    LOGGER.info("Test: Nachricht Senden Fehlschlag --> kein Kontakt -- beendet");
+        "Text message was not delivered. 15006 is no contact of yours.");
+    LOGGER.info("Test: send message -> not a contact -- terminated");
   }
 
   private ClientConnection loginSpecificClient(final AuthenticationDTO credentials) {
@@ -98,14 +98,14 @@ public class TestClientMessage extends ServerTestBase {
         connection.setClientData(null, null);
       }
     } else {
-      Assertions.fail("Keine freie Verbindung gefunden.");
+      Assertions.fail("No usable connection.");
     }
     return null;
   }
 
   @Test
   void sendMessageSuccess() throws IOException {
-    LOGGER.info("Test: Nachricht Senden erfolgreich -- gestartet");
+    LOGGER.info("Test: send message -> success");
     Packet sentPacket, receivedPacket, responsePacket;
     final ClientConnection clientOne, clientTwo;
     final int contactId;
@@ -121,7 +121,7 @@ public class TestClientMessage extends ServerTestBase {
     contactId = clientTwo.getCommunicatorData().getCommunicatorId();
 
     final var message = new TextMessageDTO(clientOne.getCommunicatorData().getCommunicatorId(),
-        EligibleContactEntity.CLIENT, contactId, "Testnachricht.");
+        EligibleContactEntity.CLIENT, contactId, "test message");
 
     sentPacket = clientOne.sendRequest(message, getClientEntity(contactId));
     receivedPacket = clientTwo.readPacket();
@@ -135,14 +135,14 @@ public class TestClientMessage extends ServerTestBase {
             responseMessage.getMessage());
       } else {
         Assertions.fail(
-            "Fehlerhafter Paketinhalt:\nGesandt: " + sentPacket.getPacketContent() + "\nEmpfangen: "
-                + receivedPacket.getPacketContent() + "\nAntwort: "
+            "Erroneous PacketContent:\nSent: " + sentPacket.getPacketContent() + "\nReceived: "
+                + receivedPacket.getPacketContent() + "\nResponse: "
                 + responsePacket.getPacketContent());
       }
     } else {
-      Assertions.fail("Eines der erwarteten Pakete fehlt:\nGesandt: " + sentPacket + "\nEmpfangen: "
-          + receivedPacket + "\nAntwort: " + responsePacket);
+      Assertions.fail("One of the expected Packets went missing:\nSent: " + sentPacket + "\nReceived: "
+          + receivedPacket + "\nResponse: " + responsePacket);
     }
-    LOGGER.info("Test: Nachricht Senden erfolgreich -- beendet");
+    LOGGER.info("Test: send message -> success -- terminated");
   }
 }

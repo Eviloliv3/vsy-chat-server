@@ -83,7 +83,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
         }
       } else {
         this.clientStateManager.logoutClient();
-        causeMessage = "You are not registered as authenticated..";
+        causeMessage = "You are not registered as authenticated.";
       }
     } else {
       causeMessage = "There is no account with your credentials.";

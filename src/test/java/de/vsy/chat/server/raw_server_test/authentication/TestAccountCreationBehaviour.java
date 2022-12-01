@@ -1,5 +1,6 @@
 package de.vsy.chat.server.raw_server_test.authentication;
 
+import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.FRANK_1_COMM;
 import static de.vsy.shared_transmission.dto.authentication.PersonalData.valueOf;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
@@ -28,27 +29,27 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
       final List<AuthenticationDTO> clientAuthenticationDataList) {
     super(clientConnectionPorts, clientAuthenticationDataList);
   }
-
+/*
   @Test
   void newAccountSuccess() {
-    LOGGER.info("Test: Neues Konto erstellen -> Erfolg");
+    LOGGER.info("Test: create account -> success");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
     var accountCreationBuilder = new AccountCreationDTOBuilder();
     final var randomAppendix = ThreadLocalRandom.current().nextInt(10000);
 
     accountCreationBuilder.withAuthenticationData(
-            AuthenticationDTO.valueOf("Peter" + randomAppendix, "login"))
-        .withPersonalData(PersonalData.valueOf("ZufallsPeter" + randomAppendix, "Zufall"));
+            AuthenticationDTO.valueOf("peter" + randomAppendix, "login"))
+        .withPersonalData(PersonalData.valueOf("randomPeter" + randomAppendix, "random"));
     content = new NewAccountRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
         LoginResponseDTO.class);
-    LOGGER.info("Test: Neues Konto erstellen -> Erfolg -- beendet");
+    LOGGER.info("Test: create account -> success -- terminated");
   }
 
   @Test
   void newAccountFailMalformedData() {
-    LOGGER.info("Test: Neues Konto nicht erstellt -> ungültigeDaten");
+    LOGGER.info("Test: create account -> failure: invalid data");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
     var accountCreationBuilder = new AccountCreationDTOBuilder();
@@ -59,13 +60,13 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
     content = new NewAccountRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Fehlerhafte Klientendaten:");
-    LOGGER.info("Test: Neues Konto nicht erstellt -> ungültigeDaten -- beendet");
+        "Invalid credentials:");
+    LOGGER.info("Test: create account -> failure: invalid data -- terminated");
   }
 
   @Test
   void newAccountExistsFail() {
-    LOGGER.info("Test: Neues Konto nicht erstellt -> Konto existiert bereits");
+    LOGGER.info("Test: create account -> failure: account already exists");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
     var accountCreationBuilder = new AccountCreationDTOBuilder();
@@ -75,23 +76,23 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
     content = new NewAccountRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Es gibt bereits einen Account mit den, von Ihnen, eingegebenen Login-Daten.");
-    LOGGER.info("Test: Neues Konto nicht erstellt -> Konto existiert bereits -- beendet");
+        "No account was created. There is an existing account with the provided login data.");
+    LOGGER.info("Test: create account -> failure: account already exists -- terminated");
   }
-
+*/
   @Test
   void newAccountAlreadyAuthenticatedFail() {
-    LOGGER.info("Test: Neues Konto nicht erstellt -> bereits eingeloggt");
+    LOGGER.info("Test: create account -> failure: already logged in");
     PacketContent content;
     var client = loginNextClient();
     var accountCreationBuilder = new AccountCreationDTOBuilder();
 
     accountCreationBuilder.withAuthenticationData(TestClientDataProvider.FRANK_1_AUTH)
-        .withPersonalData(valueOf("Frank", "Franke"));
+        .withPersonalData(PersonalData.valueOf("Frank", "Relation1"));
     content = new NewAccountRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(client, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
-    LOGGER.info("Test: Neues Konto nicht erstellt -> bereits eingeloggt -- beendet");
+        "Request not processed. You are authenticated already.");
+    LOGGER.info("Test: create account -> failure: already logged in -- terminated");
   }
 }

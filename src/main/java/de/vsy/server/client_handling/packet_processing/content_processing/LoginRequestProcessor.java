@@ -61,7 +61,7 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
             causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
           }
         } else {
-          causeMessage = "You already are conncted from another device.";
+          causeMessage = "You already are connected from another device.";
         }
       } else {
         this.clientStateManager.logoutClient();

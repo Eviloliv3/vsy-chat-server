@@ -83,7 +83,7 @@ public class TestPendingPacketDAO {
    * "fileLock.lock", LogManager.getLogger()); try(var raf = new
    * RandomAccessFile(file.toFile(), "r")){ Runnable test = () -> { try { var
    * channel = raf.getChannel(); var lock = raf.getChannel().tryLock(0,
-   * Long.MAX_VALUE, true); Assertions.assertTrue(lock.isValid(), "erfolgreich");
+   * Long.MAX_VALUE, true); Assertions.assertTrue(lock.isValid(), "successful");
    * Thread.sleep(500); lock.release(); } catch (IOException |
    * InterruptedException e) { throw new RuntimeException(e); } }; ExecutorService
    * threadPool = Executors.newFixedThreadPool(2); threadPool.execute(test);

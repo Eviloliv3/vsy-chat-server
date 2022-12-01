@@ -18,7 +18,7 @@ import de.vsy.shared_transmission.packet.content.authentication.NewAccountReques
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class NewAccountRequestProcessor implements ContentProcessor<NewAccountRequestDTO> {
+public class AccountCreationProcessor implements ContentProcessor<NewAccountRequestDTO> {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final CommunicatorDataManipulator clientRegistry;
@@ -30,7 +30,7 @@ public class NewAccountRequestProcessor implements ContentProcessor<NewAccountRe
    *
    * @param threadDataAccess the thread dataManagement accessLimiter
    */
-  public NewAccountRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
+  public AccountCreationProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
 
     this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
     this.clientRegistry = HandlerAccessManager.getCommunicatorDataManipulator();

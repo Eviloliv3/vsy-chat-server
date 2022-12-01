@@ -35,20 +35,20 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
   @Test
   void reconnectionFailAlreadyLoggedIn() {
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt");
+    LOGGER.info("Test: reconnection -> failure: already authenticated on connection");
     PacketContent content;
     final var clientOne = super.loginNextClient();
     final var clientOneCommunicatorData = clientOne.getCommunicatorData();
     content = new ReconnectRequestDTO(clientOneCommunicatorData);
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> bereits eingeloggt -- beendet");
+        "Request not processed. You are authenticated already.");
+    LOGGER.info("Test:Reconnection -> failure: already authenticated on connection -- terminated");
   }
 
   @Test
   void reconnectionFailReconnectionUnderway() throws InterruptedException, IOException {
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen");
+    LOGGER.info("Test: reconnection -> failure: reconnection attempt underway");
     ReconnectRequestDTO request;
     final ClientConnection clientOne, clientTwo;
     final CommunicatorDTO clientOneCommunicatorData;
@@ -69,27 +69,25 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     clientTwo.sendRequest(request, getServerEntity(STANDARD_SERVER_ID));
 
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
-        request,
-        "anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch");
+        request, "trying to reconnect from another device right now.");
     final var response = clientTwo.readPacket();
 
     if (response.getPacketContent() instanceof final ReconnectResponseDTO reconnectResponse) {
       if (reconnectResponse.getReconnectionState()) {
         clientTwo.setClientData(clientOneAuthenticationData, clientOneCommunicatorData);
       } else {
-        Assertions.fail("Wiederverbindung fehlgeschlagen.");
+        Assertions.fail("Reconnection attempt failed.");
       }
     } else {
-      Assertions.fail("Antwort ist: " + response.getPacketContent().getClass().getSimpleName() +
-          ",  erwartet wurde: " + ReconnectResponseDTO.class.getSimpleName());
+      Assertions.fail("Response: " + response.getPacketContent().getClass().getSimpleName() +
+          ",  expected value: " + ReconnectResponseDTO.class.getSimpleName());
     }
-    LOGGER.info(
-        "Test: Wiederverbindung fehlgeschlagen -> Versuch wird bereits unternommen -- beendet");
+    LOGGER.info("Test: reconnection -> failure: reconnection attempt underway -- terminated");
   }
 
   @Test
   void reconnectionFailStillLoggedIn() throws IOException {
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> noch von anderem Gerät eingeloggt");
+    LOGGER.info("Test: reconnection -> failure: still logged on from another device");
     PacketContent content;
     final ClientConnection clientOne, clientTwo;
     final CommunicatorDTO clientOneCommunicatorData;
@@ -102,54 +100,52 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
     content = new ReconnectRequestDTO(clientOneCommunicatorData);
     TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID),
-        content,
-        "Sie sind entweder von einem anderen Gerät aus verbunden oder es wird bereits ein Wiederverbindungsversuch von einem anderen Gerät aus unternommen.");
-    LOGGER.info(
-        "Test: Wiederverbindung fehlgeschlagen -> noch von anderem Gerät eingeloggt -- beendet");
+        content, "You are either connected from another device");
+    LOGGER.info("Test: reconnection -> failure: still logged on from another device -- terminated");
   }
 
   @Test
   void reconnectionFailNotAuthenticated() {
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> nicht im schwebenden Zustand");
+    LOGGER.info("Test: reconnection -> failure: not authenticated and pending");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
 
     content = new ReconnectRequestDTO(TestClientDataProvider.FRANK_1_COMM);
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Sie sind nicht als authentifiziert registriert.");
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> nicht im schwebenden Zustand -- beendet");
+        "You are not registered as authenticated.");
+    LOGGER.info("Test: reconnection -> failure: not authenticated and pending -- terminated");
   }
 
   @Test
   void reconnectionFailMalformedData() {
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> ungültige Daten");
+    LOGGER.info("Test: reconnection -> failure: invalid data/token");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
 
     content = new ReconnectRequestDTO(CommunicatorDTO.valueOf(-4567, "Frank% Franke"));
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Fehlerhafte Kommunikatordaten:");
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> ungültige Daten -- beendet");
+        "Invalid communicator data:");
+    LOGGER.info("Test: reconnection -> failure: invalid data/token -- terminated");
   }
 
   @Test
   void reconnectionFailFalseData() {
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> fehlerhafte Daten");
+    LOGGER.info("Test: reconnection -> failure: unknown data/token");
     ReconnectRequestDTO erroneousRequest;
     final var clientOne = super.getUnusedClientConnection();
 
-    erroneousRequest = new ReconnectRequestDTO(CommunicatorDTO.valueOf(123560, "Frank Falsch"));
+    erroneousRequest = new ReconnectRequestDTO(CommunicatorDTO.valueOf(123560, "Frank Wrong"));
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         erroneousRequest,
-        "Es existiert kein Account mit den von Ihnen angegebenen Daten.");
-    LOGGER.info("Test: Wiederverbindung fehlgeschlagen -> fehlerhafte Daten -- beendet");
+        "There is no account with your credentials.");
+    LOGGER.info("Test: reconnection -> failure: unknown data/token -- terminated");
   }
 
   @Test
   void reconnectionSuccess() throws InterruptedException, IOException {
-    LOGGER.info("Test: Wiederverbindung erfolgreich");
+    LOGGER.info("Test: reconnection -> success");
     ReconnectRequestDTO content;
     final ClientConnection clientOne, clientTwo;
     final CommunicatorDTO clientOneCommunicatorData;
@@ -164,7 +160,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
     content = new ReconnectRequestDTO(clientOneCommunicatorData);
     reconnectPendingClient(clientTwo, content);
-    LOGGER.info("Test: Wiederverbindung erfolgreich -- beendet");
+    LOGGER.info("Test: reconnection -> success -- terminated");
   }
 
   private void reconnectPendingClient(ClientConnection connection, ReconnectRequestDTO request) {

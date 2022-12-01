@@ -62,12 +62,14 @@ public class CommunicatorDataManipulator {
         this.clientAuthPersist.removeAccountData(authData.getClientId());
         LOGGER.error(
             "Communicator data could not be saved. Authentication data has been removed");
+        this.idPersist.returnId(IdType.CLIENT, clientId);
         communicatorData = null;
       } else {
         LOGGER.info("Account creation successful:\n{}\n{}", authData, communicatorData);
       }
     } else {
       LOGGER.error("Authentication data could not be saved.");
+      this.idPersist.returnId(IdType.CLIENT, clientId);
     }
     return communicatorData;
   }

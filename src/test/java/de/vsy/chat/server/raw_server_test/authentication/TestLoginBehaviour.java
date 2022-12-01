@@ -29,7 +29,7 @@ public class TestLoginBehaviour extends ServerTestBase {
 
   @Test
   void loginFailLoggedInFromDifferentClient() throws IOException {
-    LOGGER.info("Test: Login eingeloggt -> bereits von anderem Gerät aus eingeloggt.");
+    LOGGER.info("Test: login -> failure: already logged in from another device");
     PacketContent content;
     ClientConnection clientOne, clientTwo;
     AuthenticationDTO clientOneAuth;
@@ -44,39 +44,39 @@ public class TestLoginBehaviour extends ServerTestBase {
 
     TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Sie sind bereits von einem anderen Gerät aus angemeldet.");
-    LOGGER.info("Test: Login eingeloggt -> bereits von anderem Gerät aus eingeloggt. --beendet");
+        "You already are connected from another device.");
+    LOGGER.info("Test: login -> failure: already logged in from another device -- terminated");
   }
 
   @Test
   void loginFailNoLogin() {
-    LOGGER.info("Test: Login falsch -> fehlerhafte Daten");
+    LOGGER.info("Test: login -> failure: erroneous credentials");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
 
     content = new LoginRequestDTO(STANDARD_EMPTY_STRING, STANDARD_EMPTY_STRING);
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Fehlerhafte Klientendaten:");
-    LOGGER.info("Test: Login falsch -> fehlerhafte Daten -- beendet");
+        "Invalid credentials:");
+    LOGGER.info("Test: login -> failure: erroneous credentials -- terminated");
   }
 
   @Test
   void loginFailFalseCredentials() {
-    LOGGER.info("Test: Login falsch -> Kein Konto");
+    LOGGER.info("Test: login -> failure: no account");
     PacketContent content;
     final var clientOne = super.getUnusedClientConnection();
 
-    content = new LoginRequestDTO("frank1", "falsch");
+    content = new LoginRequestDTO("frank1", "wrong");
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Es wurde kein Konto für die von Ihnen eingegebenen Login-Daten gefunden.");
-    LOGGER.info("Test: Login falsch -> Kein Konto --beendet");
+        "No account data found for your credentials.");
+    LOGGER.info("Test: login -> failure: no account -- terminated");
   }
 
   @Test
   void loginFailAlreadyLoggedIn() {
-    LOGGER.info("Test: Login richtig -> schon eingeloggt");
+    LOGGER.info("Test: login -> failure: already authenticated on this connection");
     ClientConnection clientOne;
     AuthenticationDTO clientOneAuthenticationData;
     PacketContent content;
@@ -88,17 +88,17 @@ public class TestLoginBehaviour extends ServerTestBase {
 
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
-        "Anfrage nicht bearbeitet. Sie sind bereits authentifiziert.");
-    LOGGER.info("Test: Login richtig -> schon eingeloggt --beendet");
+        "Request not processed. You are authenticated already.");
+    LOGGER.info("Test: login -> failure: already authenticated on this connection -- terminated");
   }
 
   @Test
   void loginSuccess() {
-    LOGGER.info("Test: Login erfolgreich");
+    LOGGER.info("Test: login -> success");
     boolean loginSuccess;
     final var clientOne = super.getUnusedClientConnection();
     clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
-    Assertions.assertTrue(clientOne.tryClientLogin(), "Login fehlgeschlagen.");
-    LOGGER.info("Test: Login falsch -> fehlerhafte Daten -- beendet");
+    Assertions.assertTrue(clientOne.tryClientLogin(), "Login failed.");
+    LOGGER.info("Test: login -> success -- terminated");
   }
 }

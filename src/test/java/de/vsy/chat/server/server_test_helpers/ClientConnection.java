@@ -152,13 +152,13 @@ public class ClientConnection {
 
         if (content instanceof final LogoutResponseDTO logoutResponse) {
           logoutSuccess = logoutResponse.getLogoutState();
-          LOGGER.info("Logout erfolgreich");
+          LOGGER.info("Logout successful");
         } else {
-          LOGGER.info("{}-Logout fehlgeschlagen", this.clientData.getDisplayLabel());
+          LOGGER.info("{}-Logout failed", this.clientData.getDisplayLabel());
         }
       } else {
         LOGGER.info(
-            "Logout fehlgeschlagen. Letzte empfangene Nachricht hatte nicht Typ \"LogoutResponseDTO\".");
+            "Logout failed. Letzte receivede Nachricht hatte nicht Typ \"LogoutResponseDTO\".");
       }
     } else {
       LOGGER.info("Logout unnötig. Es besteht keine Verbindung. ID: {}",
@@ -206,16 +206,16 @@ public class ClientConnection {
           this.authenticated = loginSuccess = true;
           this.clientData = loginResponse.getClientData();
 
-          LOGGER.info("{}-Login erfolgreich", this.clientData.getDisplayLabel());
+          LOGGER.info("{}-Login successful", this.clientData.getDisplayLabel());
         } else {
-          LOGGER.info("{}-Login fehlgeschlagen. Antworttyp " + "statt LoginResponseDTO: {}",
+          LOGGER.info("{}-Login failed. Antworttyp " + "statt LoginResponseDTO: {}",
               this.authenticationData.getUsername(), content.getClass().getSimpleName());
           if (content instanceof ErrorDTO errorResponse) {
             LOGGER.info(errorResponse.getErrorMessage());
           }
         }
       } else {
-        LOGGER.info("{}-Login fehlgeschlagen. Keine Antwort " + "erhalten.",
+        LOGGER.info("{}-Login failed. No response " + "erhalten.",
             this.authenticationData.getUsername());
       }
     } else {
