@@ -259,11 +259,16 @@ public class LiveClientStateDAO implements ServerDataAccess {
         LOGGER.trace("Reconnection state set to {}.", newState);
         clientStateMap.put(clientId, clientState);
         reconnectStateSet = this.dataProvider.writeData(clientStateMap);
-      } else {
-        if(trySetRemoteClientPending(clientState)) {
-          LOGGER.trace("Pending state set to true, new reconnection state change will be attempted.");
-          changeReconnectionState(clientId, newState);
+      } else if(!clientState.getReconnectState()){
+        final var pendingStateSet = trySetRemoteClientPending(clientState);
+
+        if(pendingStateSet){
+          LOGGER.trace("Pending state set to true for remotely connected client. Reconnection "
+              + "state change will be attempted anew.");
+          reconnectStateSet = changeReconnectionState(clientId, newState);
         }
+      }else{
+        LOGGER.trace("Reconnection state not set: client already reconnecting.");
       }
     }else {
       LOGGER.trace("No client state specified.");

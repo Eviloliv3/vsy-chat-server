@@ -30,7 +30,7 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
       final List<AuthenticationDTO> clientAuthenticationDataList) {
     super(clientConnectionPorts, clientAuthenticationDataList);
   }
-/*
+
   @Test
   void newAccountSuccess() {
     LOGGER.info("Test: create account -> success");
@@ -80,7 +80,7 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
         "No account was created. There is an existing account with the provided login data.");
     LOGGER.info("Test: create account -> failure: account already exists -- terminated");
   }
-*/
+
   @Test
   void newAccountAlreadyAuthenticatedFail() {
     LOGGER.info("Test: create account -> failure: already logged in");
