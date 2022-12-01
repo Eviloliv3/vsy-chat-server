@@ -59,10 +59,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
         LOGGER.error("Error occurred while saving test message.\n{}", extractedContent);
       }
     }
-
-    if (iAmOriginator) {
-      this.resultingPacketCache.addRequest(extractedContent);
-    }
+    this.resultingPacketCache.addRequest(extractedContent);
 
     if (messageToReturn) {
       this.resultingPacketCache.addResponse(extractedContent.setReceptionState());

@@ -33,7 +33,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
       final List<AuthenticationDTO> clientAuthenticationDataList) {
     super(clientConnectionPorts, clientAuthenticationDataList);
   }
-/*
+
   @Test
   void reconnectionFailAlreadyLoggedIn() {
     LOGGER.info("Test: reconnection -> failure: already authenticated on connection");
@@ -46,7 +46,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         "Request not processed. You are authenticated already.");
     LOGGER.info("Test:Reconnection -> failure: already authenticated on connection -- terminated");
   }
-*/
+
   @Test
   void reconnectionFailReconnectionUnderway() throws InterruptedException, IOException {
     LOGGER.info("Test: reconnection -> failure: reconnection attempt underway");
@@ -85,7 +85,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     }
     LOGGER.info("Test: reconnection -> failure: reconnection attempt underway -- terminated");
   }
-/*
+
   @Test
   void reconnectionFailStillLoggedIn() throws IOException {
     LOGGER.info("Test: reconnection -> failure: still logged on from another device");
@@ -169,5 +169,4 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     TestResponseSingleClient.checkResponse(connection, getServerEntity(STANDARD_SERVER_ID), request,
         ReconnectResponseDTO.class);
   }
- */
 }
