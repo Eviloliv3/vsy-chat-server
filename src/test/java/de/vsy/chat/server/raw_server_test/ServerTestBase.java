@@ -98,8 +98,8 @@ public class ServerTestBase {
   }
 
   /**
-   * Tries to get an unused set of login credentials and will proceed with the login process by
-   * calling <ref>loginNextClient(AuthenticationDTO)</ref>, if a set of unused login credentials was
+   * Tries to get an unused set of credentials and will proceed with the login process by
+   * calling <ref>loginNextClient(AuthenticationDTO)</ref>, if a set of unused credentials was
    * specified. Also requires a setup unused ClientConnection object. That can be created calling one of
    * the addConnection****Server()methods
    *

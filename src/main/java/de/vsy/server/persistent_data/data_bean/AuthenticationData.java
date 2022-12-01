@@ -20,36 +20,36 @@ public class AuthenticationData implements Serializable {
   @Serial
   private static final long serialVersionUID = -697983373949759504L;
   private final int clientId;
-  private final String login;
+  private final String username;
   private final String password;
 
   /**
    * Instantiates a new account.
    *
-   * @param login    the username
+   * @param username    the username
    * @param password the password
    * @param clientId the client id
    */
-  private AuthenticationData(final String login, final String password, final int clientId) {
-    this.login = login;
+  private AuthenticationData(final String username, final String password, final int clientId) {
+    this.username = username;
     this.password = password;
     this.clientId = clientId;
   }
 
   /**
-   * @param login    the login
+   * @param username    the username
    * @param password the password
    * @param clientId the clientId
    * @return new AuthenticationData object
    * @throws IllegalArgumentException if any input fails the corresponding check
    */
   @JsonCreator
-  public static AuthenticationData valueOf(@JsonProperty("login") final String login,
+  public static AuthenticationData valueOf(@JsonProperty("username") final String username,
       @JsonProperty("password") final String password,
       @JsonProperty("clientId") final int clientId) {
     Optional<String> checkString;
 
-    if (login == null) {
+    if (username == null) {
       throw new IllegalArgumentException("No username specified.");
     }
 
@@ -62,7 +62,7 @@ public class AuthenticationData implements Serializable {
       throw new IllegalArgumentException("Invalid client id: " + checkString.get());
     }
 
-    return new AuthenticationData(login, password, clientId);
+    return new AuthenticationData(username, password, clientId);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class AuthenticationData implements Serializable {
     }
 
     if (otherObject instanceof AuthenticationData otherAccount) {
-      return this.clientId == otherAccount.getClientId() && this.login.equals(
+      return this.clientId == otherAccount.getClientId() && this.username.equals(
           otherAccount.getUsername())
           && this.password.equals(otherAccount.getPassword());
     }
@@ -96,16 +96,16 @@ public class AuthenticationData implements Serializable {
    * @return int
    */
   public int getClientId() {
-    return clientId;
+    return this.clientId;
   }
 
   /**
    * Returns the username.
    *
-   * @return the login
+   * @return the username
    */
   public String getUsername() {
-    return login;
+    return this.username;
   }
 
   /**
@@ -114,13 +114,13 @@ public class AuthenticationData implements Serializable {
    * @return the password
    */
   public String getPassword() {
-    return password;
+    return this.password;
   }
 
   @Override
   public String toString() {
-    return "\"clientId\": " + this.clientId + ", \"login\": " + login + ", \"password\": "
-        + password;
+    return "\"clientId\": " + this.clientId + ", \"username\": " + this.username + ", \"password\": "
+        + this.password;
   }
 
   /**
