@@ -113,7 +113,7 @@ public class ServerTestBase {
     if (clientAuthenticationData != null) {
       connection = loginNextClient(clientAuthenticationData);
     } else {
-      LOGGER.error("Login-Versuch failed. Keine gueltigen " + "Logindaten gefunden.");
+      LOGGER.error("Login failed. No valid data found.");
     }
     return connection;
   }
@@ -132,7 +132,7 @@ public class ServerTestBase {
     if (clientAuthenticationData == null) {
       throw new IllegalArgumentException("Keine Authentifizierungsdaten " + "erstellt.");
     }
-    LOGGER.info("Login-Versuch gestartet.");
+    LOGGER.info("Login attempt started.");
     final var clientConnection = this.getUnusedClientConnection();
 
     if (clientConnection != null) {
@@ -140,10 +140,10 @@ public class ServerTestBase {
       if (clientConnection.tryClientLogin()) {
         this.activeClientAuthenticationData.add(clientAuthenticationData);
       } else {
-        LOGGER.error("Login-Versuch failed.");
+        LOGGER.error("Login failed.");
       }
     } else {
-      LOGGER.error("Login-Versuch failed. Keine nutzbare " + "Verbindung gefunden.");
+      LOGGER.error("Login failed. No usable connection.");
     }
     return clientConnection;
   }

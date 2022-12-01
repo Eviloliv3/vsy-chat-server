@@ -241,6 +241,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
    * @return true, if successful
    */
   public boolean changeReconnectionState(final int clientId, boolean newState) {
+    var reconnectStateSet = false;
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
 
@@ -252,12 +253,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
     clientState = clientStateMap.get(clientId);
 
     if (clientState != null) {
-      final var reconnectStateSet = clientState.setReconnectState(newState);
+      reconnectStateSet = clientState.setReconnectState(newState);
 
       if (reconnectStateSet) {
         LOGGER.trace("Reconnection state set to {}.", newState);
         clientStateMap.put(clientId, clientState);
-        return this.dataProvider.writeData(clientStateMap);
+        reconnectStateSet = this.dataProvider.writeData(clientStateMap);
       } else {
         final var clientNotReconnecting = !(clientState.getPendingState());
 
@@ -269,7 +270,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
                 + "state change will be attempted anew.");
             clientStateMap.put(clientId, clientState);
             this.dataProvider.writeData(clientStateMap);
-            return changeReconnectionState(clientId, newState);
+            reconnectStateSet = changeReconnectionState(clientId, newState);
           }else{
             LOGGER.warn("Pending state could not be set, while trying to set reconnect "
                 + "state to {}", newState);
@@ -282,7 +283,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
       LOGGER.trace("No client state specified.");
     }
     this.dataProvider.releaseAccess(true);
-    return false;
+    return reconnectStateSet;
   }
 
   private boolean trySetRemoteClientPending(CurrentClientState clientState){
