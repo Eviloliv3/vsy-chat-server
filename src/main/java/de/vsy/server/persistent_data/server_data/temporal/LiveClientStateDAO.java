@@ -243,7 +243,6 @@ public class LiveClientStateDAO implements ServerDataAccess {
   public boolean changeReconnectionState(final int clientId, boolean newState) {
     CurrentClientState clientState;
     Map<Integer, CurrentClientState> clientStateMap;
-    var reconnectStateSet = false;
 
     if (!this.dataProvider.acquireAccess(true)) {
       LOGGER.error("No exclusive write access.");
@@ -253,49 +252,57 @@ public class LiveClientStateDAO implements ServerDataAccess {
     clientState = clientStateMap.get(clientId);
 
     if (clientState != null) {
-      reconnectStateSet = clientState.setReconnectState(newState);
+      final var reconnectStateSet = clientState.setReconnectState(newState);
 
       if (reconnectStateSet) {
         LOGGER.trace("Reconnection state set to {}.", newState);
         clientStateMap.put(clientId, clientState);
-        reconnectStateSet = this.dataProvider.writeData(clientStateMap);
-      } else if(!clientState.getReconnectState()){
-        final var pendingStateSet = trySetRemoteClientPending(clientState);
+        return this.dataProvider.writeData(clientStateMap);
+      } else {
+        final var clientNotReconnecting = !(clientState.getPendingState());
 
-        if(pendingStateSet){
-          LOGGER.trace("Pending state set to true for remotely connected client. Reconnection "
-              + "state change will be attempted anew.");
-          reconnectStateSet = changeReconnectionState(clientId, newState);
+        if (clientNotReconnecting) {
+          final var pendingStateSet = trySetRemoteClientPending(clientState);
+
+          if (pendingStateSet) {
+            LOGGER.trace("Pending state set to true for remotely connected client. Reconnection "
+                + "state change will be attempted anew.");
+            clientStateMap.put(clientId, clientState);
+            this.dataProvider.writeData(clientStateMap);
+            return changeReconnectionState(clientId, newState);
+          }else{
+            LOGGER.warn("Pending state could not be set, while trying to set reconnect "
+                + "state to {}", newState);
+          }
+        } else {
+          LOGGER.trace("Reconnection state not set: client already reconnecting.");
         }
-      }else{
-        LOGGER.trace("Reconnection state not set: client already reconnecting.");
       }
     }else {
       LOGGER.trace("No client state specified.");
     }
     this.dataProvider.releaseAccess(true);
-    return reconnectStateSet;
+    return false;
   }
 
   private boolean trySetRemoteClientPending(CurrentClientState clientState){
-    final var clientNotPending = !clientState.getPendingState();
 
-    if (clientNotPending) {
       final var clientServerId = clientState.getServerId();
       final var clientRemoteConnected =
           clientServerId != this.serverConnections.getLocalServerConnectionData().getServerId();
-      final var remoteServerOffline =
-          this.serverConnections.getLiveServerConnection(clientServerId) == null;
 
-      if(clientRemoteConnected && remoteServerOffline){
-        clientState.setPendingState(true);
-        return true;
-      }else {
-        LOGGER.trace("PendingState not changed to true; client remote connected: {}; remote server offline: {}", clientRemoteConnected, remoteServerOffline);
+      if (clientRemoteConnected) {
+        final var remoteServerOffline =
+            this.serverConnections.getLiveServerConnection(clientServerId) == null;
+        if (remoteServerOffline) {
+          clientState.setPendingState(true);
+          return true;
+        } else {
+          LOGGER.trace("Client connected remotely, but remote Server is not offline.");
+        }
+      } else {
+        LOGGER.trace("Pending state not changed. Client not connected remotely.");
       }
-    }else{
-      LOGGER.trace("PendingState not change. Client already pending.");
-    }
     return false;
   }
 
