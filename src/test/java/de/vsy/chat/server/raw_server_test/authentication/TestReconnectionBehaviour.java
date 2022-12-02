@@ -68,7 +68,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
     request = new ReconnectRequestDTO(clientOneCommunicatorData);
     clientTwo.sendRequest(request, getServerEntity(STANDARD_SERVER_ID));
-
+  //TODO es ist nicht sicher, dass hier tatsaechlich die fehlermeldung ankommt
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         request, "trying to reconnect from another device right now.");
     final var response = clientTwo.readPacket();

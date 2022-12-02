@@ -161,7 +161,7 @@ public class TestClientRelationChanges extends ServerTestBase {
         MARKUS_1_COMM.getCommunicatorId(), clientData, true);
     TestResponseSingleClient.checkErrorResponse(clientOne,
         getClientEntity(MARKUS_1_COMM.getCommunicatorId()),
-        content, "Friendship request was no processed. You already are friends with");
+        content, "Friendship request was not processed. You already are friends with");
     LOGGER.info("Test: add contact -> failure: friends already -- terminated");
   }
 
