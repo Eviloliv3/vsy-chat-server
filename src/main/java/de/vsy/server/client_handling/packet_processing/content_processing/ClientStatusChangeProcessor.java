@@ -65,7 +65,7 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
         if (changeTo) {
           responseContent = prepareMessengerSetupDTO();
         } else {
-          responseContent = new MessengerTearDownDTO(false);
+          responseContent = new MessengerTearDownDTO(true);
         }
         this.contentHandler.addResponse(responseContent);
       } else {
