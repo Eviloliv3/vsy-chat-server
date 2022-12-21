@@ -39,7 +39,7 @@ public class ContactStatusChangeProcessor implements ContentProcessor<ContactMes
   public void processContent(ContactMessengerStatusDTO extractedContent) {
     var contactId = extractedContent.getContactData().getCommunicatorId();
 
-    if (this.contactProvider.checkAcquaintance(EligibleContactEntity.CLIENT, contactId)) {
+    if (this.contactProvider.checkAcquaintance(contactId)) {
 
       if (extractedContent.getOnlineStatus()) {
         LOGGER.info("Contact {} online.", contactId);
@@ -52,7 +52,7 @@ public class ContactStatusChangeProcessor implements ContentProcessor<ContactMes
         this.contentHandler.addRequest(extractedContent);
       }
     } else {
-      LOGGER.info("Status notification will be dropped. Unknown client.");
+      LOGGER.info("Status notification will be dropped. Unknown contact.");
     }
   }
 }
