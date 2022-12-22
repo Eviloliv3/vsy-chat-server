@@ -60,7 +60,9 @@ public class RemoteClientDisconnector {
     try {
       publishState(clientId, currentState);
     } catch (InterruptedException ie) {
-      LogManager.getLogger().error("No contact list access could be acquired for {}. Client state was not published.", clientId);
+      LogManager.getLogger()
+          .error("No contact list access could be acquired for {}. Client state was not published.",
+              clientId);
     }
     unsubscribeClient(clientId);
     this.clientStateProvider.removeClientState(clientId);

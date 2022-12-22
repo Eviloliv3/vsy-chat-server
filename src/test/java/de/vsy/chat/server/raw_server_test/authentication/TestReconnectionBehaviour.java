@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- 
+ *
  */
 public class TestReconnectionBehaviour extends ServerTestBase {
 
@@ -68,7 +68,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
     request = new ReconnectRequestDTO(clientOneCommunicatorData);
     clientTwo.sendRequest(request, getServerEntity(STANDARD_SERVER_ID));
-  //TODO es ist nicht sicher, dass hier tatsaechlich die fehlermeldung ankommt
+    //TODO es ist nicht sicher, dass hier tatsaechlich die fehlermeldung ankommt
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         request, "trying to reconnect from another device right now.");
     final var response = clientTwo.readPacket();
@@ -80,7 +80,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         Assertions.fail("Reconnection attempt failed.");
       }
     } else {
-      Assertions.fail("Response: " + ((ErrorDTO)response.getPacketContent()).getErrorMessage()+
+      Assertions.fail("Response: " + ((ErrorDTO) response.getPacketContent()).getErrorMessage() +
           ",  expected value: " + ReconnectResponseDTO.class.getSimpleName());
     }
     LOGGER.info("Test: reconnection -> failure: reconnection attempt underway -- terminated");

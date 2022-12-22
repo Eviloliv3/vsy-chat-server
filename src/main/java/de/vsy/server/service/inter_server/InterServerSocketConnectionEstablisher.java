@@ -103,13 +103,16 @@ public class InterServerSocketConnectionEstablisher {
     } catch (IOException e) {
       LOGGER.error("{} during ServerSocket closing attempt.", e.getClass().getSimpleName());
     }
+    this.establishingThread.shutdownNow();
+
     try {
       final var interServerEstablisherDown = this.establishingThread.awaitTermination(5, SECONDS);
 
-      if(interServerEstablisherDown){
+      if (interServerEstablisherDown) {
         LOGGER.info("ServerConnectionEstablisher thread terminated.");
-      }else{
-        LOGGER.error("ServerConnectionEstablisher shutdown unexpectedly took more than 5 seconds and may be deadlocked.");
+      } else {
+        LOGGER.error(
+            "ServerConnectionEstablisher shutdown unexpectedly took more than 5 seconds and may be deadlocked.");
       }
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();

@@ -17,7 +17,8 @@ public interface PendingPacketPersistence {
 
   /**
    * Removes Packets.
-   * @param pending PendingType
+   *
+   * @param pending  PendingType
    * @param toRemove Packet
    */
   void removePacket(PendingType pending, Packet toRemove);

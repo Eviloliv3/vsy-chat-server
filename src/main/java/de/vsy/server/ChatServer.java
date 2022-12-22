@@ -39,6 +39,7 @@ import org.apache.logging.log4j.ThreadContext;
 
 public class ChatServer implements ClientServer {
 
+  public static final int MAX_CLIENT_CONNECTIONS = 10;
   private static final Logger LOGGER = LogManager.getLogger();
   private final ExecutorService clientConnectionPool;
   private final Timer serviceMonitor;
@@ -51,7 +52,7 @@ public class ChatServer implements ClientServer {
    * Instantiates a new chat server.
    */
   public ChatServer() {
-    this.clientConnectionPool = newFixedThreadPool(10);
+    this.clientConnectionPool = newFixedThreadPool(MAX_CLIENT_CONNECTIONS);
     this.serviceMonitor = new Timer("ServiceHealthMonitor");
   }
 
@@ -116,11 +117,14 @@ public class ChatServer implements ClientServer {
   public void shutdownServer() {
     LOGGER.info("Server shutdown initiated. Interruption status: {}",
         Thread.interrupted());
+    final var pendingBufferWatcher = HandlerAccessManager.getPendingClientWatcherManager();
 
     this.clientConnectionEstablisher.stopEstablishingConnections();
     LOGGER.info("Client connection establisher terminated.");
     this.clientConnectionPool.shutdownNow();
     LOGGER.info("Client handler pool shutdown initiated.");
+    pendingBufferWatcher.shutdownPendingBufferWatchers();
+    LOGGER.info("Pending client watcher pool shutdown initiated.");
     this.serviceMonitor.cancel();
     this.serviceMonitor.purge();
     LOGGER.info("Service monitor shutdown.");
@@ -130,13 +134,21 @@ public class ChatServer implements ClientServer {
     try {
       var clientConnectionsDown = this.clientConnectionPool.awaitTermination(5, SECONDS);
 
-      if(clientConnectionsDown){
+      if (clientConnectionsDown) {
         LOGGER.info("Client handler pool shutdown.");
-      }else{
-        LOGGER.error("Client connection pool shutdown unexpectedly took more than 5 seconds and may be deadlocked.");
+      } else {
+        LOGGER.error(
+            "Client connection pool shutdown unexpectedly took more than 5 seconds and may be deadlocked.");
       }
     } catch (InterruptedException ie) {
       LOGGER.error("Interrupted while waiting for client handler pool to terminate.");
+    }
+
+    try {
+      pendingBufferWatcher.awaitPendingBufferWatchers();
+    } catch (InterruptedException e) {
+      LOGGER.error(
+          "Interrupted while waiting for client pending buffer watcher pool to terminate.");
     }
 
     this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
@@ -186,7 +198,8 @@ public class ChatServer implements ClientServer {
   }
 
   private void setupPersistentDataAccess() {
-    this.serverPersistentDataManager = new ServerPersistentDataManager(this.serverDataModel.getServerConnectionDataManager());
+    this.serverPersistentDataManager = new ServerPersistentDataManager(
+        this.serverDataModel.getServerConnectionDataManager());
     this.serverPersistentDataManager.initiatePersistentAccess();
   }
 
@@ -213,12 +226,11 @@ public class ChatServer implements ClientServer {
     serviceMonitoring = new ServiceHealthMonitor(this, this.serviceControl);
     this.serviceMonitor.scheduleAtFixedRate(serviceMonitoring, 100, 500);
 
-    /* Bereits registrierte Nutzer werden registriert */
+    /* add remotely connected clients to publish/subscribe network */
     waitForPrecedingServerConnections();
     loadRemoteClientConnections();
     /*
-     * Server Synchronität wird eingetragen. Auswirkung auf
-     * InterServerCommunicationService
+     * server synchronization state set
      */
   }
 
@@ -253,15 +265,16 @@ public class ChatServer implements ClientServer {
     } catch (InterruptedException e) {
       Thread.currentThread().interrupt();
       LOGGER.error(
-          "Interrupted while waiting for preceeding server connections to be established.");
+          "Interrupted while waiting for preceding server connections to be established.");
     }
     LOGGER.info("Connection synchronization with existing servers finished.");
   }
 
   /**
-   * Laedt alle existiernden Klientenzustände. Prüft je entferntem Server-Buffer, ob entfernte
-   * Klienten vorliegen. Dann werden, nach Zustand, Abonnements vorgenommen, wobei der überprüfte
-   * InterServerbuffer hinterlegt wird. Dasselbe passiert für alle zusätzlichen Abonnements.
+   * Loads all existing remotely connected client states. Checks for each remote server
+   * PacketBuffer, if there are client connections and uses the server PacketBuffer for the client
+   * subscriptions. Extra subscriptions per client will also be subscribed to using the remote
+   * server PacketBuffer.
    */
   private void loadRemoteClientConnections() {
     LOGGER.info("Remote client states will be loaded.");

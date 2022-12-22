@@ -119,6 +119,15 @@ public class CurrentClientState {
   }
 
   /**
+   * Sets the client's pending state.
+   *
+   * @param pendingState boolean
+   */
+  public void setPendingState(final boolean pendingState) {
+    this.pendingState = pendingState;
+  }
+
+  /**
    * Returns the reconnection state.
    *
    * @return the reconnection state
@@ -137,17 +146,12 @@ public class CurrentClientState {
   }
 
   /**
-   * Sets the client's pending state.
-   * @param pendingState boolean
-   */
-  public void setPendingState(final boolean pendingState) {
-    this.pendingState = pendingState;
-  }
-
-  /**
-   * Sets global client reconnect state true or false if reconnect state is false and pending is also true.
+   * Sets global client reconnect state true or false if reconnect state is false and pending is
+   * also true.
+   *
    * @param reconnectState the desired global client reconnect state
-   * @return true, if argument is false or global reconnect state is false and global pending is true; false otherwise
+   * @return true, if argument is false or global reconnect state is false and global pending is
+   * true; false otherwise
    */
   public boolean setReconnectState(boolean reconnectState) {
     final var reconnectSet = true;

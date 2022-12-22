@@ -5,7 +5,8 @@ import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 
 /**
- * The Class SimpleInternalContentBuilder.*/
+ * The Class SimpleInternalContentBuilder.
+ */
 @JsonPOJOBuilder
 public class SimpleInternalContentBuilder extends
     ServerPacketContentBuilder<SimpleInternalContentBuilder> {

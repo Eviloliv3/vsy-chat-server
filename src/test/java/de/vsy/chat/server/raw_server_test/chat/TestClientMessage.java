@@ -140,8 +140,9 @@ public class TestClientMessage extends ServerTestBase {
                 + responsePacket.getPacketContent());
       }
     } else {
-      Assertions.fail("One of the expected Packets went missing:\nSent: " + sentPacket + "\nReceived: "
-          + receivedPacket + "\nResponse: " + responsePacket);
+      Assertions.fail(
+          "One of the expected Packets went missing:\nSent: " + sentPacket + "\nReceived: "
+              + receivedPacket + "\nResponse: " + responsePacket);
     }
     LOGGER.info("Test: send message -> success -- terminated");
   }

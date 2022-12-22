@@ -84,10 +84,12 @@ public class RelationResponseProcessor implements ContentProcessor<ContactRelati
       final var contactData = this.threadDataAccess.getContactToActiveClientMapper()
           .getContactData(contactId);
       throw new PacketProcessingException(
-          "Friendship response was not processed. You already are friends with " + contactData.getDisplayName());
+          "Friendship response was not processed. You already are friends with "
+              + contactData.getDisplayName());
     } else if (contactResponse.getRespondingClient().getCommunicatorId() != contactId
         && !desiredState) {
-      throw new PacketProcessingException("Friendship response was not processed. Your response was already created automatically.");
+      throw new PacketProcessingException(
+          "Friendship response was not processed. Your response was already created automatically.");
     }
   }
 

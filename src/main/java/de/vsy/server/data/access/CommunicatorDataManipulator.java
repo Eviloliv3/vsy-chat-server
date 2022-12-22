@@ -42,7 +42,7 @@ public class CommunicatorDataManipulator {
   /**
    * Creates the new account.
    *
-   * @param username   the username
+   * @param username    the username
    * @param password    the password
    * @param displayName the display name
    * @return the communicator dataManagement
@@ -158,7 +158,7 @@ public class CommunicatorDataManipulator {
    * Returns the client communicator dataManagement for credentials.
    *
    * @param username the username
-   * @param password  the password
+   * @param password the password
    * @return the client communicator dataManagement
    */
   public CommunicatorData getCommunicatorData(final String username, final String password) {

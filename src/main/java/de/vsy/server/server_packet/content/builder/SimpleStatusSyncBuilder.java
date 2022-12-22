@@ -7,7 +7,8 @@ import de.vsy.shared_module.data_element_validation.BeanChecker;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
 /**
- * The Class SimpleStatusSyncBuilder.*/
+ * The Class SimpleStatusSyncBuilder.
+ */
 @JsonPOJOBuilder
 public class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>> extends
     ServerPacketContentBuilder<T> {

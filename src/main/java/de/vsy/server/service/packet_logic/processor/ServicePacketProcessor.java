@@ -47,7 +47,7 @@ public class ServicePacketProcessor {
         this.contentHandler.setError(errorContent);
       }
     } else {
-      final var errorMessage = "No PacketProcessor found for ContentIdentifier: "+identifier;
+      final var errorMessage = "No PacketProcessor found for ContentIdentifier: " + identifier;
       final var errorContent = new ErrorDTO(errorMessage, input);
       this.contentHandler.setError(errorContent);
     }

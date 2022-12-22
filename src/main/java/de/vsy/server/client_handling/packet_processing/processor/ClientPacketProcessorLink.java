@@ -35,7 +35,8 @@ public class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
 
     processor = this.processingLogic.getProcessor(identifier, contentType)
         .orElseThrow(() -> new PacketProcessingException(
-            "No Packet processor found for: " + input.getPacketProperties().getPacketIdentificationProvider()));
+            "No Packet processor found for: " + input.getPacketProperties()
+                .getPacketIdentificationProvider()));
     processor.processPacket(input);
   }
 }

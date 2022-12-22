@@ -1,7 +1,6 @@
 package de.vsy.chat.server.raw_server_test.authentication;
 
 import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.FRANK_1_COMM;
-import static de.vsy.shared_transmission.dto.authentication.PersonalData.valueOf;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static de.vsy.shared_utility.standard_value.StandardStringProvider.STANDARD_EMPTY_STRING;
@@ -19,10 +18,9 @@ import de.vsy.shared_transmission.packet.content.authentication.NewAccountReques
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
 
 /**
- 
+ *
  */
 public class TestAccountCreationBehaviour extends ServerTestBase {
 

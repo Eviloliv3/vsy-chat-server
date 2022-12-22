@@ -40,7 +40,7 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
   private final ClientStateManager clientStateManager;
   private final CommunicationEntityDataProvider contactMapper;
   private final ThreadPacketBufferManager threadBuffers;
-  private final LocalClientStateDependentLogicProvider stateDependingAccess;
+  private final LocalClientStateObserverManager stateDependingAccess;
   private final ClientStateRecorder stateRecorder;
   private final ResultingPacketContentHandler contentHandler;
   private final ResultingPacketCreator packetCreator;
@@ -62,7 +62,7 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
         HandlerAccessManager.getClientSubscriptionManager(),
         HandlerAccessManager.getCommunicatorDataManipulator());
     createThreadPacketBuffers(requestAssignmentBuffer);
-    this.stateDependingAccess = new LocalClientStateDependentLogicProvider(this);
+    this.stateDependingAccess = new LocalClientStateObserverManager(this);
   }
 
   /**
@@ -115,7 +115,7 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
   }
 
   @Override
-  public LocalClientStateDependentLogicProvider getLocalClientStateDependentLogicProvider() {
+  public LocalClientStateObserverManager getLocalClientStateDependentLogicProvider() {
     return this.stateDependingAccess;
   }
 

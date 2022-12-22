@@ -135,7 +135,8 @@ public abstract class AbstractPacketCategorySubscriptionManager {
         unsubSuccessful = false;
       }
       if (unsubSuccessful) {
-        LOGGER.trace("Subscription cancellation of topic/thread successful: {}/{}", topic, threadId);
+        LOGGER.trace("Subscription cancellation of topic/thread successful: {}/{}", topic,
+            threadId);
       } else {
         LOGGER.warn(
             "Subscription cancellation failed. Client was not subscribed to topic/thread: {}/{}",

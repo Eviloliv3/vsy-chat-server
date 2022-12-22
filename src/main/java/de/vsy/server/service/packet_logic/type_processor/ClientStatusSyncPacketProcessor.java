@@ -87,7 +87,8 @@ public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
         final var recipient = getServerEntity(notSynchronizedServerData.getServerId());
         resultingPackets.addRequest(inputData, recipient);
       } else {
-        LOGGER.trace("Not synchronized server set is empty, state synchronization message will be discarded.");
+        LOGGER.trace(
+            "Not synchronized server set is empty, state synchronization message will be discarded.");
       }
     } else {
       throw new PacketProcessingException("Content not of type ServerPacketContentImpl.");

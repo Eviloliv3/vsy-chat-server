@@ -79,8 +79,8 @@ public class PersistenceDAO {
    * access using acquireFileLoci()
    *
    * @return true, if exclusive access could be acquired, false otherwise. Interrupt flag might be
-   * set if: lockFilePath does not reference a valid file path; FileLockInterruption occurred;
-   * an InterruptException gets caught or an unexpected IOException get caught.
+   * set if: lockFilePath does not reference a valid file path; FileLockInterruption occurred; an
+   * InterruptException gets caught or an unexpected IOException get caught.
    */
   public boolean acquireAccess(final boolean writeAccess) {
     if (this.filePaths == null) {
@@ -307,7 +307,8 @@ public class PersistenceDAO {
       this.createWorkingFileReferences(pathExtension);
     } else {
       final var errorMessage =
-          "File paths could not be created. No path extension required for descriptor: " + fileDescriptor;
+          "File paths could not be created. No path extension required for descriptor: "
+              + fileDescriptor;
       throw new IllegalStateException(errorMessage);
     }
   }
@@ -340,8 +341,8 @@ public class PersistenceDAO {
   }
 
   /**
-   * Tries to read from file and backup file. Returns first content specified. If all this.fileChannels
-   * are empty, null is returned.
+   * Tries to read from file and backup file. Returns first content specified. If all
+   * this.fileChannels are empty, null is returned.
    *
    * @return object
    */

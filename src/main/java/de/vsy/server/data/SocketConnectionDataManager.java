@@ -138,13 +138,13 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     }
   }
 
-  public RemoteServerConnectionData getLiveServerConnection(final int wantedServerId){
+  public RemoteServerConnectionData getLiveServerConnection(final int wantedServerId) {
     this.lock.readLock().lock();
 
-    try{
+    try {
       final var initiatedConnectedServers = this.remoteServerConnections.get(INITIATED);
-      for(final var remoteServer : initiatedConnectedServers){
-        if(remoteServer.getServerId() == wantedServerId){
+      for (final var remoteServer : initiatedConnectedServers) {
+        if (remoteServer.getServerId() == wantedServerId) {
           return remoteServer;
         }
       }

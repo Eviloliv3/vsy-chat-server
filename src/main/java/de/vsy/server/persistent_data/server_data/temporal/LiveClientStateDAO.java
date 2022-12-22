@@ -271,7 +271,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
             clientStateMap.put(clientId, clientState);
             this.dataProvider.writeData(clientStateMap);
             reconnectStateSet = changeReconnectionState(clientId, newState);
-          }else{
+          } else {
             LOGGER.warn("Pending state could not be set, while trying to set reconnect "
                 + "state to {}", newState);
           }
@@ -279,31 +279,31 @@ public class LiveClientStateDAO implements ServerDataAccess {
           LOGGER.trace("Reconnection state not set: client already reconnecting.");
         }
       }
-    }else {
+    } else {
       LOGGER.trace("No client state specified.");
     }
     this.dataProvider.releaseAccess(true);
     return reconnectStateSet;
   }
 
-  private boolean trySetRemoteClientPending(CurrentClientState clientState){
+  private boolean trySetRemoteClientPending(CurrentClientState clientState) {
 
-      final var clientServerId = clientState.getServerId();
-      final var clientRemoteConnected =
-          clientServerId != this.serverConnections.getLocalServerConnectionData().getServerId();
+    final var clientServerId = clientState.getServerId();
+    final var clientRemoteConnected =
+        clientServerId != this.serverConnections.getLocalServerConnectionData().getServerId();
 
-      if (clientRemoteConnected) {
-        final var remoteServerOffline =
-            this.serverConnections.getLiveServerConnection(clientServerId) == null;
-        if (remoteServerOffline) {
-          clientState.setPendingState(true);
-          return true;
-        } else {
-          LOGGER.trace("Client connected remotely, but remote Server is not offline.");
-        }
+    if (clientRemoteConnected) {
+      final var remoteServerOffline =
+          this.serverConnections.getLiveServerConnection(clientServerId) == null;
+      if (remoteServerOffline) {
+        clientState.setPendingState(true);
+        return true;
       } else {
-        LOGGER.trace("Pending state not changed. Client not connected remotely.");
+        LOGGER.trace("Client connected remotely, but remote Server is not offline.");
       }
+    } else {
+      LOGGER.trace("Pending state not changed. Client not connected remotely.");
+    }
     return false;
   }
 

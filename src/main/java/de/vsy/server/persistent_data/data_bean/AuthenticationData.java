@@ -26,7 +26,7 @@ public class AuthenticationData implements Serializable {
   /**
    * Instantiates a new account.
    *
-   * @param username    the username
+   * @param username the username
    * @param password the password
    * @param clientId the client id
    */
@@ -37,7 +37,7 @@ public class AuthenticationData implements Serializable {
   }
 
   /**
-   * @param username    the username
+   * @param username the username
    * @param password the password
    * @param clientId the clientId
    * @return new AuthenticationData object
@@ -119,7 +119,8 @@ public class AuthenticationData implements Serializable {
 
   @Override
   public String toString() {
-    return "\"clientId\": " + this.clientId + ", \"username\": " + this.username + ", \"password\": "
+    return "\"clientId\": " + this.clientId + ", \"username\": " + this.username
+        + ", \"password\": "
         + this.password;
   }
 

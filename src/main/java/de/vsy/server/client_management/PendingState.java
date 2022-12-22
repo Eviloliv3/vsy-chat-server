@@ -61,9 +61,12 @@ public class PendingState {
   }
 
   /**
-   * Sets global client reconnect state true or false if reconnect state is false and pending is also true.
+   * Sets global client reconnect state true or false if reconnect state is false and pending is
+   * also true.
+   *
    * @param reconnectState the desired global client reconnect state
-   * @return true, if argument is false or global reconnect state is false and global pending is true; false otherwise
+   * @return true, if argument is false or global reconnect state is false and global pending is
+   * true; false otherwise
    */
   public boolean setReconnecting(boolean reconnectState) {
     final var reconnectSet = true;

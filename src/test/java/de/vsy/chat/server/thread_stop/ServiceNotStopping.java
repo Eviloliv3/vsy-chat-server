@@ -42,7 +42,8 @@ class TestServiceNotStopping {
 
     s = new ServerSocket(6666);
     serverData = new ServerDataManager(LocalServerConnectionData.valueOf(s.getLocalPort(), s));
-    serverPersistentDataManager = new ServerPersistentDataManager(serverData.getServerConnectionDataManager());
+    serverPersistentDataManager = new ServerPersistentDataManager(
+        serverData.getServerConnectionDataManager());
     serverPersistentDataManager.initiatePersistentAccess();
     serviceAccess = new ServiceDataAccessManager(serverData, serverPersistentDataManager);
   }

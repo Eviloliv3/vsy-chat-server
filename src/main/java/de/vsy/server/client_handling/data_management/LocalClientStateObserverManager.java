@@ -7,7 +7,7 @@ import de.vsy.server.client_handling.persistent_data_access.ClientPersistentData
 import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 
-public class LocalClientStateDependentLogicProvider {
+public class LocalClientStateObserverManager {
 
   private final PermittedPacketCategoryCheck permittedPackets;
   private final ClientPersistentDataAccessProvider clientPersistentAccess;
@@ -16,7 +16,7 @@ public class LocalClientStateDependentLogicProvider {
   private final ClientStatePublisher clientStatePublisher;
   private final StateDependentPacketRetriever pendingPacketRetriever;
 
-  public LocalClientStateDependentLogicProvider(final HandlerLocalDataManager handlerDataAccess) {
+  public LocalClientStateObserverManager(final HandlerLocalDataManager handlerDataAccess) {
     this.permittedPackets = new PermittedPacketCategoryCheck();
     this.clientPersistentAccess = new ClientPersistentDataAccessProvider(
         handlerDataAccess.getLocalClientDataProvider());

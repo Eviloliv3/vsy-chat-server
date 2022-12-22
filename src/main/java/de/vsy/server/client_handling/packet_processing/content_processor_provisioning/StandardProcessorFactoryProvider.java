@@ -9,7 +9,7 @@ public class StandardProcessorFactoryProvider implements CategoryBasedProcessorF
   @Override
   public ContentBasedProcessorFactory getCategoryHandlerFactory(PacketCategory category,
       HandlerLocalDataManager threadDataAccess) {
-    if(category == null){
+    if (category == null) {
       return null;
     }
 

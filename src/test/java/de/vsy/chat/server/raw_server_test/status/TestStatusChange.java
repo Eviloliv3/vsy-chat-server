@@ -116,7 +116,8 @@ public class TestStatusChange extends ServerTestBase {
     content = new ClientStatusChangeDTO(null, true, clientOne.getCommunicatorData());
     checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
         "No service type specified.");
-    LOGGER.info("Test: client messenger status change -> failure: no desired status transmitted -- terminated");
+    LOGGER.info(
+        "Test: client messenger status change -> failure: no desired status transmitted -- terminated");
   }
 
   @Test
@@ -147,6 +148,7 @@ public class TestStatusChange extends ServerTestBase {
       Assertions.fail(
           ContactMessengerStatusDTO.class.getSimpleName() + " expected, read: " + packet);
     }
-    LOGGER.info("Test: change messenger status for two clients that are contacts -> success -- terminated");
+    LOGGER.info(
+        "Test: change messenger status for two clients that are contacts -> success -- terminated");
   }
 }

@@ -21,6 +21,7 @@ public class HandlerAccessManager {
   private static ClientTransactionDAO clientTransactionManager;
   private static CommunicatorDataManipulator communicatorDataManipulator;
   private static LocalServerConnectionData serverNodeData;
+  private static PendingClientWatcherManager pendingClientManager;
 
   private HandlerAccessManager() {
   }
@@ -33,6 +34,7 @@ public class HandlerAccessManager {
     communicatorDataManipulator = new CommunicatorDataManipulator(serverPersistentDataManager);
     serverNodeData = serverDataAccess.getServerConnectionDataManager()
         .getLocalServerConnectionData();
+    pendingClientManager = new PendingClientWatcherManager();
   }
 
   public static LocalServerConnectionData getLocalServerConnectionData() {
@@ -53,5 +55,9 @@ public class HandlerAccessManager {
 
   public static LiveClientStateDAO getClientStateAccessManager() {
     return clientStatePersistenceManager;
+  }
+
+  public static PendingClientWatcherManager getPendingClientWatcherManager() {
+    return pendingClientManager;
   }
 }

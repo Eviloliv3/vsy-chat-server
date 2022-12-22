@@ -6,7 +6,6 @@ package de.vsy.chat.server.testing_grounds;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
 import de.vsy.server.client_management.ClientState;
-import de.vsy.server.data.ServerDataManager;
 import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * 
+ *
  */
 class TestClientStatePersistenceDAO {
 

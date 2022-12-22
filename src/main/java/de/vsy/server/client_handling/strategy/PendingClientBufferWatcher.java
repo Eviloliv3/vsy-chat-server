@@ -76,12 +76,13 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
     reconnectFlagCheck.shutdownNow();
     try {
       flagCheckDown = reconnectFlagCheck.awaitTermination(5, SECONDS);
-      if(flagCheckDown){
+      if (flagCheckDown) {
         LOGGER.trace("ReconnectionFlagCheck shutdown regularly.");
-      }else {
-        LOGGER.error("ReconnectionFlagCheck shutdown unexpectedly took more than 5 seconds and might.");
+      } else {
+        LOGGER.error(
+            "ReconnectionFlagCheck shutdown unexpectedly took more than 5 seconds and might.");
       }
-    }catch(InterruptedException ie){
+    } catch (InterruptedException ie) {
       LOGGER.error("Interrupted while waiting for ReconnectionFlagChecker to terminate.");
     }
   }

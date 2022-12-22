@@ -74,9 +74,8 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
                 "Reconnection attempt took too much time and was cancelled. Please try logging in.";
           }
         } else {
-          //TODO client attempted to reconnect too early?
-          LOGGER.error("Client state could not be saved. Either the access of client "
-                  + "states failed or could not be written. Found client data: {}",
+          LOGGER.error("Client state could not be saved. Either of client states could not "
+                  + "be accessed or could not be written. Found client data: {}",
               clientData);
           causeMessage = "You are either connected from another device or you are trying to reconnect from another device right now.";
           this.clientStateManager.logoutClient();
@@ -115,9 +114,9 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
       latch.await();
       pendingFlagCheck.shutdownNow();
       pendingFlagCheckDown = pendingFlagCheck.awaitTermination(5, SECONDS);
-      if(pendingFlagCheckDown){
+      if (pendingFlagCheckDown) {
         LOGGER.trace("PendingFlagCheck shutdown successfully.");
-      }else{
+      } else {
         LOGGER.error("PendingFlagCheck shutdown unexpectedly took more than 5 seconds.");
       }
       pendingFlagRemoved = !pendingFlagFetcher.getFetchedValue();

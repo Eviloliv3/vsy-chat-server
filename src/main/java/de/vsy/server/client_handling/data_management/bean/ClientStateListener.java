@@ -12,6 +12,7 @@ public interface ClientStateListener {
 
   /**
    * Let's listener evaluate client state changes.
+   *
    * @param changedState ClientState
    * @param added        boolean
    */

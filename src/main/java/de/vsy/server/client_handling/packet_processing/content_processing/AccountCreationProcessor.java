@@ -41,7 +41,8 @@ public class AccountCreationProcessor implements ContentProcessor<NewAccountRequ
   public void processContent(NewAccountRequestDTO toProcess) throws PacketProcessingException {
     String causeMessage = null;
     var newAccount = toProcess.getAccountCreationData();
-    var clientData = clientRegistry.createNewAccount(newAccount.getAuthenticationData().getUsername(),
+    var clientData = clientRegistry.createNewAccount(
+        newAccount.getAuthenticationData().getUsername(),
         newAccount.getAuthenticationData().getPassword(),
         (newAccount.getPersonalData().getFirstName() + " " + newAccount.getPersonalData()
             .getLastName()));

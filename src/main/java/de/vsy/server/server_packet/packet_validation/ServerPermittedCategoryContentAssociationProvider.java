@@ -57,7 +57,7 @@ public class ServerPermittedCategoryContentAssociationProvider {
   /**
    * Setup regular server PacketContent validator.
    *
-   * @return Map<PacketCategory, Map<PacketType, Set<Class<? extends PacketContent>>>>
+   * @return Map<PacketCategory, Map < PacketType, Set < Class < ? extends PacketContent>>>>
    */
   public static Map<PacketCategory, Map<PacketType, Set<Class<? extends PacketContent>>>> setupRegularServerPacketContentValidation() {
     Map<PacketCategory, Map<PacketType, Set<Class<? extends PacketContent>>>> packetValidator = new EnumMap<>(
@@ -75,7 +75,7 @@ public class ServerPermittedCategoryContentAssociationProvider {
   /**
    * Setup status validation.
    *
-   * @return Map<PacketType, Set<Class<? extends PacketContent>>>
+   * @return Map<PacketType, Set < Class < ? extends PacketContent>>>
    */
   public static Map<PacketType, Set<Class<? extends PacketContent>>> setupStatusValidation() {
     Map<PacketType, Set<Class<? extends PacketContent>>> statusMapping = new HashMap<>();
@@ -90,7 +90,7 @@ public class ServerPermittedCategoryContentAssociationProvider {
   /**
    * Setup error validation.
    *
-   * @return Map<PacketType, Set<Class<? extends PacketContent>>>
+   * @return Map<PacketType, Set < Class < ? extends PacketContent>>>
    */
   public static Map<PacketType, Set<Class<? extends PacketContent>>> setupErrorValidation() {
     Map<PacketType, Set<Class<? extends PacketContent>>> errorMapping = new HashMap<>();

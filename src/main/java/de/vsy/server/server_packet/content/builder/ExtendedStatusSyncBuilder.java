@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The Class ExtendedStatusSyncBuilder.*/
+ * The Class ExtendedStatusSyncBuilder.
+ */
 @JsonPOJOBuilder
 public class ExtendedStatusSyncBuilder<T extends ExtendedStatusSyncBuilder<T>> extends
     SimpleStatusSyncBuilder<T> {

@@ -13,7 +13,7 @@ import de.vsy.chat.server.raw_server_test.relation.TestClientRelationChanges;
 import org.apache.logging.log4j.ThreadContext;
 
 /**
- 
+ *
  */
 public class ClientRelationChange extends TestClientRelationChanges {
 

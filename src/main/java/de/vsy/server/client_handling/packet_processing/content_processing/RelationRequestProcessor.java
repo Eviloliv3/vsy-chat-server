@@ -71,10 +71,13 @@ public class RelationRequestProcessor implements ContentProcessor<ContactRelatio
 
     if (desiredState && contactsAlready) {
       final var contactData = this.contactMapper.getContactData(contactId);
-      throw new PacketProcessingException("Friendship request was not processed. You already are friends with " + contactData.getDisplayName());
+      throw new PacketProcessingException(
+          "Friendship request was not processed. You already are friends with "
+              + contactData.getDisplayName());
     } else {
       if (!desiredState && !contactsAlready) {
-        throw new PacketProcessingException("Friendship request was not processed. " + contactId + " is no contact of yours.");
+        throw new PacketProcessingException(
+            "Friendship request was not processed. " + contactId + " is no contact of yours.");
       }
     }
   }

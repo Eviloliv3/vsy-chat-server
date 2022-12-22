@@ -13,7 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * The Class ClientTransactionDAO.*/
+ * The Class ClientTransactionDAO.
+ */
 public class ClientTransactionDAO implements ServerDataAccess {
 
   private static final Logger LOGGER = LogManager.getLogger();

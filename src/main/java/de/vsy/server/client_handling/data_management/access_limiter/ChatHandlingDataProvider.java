@@ -1,11 +1,11 @@
 package de.vsy.server.client_handling.data_management.access_limiter;
 
-import de.vsy.server.client_handling.data_management.LocalClientStateDependentLogicProvider;
+import de.vsy.server.client_handling.data_management.LocalClientStateObserverManager;
 
 /**
  * Provides chat PacketCategory handlers with dataManagement accessLimiter.
  */
 public interface ChatHandlingDataProvider extends BaseHandlingDataProvider {
 
-  LocalClientStateDependentLogicProvider getLocalClientStateDependentLogicProvider();
+  LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
 }

@@ -9,9 +9,9 @@ import static de.vsy.shared_transmission.packet.content.authentication.Authentic
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.packet_processing.ClientHandlerPacketProcessor;
+import de.vsy.server.client_handling.packet_processing.content_processing.AccountCreationProcessor;
 import de.vsy.server.client_handling.packet_processing.content_processing.LoginRequestProcessor;
 import de.vsy.server.client_handling.packet_processing.content_processing.LogoutRequestProcessor;
-import de.vsy.server.client_handling.packet_processing.content_processing.AccountCreationProcessor;
 import de.vsy.server.client_handling.packet_processing.content_processing.ReconnectRequestProcessor;
 import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_module.packet_processing.ProcessingCondition;

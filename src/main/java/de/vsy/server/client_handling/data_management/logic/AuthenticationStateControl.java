@@ -9,6 +9,7 @@ public interface AuthenticationStateControl extends ClientStateControl {
    * Firstly adds the authenticated client's communicator data to local state cache. Then adds
    * AUTHENTICATED state. This order should be followed, because other objects may observe state
    * changes and subsequently use the communicator data.
+   *
    * @param clientData CommunicatorData
    */
   boolean loginClient(CommunicatorData clientData);
@@ -22,6 +23,7 @@ public interface AuthenticationStateControl extends ClientStateControl {
 
   /**
    * Changes the local client's global pending state.
+   *
    * @param isPending boolean
    * @return true if global pending state could be change; false otherwise
    */
@@ -29,12 +31,14 @@ public interface AuthenticationStateControl extends ClientStateControl {
 
   /**
    * Returns the client's global pending state.
+   *
    * @return boolean
    */
   boolean getPendingState();
 
   /**
    * Tries to change the local client's global reconnection state.
+   *
    * @param newState boolean
    * @return boolean
    */
@@ -42,6 +46,7 @@ public interface AuthenticationStateControl extends ClientStateControl {
 
   /**
    * Returns the local client's global reconnection state.
+   *
    * @return boolean
    */
   boolean getReconnectionState();

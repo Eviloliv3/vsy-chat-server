@@ -8,7 +8,7 @@ import de.vsy.chat.server.raw_server_test.authentication.TestLoginBehaviour;
 import org.apache.logging.log4j.ThreadContext;
 
 /**
- 
+ *
  */
 public class LoginBehaviour extends TestLoginBehaviour {
 

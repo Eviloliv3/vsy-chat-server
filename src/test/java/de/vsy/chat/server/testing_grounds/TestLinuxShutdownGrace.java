@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 
 public class TestLinuxShutdownGrace {
@@ -21,8 +20,9 @@ public class TestLinuxShutdownGrace {
         try {
           System.out.println("Test ExecutorService shutdown expected.");
           final var testExecutorDown = es.awaitTermination(5, SECONDS);
-          if  (!testExecutorDown) {
-            LogManager.getLogger().error("Test ExecutorService unexpectedly took more than 5 seconds and may be deadlocked.");
+          if (!testExecutorDown) {
+            LogManager.getLogger().error(
+                "Test ExecutorService unexpectedly took more than 5 seconds and may be deadlocked.");
           }
         } catch (InterruptedException e) {
           throw new RuntimeException(e);

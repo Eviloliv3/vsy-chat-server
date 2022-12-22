@@ -10,19 +10,15 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
 import de.vsy.server.client_handling.strategy.PacketHandlingStrategy;
-import de.vsy.server.client_handling.strategy.PendingChatPacketHandling;
+import de.vsy.server.client_handling.strategy.PendingClientPacketHandling;
 import de.vsy.server.client_handling.strategy.RegularPacketHandlingStrategy;
 import de.vsy.server.client_management.ClientState;
-import de.vsy.server.persistent_data.client_data.PendingType;
 import de.vsy.shared_module.packet_management.PacketBuffer;
-import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import de.vsy.shared_module.packet_transmission.cache.UnconfirmedPacketTransmissionCache;
-import de.vsy.shared_transmission.packet.Packet;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Queue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -67,9 +63,9 @@ public class ClientConnectionHandler implements Runnable {
       }
 
       if (stateManager.checkClientState(ClientState.AUTHENTICATED)) {
-        LOGGER.info("Client not logged out. Therefore client state will be set to pending.");
-        saveClientBoundPackets();
-        clientHandling = new PendingChatPacketHandling(threadDataManager);
+        LOGGER.info("Client not logged out, therefore client will be handled as pending.");
+        clientHandling = new PendingClientPacketHandling(this.threadDataManager,
+            this.connectionControl);
         clientHandling.administerStrategy();
       } else {
         LOGGER.error("!! Buffers not cleared.");
@@ -102,51 +98,14 @@ public class ClientConnectionHandler implements Runnable {
   }
 
   /**
-   * Removes Packets from UnconfirmedPacketTransmissionCache and then CLIENT_BOUND buffer. Saves
-   * them in with PendingPacketDAO.
-   */
-  private void saveClientBoundPackets() {
-    var reinterrupt = false;
-    final var pendingPacketAccessor = this.threadDataManager.getLocalClientStateDependentLogicProvider()
-        .getClientPersistentAccess().getPendingPacketDAO();
-
-    if (pendingPacketAccessor != null) {
-      final var handlerBuffer = this.threadDataManager.getHandlerBufferManager()
-          .getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
-      UnconfirmedPacketTransmissionCache cache = this.connectionControl.getPacketCache();
-      final Queue<Packet> notReceivedPackets = cache.removeRemainingPackets();
-
-      while (!notReceivedPackets.isEmpty()) {
-        pendingPacketAccessor.appendPendingPacket(PendingType.CLIENT_BOUND,
-            notReceivedPackets.poll());
-      }
-
-      while (handlerBuffer.containsPackets()) {
-        try {
-          final var currentPacket = handlerBuffer.getPacket();
-          pendingPacketAccessor.appendPendingPacket(PendingType.CLIENT_BOUND, currentPacket);
-        } catch (InterruptedException e) {
-          reinterrupt = true;
-          LOGGER.error("PacketBuffer has to be emptied be emptied. Interrupt suspended.");
-        }
-      }
-
-      if (reinterrupt) {
-        Thread.currentThread().interrupt();
-      }
-    }
-  }
-
-  /*
-  /**
    * Try buffer clearing.
-   *
+   */
   private void clearAllBuffers() {
     // TODO client logged out, remaining packets should be processed in a sensible way, or sent back.
     // clearClientBoundBuffer();
     // clearHandlerBoundBuffer();
   }
-  */
+
   /**
    * Finish thread termination.
    */

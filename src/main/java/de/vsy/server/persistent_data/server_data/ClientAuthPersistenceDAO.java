@@ -111,7 +111,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
    * Returns the client id.
    *
    * @param username the username
-   * @param password  the password
+   * @param password the password
    * @return the client id
    */
   public int getClientId(final String username, final String password) {

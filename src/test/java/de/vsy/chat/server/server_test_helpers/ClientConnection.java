@@ -64,7 +64,8 @@ public class ClientConnection {
 
   private void setupNonStaticCompiler() {
     this.packetCompiler = new NonStaticPacketCompiler();
-    this.packetCompiler.addContentIdentificationProvider(new ServerContentIdentificationProviderImpl());
+    this.packetCompiler.addContentIdentificationProvider(
+        new ServerContentIdentificationProviderImpl());
     this.packetCompiler.addOriginatorEntityProvider(getOriginatorEntityProvider());
   }
 
