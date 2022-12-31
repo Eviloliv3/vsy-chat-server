@@ -33,7 +33,7 @@ public class TestPendingPacketDAO {
    * allPacketContentSamples.add(new LogoutResponseDTO(true));
    * allPacketContentSamples.add(new ReconnectRequestDTO(commDTO));
    * allPacketContentSamples.add(new ReconnectResponseDTO(true));
-   * allPacketContentSamples.add(new NewAccountRequestDTO());
+   * allPacketContentSamples.add(new AccountCreationRequestDTO());
    * allPacketContentSamples.add(new
    * ClientStatusChangeDTO(ClientService.MESSENGER, true, commDTO));
    * allPacketContentSamples.add(new MessengerSetupDTO(Collections.emptyMap(),

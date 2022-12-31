@@ -3,6 +3,8 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
+import static de.vsy.server.client_management.ClientState.ACTIVE_MESSENGER;
+import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 
 import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
@@ -29,25 +31,22 @@ public class LogoutRequestProcessor implements ContentProcessor<LogoutRequestDTO
    * @param threadDataAccess the thread dataManagement accessLimiter
    */
   public LogoutRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
-
     this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
     this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
   }
 
   @Override
   public void processContent(LogoutRequestDTO toProcess) throws PacketProcessingException {
-    String causeMessage = null;
 
-    if (this.clientStateManager.changePersistentClientState(ClientState.AUTHENTICATED, false)) {
+    if (this.clientStateManager.changePersistentClientState(AUTHENTICATED, false)) {
       ThreadContext.put(LOG_FILE_CONTEXT_KEY, Thread.currentThread().getName());
 
       this.contentHandler.addResponse(new LogoutResponseDTO(true));
       this.clientStateManager.logoutClient();
     } else {
-      causeMessage =
+      LOGGER.error("ClientState could not be changed from {}.", AUTHENTICATED);
+      final var causeMessage =
           "An error occurred while writing your global logout state. Please contact the ChatServer support team.";
-    }
-    if (causeMessage != null) {
       throw new PacketProcessingException(causeMessage);
     }
   }

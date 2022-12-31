@@ -3,17 +3,20 @@
  */
 package de.vsy.server.client_handling;
 
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.HANDLER_BOUND;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.STANDARD_CLIENT_ROUTE_VALUE;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
+import de.vsy.server.client_handling.strategy.LoggedOutClientHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PacketHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PendingClientPacketHandling;
 import de.vsy.server.client_handling.strategy.RegularPacketHandlingStrategy;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.shared_module.packet_management.PacketBuffer;
+import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import de.vsy.shared_module.packet_transmission.cache.UnconfirmedPacketTransmissionCache;
 import java.net.Socket;
@@ -61,6 +64,8 @@ public class ClientConnectionHandler implements Runnable {
       while (this.connectionControl.connectionIsLive() && !Thread.interrupted()) {
         clientHandling.administerStrategy();
       }
+      this.connectionControl.closeConnection();
+      LOGGER.info("Client connection terminated.");
 
       if (stateManager.checkClientState(ClientState.AUTHENTICATED)) {
         LOGGER.info("Client not logged out, therefore client will be handled as pending.");
@@ -68,11 +73,10 @@ public class ClientConnectionHandler implements Runnable {
             this.connectionControl);
         clientHandling.administerStrategy();
       } else {
-        LOGGER.error("!! Buffers not cleared.");
-        //clearAllBuffers();
+        LOGGER.error("Client logged out, remaining Packets will be processed.");
+        clientHandling = new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
+        clientHandling.administerStrategy();
       }
-      this.connectionControl.closeConnection();
-      LOGGER.info("Client connection terminated.");
     } else {
       LOGGER.info("Client connection failed.");
     }
@@ -95,15 +99,6 @@ public class ClientConnectionHandler implements Runnable {
     this.connectionControl = new ConnectionThreadControl(this.clientConnection,
         this.threadDataManager.getHandlerBufferManager(),
         new UnconfirmedPacketTransmissionCache(1000), true);
-  }
-
-  /**
-   * Try buffer clearing.
-   */
-  private void clearAllBuffers() {
-    // TODO client logged out, remaining packets should be processed in a sensible way, or sent back.
-    // clearClientBoundBuffer();
-    // clearHandlerBoundBuffer();
   }
 
   /**

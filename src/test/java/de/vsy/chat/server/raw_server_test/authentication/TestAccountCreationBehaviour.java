@@ -13,8 +13,8 @@ import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import de.vsy.shared_transmission.dto.authentication.PersonalData;
 import de.vsy.shared_transmission.dto.builder.AccountCreationDTOBuilder;
 import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.authentication.AccountCreationRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
-import de.vsy.shared_transmission.packet.content.authentication.NewAccountRequestDTO;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
     accountCreationBuilder.withAuthenticationData(
             AuthenticationDTO.valueOf("peter" + randomAppendix, "login"))
         .withPersonalData(PersonalData.valueOf("randomPeter" + randomAppendix, "random"));
-    content = new NewAccountRequestDTO(accountCreationBuilder.build());
+    content = new AccountCreationRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content,
         LoginResponseDTO.class);
     LOGGER.info("Test: create account -> success -- terminated");
@@ -56,7 +56,7 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
     accountCreationBuilder.withAuthenticationData(
             AuthenticationDTO.valueOf("123456", STANDARD_EMPTY_STRING))
         .withPersonalData(PersonalData.valueOf("34fsjö5&", "jsdfj34ßtm"));
-    content = new NewAccountRequestDTO(accountCreationBuilder.build());
+    content = new AccountCreationRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
         "Invalid credentials:");
@@ -72,7 +72,7 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
 
     accountCreationBuilder.withAuthenticationData(TestClientDataProvider.FRANK_1_AUTH)
         .withPersonalData(PersonalData.valueOf("Frank", "Relation1"));
-    content = new NewAccountRequestDTO(accountCreationBuilder.build());
+    content = new AccountCreationRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
         content,
         "No account was created. There is an existing account with the provided login data.");
@@ -89,7 +89,7 @@ public class TestAccountCreationBehaviour extends ServerTestBase {
     var labelComponents = FRANK_1_COMM.getDisplayLabel().split(" ");
     accountCreationBuilder.withAuthenticationData(TestClientDataProvider.FRANK_1_AUTH)
         .withPersonalData(PersonalData.valueOf(labelComponents[0], labelComponents[1]));
-    content = new NewAccountRequestDTO(accountCreationBuilder.build());
+    content = new AccountCreationRequestDTO(accountCreationBuilder.build());
     TestResponseSingleClient.checkErrorResponse(client, getServerEntity(STANDARD_SERVER_ID),
         content,
         "Request not processed. You are authenticated already.");

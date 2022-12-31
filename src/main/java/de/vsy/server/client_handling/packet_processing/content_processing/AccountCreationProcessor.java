@@ -13,12 +13,12 @@ import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.packet.content.authentication.AccountCreationRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
-import de.vsy.shared_transmission.packet.content.authentication.NewAccountRequestDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class AccountCreationProcessor implements ContentProcessor<NewAccountRequestDTO> {
+public class AccountCreationProcessor implements ContentProcessor<AccountCreationRequestDTO> {
 
   private static final Logger LOGGER = LogManager.getLogger();
   private final CommunicatorDataManipulator clientRegistry;
@@ -38,7 +38,7 @@ public class AccountCreationProcessor implements ContentProcessor<NewAccountRequ
   }
 
   @Override
-  public void processContent(NewAccountRequestDTO toProcess) throws PacketProcessingException {
+  public void processContent(AccountCreationRequestDTO toProcess) throws PacketProcessingException {
     String causeMessage = null;
     var newAccount = toProcess.getAccountCreationData();
     var clientData = clientRegistry.createNewAccount(

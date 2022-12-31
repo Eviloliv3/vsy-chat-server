@@ -45,7 +45,7 @@ public class RelationRequestProcessor implements ContentProcessor<ContactRelatio
     final var isFriendshipRequest = extractedContent.getDesiredState();
     final var originatorId = extractedContent.getOriginatorId();
     final var recipientId = extractedContent.getRecipientId();
-    final var iAmOriginator = IdComparator.determineIfOriginator(clientId, originatorId);
+    final var iAmOriginator = clientId == originatorId;
     final var contactId = IdComparator.determineContactId(clientId, originatorId, recipientId);
     checkRequestLegitimacy(extractedContent, contactId);
 

@@ -48,8 +48,8 @@ public class ClientStateRecorder implements AuthenticationStateControl {
   @Override
   public void logoutClient() {
     final var statesToRemove = this.localClientStateManager.getCurrentState();
-    for (int stateIndex = (statesToRemove.size() - 1); stateIndex >= 0; stateIndex--) {
-      changeClientState(statesToRemove.get(stateIndex), false);
+    for (final var currentState : statesToRemove) {
+      changeClientState(currentState, false);
     }
     this.localClientDataManager.setCommunicatorData(null);
   }

@@ -5,6 +5,7 @@
  */
 package de.vsy.server.client_handling.data_management.access_limiter;
 
+import de.vsy.server.client_handling.data_management.LocalClientStateObserverManager;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 
 /**
@@ -18,4 +19,6 @@ public interface AuthenticationHandlingDataProvider extends BaseHandlingDataProv
    * @return the handler buffers
    */
   AuthenticationStateControl getGlobalAuthenticationStateControl();
+
+  LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
 }

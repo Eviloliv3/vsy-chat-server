@@ -108,11 +108,21 @@ public class CommunicatorDataManipulator {
    * Delete account.
    *
    * @param clientId the client id
-   * @return true, if successful
+   * @return true, if all id associated data could be deleted
    */
   public boolean deleteAccount(final int clientId) {
-    this.communicatorDataPersist.removeCommunicator(clientId);
-    return this.clientAuthPersist.removeAccountData(clientId);
+
+    if(this.communicatorDataPersist.removeCommunicator(clientId)){
+
+      if(this.clientAuthPersist.removeAccountData(clientId)){
+        return true;
+      }else{
+        LOGGER.error("AuthenticationDTO could not be deleted for id {}.", clientId);
+      }
+    }else{
+      LOGGER.error("CommunicatorDTO could not be deleted for id {}.", clientId);
+    }
+    return false;
   }
 
   public CommunicatorData getCommunicatorData(final int communicatorId) {

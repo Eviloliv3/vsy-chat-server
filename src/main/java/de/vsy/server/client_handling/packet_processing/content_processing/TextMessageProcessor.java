@@ -50,7 +50,7 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
     final var clientId = this.localClientData.getClientId();
     final var originatorId = extractedContent.getOriginatorId();
     final var receptionState = extractedContent.getReceptionState();
-    final var iAmOriginator = IdComparator.determineIfOriginator(clientId, originatorId);
+    final var iAmOriginator = clientId == originatorId;
     final var messageToReturn = !iAmOriginator && !receptionState;
     final var returnedMessage = iAmOriginator && receptionState;
 
