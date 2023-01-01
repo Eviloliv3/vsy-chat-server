@@ -6,6 +6,7 @@ import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,7 +50,10 @@ public class ClientStateRecorder implements AuthenticationStateControl {
 
   @Override
   public void logoutClient() {
-    final var statesToRemove = Collections.unmodifiableList(this.localClientStateManager.getCurrentState());
+    final var currentStates = this.localClientStateManager.getCurrentState();
+    final var statesToRemove = new ArrayList<ClientState>(currentStates.size());
+    statesToRemove.addAll(currentStates);
+
 
     for (final var currentState : statesToRemove) {
       changeClientState(currentState, false);
