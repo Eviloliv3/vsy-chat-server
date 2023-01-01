@@ -23,6 +23,7 @@ import de.vsy.shared_module.packet_validation.content_validation.authentication.
 import de.vsy.shared_module.packet_validation.content_validation.authentication.NewAccountRequestValidator;
 import de.vsy.shared_module.packet_validation.content_validation.authentication.ReconnectRequestValidator;
 import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionRequestDTO;
 
 public class AuthenticationPacketProcessorFactory implements ContentBasedProcessorFactory {
 
@@ -54,7 +55,7 @@ public class AuthenticationPacketProcessorFactory implements ContentBasedProcess
             processingCondition, new LogoutRequestValidator(),
             new LogoutRequestProcessor(this.threadDataAccess));
       }
-      case NewAccountRequestDTO -> {
+      case AccountCreationRequestDTO -> {
         processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
             NOT_AUTHENTICATED, this.threadDataAccess.getLocalClientStateProvider());
         return new ClientHandlerPacketProcessor<>(
@@ -68,7 +69,7 @@ public class AuthenticationPacketProcessorFactory implements ContentBasedProcess
         return new ClientHandlerPacketProcessor<>(
             this.threadDataAccess.getLocalClientDataProvider(),
             processingCondition, new AccountDeletionRequestValidator(),
-            new AccountCreationProcessor(this.threadDataAccess));
+            new AccountDeletionProcessor(this.threadDataAccess));
       }
       case ReconnectRequestDTO -> {
         processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(

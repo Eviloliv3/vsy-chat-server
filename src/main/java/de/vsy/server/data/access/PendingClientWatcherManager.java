@@ -29,7 +29,7 @@ public class PendingClientWatcherManager {
     final var clientId = clientHandlerData.getLocalClientDataProvider().getClientId();
     final var idCheckResult = IdCheck.checkData(clientId);
 
-    if (idCheckResult.isPresent()) {
+    if (!(idCheckResult.isPresent())) {
       final var pendingBufferWatcher = new PendingClientBufferWatcher(clientHandlerData);
       final var existingBufferWatcher = this.watchedPendingClients.putIfAbsent(clientId,
           pendingBufferWatcher);
