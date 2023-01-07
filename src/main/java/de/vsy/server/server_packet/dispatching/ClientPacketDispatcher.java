@@ -3,7 +3,6 @@ package de.vsy.server.server_packet.dispatching;
 import de.vsy.shared_module.packet_management.BasicClientPacketDispatcher;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_management.PacketBuffer;
-import org.apache.logging.log4j.LogManager;
 
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 

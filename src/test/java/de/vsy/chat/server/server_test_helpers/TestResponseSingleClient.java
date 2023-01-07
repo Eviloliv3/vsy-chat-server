@@ -29,6 +29,6 @@ public class TestResponseSingleClient {
         verifyPacketContent(packet, ErrorDTO.class);
         errorContent = (ErrorDTO) packet.getPacketContent();
         Assertions.assertTrue(errorContent.getErrorMessage().contains(expectedErrorString),
-                        "Error notification contains unexpected message.\n" + errorContent);
+                "Error notification contains unexpected message.\n" + errorContent);
     }
 }

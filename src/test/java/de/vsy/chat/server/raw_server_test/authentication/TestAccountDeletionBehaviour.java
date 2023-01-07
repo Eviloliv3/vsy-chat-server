@@ -8,10 +8,8 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionResponseDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
-import de.vsy.shared_transmission.packet.content.status.ClientService;
 import de.vsy.shared_transmission.packet.content.status.ClientStatusChangeDTO;
 import de.vsy.shared_transmission.packet.content.status.MessengerSetupDTO;
-import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +29,7 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
     }
 
     @Test
-    void deletionFailureNotLoggedIn(){
+    void deletionFailureNotLoggedIn() {
         LOGGER.info("Test: deletion -> failure: not authenticated");
         final var clientOne = super.loginNextClient();
         final var content = new AccountDeletionRequestDTO();
@@ -55,15 +53,15 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         content = new ClientStatusChangeDTO(MESSENGER, true, clientTwo.getCommunicatorData());
         checkResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
 
-        do{
+        do {
             receivedPacket = clientOne.readPacket();
             LOGGER.info("Discarding clientOne Packet: {}", receivedPacket);
-        } while(receivedPacket != null);
+        } while (receivedPacket != null);
 
-        do{
+        do {
             receivedPacket = clientTwo.readPacket();
             LOGGER.info("Discarding clientTwo Packet: {}", receivedPacket);
-        } while(receivedPacket != null);
+        } while (receivedPacket != null);
         content = new AccountDeletionRequestDTO();
         checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, AccountDeletionResponseDTO.class);
 
@@ -73,7 +71,7 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
     }
 
     @Test
-    void deletionSuccess(){
+    void deletionSuccess() {
         LOGGER.info("Test: deletion -> success");
         final var clientOne = super.loginNextClient();
         final var content = new AccountDeletionRequestDTO();

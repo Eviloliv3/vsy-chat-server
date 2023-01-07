@@ -48,7 +48,7 @@ public class PendingClientWatcherManager implements PendingClientRegistry {
     }
 
     @Override
-    public void removePendingClient(final int clientId){
+    public void removePendingClient(final int clientId) {
         this.watchedPendingClients.remove(clientId);
     }
 

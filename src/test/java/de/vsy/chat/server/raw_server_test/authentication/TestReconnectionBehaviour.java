@@ -19,7 +19,6 @@ import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.security.auth.login.CredentialException;
 import java.io.IOException;
 import java.util.List;
 

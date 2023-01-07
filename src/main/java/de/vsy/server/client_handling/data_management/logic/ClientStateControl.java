@@ -2,7 +2,6 @@ package de.vsy.server.client_handling.data_management.logic;
 
 import de.vsy.server.client_management.ClientState;
 
-import java.util.List;
 import java.util.Stack;
 
 public interface ClientStateControl {

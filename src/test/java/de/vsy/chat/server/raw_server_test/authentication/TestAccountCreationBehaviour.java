@@ -4,7 +4,6 @@ import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
 import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
 import de.vsy.chat.server.server_test_helpers.TestResponseSingleClient;
-import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import de.vsy.shared_transmission.dto.authentication.PersonalData;
 import de.vsy.shared_transmission.dto.builder.AccountCreationDTOBuilder;

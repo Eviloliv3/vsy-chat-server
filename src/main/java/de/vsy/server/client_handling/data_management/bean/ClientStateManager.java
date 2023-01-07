@@ -2,7 +2,9 @@ package de.vsy.server.client_handling.data_management.bean;
 
 import de.vsy.server.client_management.ClientState;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.Stack;
 
 public class ClientStateManager implements LocalClientStateProvider {
 

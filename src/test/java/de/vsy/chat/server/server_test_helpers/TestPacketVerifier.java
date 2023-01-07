@@ -5,7 +5,7 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import org.junit.jupiter.api.Assertions;
 
 public class TestPacketVerifier {
-    public static void verifyPacketContent(Packet packet, Class<? extends PacketContent> expectedType){
+    public static void verifyPacketContent(Packet packet, Class<? extends PacketContent> expectedType) {
         final PacketContent content;
         Assertions.assertNotNull(packet, "No response.");
         content = packet.getPacketContent();

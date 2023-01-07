@@ -2,16 +2,13 @@ package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
-import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.access.PendingClientRegistry;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.packet_management.PacketTransmissionCache;
-import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_utility.async_value_acquisition.TimeBasedValueFetcher;
 import de.vsy.shared_utility.logging.ThreadContextRunnable;

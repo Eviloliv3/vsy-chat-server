@@ -3,13 +3,11 @@ package de.vsy.server.client_handling.data_management.logic;
 import de.vsy.server.client_handling.data_management.bean.ClientDataManager;
 import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
 import de.vsy.server.client_management.ClientState;
-import de.vsy.server.client_management.CurrentClientState;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
@@ -120,15 +118,15 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     }
 
     @Override
-    public void appendSynchronizationRemovalPacketPerState(){
+    public void appendSynchronizationRemovalPacketPerState() {
         final var currentStates = this.localClientStateManager.getCurrentState();
         final var statesToRemove = new ArrayList<ClientState>(currentStates.size());
 
-        while(!currentStates.isEmpty()){
+        while (!currentStates.isEmpty()) {
             statesToRemove.add(currentStates.pop());
         }
 
-        for(final var currentState : statesToRemove){
+        for (final var currentState : statesToRemove) {
             appendStateSynchronizationPacket(currentState, false);
         }
     }
