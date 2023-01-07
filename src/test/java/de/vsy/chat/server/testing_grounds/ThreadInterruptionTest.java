@@ -1,37 +1,38 @@
 package de.vsy.chat.server.testing_grounds;
 
-import java.time.Instant;
 import org.junit.jupiter.api.Test;
+
+import java.time.Instant;
 
 public class ThreadInterruptionTest implements Runnable {
 
-  @Override
-  public void run() {
+    @Override
+    public void run() {
 
-    while (!Thread.currentThread().isInterrupted()) {
-      Thread.yield();
+        while (!Thread.currentThread().isInterrupted()) {
+            Thread.yield();
+        }
     }
-  }
 
-  @Test
-  void TestThreadInterruption() throws InterruptedException {
-    var maxWait = 500;
-    var testThread = new Thread(new ThreadInterruptionTest());
-    testThread.start();
+    @Test
+    void TestThreadInterruption() throws InterruptedException {
+        var maxWait = 500;
+        var testThread = new Thread(new ThreadInterruptionTest());
+        testThread.start();
 
-    var endTime = Instant.now().plusMillis(5000);
+        var endTime = Instant.now().plusMillis(5000);
 
-    testThread.interrupt();
+        testThread.interrupt();
 
-    do {
-      Thread.yield();
-      if (Instant.now().isAfter(endTime)) {
-        break;
-      }
-    } while (testThread.isAlive());
+        do {
+            Thread.yield();
+            if (Instant.now().isAfter(endTime)) {
+                break;
+            }
+        } while (testThread.isAlive());
 
-    if (!testThread.isAlive()) {
+        if (!testThread.isAlive()) {
+        }
+        testThread.join();
     }
-    testThread.join();
-  }
 }

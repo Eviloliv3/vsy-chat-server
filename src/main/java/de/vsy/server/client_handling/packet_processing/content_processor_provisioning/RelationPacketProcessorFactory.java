@@ -15,39 +15,39 @@ import de.vsy.shared_transmission.packet.content.relation.RelationContent;
 
 public class RelationPacketProcessorFactory implements ContentBasedProcessorFactory {
 
-  private final HandlerLocalDataManager threadDataAccess;
+    private final HandlerLocalDataManager threadDataAccess;
 
-  public RelationPacketProcessorFactory(HandlerLocalDataManager threadDataAccess) {
-    this.threadDataAccess = threadDataAccess;
-  }
-
-  @Override
-  public PacketProcessor createTypeProcessor(final Class<? extends PacketContent> contentType) {
-    ProcessingCondition processingCondition;
-    final var type = RelationContent.valueOf(contentType.getSimpleName());
-
-    switch (type) {
-      case ContactRelationRequestDTO -> {
-        processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-            ProcessingConditionType.AUTHENTICATED,
-            this.threadDataAccess.getLocalClientStateProvider());
-        return new ClientHandlerPacketProcessor<>(
-            this.threadDataAccess.getLocalClientDataProvider(),
-            processingCondition, new ContactRelationRequestValidator(),
-            new RelationRequestProcessor(this.threadDataAccess));
-      }
-      case ContactRelationResponseDTO -> {
-        processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-            ProcessingConditionType.ACTIVE_MESSENGER,
-            this.threadDataAccess.getLocalClientStateProvider());
-        return new ClientHandlerPacketProcessor<>(
-            this.threadDataAccess.getLocalClientDataProvider(),
-            processingCondition, new ContactRelationResponseValidator(),
-            new RelationResponseProcessor(this.threadDataAccess));
-      }
-      default -> {
-      }
+    public RelationPacketProcessorFactory(HandlerLocalDataManager threadDataAccess) {
+        this.threadDataAccess = threadDataAccess;
     }
-    return null;
-  }
+
+    @Override
+    public PacketProcessor createTypeProcessor(final Class<? extends PacketContent> contentType) {
+        ProcessingCondition processingCondition;
+        final var type = RelationContent.valueOf(contentType.getSimpleName());
+
+        switch (type) {
+            case ContactRelationRequestDTO -> {
+                processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
+                        ProcessingConditionType.AUTHENTICATED,
+                        this.threadDataAccess.getLocalClientStateProvider());
+                return new ClientHandlerPacketProcessor<>(
+                        this.threadDataAccess.getLocalClientDataProvider(),
+                        processingCondition, new ContactRelationRequestValidator(),
+                        new RelationRequestProcessor(this.threadDataAccess));
+            }
+            case ContactRelationResponseDTO -> {
+                processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
+                        ProcessingConditionType.ACTIVE_MESSENGER,
+                        this.threadDataAccess.getLocalClientStateProvider());
+                return new ClientHandlerPacketProcessor<>(
+                        this.threadDataAccess.getLocalClientDataProvider(),
+                        processingCondition, new ContactRelationResponseValidator(),
+                        new RelationResponseProcessor(this.threadDataAccess));
+            }
+            default -> {
+            }
+        }
+        return null;
+    }
 }

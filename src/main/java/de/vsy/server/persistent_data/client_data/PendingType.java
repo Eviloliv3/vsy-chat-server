@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("pendingPacketEnum")
 public enum PendingType {
-  @JsonProperty("CLIENT_BOUND")
-  CLIENT_BOUND,
-  @JsonProperty("PROCESSOR_BOUND")
-  PROCESSOR_BOUND
+    @JsonProperty("CLIENT_BOUND")
+    CLIENT_BOUND,
+    @JsonProperty("PROCESSOR_BOUND")
+    PROCESSOR_BOUND
 }

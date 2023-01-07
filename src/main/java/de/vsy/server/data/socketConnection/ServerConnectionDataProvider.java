@@ -4,26 +4,26 @@ import java.io.IOException;
 
 public interface ServerConnectionDataProvider {
 
-  /**
-   * Returns the hostname
-   *
-   * @return local hostname as String
-   */
-  String getHostname();
+    /**
+     * Returns the hostname
+     *
+     * @return local hostname as String
+     */
+    String getHostname();
 
-  /**
-   * Returns the server port
-   *
-   * @return local port as int
-   */
-  int getServerPort();
+    /**
+     * Returns the server port
+     *
+     * @return local port as int
+     */
+    int getServerPort();
 
-  /**
-   * Returns the server id
-   *
-   * @return local OR remote server id; depending on implementing class
-   */
-  int getServerId();
+    /**
+     * Returns the server id
+     *
+     * @return local OR remote server id; depending on implementing class
+     */
+    int getServerId();
 
-  boolean closeConnection() throws IOException;
+    boolean closeConnection() throws IOException;
 }

@@ -11,11 +11,11 @@ import de.vsy.shared_transmission.packet.Packet;
  */
 public interface ServicePacketProcessor {
 
-  /**
-   * Process Packet
-   *
-   * @param input the input
-   * @throws PacketProcessingException the PacketHandling exception
-   */
-  void processPacket(Packet input) throws PacketProcessingException;
+    /**
+     * Process Packet
+     *
+     * @param input the input
+     * @throws PacketProcessingException the PacketHandling exception
+     */
+    void processPacket(Packet input) throws PacketProcessingException;
 }

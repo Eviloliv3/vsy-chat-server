@@ -5,8 +5,8 @@ import de.vsy.shared_module.packet_management.ClientDataProvider;
 
 public interface BaseHandlingDataProvider {
 
-  ResultingPacketContentHandler getResultingPacketContentHandler();
+    ResultingPacketContentHandler getResultingPacketContentHandler();
 
-  ClientDataProvider getLocalClientDataProvider();
+    ClientDataProvider getLocalClientDataProvider();
 
 }

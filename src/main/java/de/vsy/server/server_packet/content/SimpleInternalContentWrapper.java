@@ -2,6 +2,7 @@ package de.vsy.server.server_packet.content;
 
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
 import de.vsy.shared_transmission.packet.content.PacketContent;
+
 import java.io.Serial;
 
 /**
@@ -9,28 +10,28 @@ import java.io.Serial;
  */
 public class SimpleInternalContentWrapper extends ServerPacketContentImpl {
 
-  @Serial
-  private static final long serialVersionUID = -7878330046557483936L;
-  private final PacketContent wrappedContent;
+    @Serial
+    private static final long serialVersionUID = -7878330046557483936L;
+    private final PacketContent wrappedContent;
 
-  /**
-   * Instantiates a new simple internal content wrapper.
-   *
-   * @param builder the builder
-   */
-  public SimpleInternalContentWrapper(SimpleInternalContentBuilder builder) {
-    super(builder);
-    this.wrappedContent = builder.getWrappedContent();
-  }
+    /**
+     * Instantiates a new simple internal content wrapper.
+     *
+     * @param builder the builder
+     */
+    public SimpleInternalContentWrapper(SimpleInternalContentBuilder builder) {
+        super(builder);
+        this.wrappedContent = builder.getWrappedContent();
+    }
 
-  public PacketContent getWrappedContent() {
-    return this.wrappedContent;
-  }
+    public PacketContent getWrappedContent() {
+        return this.wrappedContent;
+    }
 
-  @Override
-  public String toString() {
-    return "\"simpleContentWrapper\": { " + super.toString() + ", \"wrappedContent\": "
-        + this.wrappedContent
-        + " }";
-  }
+    @Override
+    public String toString() {
+        return "\"simpleContentWrapper\": { " + super.toString() + ", \"wrappedContent\": "
+                + this.wrappedContent
+                + " }";
+    }
 }

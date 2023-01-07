@@ -11,72 +11,72 @@ import de.vsy.shared_transmission.dto.CommunicatorDTO;
  */
 @JsonPOJOBuilder
 public class SimpleStatusSyncBuilder<T extends SimpleStatusSyncBuilder<T>> extends
-    ServerPacketContentBuilder<T> {
+        ServerPacketContentBuilder<T> {
 
-  private CommunicatorDTO communicatorData = null;
-  private ClientState clientState = null;
-  private boolean idToAdd = false;
+    private CommunicatorDTO communicatorData = null;
+    private ClientState clientState = null;
+    private boolean idToAdd = false;
 
-  public CommunicatorDTO getCommunicatorData() {
-    return this.communicatorData;
-  }
-
-  public ClientState getClientState() {
-    return this.clientState;
-  }
-
-  public boolean getIsToAdd() {
-    return this.idToAdd;
-  }
-
-  /**
-   * With.
-   *
-   * @param idToAdd the is to add
-   * @return the simple status sync builder
-   */
-  public SimpleStatusSyncBuilder<T> withToAdd(final boolean idToAdd) {
-    this.idToAdd = idToAdd;
-    return getInstanciable();
-  }
-
-  @Override
-  public SimpleStatusSyncBuilder<T> getInstanciable() {
-    return this;
-  }
-
-  @Override
-  public BaseStatusSyncDTO build() {
-    return new BaseStatusSyncDTO(this);
-  }
-
-  /**
-   * With.
-   *
-   * @param clientState the client state
-   * @return the simple status sync builder
-   */
-  public SimpleStatusSyncBuilder<T> withClientState(final ClientState clientState) {
-    if (clientState == null) {
-      throw new IllegalArgumentException("No ClientState specified.");
+    public CommunicatorDTO getCommunicatorData() {
+        return this.communicatorData;
     }
-    this.clientState = clientState;
-    return getInstanciable();
-  }
 
-  /**
-   * With.
-   *
-   * @param communicatorData the client id
-   * @return the simple status sync builder
-   */
-  public SimpleStatusSyncBuilder<T> withContactData(final CommunicatorDTO communicatorData) {
-    var communicatorDataCheck = BeanChecker.checkBean(communicatorData);
-
-    if (communicatorDataCheck.isPresent()) {
-      throw new IllegalArgumentException(communicatorDataCheck.get());
+    public ClientState getClientState() {
+        return this.clientState;
     }
-    this.communicatorData = communicatorData;
-    return getInstanciable();
-  }
+
+    public boolean getIsToAdd() {
+        return this.idToAdd;
+    }
+
+    /**
+     * With.
+     *
+     * @param idToAdd the is to add
+     * @return the simple status sync builder
+     */
+    public SimpleStatusSyncBuilder<T> withToAdd(final boolean idToAdd) {
+        this.idToAdd = idToAdd;
+        return getInstanciable();
+    }
+
+    @Override
+    public SimpleStatusSyncBuilder<T> getInstanciable() {
+        return this;
+    }
+
+    @Override
+    public BaseStatusSyncDTO build() {
+        return new BaseStatusSyncDTO(this);
+    }
+
+    /**
+     * With.
+     *
+     * @param clientState the client state
+     * @return the simple status sync builder
+     */
+    public SimpleStatusSyncBuilder<T> withClientState(final ClientState clientState) {
+        if (clientState == null) {
+            throw new IllegalArgumentException("No ClientState specified.");
+        }
+        this.clientState = clientState;
+        return getInstanciable();
+    }
+
+    /**
+     * With.
+     *
+     * @param communicatorData the client id
+     * @return the simple status sync builder
+     */
+    public SimpleStatusSyncBuilder<T> withContactData(final CommunicatorDTO communicatorData) {
+        var communicatorDataCheck = BeanChecker.checkBean(communicatorData);
+
+        if (communicatorDataCheck.isPresent()) {
+            throw new IllegalArgumentException(communicatorDataCheck.get());
+        }
+        this.communicatorData = communicatorData;
+        return getInstanciable();
+    }
 }

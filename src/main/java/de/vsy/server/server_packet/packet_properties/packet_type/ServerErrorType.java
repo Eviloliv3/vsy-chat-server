@@ -8,5 +8,5 @@ import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
  */
 @JsonTypeName("serverError")
 public enum ServerErrorType implements PacketType {
-  SERVER_STATUS
+    SERVER_STATUS
 }

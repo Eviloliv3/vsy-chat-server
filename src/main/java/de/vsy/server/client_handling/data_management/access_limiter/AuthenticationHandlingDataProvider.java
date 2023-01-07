@@ -13,12 +13,12 @@ import de.vsy.server.client_handling.data_management.logic.AuthenticationStateCo
  */
 public interface AuthenticationHandlingDataProvider extends BaseHandlingDataProvider {
 
-  /**
-   * Returns the handler buffers.
-   *
-   * @return the handler buffers
-   */
-  AuthenticationStateControl getGlobalAuthenticationStateControl();
+    /**
+     * Returns the handler buffers.
+     *
+     * @return the handler buffers
+     */
+    AuthenticationStateControl getGlobalAuthenticationStateControl();
 
-  LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
+    LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
 }

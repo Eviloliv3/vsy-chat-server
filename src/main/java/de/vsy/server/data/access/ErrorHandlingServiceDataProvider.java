@@ -7,10 +7,10 @@ import de.vsy.server.service.ServicePacketBufferManager;
  */
 public interface ErrorHandlingServiceDataProvider extends ServiceBaseDataProvider {
 
-  /**
-   * Returns the service PacketBuffer manager.
-   *
-   * @return the service PacketBuffer manager
-   */
-  ServicePacketBufferManager getServicePacketBufferManager();
+    /**
+     * Returns the service PacketBuffer manager.
+     *
+     * @return the service PacketBuffer manager
+     */
+    ServicePacketBufferManager getServicePacketBufferManager();
 }

@@ -4,7 +4,7 @@ import java.net.Socket;
 
 public interface ClientServer {
 
-  void serveClient(Socket clientConnection);
+    void serveClient(Socket clientConnection);
 
-  void shutdownServer();
+    void shutdownServer();
 }

@@ -7,19 +7,19 @@ import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdent
 
 public class ServerContentIdentificationProviderImpl extends ContentIdentificationProviderImpl {
 
-  {
-    super.registeredIdentifiers.putAll(new ServerStatusIdentificationProvider().getIdentifiers());
-  }
-
-  @Override
-  public ContentIdentifier getContentIdentifier(PacketContent data) {
-    final PacketContent toIdentify;
-
-    if (data instanceof SimpleInternalContentWrapper) {
-      toIdentify = ((SimpleInternalContentWrapper) data).getWrappedContent();
-    } else {
-      toIdentify = data;
+    {
+        super.registeredIdentifiers.putAll(new ServerStatusIdentificationProvider().getIdentifiers());
     }
-    return super.getContentIdentifier(toIdentify);
-  }
+
+    @Override
+    public ContentIdentifier getContentIdentifier(PacketContent data) {
+        final PacketContent toIdentify;
+
+        if (data instanceof SimpleInternalContentWrapper) {
+            toIdentify = ((SimpleInternalContentWrapper) data).getWrappedContent();
+        } else {
+            toIdentify = data;
+        }
+        return super.getContentIdentifier(toIdentify);
+    }
 }

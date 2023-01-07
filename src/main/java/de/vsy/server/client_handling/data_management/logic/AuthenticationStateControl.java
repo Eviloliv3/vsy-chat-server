@@ -5,49 +5,49 @@ import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 
 public interface AuthenticationStateControl extends ClientStateControl {
 
-  /**
-   * Firstly adds the authenticated client's communicator data to local state cache. Then adds
-   * AUTHENTICATED state. This order should be followed, because other objects may observe state
-   * changes and subsequently use the communicator data.
-   *
-   * @param clientData CommunicatorData
-   */
-  boolean loginClient(CommunicatorData clientData);
+    /**
+     * Firstly adds the authenticated client's communicator data to local state cache. Then adds
+     * AUTHENTICATED state. This order should be followed, because other objects may observe state
+     * changes and subsequently use the communicator data.
+     *
+     * @param clientData CommunicatorData
+     */
+    boolean registerClient(CommunicatorData clientData);
 
-  ClientState reconnectClient(CommunicatorData clientData);
+    ClientState reconnectClient(CommunicatorData clientData);
 
-  /**
-   * Removes all client specific data and states.
-   */
-  void logoutClient();
+    /**
+     * Removes all client specific data and states.
+     */
+    void deregisterClient();
 
-  /**
-   * Changes the local client's global pending state.
-   *
-   * @param isPending boolean
-   * @return true if global pending state could be change; false otherwise
-   */
-  boolean changePendingState(boolean isPending);
+    /**
+     * Changes the local client's global pending state.
+     *
+     * @param isPending boolean
+     * @return true if global pending state could be change; false otherwise
+     */
+    boolean changePersistentPendingState(boolean isPending);
 
-  /**
-   * Returns the client's global pending state.
-   *
-   * @return boolean
-   */
-  boolean getPendingState();
+    /**
+     * Returns the client's global pending state.
+     *
+     * @return boolean
+     */
+    boolean getPersistentPendingState();
 
-  /**
-   * Tries to change the local client's global reconnection state.
-   *
-   * @param newState boolean
-   * @return boolean
-   */
-  boolean changeReconnectionState(boolean newState);
+    /**
+     * Tries to change the local client's global reconnection state.
+     *
+     * @param newState boolean
+     * @return boolean
+     */
+    boolean changePersistentReconnectionState(boolean newState);
 
-  /**
-   * Returns the local client's global reconnection state.
-   *
-   * @return boolean
-   */
-  boolean getReconnectionState();
+    /**
+     * Returns the local client's global reconnection state.
+     *
+     * @return boolean
+     */
+    boolean getPersistentReconnectionState();
 }

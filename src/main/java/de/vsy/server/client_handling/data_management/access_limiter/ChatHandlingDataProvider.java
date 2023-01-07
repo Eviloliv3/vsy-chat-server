@@ -7,5 +7,5 @@ import de.vsy.server.client_handling.data_management.LocalClientStateObserverMan
  */
 public interface ChatHandlingDataProvider extends BaseHandlingDataProvider {
 
-  LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
+    LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
 }

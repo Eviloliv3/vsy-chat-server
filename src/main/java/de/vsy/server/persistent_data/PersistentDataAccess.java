@@ -5,8 +5,8 @@ package de.vsy.server.persistent_data;
  */
 public interface PersistentDataAccess {
 
-  /**
-   * Removes the file accessLimiter.
-   */
-  void removeFileAccess();
+    /**
+     * Removes the file accessLimiter.
+     */
+    void removeFileAccess();
 }

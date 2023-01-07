@@ -3,11 +3,6 @@
  */
 package de.vsy.server.service.packet_logic.type_processor;
 
-import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
-import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
-import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
-
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
 import de.vsy.server.client_management.ClientStateTranslator;
 import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
@@ -26,109 +21,115 @@ import de.vsy.server.service.packet_logic.ServicePacketProcessor;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
 
 /**
  * Handles status synchronization Packet sent by other servers.
  */
 public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
 
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final SocketConnectionDataManager serverConnectionDataManager;
-  private final LocalServerConnectionData serverNode;
-  private final ServicePacketBufferManager serviceBufferManager;
-  private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
-  private final ResultingPacketContentHandler resultingPackets;
-  private final LiveClientStateDAO persistentClientStates;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final SocketConnectionDataManager serverConnectionDataManager;
+    private final LocalServerConnectionData serverNode;
+    private final ServicePacketBufferManager serviceBufferManager;
+    private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+    private final ResultingPacketContentHandler resultingPackets;
+    private final LiveClientStateDAO persistentClientStates;
 
-  /**
-   * Instantiates a new client status sync PacketHandler.
-   *
-   * @param serviceDataAccess the service dataManagement accessLimiter
-   */
-  public ClientStatusSyncPacketProcessor(final ResultingPacketContentHandler resultingPackets,
-      final ClientStatusRegistrationServiceDataProvider serviceDataAccess) {
-    this.resultingPackets = resultingPackets;
-    this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
-    this.serverNode = this.serverConnectionDataManager.getLocalServerConnectionData();
-    this.serviceBufferManager = serviceDataAccess.getServicePacketBufferManager();
-    this.clientSubscriptionManager = serviceDataAccess.getClientSubscriptionManager();
-    this.persistentClientStates = serviceDataAccess.getLiveClientStateDAO();
-  }
-
-  @Override
-  public void processPacket(final Packet input) throws PacketProcessingException {
-    RemoteServerConnectionData notSynchronizedServerData;
-    final var content = input.getPacketContent();
-
-    if (content instanceof final ServerPacketContentImpl inputData) {
-      final var originatingServerId = inputData.getOriginatingServerId();
-
-      if (originatingServerId != this.serverNode.getServerId()
-          && inputData instanceof final BaseStatusSyncDTO simpleStatus) {
-        translateState(simpleStatus, originatingServerId);
-      }
-
-      if (inputData instanceof ExtendedStatusSyncDTO) {
-        final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
-        resultingPackets.addRequest(inputData, clientBroadcast);
-      }
-      final var synchronizedServers = new HashSet<>(inputData.getSynchronizedServers());
-      synchronizedServers.add(this.serverNode.getServerId());
-
-      notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
-          INITIATED, synchronizedServers);
-
-      if (notSynchronizedServerData != null) {
-        final var recipient = getServerEntity(notSynchronizedServerData.getServerId());
-        resultingPackets.addRequest(inputData, recipient);
-      } else {
-        LOGGER.trace(
-            "Not synchronized server set is empty, state synchronization message will be discarded.");
-      }
-    } else {
-      throw new PacketProcessingException("Content not of type ServerPacketContentImpl.");
+    /**
+     * Instantiates a new client status sync PacketHandler.
+     *
+     * @param serviceDataAccess the service dataManagement accessLimiter
+     */
+    public ClientStatusSyncPacketProcessor(final ResultingPacketContentHandler resultingPackets,
+                                           final ClientStatusRegistrationServiceDataProvider serviceDataAccess) {
+        this.resultingPackets = resultingPackets;
+        this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
+        this.serverNode = this.serverConnectionDataManager.getLocalServerConnectionData();
+        this.serviceBufferManager = serviceDataAccess.getServicePacketBufferManager();
+        this.clientSubscriptionManager = serviceDataAccess.getClientSubscriptionManager();
+        this.persistentClientStates = serviceDataAccess.getLiveClientStateDAO();
     }
-  }
 
-  /**
-   * Translate state.
-   *
-   * @param clientStatusData the messenger status
-   */
-  private void translateState(final BaseStatusSyncDTO clientStatusData, final int serviceId) {
-    final var remoteClientBuffer = this.serviceBufferManager.getSpecificBuffer(
-        Service.TYPE.SERVER_TRANSFER,
-        serviceId);
-    final var subscriptions = createSubscriptionMap(clientStatusData);
-    SubscriptionHandler subscriptionLogic =
-        clientStatusData.isToAdd() ? this.clientSubscriptionManager::subscribe
-            : this.clientSubscriptionManager::unsubscribe;
+    @Override
+    public void processPacket(final Packet input) throws PacketProcessingException {
+        RemoteServerConnectionData notSynchronizedServerData;
+        final var content = input.getPacketContent();
 
-    for (final var currentSubscriptionSet : subscriptions.entrySet()) {
-      final var currentTopic = currentSubscriptionSet.getKey();
-      final var currentThreadSet = currentSubscriptionSet.getValue();
+        if (content instanceof final ServerPacketContentImpl inputData) {
+            final var originatingServerId = inputData.getOriginatingServerId();
 
-      for (final var currentThread : currentThreadSet) {
-        subscriptionLogic.handle(currentTopic, currentThread, remoteClientBuffer);
-      }
+            if (originatingServerId != this.serverNode.getServerId()
+                    && inputData instanceof final BaseStatusSyncDTO simpleStatus) {
+                translateState(simpleStatus, originatingServerId);
+            }
+
+            if (inputData instanceof ExtendedStatusSyncDTO) {
+                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
+                resultingPackets.addRequest(inputData, clientBroadcast);
+            }
+            final var synchronizedServers = new HashSet<>(inputData.getSynchronizedServers());
+            synchronizedServers.add(this.serverNode.getServerId());
+
+            notSynchronizedServerData = this.serverConnectionDataManager.getDistinctNodeData(
+                    INITIATED, synchronizedServers);
+
+            if (notSynchronizedServerData != null) {
+                final var recipient = getServerEntity(notSynchronizedServerData.getServerId());
+                resultingPackets.addRequest(inputData, recipient);
+            } else {
+                LOGGER.trace(
+                        "Not synchronized server set is empty, state synchronization message will be discarded.");
+            }
+        } else {
+            throw new PacketProcessingException("Content not of type ServerPacketContentImpl.");
+        }
     }
-  }
 
-  private Map<PacketCategory, Set<Integer>> createSubscriptionMap(
-      final BaseStatusSyncDTO statusSync) {
-    final var clientState = statusSync.getClientState();
-    final var clientId = statusSync.getContactData().getCommunicatorId();
-    final var subscriptions = ClientStateTranslator.prepareClientSubscriptionMap(clientState,
-        statusSync.isToAdd(),
-        clientId);
-    final var persistedClientState = this.persistentClientStates.getClientState(clientId);
+    /**
+     * Translate state.
+     *
+     * @param clientStatusData the messenger status
+     */
+    private void translateState(final BaseStatusSyncDTO clientStatusData, final int serviceId) {
+        final var remoteClientBuffer = this.serviceBufferManager.getSpecificBuffer(
+                Service.TYPE.SERVER_TRANSFER,
+                serviceId);
+        final var subscriptions = createSubscriptionMap(clientStatusData);
+        SubscriptionHandler subscriptionLogic =
+                clientStatusData.isToAdd() ? this.clientSubscriptionManager::subscribe
+                        : this.clientSubscriptionManager::unsubscribe;
 
-    subscriptions.putAll(persistedClientState.getExtraSubscriptions());
-    return subscriptions;
-  }
+        for (final var currentSubscriptionSet : subscriptions.entrySet()) {
+            final var currentTopic = currentSubscriptionSet.getKey();
+            final var currentThreadSet = currentSubscriptionSet.getValue();
+
+            for (final var currentThread : currentThreadSet) {
+                subscriptionLogic.handle(currentTopic, currentThread, remoteClientBuffer);
+            }
+        }
+    }
+
+    private Map<PacketCategory, Set<Integer>> createSubscriptionMap(
+            final BaseStatusSyncDTO statusSync) {
+        final var clientState = statusSync.getClientState();
+        final var clientId = statusSync.getContactData().getCommunicatorId();
+        final var subscriptions = ClientStateTranslator.prepareClientSubscriptionMap(clientState,
+                statusSync.isToAdd(),
+                clientId);
+        final var persistedClientState = this.persistentClientStates.getClientState(clientId);
+
+        subscriptions.putAll(persistedClientState.getExtraSubscriptions());
+        return subscriptions;
+    }
 }

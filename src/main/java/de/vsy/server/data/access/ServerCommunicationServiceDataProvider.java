@@ -13,22 +13,22 @@ import de.vsy.server.service.ServicePacketBufferManager;
  */
 public interface ServerCommunicationServiceDataProvider extends ServiceBaseDataProvider {
 
-  /**
-   * Returns the client state PersistenceDAO provider.
-   *
-   * @return the client state PersistenceDAO provider
-   */
-  LiveClientStateDAO getLiveClientStateDAO();
+    /**
+     * Returns the client state PersistenceDAO provider.
+     *
+     * @return the client state PersistenceDAO provider
+     */
+    LiveClientStateDAO getLiveClientStateDAO();
 
-  /**
-   * Returns the server connection dataManagement.
-   *
-   * @return the server connection dataManagement
-   */
-  SocketConnectionDataManager getServerConnectionDataManager();
+    /**
+     * Returns the server connection dataManagement.
+     *
+     * @return the server connection dataManagement
+     */
+    SocketConnectionDataManager getServerConnectionDataManager();
 
-  ServicePacketBufferManager getServicePacketBufferManager();
+    ServicePacketBufferManager getServicePacketBufferManager();
 
-  CommunicatorPersistenceDAO getCommunicatorDataAccessor();
+    CommunicatorPersistenceDAO getCommunicatorDataAccessor();
 
 }

@@ -9,19 +9,19 @@ import de.vsy.server.service.ServicePacketBufferManager;
 
 public interface ClientStatusRegistrationServiceDataProvider extends ServiceBaseDataProvider {
 
-  /**
-   * Returns the server connection dataManagement.
-   *
-   * @return the server connection dataManagement
-   */
-  SocketConnectionDataManager getServerConnectionDataManager();
+    /**
+     * Returns the server connection dataManagement.
+     *
+     * @return the server connection dataManagement
+     */
+    SocketConnectionDataManager getServerConnectionDataManager();
 
-  /**
-   * Returns the service PacketBuffer manager.
-   *
-   * @return the service PacketBuffer manager
-   */
-  ServicePacketBufferManager getServicePacketBufferManager();
+    /**
+     * Returns the service PacketBuffer manager.
+     *
+     * @return the service PacketBuffer manager
+     */
+    ServicePacketBufferManager getServicePacketBufferManager();
 
-  LiveClientStateDAO getLiveClientStateDAO();
+    LiveClientStateDAO getLiveClientStateDAO();
 }

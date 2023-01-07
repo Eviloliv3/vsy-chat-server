@@ -12,177 +12,178 @@ import de.vsy.server.service.inter_server.InterServerCommunicationServiceCreator
 import de.vsy.server.service.inter_server.InterServerSocketConnectionEstablisher;
 import de.vsy.server.service.request.PacketAssignmentService;
 import de.vsy.server.service.status_synchronization.ClientStatusSynchronizationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ServiceControl implements InterServerCommunicationServiceCreator {
 
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final Map<Service.TYPE, Set<Thread>> registeredServices;
-  private final ServiceDataAccessManager serviceDataModel;
-  private InterServerSocketConnectionEstablisher interServerConnectionEstablisher;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final Map<Service.TYPE, Set<Thread>> registeredServices;
+    private final ServiceDataAccessManager serviceDataModel;
+    private InterServerSocketConnectionEstablisher interServerConnectionEstablisher;
 
-  /**
-   * Instantiates a new service control.
-   *
-   * @param serverData                  the server dataManagement
-   * @param serverPersistentDataManager the server persistence access
-   */
-  public ServiceControl(final ServerDataManager serverData,
-      final ServerPersistentDataManager serverPersistentDataManager) {
+    /**
+     * Instantiates a new service control.
+     *
+     * @param serverData                  the server dataManagement
+     * @param serverPersistentDataManager the server persistence access
+     */
+    public ServiceControl(final ServerDataManager serverData,
+                          final ServerPersistentDataManager serverPersistentDataManager) {
 
-    serviceDataModel = new ServiceDataAccessManager(serverData, serverPersistentDataManager);
-    this.registeredServices = new EnumMap<>(Service.TYPE.class);
-  }
-
-  /**
-   * All services healthy.
-   *
-   * @return true, if successful
-   */
-  public boolean confinedServicesHealthy() {
-    if (!this.interServerConnectionEstablisher.isEstablishingConnections()) {
-      return false;
+        serviceDataModel = new ServiceDataAccessManager(serverData, serverPersistentDataManager);
+        this.registeredServices = new EnumMap<>(Service.TYPE.class);
     }
 
-    for (final var currentThreadSet : this.registeredServices.entrySet()) {
-      final var currentServiceType = currentThreadSet.getKey();
-
-      if (!(currentServiceType.equals(TYPE.SERVER_TRANSFER))) {
-        final var currentServiceThreads = currentThreadSet.getValue();
-
-        for (final var currentThread : currentServiceThreads) {
-
-          if (!currentThread.isAlive() || currentThread.isInterrupted()) {
+    /**
+     * All services healthy.
+     *
+     * @return true, if successful
+     */
+    public boolean confinedServicesHealthy() {
+        if (!this.interServerConnectionEstablisher.isEstablishingConnections()) {
             return false;
-          }
         }
-      }
-    }
-    return true;
-  }
 
-  /**
-   * Start services.
-   */
-  public void startServices() {
-    startAssignmentThread();
-    startClientStatusSynchronizationThread();
-    startInterServerCommServices();
-  }
+        for (final var currentThreadSet : this.registeredServices.entrySet()) {
+            final var currentServiceType = currentThreadSet.getKey();
 
-  private void startInterServerCommServices() {
-    var remoteConnections = this.serviceDataModel.getServerConnectionDataManager();
+            if (!(currentServiceType.equals(TYPE.SERVER_TRANSFER))) {
+                final var currentServiceThreads = currentThreadSet.getValue();
 
-    while (remoteConnections.uninitiatedConnectionsRemaining()) {
-      startInterServerCommThread();
+                for (final var currentThread : currentServiceThreads) {
+
+                    if (!currentThread.isAlive() || currentThread.isInterrupted()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
-  }
-
-  public void startInterServerConnector() {
-    this.interServerConnectionEstablisher = new InterServerSocketConnectionEstablisher(
-        this.serviceDataModel.getServerSynchronizationManager(),
-        this.serviceDataModel.getServerConnectionDataManager(), this);
-    interServerConnectionEstablisher.establishConnections();
-  }
-
-  /**
-   * Start assignment thread.
-   */
-  public void startAssignmentThread() {
-    final var as = new PacketAssignmentService(this.serviceDataModel);
-    startService(as);
-  }
-
-  /**
-   * Start client status synchronization thread.
-   */
-  public void startClientStatusSynchronizationThread() {
-    final var csss = new ClientStatusSynchronizationService(this.serviceDataModel);
-    startService(csss);
-  }
-
-  /**
-   * Start service.
-   *
-   * @param newService the new service
-   */
-  private void startService(final Service newService) {
-    Set<Thread> sameTypeServices = this.registeredServices.computeIfAbsent(
-        newService.getServiceType(),
-        serviceType -> new HashSet<>());
-    Thread newServiceThread = new Thread(newService);
-    sameTypeServices.add(newServiceThread);
-    newServiceThread.start();
-    this.registeredServices.put(newService.getServiceType(), sameTypeServices);
-
-    try {
-      newService.waitForServiceReadiness();
-    } catch (InterruptedException ie) {
-      LOGGER.error("Interrupted while waiting for readiness: {}:", newService.getServiceName());
+    /**
+     * Start services.
+     */
+    public void startServices() {
+        startAssignmentThread();
+        startClientStatusSynchronizationThread();
+        startInterServerCommServices();
     }
-  }
 
-  /**
-   * Start inter-server comm thread.
-   */
-  public void startInterServerCommThread() {
-    final var iscr = new InterServerCommunicationService(this.serviceDataModel);
-    startService(iscr);
-  }
+    private void startInterServerCommServices() {
+        var remoteConnections = this.serviceDataModel.getServerConnectionDataManager();
 
-  public void stopAllServices() {
-    LOGGER.info("Services termination initiated.");
-    this.interServerConnectionEstablisher.stopEstablishingConnections();
+        while (remoteConnections.uninitiatedConnectionsRemaining()) {
+            startInterServerCommThread();
+        }
 
-    for (final var serviceSet : this.registeredServices.entrySet()) {
+    }
 
-      for (final var currentService : serviceSet.getValue()) {
-        final var threadName = currentService.getName();
-        LOGGER.info("Service termination initiated: {}", currentService.getName());
-        currentService.interrupt();
+    public void startInterServerConnector() {
+        this.interServerConnectionEstablisher = new InterServerSocketConnectionEstablisher(
+                this.serviceDataModel.getServerSynchronizationManager(),
+                this.serviceDataModel.getServerConnectionDataManager(), this);
+        interServerConnectionEstablisher.establishConnections();
+    }
+
+    /**
+     * Start assignment thread.
+     */
+    public void startAssignmentThread() {
+        final var as = new PacketAssignmentService(this.serviceDataModel);
+        startService(as);
+    }
+
+    /**
+     * Start client status synchronization thread.
+     */
+    public void startClientStatusSynchronizationThread() {
+        final var csss = new ClientStatusSynchronizationService(this.serviceDataModel);
+        startService(csss);
+    }
+
+    /**
+     * Start service.
+     *
+     * @param newService the new service
+     */
+    private void startService(final Service newService) {
+        Set<Thread> sameTypeServices = this.registeredServices.computeIfAbsent(
+                newService.getServiceType(),
+                serviceType -> new HashSet<>());
+        Thread newServiceThread = new Thread(newService);
+        sameTypeServices.add(newServiceThread);
+        newServiceThread.start();
+        this.registeredServices.put(newService.getServiceType(), sameTypeServices);
 
         try {
-          currentService.join(500);
-        } catch (InterruptedException e) {
-          LOGGER.error("Service shutdown failed.", e);
+            newService.waitForServiceReadiness();
+        } catch (InterruptedException ie) {
+            LOGGER.error("Interrupted while waiting for readiness: {}:", newService.getServiceName());
         }
-        LOGGER.info("{} terminated.", threadName);
-      }
     }
-    LOGGER.info("Services terminated.");
-  }
 
-  /**
-   * Stop service.
-   *
-   * @param serviceType the service type
-   * @param threadName  the thread name
-   * @return true, if successful
-   */
-  public boolean stopService(final Service.TYPE serviceType, final String threadName) {
-    Set<Thread> serviceThreads;
-
-    if (serviceType == null || threadName == null) {
-      return false;
+    /**
+     * Start inter-server comm thread.
+     */
+    public void startInterServerCommThread() {
+        final var iscr = new InterServerCommunicationService(this.serviceDataModel);
+        startService(iscr);
     }
-    serviceThreads = this.registeredServices.get(serviceType);
 
-    if (serviceThreads != null) {
+    public void stopAllServices() {
+        LOGGER.info("Services termination initiated.");
+        this.interServerConnectionEstablisher.stopEstablishingConnections();
 
-      for (final Thread service : serviceThreads) {
+        for (final var serviceSet : this.registeredServices.entrySet()) {
 
-        if (service.getName().equals(threadName)) {
-          service.interrupt();
-          return true;
+            for (final var currentService : serviceSet.getValue()) {
+                final var threadName = currentService.getName();
+                LOGGER.info("Service termination initiated: {}", currentService.getName());
+                currentService.interrupt();
+
+                try {
+                    currentService.join(500);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Service shutdown failed.", e);
+                }
+                LOGGER.info("{} terminated.", threadName);
+            }
         }
-      }
+        LOGGER.info("Services terminated.");
     }
-    return false;
-  }
+
+    /**
+     * Stop service.
+     *
+     * @param serviceType the service type
+     * @param threadName  the thread name
+     * @return true, if successful
+     */
+    public boolean stopService(final Service.TYPE serviceType, final String threadName) {
+        Set<Thread> serviceThreads;
+
+        if (serviceType == null || threadName == null) {
+            return false;
+        }
+        serviceThreads = this.registeredServices.get(serviceType);
+
+        if (serviceThreads != null) {
+
+            for (final Thread service : serviceThreads) {
+
+                if (service.getName().equals(threadName)) {
+                    service.interrupt();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

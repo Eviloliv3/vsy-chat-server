@@ -9,40 +9,41 @@ import de.vsy.shared_module.packet_processing.processor_provision.PacketProcesso
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdentifier;
+
 import java.util.Optional;
 
 public class PacketProcessorManager {
 
-  private final PacketProcessorProvider contentHandlerProvider;
-  private final CategoryBasedProcessorFactoryProvider handlerProvider;
-  private final HandlerLocalDataManager threadDataAccess;
+    private final PacketProcessorProvider contentHandlerProvider;
+    private final CategoryBasedProcessorFactoryProvider handlerProvider;
+    private final HandlerLocalDataManager threadDataAccess;
 
-  public PacketProcessorManager(HandlerLocalDataManager threadDataAccess,
-      CategoryBasedProcessorFactoryProvider handlerProvider) {
-    this.contentHandlerProvider = new PacketProcessorProvider();
-    this.threadDataAccess = threadDataAccess;
-    this.handlerProvider = handlerProvider;
-  }
-
-  public void registerCategoryProcessingProvider(PacketCategory category,
-      ContentBasedProcessorFactory processingProvider) {
-    this.contentHandlerProvider.registerTypeProcessingProvider(category,
-        new ContentBasedPacketProcessorProvider(processingProvider));
-  }
-
-  public Optional<PacketProcessor> getProcessor(ContentIdentifier identifier,
-      Class<? extends PacketContent> contentType) {
-    Optional<PacketProcessor> categoryProcessing;
-    categoryProcessing = contentHandlerProvider.getProcessor(identifier.getPacketCategory(),
-        contentType);
-
-    if (categoryProcessing.isEmpty()) {
-      var factory = new ContentBasedPacketProcessorProvider(this.handlerProvider
-          .getCategoryHandlerFactory(identifier.getPacketCategory(), this.threadDataAccess));
-      this.contentHandlerProvider.registerTypeProcessingProvider(identifier.getPacketCategory(),
-          factory);
-      categoryProcessing = factory.getProcessor(contentType);
+    public PacketProcessorManager(HandlerLocalDataManager threadDataAccess,
+                                  CategoryBasedProcessorFactoryProvider handlerProvider) {
+        this.contentHandlerProvider = new PacketProcessorProvider();
+        this.threadDataAccess = threadDataAccess;
+        this.handlerProvider = handlerProvider;
     }
-    return categoryProcessing;
-  }
+
+    public void registerCategoryProcessingProvider(PacketCategory category,
+                                                   ContentBasedProcessorFactory processingProvider) {
+        this.contentHandlerProvider.registerTypeProcessingProvider(category,
+                new ContentBasedPacketProcessorProvider(processingProvider));
+    }
+
+    public Optional<PacketProcessor> getProcessor(ContentIdentifier identifier,
+                                                  Class<? extends PacketContent> contentType) {
+        Optional<PacketProcessor> categoryProcessing;
+        categoryProcessing = contentHandlerProvider.getProcessor(identifier.getPacketCategory(),
+                contentType);
+
+        if (categoryProcessing.isEmpty()) {
+            var factory = new ContentBasedPacketProcessorProvider(this.handlerProvider
+                    .getCategoryHandlerFactory(identifier.getPacketCategory(), this.threadDataAccess));
+            this.contentHandlerProvider.registerTypeProcessingProvider(identifier.getPacketCategory(),
+                    factory);
+            categoryProcessing = factory.getProcessor(contentType);
+        }
+        return categoryProcessing;
+    }
 }

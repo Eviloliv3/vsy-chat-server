@@ -9,28 +9,28 @@ import de.vsy.shared_transmission.packet.Packet;
 
 public class PacketContextCheckLink extends AbstractPacketProcessorLink {
 
-  private final PermittedPacketCategoryCheck packetCategoryCheck;
+    private final PermittedPacketCategoryCheck packetCategoryCheck;
 
-  public PacketContextCheckLink(PacketProcessor nextStep,
-      PermittedPacketCategoryCheck packetCategoryCheck) {
-    super(nextStep);
-    this.packetCategoryCheck = packetCategoryCheck;
-  }
-
-  @Override
-  public void processPacket(Packet input)
-      throws PacketValidationException, PacketProcessingException {
-    var inputCategory = input.getPacketProperties().getPacketIdentificationProvider()
-        .getPacketCategory();
-
-    if (!this.packetCategoryCheck.checkPacketCategory(inputCategory)) {
-      var errorCause = "Packets of category \"" + inputCategory
-          + "\" cannot be processed in your current state."
-          + " Allowed categories are: "
-          + this.packetCategoryCheck.getPermittedPacketCategories();
-
-      throw new PacketValidationException(errorCause);
+    public PacketContextCheckLink(PacketProcessor nextStep,
+                                  PermittedPacketCategoryCheck packetCategoryCheck) {
+        super(nextStep);
+        this.packetCategoryCheck = packetCategoryCheck;
     }
-    super.nextLink.processPacket(input);
-  }
+
+    @Override
+    public void processPacket(Packet input)
+            throws PacketValidationException, PacketProcessingException {
+        var inputCategory = input.getPacketProperties().getPacketIdentificationProvider()
+                .getPacketCategory();
+
+        if (!this.packetCategoryCheck.checkPacketCategory(inputCategory)) {
+            var errorCause = "Packets of category \"" + inputCategory
+                    + "\" cannot be processed in your current state."
+                    + " Allowed categories are: "
+                    + this.packetCategoryCheck.getPermittedPacketCategories();
+
+            throw new PacketValidationException(errorCause);
+        }
+        super.nextLink.processPacket(input);
+    }
 }

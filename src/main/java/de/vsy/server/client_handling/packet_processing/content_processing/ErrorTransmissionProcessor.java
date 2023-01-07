@@ -12,18 +12,18 @@ import org.apache.logging.log4j.Logger;
 
 public class ErrorTransmissionProcessor implements ContentProcessor<ErrorDTO> {
 
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final ResultingPacketContentHandler contentHandler;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final ResultingPacketContentHandler contentHandler;
 
-  /**
-   * Instantiates a new error response transmission handler.
-   */
-  public ErrorTransmissionProcessor(final ErrorHandlingDataProvider threadDataAccess) {
-    this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
-  }
+    /**
+     * Instantiates a new error response transmission handler.
+     */
+    public ErrorTransmissionProcessor(final ErrorHandlingDataProvider threadDataAccess) {
+        this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+    }
 
-  @Override
-  public void processContent(ErrorDTO validatedContent) {
-    this.contentHandler.addRequest(validatedContent);
-  }
+    @Override
+    public void processContent(ErrorDTO validatedContent) {
+        this.contentHandler.addRequest(validatedContent);
+    }
 }

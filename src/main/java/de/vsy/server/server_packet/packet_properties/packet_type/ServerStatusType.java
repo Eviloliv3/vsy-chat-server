@@ -8,5 +8,5 @@ import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
  */
 @JsonTypeName("serverStatus")
 public enum ServerStatusType implements PacketType {
-  SERVER_STATUS, CLIENT_STATUS
+    SERVER_STATUS, CLIENT_STATUS
 }

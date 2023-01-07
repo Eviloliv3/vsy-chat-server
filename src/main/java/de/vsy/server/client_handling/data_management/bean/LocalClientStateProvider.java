@@ -4,12 +4,12 @@ import de.vsy.server.client_management.ClientState;
 
 public interface LocalClientStateProvider {
 
-  boolean checkClientState(ClientState toCheck);
+    boolean checkClientState(ClientState toCheck);
 
-  /**
-   * Returns client state changes once per change.
-   *
-   * @return true, if client state change since last check; false otherwise
-   */
-  boolean clientStateHasChanged();
+    /**
+     * Returns client state changes once per change.
+     *
+     * @return true, if client state change since last check; false otherwise
+     */
+    boolean clientStateHasChanged();
 }

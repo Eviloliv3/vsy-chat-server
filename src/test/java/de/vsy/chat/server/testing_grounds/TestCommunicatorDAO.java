@@ -15,42 +15,42 @@ import org.junit.jupiter.api.Test;
  */
 class TestCommunicatorDAO {
 
-  final CommunicatorPersistenceDAO dataProvider = new CommunicatorPersistenceDAO();
+    final CommunicatorPersistenceDAO dataProvider = new CommunicatorPersistenceDAO();
 
-  @BeforeEach
-  void createAccess() throws InterruptedException {
-    this.dataProvider.createFileAccess();
-  }
+    @BeforeEach
+    void createAccess() throws InterruptedException {
+        this.dataProvider.createFileAccess();
+    }
 
-  @AfterEach
-  void removeAllClients() {
-    this.dataProvider.removeFileAccess();
-  }
+    @AfterEach
+    void removeAllClients() {
+        this.dataProvider.removeFileAccess();
+    }
 
-  @Test
-  void addComm() {
-    var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
-    Assertions.assertTrue(this.dataProvider.addCommunicator(newComm));
-  }
+    @Test
+    void addComm() {
+        var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
+        Assertions.assertTrue(this.dataProvider.addCommunicator(newComm));
+    }
 
-  @Test
-  void getComm() {
-    var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
-    this.dataProvider.addCommunicator(newComm);
-    Assertions.assertEquals(this.dataProvider.getCommunicatorData(11111), newComm);
-  }
+    @Test
+    void getComm() {
+        var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
+        this.dataProvider.addCommunicator(newComm);
+        Assertions.assertEquals(this.dataProvider.getCommunicatorData(11111), newComm);
+    }
 
-  @Test
-  void delDataComm() {
-    var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
-    this.dataProvider.addCommunicator(newComm);
-    Assertions.assertTrue(this.dataProvider.removeCommunicator(newComm));
-  }
+    @Test
+    void delDataComm() {
+        var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
+        this.dataProvider.addCommunicator(newComm);
+        Assertions.assertTrue(this.dataProvider.removeCommunicator(newComm));
+    }
 
-  @Test
-  void delIdComm() {
-    var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
-    this.dataProvider.addCommunicator(newComm);
-    Assertions.assertTrue(this.dataProvider.removeCommunicator(11111));
-  }
+    @Test
+    void delIdComm() {
+        var newComm = CommunicatorData.valueOf(11111, 11111, "New Communicator");
+        this.dataProvider.addCommunicator(newComm);
+        Assertions.assertTrue(this.dataProvider.removeCommunicator(11111));
+    }
 }

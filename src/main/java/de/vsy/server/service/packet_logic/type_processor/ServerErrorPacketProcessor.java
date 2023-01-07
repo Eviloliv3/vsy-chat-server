@@ -13,25 +13,25 @@ import org.apache.logging.log4j.Logger;
  */
 public class ServerErrorPacketProcessor implements ServicePacketProcessor {
 
-  private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
-  /**
-   * Instantiates a new server error PacketHandler.
-   *
-   * @param serviceDataProvider the dataManagement accessLimiter provider
-   */
-  public ServerErrorPacketProcessor(final ErrorHandlingServiceDataProvider serviceDataProvider) {
+    /**
+     * Instantiates a new server error PacketHandler.
+     *
+     * @param serviceDataProvider the dataManagement accessLimiter provider
+     */
+    public ServerErrorPacketProcessor(final ErrorHandlingServiceDataProvider serviceDataProvider) {
 
-  }
-
-  @Override
-  public void processPacket(final Packet input) {
-    PacketContent content;
-
-    content = input.getPacketContent();
-
-    if (!(content instanceof ServerFailureDTO)) {
-      LOGGER.info("Invalid data format.");
     }
-  }
+
+    @Override
+    public void processPacket(final Packet input) {
+        PacketContent content;
+
+        content = input.getPacketContent();
+
+        if (!(content instanceof ServerFailureDTO)) {
+            LOGGER.info("Invalid data format.");
+        }
+    }
 }

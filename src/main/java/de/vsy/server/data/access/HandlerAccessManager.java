@@ -16,48 +16,48 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
  */
 public class HandlerAccessManager {
 
-  private static LiveClientStateDAO clientStatePersistenceManager;
-  private static AbstractPacketCategorySubscriptionManager clientSubscriptionHandler;
-  private static ClientTransactionDAO clientTransactionManager;
-  private static CommunicatorDataManipulator communicatorDataManipulator;
-  private static LocalServerConnectionData serverNodeData;
-  private static PendingClientWatcherManager pendingClientManager;
+    private static LiveClientStateDAO clientStatePersistenceManager;
+    private static AbstractPacketCategorySubscriptionManager clientSubscriptionHandler;
+    private static ClientTransactionDAO clientTransactionManager;
+    private static CommunicatorDataManipulator communicatorDataManipulator;
+    private static LocalServerConnectionData serverNodeData;
+    private static PendingClientWatcherManager pendingClientManager;
 
-  private HandlerAccessManager() {
-  }
+    private HandlerAccessManager() {
+    }
 
-  public static void setupStaticAccess(final ServerDataManager serverDataAccess,
-      final ServerPersistentDataManager serverPersistentDataManager) {
-    clientStatePersistenceManager = serverPersistentDataManager.getClientStateAccessManager();
-    clientSubscriptionHandler = serverDataAccess.getClientCategorySubscriptionManager();
-    clientTransactionManager = serverPersistentDataManager.getTransactionAccessManager();
-    communicatorDataManipulator = new CommunicatorDataManipulator(serverPersistentDataManager);
-    serverNodeData = serverDataAccess.getServerConnectionDataManager()
-        .getLocalServerConnectionData();
-    pendingClientManager = new PendingClientWatcherManager();
-  }
+    public static void setupStaticAccess(final ServerDataManager serverDataAccess,
+                                         final ServerPersistentDataManager serverPersistentDataManager) {
+        clientStatePersistenceManager = serverPersistentDataManager.getClientStateAccessManager();
+        clientSubscriptionHandler = serverDataAccess.getClientCategorySubscriptionManager();
+        clientTransactionManager = serverPersistentDataManager.getTransactionAccessManager();
+        communicatorDataManipulator = new CommunicatorDataManipulator(serverPersistentDataManager);
+        serverNodeData = serverDataAccess.getServerConnectionDataManager()
+                .getLocalServerConnectionData();
+        pendingClientManager = new PendingClientWatcherManager();
+    }
 
-  public static LocalServerConnectionData getLocalServerConnectionData() {
-    return serverNodeData;
-  }
+    public static LocalServerConnectionData getLocalServerConnectionData() {
+        return serverNodeData;
+    }
 
-  public static ClientTransactionDAO getClientTransactionAccessManager() {
-    return clientTransactionManager;
-  }
+    public static ClientTransactionDAO getClientTransactionAccessManager() {
+        return clientTransactionManager;
+    }
 
-  public static CommunicatorDataManipulator getCommunicatorDataManipulator() {
-    return communicatorDataManipulator;
-  }
+    public static CommunicatorDataManipulator getCommunicatorDataManipulator() {
+        return communicatorDataManipulator;
+    }
 
-  public static AbstractPacketCategorySubscriptionManager getClientSubscriptionManager() {
-    return clientSubscriptionHandler;
-  }
+    public static AbstractPacketCategorySubscriptionManager getClientSubscriptionManager() {
+        return clientSubscriptionHandler;
+    }
 
-  public static LiveClientStateDAO getClientStateAccessManager() {
-    return clientStatePersistenceManager;
-  }
+    public static LiveClientStateDAO getClientStateAccessManager() {
+        return clientStatePersistenceManager;
+    }
 
-  public static PendingClientWatcherManager getPendingClientWatcherManager() {
-    return pendingClientManager;
-  }
+    public static PendingClientWatcherManager getPendingClientWatcherManager() {
+        return pendingClientManager;
+    }
 }

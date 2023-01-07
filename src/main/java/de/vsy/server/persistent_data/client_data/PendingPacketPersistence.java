@@ -7,19 +7,19 @@ import de.vsy.shared_transmission.packet.Packet;
  */
 public interface PendingPacketPersistence {
 
-  /**
-   * Saves unique Packets.
-   *
-   * @param toPersist Packet
-   * @return boolean true, if Packet saved
-   */
-  boolean persistPacket(PendingType pending, Packet toPersist);
+    /**
+     * Saves unique Packets.
+     *
+     * @param toPersist Packet
+     * @return boolean true, if Packet saved
+     */
+    boolean persistPacket(PendingType pending, Packet toPersist);
 
-  /**
-   * Removes Packets.
-   *
-   * @param pending  PendingType
-   * @param toRemove Packet
-   */
-  void removePacket(PendingType pending, Packet toRemove);
+    /**
+     * Removes Packets.
+     *
+     * @param pending  PendingType
+     * @param toRemove Packet
+     */
+    void removePacket(PendingType pending, Packet toRemove);
 }

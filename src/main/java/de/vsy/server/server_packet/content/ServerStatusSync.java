@@ -8,28 +8,28 @@ package de.vsy.server.server_packet.content;
  */
 public interface ServerStatusSync {
 
-  /**
-   * Adds the synchronized server id.
-   *
-   * @param serverId the server id
-   */
-  void addSyncedServerId(int serverId);
+    /**
+     * Adds the synchronized server id.
+     *
+     * @param serverId the server id
+     */
+    void addSyncedServerId(int serverId);
 
-  /**
-   * Check server sync count.
-   *
-   * @param checkCount the check count
-   * @return true, if successful
-   */
-  boolean checkServerSyncCount(int checkCount);
+    /**
+     * Check server sync count.
+     *
+     * @param checkCount the check count
+     * @return true, if successful
+     */
+    boolean checkServerSyncCount(int checkCount);
 
-  /**
-   * Check server sync state.
-   *
-   * @param serverId the server id
-   * @return true, if successful
-   */
-  boolean checkServerSyncState(int serverId);
+    /**
+     * Check server sync state.
+     *
+     * @param serverId the server id
+     * @return true, if successful
+     */
+    boolean checkServerSyncState(int serverId);
 
-  int getOriginatingServerId();
+    int getOriginatingServerId();
 }

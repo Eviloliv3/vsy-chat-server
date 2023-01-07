@@ -9,32 +9,32 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
  */
 @JsonPOJOBuilder
 public class SimpleInternalContentBuilder extends
-    ServerPacketContentBuilder<SimpleInternalContentBuilder> {
+        ServerPacketContentBuilder<SimpleInternalContentBuilder> {
 
-  private PacketContent wrappedContent;
+    private PacketContent wrappedContent;
 
-  public PacketContent getWrappedContent() {
-    return this.wrappedContent;
-  }
+    public PacketContent getWrappedContent() {
+        return this.wrappedContent;
+    }
 
-  /**
-   * With.
-   *
-   * @param wrappedContent the wrapped content
-   * @return the simple internal content builder
-   */
-  public SimpleInternalContentBuilder withContent(final PacketContent wrappedContent) {
-    this.wrappedContent = wrappedContent;
-    return getInstanciable();
-  }
+    /**
+     * With.
+     *
+     * @param wrappedContent the wrapped content
+     * @return the simple internal content builder
+     */
+    public SimpleInternalContentBuilder withContent(final PacketContent wrappedContent) {
+        this.wrappedContent = wrappedContent;
+        return getInstanciable();
+    }
 
-  @Override
-  public SimpleInternalContentBuilder getInstanciable() {
-    return this;
-  }
+    @Override
+    public SimpleInternalContentBuilder getInstanciable() {
+        return this;
+    }
 
-  @Override
-  public SimpleInternalContentWrapper build() {
-    return new SimpleInternalContentWrapper(this);
-  }
+    @Override
+    public SimpleInternalContentWrapper build() {
+        return new SimpleInternalContentWrapper(this);
+    }
 }

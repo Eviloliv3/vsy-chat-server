@@ -15,28 +15,28 @@ import org.junit.jupiter.api.Test;
  */
 class TestAuthenticationDAO {
 
-  final ClientAuthPersistenceDAO dataProvider = new ClientAuthPersistenceDAO();
+    final ClientAuthPersistenceDAO dataProvider = new ClientAuthPersistenceDAO();
 
-  @BeforeEach
-  void createAccess() throws InterruptedException {
-    this.dataProvider.createFileAccess();
-  }
+    @BeforeEach
+    void createAccess() throws InterruptedException {
+        this.dataProvider.createFileAccess();
+    }
 
-  @AfterEach
-  void removeAllClients() {
-    this.dataProvider.removeFileAccess();
-  }
+    @AfterEach
+    void removeAllClients() {
+        this.dataProvider.removeFileAccess();
+    }
 
-  @Test
-  void addComm() {
-    var newComm = AuthenticationData.valueOf("NewComm1", "login", 11111);
-    Assertions.assertTrue(this.dataProvider.saveAccountData(newComm));
-  }
+    @Test
+    void addComm() {
+        var newComm = AuthenticationData.valueOf("NewComm1", "login", 11111);
+        Assertions.assertTrue(this.dataProvider.saveAccountData(newComm));
+    }
 
-  @Test
-  void getComm() {
-    var newComm = AuthenticationData.valueOf("NewComm", "login", 11111);
-    this.dataProvider.saveAccountData(newComm);
-    Assertions.assertEquals(11111, this.dataProvider.getClientId("NewComm", "login"));
-  }
+    @Test
+    void getComm() {
+        var newComm = AuthenticationData.valueOf("NewComm", "login", 11111);
+        this.dataProvider.saveAccountData(newComm);
+        Assertions.assertEquals(11111, this.dataProvider.getClientId("NewComm", "login"));
+    }
 }

@@ -11,32 +11,32 @@ import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdent
 
 public class ClientPacketProcessorLink extends AbstractPacketProcessorLink {
 
-  private final PacketProcessorManager processingLogic;
+    private final PacketProcessorManager processingLogic;
 
-  public ClientPacketProcessorLink(final PacketProcessorManager processingLogic) {
-    super(null);
-    this.processingLogic = processingLogic;
-  }
-
-  @Override
-  public void processPacket(Packet input)
-      throws PacketValidationException, PacketProcessingException {
-    PacketProcessor processor;
-    final var inputContent = input.getPacketContent();
-    final ContentIdentifier identifier;
-    final Class<? extends PacketContent> contentType;
-
-    if (inputContent instanceof final SimpleInternalContentWrapper inputServerContent) {
-      contentType = inputServerContent.getWrappedContent().getClass();
-    } else {
-      contentType = inputContent.getClass();
+    public ClientPacketProcessorLink(final PacketProcessorManager processingLogic) {
+        super(null);
+        this.processingLogic = processingLogic;
     }
-    identifier = input.getPacketProperties().getPacketIdentificationProvider();
 
-    processor = this.processingLogic.getProcessor(identifier, contentType)
-        .orElseThrow(() -> new PacketProcessingException(
-            "No Packet processor found for: " + input.getPacketProperties()
-                .getPacketIdentificationProvider()));
-    processor.processPacket(input);
-  }
+    @Override
+    public void processPacket(Packet input)
+            throws PacketValidationException, PacketProcessingException {
+        PacketProcessor processor;
+        final var inputContent = input.getPacketContent();
+        final ContentIdentifier identifier;
+        final Class<? extends PacketContent> contentType;
+
+        if (inputContent instanceof final SimpleInternalContentWrapper inputServerContent) {
+            contentType = inputServerContent.getWrappedContent().getClass();
+        } else {
+            contentType = inputContent.getClass();
+        }
+        identifier = input.getPacketProperties().getPacketIdentificationProvider();
+
+        processor = this.processingLogic.getProcessor(identifier, contentType)
+                .orElseThrow(() -> new PacketProcessingException(
+                        "No Packet processor found for: " + input.getPacketProperties()
+                                .getPacketIdentificationProvider()));
+        processor.processPacket(input);
+    }
 }

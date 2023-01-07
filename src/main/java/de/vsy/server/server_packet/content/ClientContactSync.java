@@ -7,17 +7,17 @@ import java.util.Set;
  */
 public interface ClientContactSync {
 
-  /**
-   * Returns the contact id list.
-   *
-   * @return the contact id list
-   */
-  Set<Integer> getContactIdSet();
+    /**
+     * Returns the contact id list.
+     *
+     * @return the contact id list
+     */
+    Set<Integer> getContactIdSet();
 
-  /**
-   * Sets the remaining id set.
-   *
-   * @param remainingContacts Set<Integer>
-   */
-  void setRemainingContactIds(Set<Integer> remainingContacts);
+    /**
+     * Sets the remaining id set.
+     *
+     * @param remainingContacts Set<Integer>
+     */
+    void setRemainingContactIds(Set<Integer> remainingContacts);
 }

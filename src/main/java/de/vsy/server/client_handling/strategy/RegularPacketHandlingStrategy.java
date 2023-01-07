@@ -1,8 +1,5 @@
 package de.vsy.server.client_handling.strategy;
 
-import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.OUTSIDE_BOUND;
-import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.SERVER_BOUND;
-
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
 import de.vsy.server.client_handling.packet_processing.content_processor_provisioning.StandardProcessorFactoryProvider;
@@ -29,102 +26,105 @@ import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.OUTSIDE_BOUND;
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.SERVER_BOUND;
+
 /**
  * Contains Packet processing strategies during live connection. Pending Packet are added to the
  * respective Buffers. Neither remaining Packet nor pending Packet are dealt with.
  */
 public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
 
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final LocalClientStateProvider clientStateAccess;
-  private final ConnectionThreadControl connectionControl;
-  private final ResultingPacketCreator packetCreator;
-  private final ResultingPacketContentHandler contentHandler;
-  private final PacketTransmissionCache packetsToDispatch;
-  private final MultiplePacketDispatcher dispatcher;
-  private final ThreadPacketBufferManager threadLocalBuffers;
-  private PacketProcessor processor;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final LocalClientStateProvider clientStateAccess;
+    private final ConnectionThreadControl connectionControl;
+    private final ResultingPacketCreator packetCreator;
+    private final ResultingPacketContentHandler contentHandler;
+    private final PacketTransmissionCache packetsToDispatch;
+    private final MultiplePacketDispatcher dispatcher;
+    private final ThreadPacketBufferManager threadLocalBuffers;
+    private PacketProcessor processor;
 
-  /**
-   * Instantiates a new standard buffer handling strategy.
-   *
-   * @param threadDataAccess  the thread bean access
-   * @param connectionControl the connection control
-   */
-  public RegularPacketHandlingStrategy(final HandlerLocalDataManager threadDataAccess,
-      final ConnectionThreadControl connectionControl) {
-    this.packetCreator = threadDataAccess.getResultingPacketCreator();
-    this.packetsToDispatch = threadDataAccess.getPacketTransmissionCache();
-    this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
-    this.clientStateAccess = threadDataAccess.getLocalClientStateProvider();
-    this.connectionControl = connectionControl;
-    this.threadLocalBuffers = threadDataAccess.getHandlerBufferManager();
+    /**
+     * Instantiates a new standard buffer handling strategy.
+     *
+     * @param threadDataAccess  the thread bean access
+     * @param connectionControl the connection control
+     */
+    public RegularPacketHandlingStrategy(final HandlerLocalDataManager threadDataAccess,
+                                         final ConnectionThreadControl connectionControl) {
+        this.packetCreator = threadDataAccess.getResultingPacketCreator();
+        this.packetsToDispatch = threadDataAccess.getPacketTransmissionCache();
+        this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+        this.clientStateAccess = threadDataAccess.getLocalClientStateProvider();
+        this.connectionControl = connectionControl;
+        this.threadLocalBuffers = threadDataAccess.getHandlerBufferManager();
 
-    this.dispatcher = new ClientPacketDispatcher(threadDataAccess.getLocalClientDataProvider(),
-        this.threadLocalBuffers.getPacketBuffer(OUTSIDE_BOUND),
-        this.threadLocalBuffers.getPacketBuffer(SERVER_BOUND));
-    setupProcessor(threadDataAccess);
-  }
-
-  private void setupProcessor(final HandlerLocalDataManager threadDataAccess) {
-    final var processorLink = new ClientPacketProcessorLink(
-        new PacketProcessorManager(threadDataAccess, new StandardProcessorFactoryProvider()));
-    final var contextCheckLink = new PacketContextCheckLink(processorLink,
-        threadDataAccess.getLocalClientStateDependentLogicProvider()
-            .getPermittedPacketCategoryCheck());
-    this.processor = new PacketSyntaxCheckLink(contextCheckLink,
-        new SimplePacketChecker(setupValidator()));
-  }
-
-  private SemanticPacketValidator setupValidator() {
-    SemanticPacketValidator packetValidator = ClientPacketSemanticsValidationCreator.createSemanticValidator();
-    var serverPacketValidation = ServerPermittedCategoryContentAssociationProvider.setupRegularServerPacketContentValidation();
-
-    for (var associationSet : serverPacketValidation.entrySet()) {
-      packetValidator.addCategoryAssociations(associationSet.getKey(), associationSet.getValue());
+        this.dispatcher = new ClientPacketDispatcher(threadDataAccess.getLocalClientDataProvider(),
+                this.threadLocalBuffers.getPacketBuffer(OUTSIDE_BOUND),
+                this.threadLocalBuffers.getPacketBuffer(SERVER_BOUND));
+        setupProcessor(threadDataAccess);
     }
-    return packetValidator;
-  }
 
-  @Override
-  public void administerStrategy() {
-
-    while (this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
-      processStateConformPackets();
+    private void setupProcessor(final HandlerLocalDataManager threadDataAccess) {
+        final var processorLink = new ClientPacketProcessorLink(
+                new PacketProcessorManager(threadDataAccess, new StandardProcessorFactoryProvider()));
+        final var contextCheckLink = new PacketContextCheckLink(processorLink,
+                threadDataAccess.getLocalClientStateDependentLogicProvider()
+                        .getPermittedPacketCategoryCheck());
+        this.processor = new PacketSyntaxCheckLink(contextCheckLink,
+                new SimplePacketChecker(setupValidator()));
     }
-  }
 
-  /**
-   * Process state conform Packet.
-   */
-  private void processStateConformPackets() {
-    var stateChanged = false;
-    var buffer = this.threadLocalBuffers.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+    private SemanticPacketValidator setupValidator() {
+        SemanticPacketValidator packetValidator = ClientPacketSemanticsValidationCreator.createSemanticValidator();
+        var serverPacketValidation = ServerPermittedCategoryContentAssociationProvider.setupRegularServerPacketContentValidation();
 
-    while (!stateChanged && this.connectionControl.connectionIsLive()) {
-      Packet input;
-
-      try {
-        input = buffer.getPacket();
-      } catch (InterruptedException ie) {
-        Thread.currentThread().interrupt();
-        LOGGER.error("Interrupted while waiting for next packet.");
-        break;
-      }
-
-      if (input != null) {
-        this.packetCreator.setCurrentPacket(input);
-
-        try {
-          this.processor.processPacket(input);
-        } catch (final PacketHandlingException phe) {
-          final var errorContent = new ErrorDTO(phe.getMessage(), input);
-          this.contentHandler.setError(errorContent);
+        for (var associationSet : serverPacketValidation.entrySet()) {
+            packetValidator.addCategoryAssociations(associationSet.getKey(), associationSet.getValue());
         }
-        this.packetsToDispatch.transmitPackets(this.dispatcher);
-
-        stateChanged = this.clientStateAccess.clientStateHasChanged();
-      }
+        return packetValidator;
     }
-  }
+
+    @Override
+    public void administerStrategy() {
+
+        while (this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
+            processStateConformPackets();
+        }
+    }
+
+    /**
+     * Process state conform Packet.
+     */
+    private void processStateConformPackets() {
+        var stateChanged = false;
+        var buffer = this.threadLocalBuffers.getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+
+        while (!stateChanged && this.connectionControl.connectionIsLive()) {
+            Packet input;
+
+            try {
+                input = buffer.getPacket();
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                LOGGER.error("Interrupted while waiting for next packet.");
+                break;
+            }
+
+            if (input != null) {
+                this.packetCreator.setCurrentPacket(input);
+
+                try {
+                    this.processor.processPacket(input);
+                } catch (final PacketHandlingException phe) {
+                    final var errorContent = new ErrorDTO(phe.getMessage(), input);
+                    this.contentHandler.setError(errorContent);
+                }
+                this.packetsToDispatch.transmitPackets(this.dispatcher);
+
+                stateChanged = this.clientStateAccess.clientStateHasChanged();
+            }
+        }
+    }
 }

@@ -9,9 +9,9 @@ import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
  */
 public interface StatusHandlingDataProvider extends BaseHandlingDataProvider {
 
-  ClientStateControl getGlobalClientStateControl();
+    ClientStateControl getClientStateControl();
 
-  CommunicationEntityDataProvider getContactToActiveClientMapper();
+    CommunicationEntityDataProvider getContactToActiveClientMapper();
 
-  LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
+    LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
 }

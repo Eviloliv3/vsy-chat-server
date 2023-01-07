@@ -5,10 +5,10 @@ package de.vsy.server.persistent_data;
  */
 public interface RequirementProvider {
 
-  /**
-   * Checks if is id required.
-   *
-   * @return true, if is id required
-   */
-  boolean isIdRequired();
+    /**
+     * Checks if is id required.
+     *
+     * @return true, if is id required
+     */
+    boolean isIdRequired();
 }

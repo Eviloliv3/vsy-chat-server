@@ -8,17 +8,17 @@ import de.vsy.server.persistent_data.client_data.MessageDAO;
  */
 public interface UpdateHandlingPersistentAccess {
 
-  /**
-   * Returns the contact list access provider.
-   *
-   * @return ContactListDAO
-   */
-  ContactListDAO getContactListDAO();
+    /**
+     * Returns the contact list access provider.
+     *
+     * @return ContactListDAO
+     */
+    ContactListDAO getContactListDAO();
 
-  /**
-   * Returns the Message access provider.
-   *
-   * @return MessageDAO
-   */
-  MessageDAO getMessageDAO();
+    /**
+     * Returns the Message access provider.
+     *
+     * @return MessageDAO
+     */
+    MessageDAO getMessageDAO();
 }

@@ -11,112 +11,113 @@ import de.vsy.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.shared_transmission.packet.content.status.ContactMessengerStatusDTO;
+import de.vsy.shared_transmission.packet.content.status.ContactStatusChangeDTO;
 import de.vsy.shared_utility.id_manipulation.IdComparator;
+
 import java.util.Collections;
 import java.util.Set;
 
 public class RelationResponseProcessor implements ContentProcessor<ContactRelationResponseDTO> {
 
-  private final RelationHandlingDataProvider threadDataAccess;
-  private final ResultingPacketContentHandler contentHandler;
-  private final ContactListDAO contactListAccess;
-  private final MessageDAO messageHistoryAccess;
+    private final RelationHandlingDataProvider threadDataAccess;
+    private final ResultingPacketContentHandler contentHandler;
+    private final ContactListDAO contactListAccess;
+    private final MessageDAO messageHistoryAccess;
 
-  public RelationResponseProcessor(final RelationHandlingDataProvider threadDataAccess) {
-    this.threadDataAccess = threadDataAccess;
-    this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
-    this.contactListAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
-        .getClientPersistentAccess().getContactListDAO();
-    this.messageHistoryAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
-        .getClientPersistentAccess().getMessageDAO();
-  }
-
-  @Override
-  public void processContent(ContactRelationResponseDTO extractedContent)
-      throws PacketProcessingException {
-    final var contactId = this.extractContactId(extractedContent);
-
-    checkResponseLegitimacy(extractedContent, contactId);
-    final var iAmOriginator = this.checkClientOriginator(extractedContent);
-    final var requestData = extractedContent.getRequestData();
-    final var isFriendshipRequest = requestData.getDesiredState();
-
-    if (isFriendshipRequest && extractedContent.getDecision()) {
-      RelationManipulator.addContact(requestData.getContactType(), contactId,
-          this.contactListAccess);
-      this.appendStatusMessage(contactId, true);
-    } else {
-      if (iAmOriginator && !isFriendshipRequest) {
-        RelationManipulator.removeContact(requestData.getContactType(), contactId,
-            this.contactListAccess,
-            this.messageHistoryAccess);
-        this.appendStatusMessage(contactId, false);
-      }
+    public RelationResponseProcessor(final RelationHandlingDataProvider threadDataAccess) {
+        this.threadDataAccess = threadDataAccess;
+        this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+        this.contactListAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
+                .getClientPersistentAccess().getContactListDAO();
+        this.messageHistoryAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
+                .getClientPersistentAccess().getMessageDAO();
     }
-    this.contentHandler.addRequest(extractedContent);
-  }
 
-  private int extractContactId(final ContactRelationResponseDTO responseData) {
-    final var requestData = responseData.getRequestData();
-    final var originatorId = requestData.getOriginatorId();
-    final var recipientId = requestData.getRecipientId();
-    final var clientId = this.threadDataAccess.getLocalClientDataProvider().getClientId();
+    @Override
+    public void processContent(ContactRelationResponseDTO extractedContent)
+            throws PacketProcessingException {
+        final var contactId = this.extractContactId(extractedContent);
 
-    return IdComparator.determineContactId(clientId, originatorId, recipientId);
-  }
+        checkResponseLegitimacy(extractedContent, contactId);
+        final var iAmOriginator = this.checkClientOriginator(extractedContent);
+        final var requestData = extractedContent.getRequestData();
+        final var isFriendshipRequest = requestData.getDesiredState();
 
-  /**
-   * Check request legitimacy.
-   *
-   * @param contactResponse the contact request
-   */
-  private void checkResponseLegitimacy(final ContactRelationResponseDTO contactResponse,
-      final int contactId)
-      throws PacketProcessingException {
-    final var requestData = contactResponse.getRequestData();
-    final var recipientId = requestData.getRecipientId();
-    final var desiredState = requestData.getDesiredState();
-    final var contactsAlready = this.contactListAccess.checkAcquaintance(
-        requestData.getContactType(), recipientId);
-
-    if (desiredState && contactsAlready) {
-      final var contactData = this.threadDataAccess.getContactToActiveClientMapper()
-          .getContactData(contactId);
-      throw new PacketProcessingException(
-          "Friendship response was not processed. You already are friends with "
-              + contactData.getDisplayName());
-    } else if (contactResponse.getRespondingClient().getCommunicatorId() != contactId
-        && !desiredState) {
-      throw new PacketProcessingException(
-          "Friendship response was not processed. Your response was already created automatically.");
+        if (isFriendshipRequest && extractedContent.getDecision()) {
+            RelationManipulator.addContact(requestData.getContactType(), contactId,
+                    this.contactListAccess);
+            this.appendStatusMessage(contactId, true);
+        } else {
+            if (iAmOriginator && !isFriendshipRequest) {
+                RelationManipulator.removeContact(requestData.getContactType(), contactId,
+                        this.contactListAccess,
+                        this.messageHistoryAccess);
+                this.appendStatusMessage(contactId, false);
+            }
+        }
+        this.contentHandler.addRequest(extractedContent);
     }
-  }
 
-  private boolean checkClientOriginator(final ContactRelationResponseDTO responseData) {
-    final var clientId = this.threadDataAccess.getLocalClientDataProvider().getClientId();
-    final var originatorId = responseData.getRequestData().getOriginatorId();
-    return clientId == originatorId;
-  }
+    private int extractContactId(final ContactRelationResponseDTO responseData) {
+        final var requestData = responseData.getRequestData();
+        final var originatorId = requestData.getOriginatorId();
+        final var recipientId = requestData.getRecipientId();
+        final var clientId = this.threadDataAccess.getLocalClientDataProvider().getClientId();
 
-  private void appendStatusMessage(final int contactId, boolean contactAdded) {
-    final boolean contactToAdd;
-    final PacketContent contactStatusContent;
-    final var contactData = threadDataAccess.getContactToActiveClientMapper()
-        .getContactData(contactId);
-    final var contactDTO = ConvertCommDataToDTO.convertFrom(contactData);
+        return IdComparator.determineContactId(clientId, originatorId, recipientId);
+    }
 
-    contactToAdd = !checkContactOnline(contactId) && contactAdded;
-    contactStatusContent = new ContactMessengerStatusDTO(EligibleContactEntity.CLIENT, contactToAdd,
-        contactDTO,
-        Collections.emptyList());
+    /**
+     * Check request legitimacy.
+     *
+     * @param contactResponse the contact request
+     */
+    private void checkResponseLegitimacy(final ContactRelationResponseDTO contactResponse,
+                                         final int contactId)
+            throws PacketProcessingException {
+        final var requestData = contactResponse.getRequestData();
+        final var recipientId = requestData.getRecipientId();
+        final var desiredState = requestData.getDesiredState();
+        final var contactsAlready = this.contactListAccess.checkAcquaintance(
+                requestData.getContactType(), recipientId);
 
-    this.contentHandler.addResponse(contactStatusContent);
-  }
+        if (desiredState && contactsAlready) {
+            final var contactData = this.threadDataAccess.getContactToActiveClientMapper()
+                    .getContactData(contactId);
+            throw new PacketProcessingException(
+                    "Friendship response was not processed. You already are friends with "
+                            + contactData.getDisplayName());
+        } else if (contactResponse.getRespondingClient().getCommunicatorId() != contactId
+                && !desiredState) {
+            throw new PacketProcessingException(
+                    "Friendship response was not processed. Your response was already created automatically.");
+        }
+    }
 
-  private boolean checkContactOnline(final int contactId) {
-    return !(this.threadDataAccess.getContactToActiveClientMapper()
-        .removeOfflineContacts(Set.of(contactId))
-        .isEmpty());
-  }
+    private boolean checkClientOriginator(final ContactRelationResponseDTO responseData) {
+        final var clientId = this.threadDataAccess.getLocalClientDataProvider().getClientId();
+        final var originatorId = responseData.getRequestData().getOriginatorId();
+        return clientId == originatorId;
+    }
+
+    private void appendStatusMessage(final int contactId, boolean contactAdded) {
+        final boolean contactToAdd;
+        final PacketContent contactStatusContent;
+        final var contactData = threadDataAccess.getContactToActiveClientMapper()
+                .getContactData(contactId);
+        final var contactDTO = ConvertCommDataToDTO.convertFrom(contactData);
+
+        contactToAdd = !checkContactOnline(contactId) && contactAdded;
+        contactStatusContent = new ContactStatusChangeDTO(EligibleContactEntity.CLIENT, contactToAdd,
+                contactDTO,
+                Collections.emptyList());
+
+        this.contentHandler.addResponse(contactStatusContent);
+    }
+
+    private boolean checkContactOnline(final int contactId) {
+        return !(this.threadDataAccess.getContactToActiveClientMapper()
+                .removeOfflineContacts(Set.of(contactId))
+                .isEmpty());
+    }
 }
