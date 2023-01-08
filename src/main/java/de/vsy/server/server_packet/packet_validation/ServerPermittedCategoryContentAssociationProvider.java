@@ -98,8 +98,9 @@ public class ServerPermittedCategoryContentAssociationProvider {
 
         authMapping.put(AuthenticationType.CLIENT_LOGIN, of(SimpleInternalContentWrapper.class));
         authMapping.put(AuthenticationType.CLIENT_LOGOUT, of(SimpleInternalContentWrapper.class));
-        authMapping.put(AuthenticationType.CLIENT_NEW_ACCOUNT, of(SimpleInternalContentWrapper.class));
+        authMapping.put(AuthenticationType.CLIENT_ACCOUNT_CREATION, of(SimpleInternalContentWrapper.class));
         authMapping.put(AuthenticationType.CLIENT_RECONNECT, of(SimpleInternalContentWrapper.class));
+        authMapping.put(AuthenticationType.CLIENT_ACCOUNT_DELETION, of(SimpleInternalContentWrapper.class));
 
         return authMapping;
     }

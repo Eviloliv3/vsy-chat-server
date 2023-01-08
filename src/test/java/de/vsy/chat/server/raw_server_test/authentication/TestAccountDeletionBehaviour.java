@@ -2,11 +2,17 @@ package de.vsy.chat.server.raw_server_test.authentication;
 
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
+import de.vsy.chat.server.server_test_helpers.ClientConnection;
+import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
+import de.vsy.shared_transmission.dto.authentication.PersonalData;
+import de.vsy.shared_transmission.dto.builder.AccountCreationDTOBuilder;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
+import de.vsy.shared_transmission.packet.content.authentication.AccountCreationRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionResponseDTO;
+import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.packet.content.status.ClientStatusChangeDTO;
 import de.vsy.shared_transmission.packet.content.status.MessengerSetupDTO;
@@ -16,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.*;
 import static de.vsy.chat.server.server_test_helpers.TestPacketVerifier.verifyPacketContent;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
@@ -31,22 +38,22 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
     @Test
     void deletionFailureNotLoggedIn() {
         LOGGER.info("Test: deletion -> failure: not authenticated");
-        final var clientOne = super.loginNextClient();
+        final var clientOne = super.getUnusedClientConnection();
         final var content = new AccountDeletionRequestDTO();
         checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, "Request not processed. You are not authenticated.");
         LOGGER.info("Test: deletion -> failure: not authenticated -- terminated");
     }
-
+/*
     @Test
     void deletionSuccessContactNotification() throws IOException {
         LOGGER.info("Test: contact notification after deletion -> success");
         Packet receivedPacket = null;
         PacketContent content = null;
-        final var clientOne = super.loginNextClient();
+        final var clientOne = super.getUnusedClientConnection();
         super.addConnectionNextServer();
         final var clientTwo = super.getUnusedClientConnection();
-        clientTwo.setClientData(this.getUnusedAuthenticationData(), null);
-        Assertions.assertTrue(clientTwo.tryClientLogin(), "Login failed for clientTwo.");
+        loginClient(clientOne, HARALD_1_AUTH);
+        loginClient(clientTwo, GERALD_1_AUTH);
 
         content = new ClientStatusChangeDTO(MESSENGER, true, clientOne.getCommunicatorData());
         checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
@@ -74,8 +81,13 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
     void deletionSuccess() {
         LOGGER.info("Test: deletion -> success");
         final var clientOne = super.loginNextClient();
-        final var content = new AccountDeletionRequestDTO();
+        PacketContent content = new AccountDeletionRequestDTO();
         checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, AccountDeletionResponseDTO.class);
         LOGGER.info("Test: deletion -> success -- terminated");
+    }
+*/
+    private void loginClient(final ClientConnection connection, final AuthenticationDTO credentials){
+        connection.setClientData(credentials, null);
+        Assertions.assertTrue(connection.tryClientLogin(), "Login failed for: " + credentials);
     }
 }

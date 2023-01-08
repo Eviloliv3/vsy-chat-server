@@ -26,6 +26,10 @@ public class TestClientDataProvider {
     public static final AuthenticationDTO MAX_1_AUTH = AuthenticationDTO.valueOf("max1", "login");
     public static final AuthenticationDTO THOMAS_1_AUTH = AuthenticationDTO.valueOf("thomas1",
             "login");
+
+    public static final AuthenticationDTO MARK_1_AUTH = AuthenticationDTO.valueOf("mark1", "login");
+    public static final AuthenticationDTO HARALD_1_AUTH = AuthenticationDTO.valueOf("harald1", "login");
+    public static final AuthenticationDTO GERALD_1_AUTH = AuthenticationDTO.valueOf("gerald1", "login");
     public static final CommunicatorDTO FRANK_1_COMM = CommunicatorDTO.valueOf(15001,
             "Frank Relation1");
     public static final CommunicatorDTO MARKUS_1_COMM = CommunicatorDTO.valueOf(15002,
