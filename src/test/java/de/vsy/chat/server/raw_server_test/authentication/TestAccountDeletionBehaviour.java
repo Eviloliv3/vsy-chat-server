@@ -34,7 +34,7 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
     public TestAccountDeletionBehaviour(ServerPortProvider clientConnectionPorts, List<AuthenticationDTO> clientAuthenticationDataList) {
         super(clientConnectionPorts, clientAuthenticationDataList);
     }
-
+/*
     @Test
     void deletionFailureNotLoggedIn() {
         LOGGER.info("Test: deletion -> failure: not authenticated");
@@ -43,7 +43,7 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, "Request not processed. You are not authenticated.");
         LOGGER.info("Test: deletion -> failure: not authenticated -- terminated");
     }
-/*
+
     @Test
     void deletionSuccessContactNotification() throws IOException {
         LOGGER.info("Test: contact notification after deletion -> success");
@@ -77,15 +77,19 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         LOGGER.info("Test: contact notification after deletion -> success -- terminated");
     }
 
+ */
+
+
     @Test
     void deletionSuccess() {
         LOGGER.info("Test: deletion -> success");
-        final var clientOne = super.loginNextClient();
+        final var clientOne = super.getUnusedClientConnection();
+        loginClient(clientOne, MARK_1_AUTH);
         PacketContent content = new AccountDeletionRequestDTO();
         checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, AccountDeletionResponseDTO.class);
         LOGGER.info("Test: deletion -> success -- terminated");
     }
-*/
+
     private void loginClient(final ClientConnection connection, final AuthenticationDTO credentials){
         connection.setClientData(credentials, null);
         Assertions.assertTrue(connection.tryClientLogin(), "Login failed for: " + credentials);

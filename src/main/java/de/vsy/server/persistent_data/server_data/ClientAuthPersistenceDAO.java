@@ -152,13 +152,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
             return false;
         }
         regClients = readRegisteredClients();
-
-        for (final var authData : regClients) {
-
-            if (authData.getClientId() == clientId) {
-                accountRemoved = regClients.remove(authData) && this.dataProvider.writeData(regClients);
-            }
-        }
+        accountRemoved = regClients.removeIf(credentials -> credentials.getClientId() == clientId) && this.dataProvider.writeData(regClients);
         this.dataProvider.releaseAccess(true);
 
         return accountRemoved;
