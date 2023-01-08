@@ -13,6 +13,7 @@ import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionR
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionResponseDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -21,6 +22,7 @@ import java.util.EnumMap;
 import java.util.Set;
 
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 
 public class AccountDeletionProcessor implements ContentProcessor<AccountDeletionRequestDTO> {
@@ -75,7 +77,7 @@ public class AccountDeletionProcessor implements ContentProcessor<AccountDeletio
             final var contactType = contactSet.getKey();
             contactSet.getValue().forEach((contactId) -> {
                 var request = new ContactRelationRequestDTO(contactType, clientData.getCommunicatorId(), contactId, clientData, false);
-                this.contentHandler.addRequest(request);
+                this.contentHandler.addRequest(request, getClientEntity(contactId));
                 this.contactList.removeContactFromSet(contactType, contactId);
             });
         }
