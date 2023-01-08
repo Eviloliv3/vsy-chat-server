@@ -44,19 +44,22 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         LOGGER.info("Test: deletion -> failure: not authenticated -- terminated");
     }
 
+ */
+
     @Test
     void deletionSuccessContactNotification() throws IOException {
         LOGGER.info("Test: contact notification after deletion -> success");
         Packet receivedPacket = null;
         PacketContent content = null;
         final var clientOne = super.getUnusedClientConnection();
+        loginClient(clientOne, HARALD_1_AUTH);
         super.addConnectionNextServer();
         final var clientTwo = super.getUnusedClientConnection();
-        loginClient(clientOne, HARALD_1_AUTH);
         loginClient(clientTwo, GERALD_1_AUTH);
 
         content = new ClientStatusChangeDTO(MESSENGER, true, clientOne.getCommunicatorData());
         checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
+
         content = new ClientStatusChangeDTO(MESSENGER, true, clientTwo.getCommunicatorData());
         checkResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID), content, MessengerSetupDTO.class);
 
@@ -77,7 +80,7 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         LOGGER.info("Test: contact notification after deletion -> success -- terminated");
     }
 
- */
+ /*
 
 
     @Test
@@ -89,6 +92,8 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         checkResponse(clientOne, getServerEntity(STANDARD_SERVER_ID), content, AccountDeletionResponseDTO.class);
         LOGGER.info("Test: deletion -> success -- terminated");
     }
+
+ */
 
     private void loginClient(final ClientConnection connection, final AuthenticationDTO credentials){
         connection.setClientData(credentials, null);
