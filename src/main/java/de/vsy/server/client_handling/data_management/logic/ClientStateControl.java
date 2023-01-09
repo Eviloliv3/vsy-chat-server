@@ -2,13 +2,11 @@ package de.vsy.server.client_handling.data_management.logic;
 
 import de.vsy.server.client_management.ClientState;
 
-import java.util.Stack;
+import java.util.Deque;
 
 public interface ClientStateControl {
 
     ClientState getPersistentClientState();
-
-    Stack<ClientState> getLocalClientState();
 
     boolean changeClientState(final ClientState clientState, final boolean changeTo);
 

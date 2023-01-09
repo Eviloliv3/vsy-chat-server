@@ -46,7 +46,6 @@ public class TestLogoutBehaviour extends ServerTestBase {
     @Test
     void logoutSuccess() throws IOException {
         LOGGER.info("Test: logout successful");
-        boolean authSuccess;
         final var clientOne = super.getUnusedClientConnection();
         clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
         Assertions.assertTrue(clientOne.tryClientLogin(), "Login failed.");

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.*;
+import static de.vsy.chat.server.server_test_helpers.TestPacketVerifier.verifyPacketContent;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
@@ -64,11 +65,7 @@ public class TestClientRelationChanges extends ServerTestBase {
                 (ContactRelationRequestDTO) content);
         clientTwo.sendResponse(content, packet);
         packet = clientOne.readPacket();
-
-        if (packet == null) {
-            Assertions.fail("No response for ContactRelationResponseDTO received.");
-        }
-        Assertions.assertInstanceOf(ContactRelationResponseDTO.class, content);
+        verifyPacketContent(packet, ContactRelationResponseDTO.class);
         LOGGER.info("Test: add contact -> success -- terminated");
     }
 
@@ -94,21 +91,11 @@ public class TestClientRelationChanges extends ServerTestBase {
                 clientOneData.getCommunicatorId(),
                 PETER_1_COMM.getCommunicatorId(), clientOneData, false);
         clientOne.sendRequest(content, getClientEntity(PETER_1_COMM.getCommunicatorId()));
+
         packet = clientTwo.readPacket();
-
-        if (packet != null) {
-            content = packet.getPacketContent();
-            Assertions.assertEquals(ContactRelationRequestDTO.class, content.getClass());
-        } else {
-            Assertions.fail("No response for ContactRelationRequestDTO received.");
-        }
+        verifyPacketContent(packet, ContactRelationRequestDTO.class);
         packet = clientOne.readPacket();
-
-        if (packet != null) {
-            Assertions.assertInstanceOf(ContactRelationResponseDTO.class, packet.getPacketContent());
-        } else {
-            Assertions.fail("No response ContactRelationResponseDTO received.");
-        }
+        verifyPacketContent(packet, ContactRelationResponseDTO.class);
         LOGGER.info("Test: remove contact -> success -- terminated");
     }
 

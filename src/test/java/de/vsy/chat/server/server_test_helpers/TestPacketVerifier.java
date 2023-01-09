@@ -9,9 +9,7 @@ public class TestPacketVerifier {
         final PacketContent content;
         Assertions.assertNotNull(packet, "No response.");
         content = packet.getPacketContent();
-        Assertions.assertNotNull(content, "No content. Expected \"" + expectedType.getSimpleName() + "\".");
-        Assertions.assertEquals(expectedType, content.getClass(),
-                () -> "Response type \"" + content + "\"."
-                        + "\nExpected type \"" + expectedType.getSimpleName() + "\"");
+        Assertions.assertInstanceOf(expectedType, content, () -> "Response type \"" + content + "\"."
+                + "\nExpected type \"" + expectedType.getSimpleName() + "\"");
     }
 }

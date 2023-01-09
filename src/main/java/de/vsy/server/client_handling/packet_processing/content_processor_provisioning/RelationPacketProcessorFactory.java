@@ -38,7 +38,7 @@ public class RelationPacketProcessorFactory implements ContentBasedProcessorFact
             }
             case ContactRelationResponseDTO -> {
                 processingCondition = ContentProcessingConditionProvider.getContentProcessingCondition(
-                        ProcessingConditionType.ACTIVE_MESSENGER,
+                        ProcessingConditionType.AUTHENTICATED,
                         this.threadDataAccess.getLocalClientStateProvider());
                 return new ClientHandlerPacketProcessor<>(
                         this.threadDataAccess.getLocalClientDataProvider(),

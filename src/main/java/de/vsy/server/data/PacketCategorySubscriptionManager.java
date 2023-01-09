@@ -151,19 +151,13 @@ public abstract class AbstractPacketCategorySubscriptionManager {
     }
 
     public Set<Integer> checkThreadIds(final PacketCategory topic, final Set<Integer> idsToCheck) {
-        final Set<Integer> foundIds = new HashSet<>();
+        final Set<Integer> foundIds = new HashSet<>(idsToCheck);
         Set<Integer> subscriberIds;
 
         try {
             this.lock.readLock().lock();
             subscriberIds = getThreads(topic);
-
-            for (var checkedId : idsToCheck) {
-
-                if (subscriberIds.contains(checkedId)) {
-                    foundIds.add(checkedId);
-                }
-            }
+            foundIds.removeIf(contactId -> !subscriberIds.contains(contactId));
             return foundIds;
         } finally {
             this.lock.readLock().unlock();

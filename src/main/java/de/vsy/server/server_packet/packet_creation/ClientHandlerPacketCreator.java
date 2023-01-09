@@ -6,7 +6,11 @@ import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 import de.vsy.shared_utility.standard_value.StandardIdProvider;
+
+import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
 
 public class ClientHandlerPacketCreator extends ResultingPacketCreator {
 
@@ -66,11 +70,17 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
      * @return true if the connected client is the originator
      */
     protected boolean checkClientSender() {
-        final var senderId = this.currentRequest.getPacketProperties().getSender().getEntityId();
-        final var localClientId = this.clientDataProvider.getClientId();
-        final var noClientAuthenticated = localClientId == StandardIdProvider.STANDARD_CLIENT_ID;
-        return noClientAuthenticated
-                || senderId == this.clientDataProvider.getClientId()
-                || senderId == StandardIdProvider.STANDARD_CLIENT_ID;
+        final var properties = this.currentRequest.getPacketProperties();
+        final var senderId = properties.getSender().getEntityId();
+
+        final var senderTypeIsClient = properties.getSender().getEntity().equals(CLIENT);
+        final var noLocalClient = this.clientDataProvider.getClientId() == STANDARD_CLIENT_ID;
+        final var senderIsClient = senderId == this.clientDataProvider.getClientId();
+        final var senderIsUnspecifiedClient = senderId == STANDARD_CLIENT_ID;
+
+        if(senderTypeIsClient){
+            return noLocalClient || senderIsClient || senderIsUnspecifiedClient;
+        }
+        return false;
     }
 }

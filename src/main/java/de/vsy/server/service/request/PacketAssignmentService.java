@@ -70,12 +70,9 @@ public class PacketAssignmentService extends ServiceBase {
             final AbstractPacketCategorySubscriptionManager serverBoundNetwork,
             final AbstractPacketCategorySubscriptionManager clientBoundNetwork) {
         Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> packetNetworkMap;
-
         packetNetworkMap = new EnumMap<>(EligibleCommunicationEntity.class);
-
         packetNetworkMap.put(SERVER, serverBoundNetwork);
         packetNetworkMap.put(CLIENT, clientBoundNetwork);
-
         this.packetNetworkManager = new CommunicationNetworkSubscriptionManager(packetNetworkMap);
     }
 

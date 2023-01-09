@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static de.vsy.chat.server.server_test_helpers.TestPacketVerifier.verifyPacketContent;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
 import static de.vsy.shared_transmission.packet.content.status.ClientService.MESSENGER;
@@ -55,16 +56,10 @@ public class TestStatusChange extends ServerTestBase {
         Assertions.assertTrue(clientOne.tryClientLogout(), "Logout failed for clientOne.");
         packet = clientTwo.readPacket();
 
-        LOGGER.info("Expecting ContactStatusChangeDTO. Read: {}", packet);
-
-        if (packet != null
-                && packet.getPacketContent() instanceof ContactStatusChangeDTO contactStatus) {
-            Assertions.assertTrue(contactStatus.getContactData().equals(clientOneCommunicatorDTO));
-            Assertions.assertFalse(contactStatus.getOnlineStatus());
-        } else {
-            Assertions.fail(
-                    ContactStatusChangeDTO.class.getSimpleName() + " expected, received: " + packet);
-        }
+        verifyPacketContent(packet, ContactStatusChangeDTO.class);
+        final var contactStatus = (ContactStatusChangeDTO) packet.getPacketContent();
+        Assertions.assertTrue(contactStatus.getContactData().equals(clientOneCommunicatorDTO));
+        Assertions.assertFalse(contactStatus.getOnlineStatus());
         clientOne.resetConnection();
         LOGGER.info("Test: change status for two clients that are contacts -> success -- terminated");
     }
@@ -80,21 +75,11 @@ public class TestStatusChange extends ServerTestBase {
         content = new ClientStatusChangeDTO(MESSENGER, true, clientOne.getCommunicatorData());
         clientOne.sendRequest(content, getServerEntity(STANDARD_SERVER_ID));
         packet = clientOne.readPacket();
-
-        if (packet != null) {
-            content = new ClientStatusChangeDTO(MESSENGER, false, clientOne.getCommunicatorData());
-            clientOne.sendRequest(content, getServerEntity(STANDARD_SERVER_ID));
-            packet = clientOne.readPacket();
-
-            if (packet != null) {
-                content = packet.getPacketContent();
-            } else {
-                Assertions.fail("No response MessengerTearDownDTO received.");
-            }
-        } else {
-            Assertions.fail("No response MessengerSetupDTO received.");
-        }
-        Assertions.assertInstanceOf(MessengerTearDownDTO.class, content);
+        verifyPacketContent(packet, MessengerSetupDTO.class);
+        content = new ClientStatusChangeDTO(MESSENGER, false, clientOne.getCommunicatorData());
+        clientOne.sendRequest(content, getServerEntity(STANDARD_SERVER_ID));
+        packet = clientOne.readPacket();
+        verifyPacketContent(packet, MessengerTearDownDTO.class);
         LOGGER.info("Test: client messenger status removal -> success -- terminated");
     }
 
@@ -142,14 +127,8 @@ public class TestStatusChange extends ServerTestBase {
 
         packet = clientOne.readPacket();
         LOGGER.info("Expecting ContactStatusChangeDTO. Read: {}", packet);
-
-        if (packet != null
-                && packet.getPacketContent() instanceof ContactStatusChangeDTO contactStatus) {
-            Assertions.assertEquals(contactStatus.getContactData(), clientTwo.getCommunicatorData());
-        } else {
-            Assertions.fail(
-                    ContactStatusChangeDTO.class.getSimpleName() + " expected, read: " + packet);
-        }
+        verifyPacketContent(packet, ContactStatusChangeDTO.class);
+        Assertions.assertEquals(((ContactStatusChangeDTO)packet.getPacketContent()).getContactData(), clientTwo.getCommunicatorData());
         LOGGER.info(
                 "Test: change messenger status for two clients that are contacts -> success -- terminated");
     }

@@ -8,7 +8,7 @@ import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Deque;
 
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
 
@@ -90,11 +90,6 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     }
 
     @Override
-    public Stack<ClientState> getLocalClientState() {
-        return this.localClientStateManager.getCurrentState();
-    }
-
-    @Override
     public boolean changeClientState(final ClientState clientState, final boolean changeTo) {
         return this.localClientStateManager.changeClientState(clientState, changeTo);
     }
@@ -120,14 +115,10 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     @Override
     public void appendSynchronizationRemovalPacketPerState() {
         final var currentStates = this.localClientStateManager.getCurrentState();
-        final var statesToRemove = new ArrayList<ClientState>(currentStates.size());
+        final var descendingStates = currentStates.descendingIterator();
 
-        while (!currentStates.isEmpty()) {
-            statesToRemove.add(currentStates.pop());
-        }
-
-        for (final var currentState : statesToRemove) {
-            appendStateSynchronizationPacket(currentState, false);
+        while(descendingStates.hasNext()){
+            appendStateSynchronizationPacket(descendingStates.next(), false);
         }
     }
 }

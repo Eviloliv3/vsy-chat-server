@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.*;
+import static de.vsy.chat.server.server_test_helpers.TestPacketVerifier.verifyPacketContent;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkErrorResponse;
 import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
 import static de.vsy.shared_transmission.packet.content.status.ClientService.MESSENGER;
@@ -105,7 +106,7 @@ public class TestClientMessage extends ServerTestBase {
     @Test
     void sendMessageSuccess() throws IOException {
         LOGGER.info("Test: send message -> success");
-        Packet sentPacket, receivedPacket, responsePacket;
+        Packet receivedPacket, responsePacket;
         final ClientConnection clientOne, clientTwo;
         final int contactId;
 
@@ -121,28 +122,17 @@ public class TestClientMessage extends ServerTestBase {
 
         final var message = new TextMessageDTO(clientOne.getCommunicatorData().getCommunicatorId(),
                 EligibleContactEntity.CLIENT, contactId, "test message");
+        clientOne.sendRequest(message, getClientEntity(contactId));
 
-        sentPacket = clientOne.sendRequest(message, getClientEntity(contactId));
         receivedPacket = clientTwo.readPacket();
         responsePacket = clientOne.readPacket();
+        verifyPacketContent(receivedPacket, TextMessageDTO.class);
+        verifyPacketContent(responsePacket, TextMessageDTO.class);
 
-        if (sentPacket != null && receivedPacket != null && responsePacket != null) {
-            if (sentPacket.getPacketContent() instanceof TextMessageDTO textMessage
-                    && receivedPacket.getPacketContent() instanceof TextMessageDTO receivedMessage
-                    && responsePacket.getPacketContent() instanceof TextMessageDTO responseMessage) {
-                Assertions.assertEquals(textMessage.getMessage(), receivedMessage.getMessage(),
-                        responseMessage.getMessage());
-            } else {
-                Assertions.fail(
-                        "Erroneous PacketContent:\nSent: " + sentPacket.getPacketContent() + "\nReceived: "
-                                + receivedPacket.getPacketContent() + "\nResponse: "
-                                + responsePacket.getPacketContent());
-            }
-        } else {
-            Assertions.fail(
-                    "One of the expected Packets went missing:\nSent: " + sentPacket + "\nReceived: "
-                            + receivedPacket + "\nResponse: " + responsePacket);
-        }
+        final var receivedMessage = (TextMessageDTO) receivedPacket.getPacketContent();
+        final var responseMessage = (TextMessageDTO) responsePacket.getPacketContent();
+        Assertions.assertEquals(message.getMessage(), receivedMessage.getMessage(), responseMessage.getMessage());
         LOGGER.info("Test: send message -> success -- terminated");
     }
+
 }

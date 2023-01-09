@@ -14,7 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static de.vsy.server.server_packet.packet_properties.packet_type.ServerStatusType.CLIENT_STATUS;
+import static de.vsy.server.server_packet.packet_properties.packet_type.ServerStatusType.SERVER_STATUS;
 import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.*;
+import static de.vsy.shared_transmission.packet.property.packet_type.AuthenticationType.*;
 import static de.vsy.shared_transmission.packet.property.packet_type.ChatType.*;
 import static de.vsy.shared_transmission.packet.property.packet_type.ErrorType.SIMPLE_ERROR;
 import static de.vsy.shared_transmission.packet.property.packet_type.RelationType.CONTACT_RELATION;
@@ -71,9 +74,9 @@ public class ServerPermittedCategoryContentAssociationProvider {
     public static Map<PacketType, Set<Class<? extends PacketContent>>> setupStatusValidation() {
         Map<PacketType, Set<Class<? extends PacketContent>>> statusMapping = new HashMap<>();
 
-        statusMapping.put(ServerStatusType.CLIENT_STATUS,
+        statusMapping.put(CLIENT_STATUS,
                 of(BaseStatusSyncDTO.class, ExtendedStatusSyncDTO.class));
-        statusMapping.put(ServerStatusType.SERVER_STATUS, of(InterServerCommSyncDTO.class));
+        statusMapping.put(SERVER_STATUS, of(InterServerCommSyncDTO.class));
         statusMapping.put(CHAT_STATUS, of(SimpleInternalContentWrapper.class));
         return statusMapping;
     }
@@ -89,18 +92,17 @@ public class ServerPermittedCategoryContentAssociationProvider {
         errorMapping.put(ServerErrorType.SERVER_STATUS,
                 of(ServerFailureDTO.class, SimpleInternalContentWrapper.class));
         errorMapping.put(SIMPLE_ERROR, of(SimpleInternalContentWrapper.class));
-
         return errorMapping;
     }
 
     private static Map<PacketType, Set<Class<? extends PacketContent>>> setupAuthenticationValidation() {
         Map<PacketType, Set<Class<? extends PacketContent>>> authMapping = new HashMap<>();
 
-        authMapping.put(AuthenticationType.CLIENT_LOGIN, of(SimpleInternalContentWrapper.class));
-        authMapping.put(AuthenticationType.CLIENT_LOGOUT, of(SimpleInternalContentWrapper.class));
-        authMapping.put(AuthenticationType.CLIENT_ACCOUNT_CREATION, of(SimpleInternalContentWrapper.class));
-        authMapping.put(AuthenticationType.CLIENT_RECONNECT, of(SimpleInternalContentWrapper.class));
-        authMapping.put(AuthenticationType.CLIENT_ACCOUNT_DELETION, of(SimpleInternalContentWrapper.class));
+        authMapping.put(CLIENT_LOGIN, of(SimpleInternalContentWrapper.class));
+        authMapping.put(CLIENT_LOGOUT, of(SimpleInternalContentWrapper.class));
+        authMapping.put(CLIENT_ACCOUNT_CREATION, of(SimpleInternalContentWrapper.class));
+        authMapping.put(CLIENT_RECONNECT, of(SimpleInternalContentWrapper.class));
+        authMapping.put(CLIENT_ACCOUNT_DELETION, of(SimpleInternalContentWrapper.class));
 
         return authMapping;
     }

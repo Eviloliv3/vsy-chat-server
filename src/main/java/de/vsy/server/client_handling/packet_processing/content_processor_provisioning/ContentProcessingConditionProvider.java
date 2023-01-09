@@ -27,12 +27,12 @@ public class ContentProcessingConditionProvider {
                             "Request not processed. You are not authenticated.");
             case ACTIVE_MESSENGER ->
                     new HandlerProcessingCondition<>(clientStateProvider::checkClientState,
-                            ClientState.AUTHENTICATED,
-                            "Request not processed. You already are registered as Messenger.");
-            case NOT_ACTIVE_MESSENGER ->
-                    new HandlerProcessingCondition<>(clientStateProvider::checkClientState,
-                            ClientState.AUTHENTICATED,
+                            ClientState.ACTIVE_MESSENGER,
                             "Request not processed. You are not registered as Messenger.");
+            case NOT_ACTIVE_MESSENGER ->
+                    new HandlerProcessingCondition<>(Predicate.not(clientStateProvider::checkClientState),
+                            ClientState.ACTIVE_MESSENGER,
+                            "Request not processed. You already are registered as Messenger.");
         };
     }
 }
