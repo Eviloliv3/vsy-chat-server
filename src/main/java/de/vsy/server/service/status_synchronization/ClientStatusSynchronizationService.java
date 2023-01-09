@@ -3,7 +3,7 @@
  */
 package de.vsy.server.service.status_synchronization;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
 import de.vsy.server.server_packet.dispatching.ServerSynchronizationPacketDispatcher;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
@@ -42,7 +42,7 @@ public class ClientStatusSynchronizationService extends ServiceBase {
     }
 
     private final ServicePacketProcessor processor;
-    private final AbstractPacketCategorySubscriptionManager serverBoundNetwork;
+    private final PacketCategorySubscriptionManager serverBoundNetwork;
     private final ServicePacketBufferManager serviceBuffers;
     private final PacketTransmissionCache packetsToSend;
     private final ServerStatusSyncPacketCreator packetCreator;

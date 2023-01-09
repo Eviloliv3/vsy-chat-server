@@ -3,7 +3,7 @@
  */
 package de.vsy.server.service.request;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.access.PacketAssignmentServiceDataProvider;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
@@ -67,9 +67,9 @@ public class PacketAssignmentService extends ServiceBase {
      * @param clientBoundNetwork the client bound network
      */
     private void setupPacketNetworkManager(
-            final AbstractPacketCategorySubscriptionManager serverBoundNetwork,
-            final AbstractPacketCategorySubscriptionManager clientBoundNetwork) {
-        Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> packetNetworkMap;
+            final PacketCategorySubscriptionManager serverBoundNetwork,
+            final PacketCategorySubscriptionManager clientBoundNetwork) {
+        Map<EligibleCommunicationEntity, PacketCategorySubscriptionManager> packetNetworkMap;
         packetNetworkMap = new EnumMap<>(EligibleCommunicationEntity.class);
         packetNetworkMap.put(SERVER, serverBoundNetwork);
         packetNetworkMap.put(CLIENT, clientBoundNetwork);

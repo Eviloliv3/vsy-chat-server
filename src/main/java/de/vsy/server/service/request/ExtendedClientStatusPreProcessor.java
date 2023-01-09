@@ -1,6 +1,6 @@
 package de.vsy.server.service.request;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.service.status_synchronization.PacketDemultiplexer;
 import de.vsy.shared_module.packet_management.OutputBuffer;
@@ -15,10 +15,10 @@ import static de.vsy.shared_transmission.packet.property.packet_category.PacketC
 public class ExtendedClientStatusPreProcessor {
 
     private final OutputBuffer assignmentBuffer;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptions;
+    private final PacketCategorySubscriptionManager clientSubscriptions;
 
     public ExtendedClientStatusPreProcessor(
-            AbstractPacketCategorySubscriptionManager clientSubscriptions,
+            PacketCategorySubscriptionManager clientSubscriptions,
             OutputBuffer assignmentBuffer) {
         this.assignmentBuffer = assignmentBuffer;
         this.clientSubscriptions = clientSubscriptions;

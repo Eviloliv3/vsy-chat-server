@@ -20,13 +20,13 @@ import static java.util.Objects.requireNonNullElseGet;
 /**
  * Manages server local subscriptions.
  */
-public abstract class AbstractPacketCategorySubscriptionManager {
+public abstract class PacketCategorySubscriptionManager {
 
     protected static final Logger LOGGER = LogManager.getLogger();
     private final ReadWriteLock lock;
     private final Map<PacketCategory, Map<Integer, CategoryIdSubscriber>> subscriptions;
 
-    protected AbstractPacketCategorySubscriptionManager() {
+    protected PacketCategorySubscriptionManager() {
         this(null);
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractPacketCategorySubscriptionManager {
      *
      * @param subscriptions the subscriptions
      */
-    protected AbstractPacketCategorySubscriptionManager(
+    protected PacketCategorySubscriptionManager(
             final Map<PacketCategory, Map<Integer, CategoryIdSubscriber>> subscriptions) {
 
         this.lock = new ReentrantReadWriteLock();

@@ -3,7 +3,7 @@
  */
 package de.vsy.server.client_handling.data_management;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -19,11 +19,11 @@ import static de.vsy.shared_transmission.packet.property.packet_category.PacketC
  */
 public class CommunicationEntityDataProvider {
 
-    private final AbstractPacketCategorySubscriptionManager activeContactLists;
+    private final PacketCategorySubscriptionManager activeContactLists;
     private final CommunicatorDataManipulator clientData;
 
     public CommunicationEntityDataProvider(
-            final AbstractPacketCategorySubscriptionManager activeContactLists,
+            final PacketCategorySubscriptionManager activeContactLists,
             final CommunicatorDataManipulator clientData) {
         this.activeContactLists = activeContactLists;
         this.clientData = clientData;

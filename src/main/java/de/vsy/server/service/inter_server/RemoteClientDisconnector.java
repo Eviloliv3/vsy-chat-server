@@ -3,7 +3,7 @@ package de.vsy.server.service.inter_server;
 import de.vsy.server.client_handling.strategy.VolatilePacketIdentifier;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.ClientStateTranslator;
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -30,13 +30,13 @@ public class RemoteClientDisconnector {
     private final ServicePacketBufferManager serviceBufferManager;
     private final CommunicatorPersistenceDAO communicatorDataProvider;
     private final LiveClientStateDAO clientStateProvider;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+    private final PacketCategorySubscriptionManager clientSubscriptionManager;
 
     public RemoteClientDisconnector(final PacketBuffer remoteServerBuffer,
                                     final ServicePacketBufferManager serviceBufferManager,
                                     final CommunicatorPersistenceDAO communicatorDataProvider,
                                     final LiveClientStateDAO clientStateProvider,
-                                    final AbstractPacketCategorySubscriptionManager clientSubscriptionManager) {
+                                    final PacketCategorySubscriptionManager clientSubscriptionManager) {
         this.remoteServerBuffer = remoteServerBuffer;
         this.serviceBufferManager = serviceBufferManager;
         this.communicatorDataProvider = communicatorDataProvider;

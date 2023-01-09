@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ClientSubscriptionManager extends AbstractPacketCategorySubscriptionManager {
+public class ClientSubscriptionManager extends PacketCategorySubscriptionManager {
 
     private final Set<Integer> remoteClients;
 

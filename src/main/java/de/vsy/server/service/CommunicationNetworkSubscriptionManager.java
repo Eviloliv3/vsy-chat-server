@@ -1,6 +1,6 @@
 package de.vsy.server.service;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class CommunicationNetworkSubscriptionManager {
 
     private final ReadWriteLock lock;
-    private final Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> communicationNetworks;
+    private final Map<EligibleCommunicationEntity, PacketCategorySubscriptionManager> communicationNetworks;
 
     /**
      * Instantiates a new communication network subscription manager.
@@ -21,7 +21,7 @@ public class CommunicationNetworkSubscriptionManager {
      * @param communicationNetworks the communication networks
      */
     public CommunicationNetworkSubscriptionManager(
-            final Map<EligibleCommunicationEntity, AbstractPacketCategorySubscriptionManager> communicationNetworks) {
+            final Map<EligibleCommunicationEntity, PacketCategorySubscriptionManager> communicationNetworks) {
         this.lock = new ReentrantReadWriteLock();
         this.communicationNetworks = communicationNetworks;
     }
@@ -34,7 +34,7 @@ public class CommunicationNetworkSubscriptionManager {
      * @return true, if successful
      */
     public boolean addCommunicationNetwork(final EligibleCommunicationEntity entity,
-                                           final AbstractPacketCategorySubscriptionManager subscriptionManager) {
+                                           final PacketCategorySubscriptionManager subscriptionManager) {
 
         try {
             this.lock.writeLock().lock();
@@ -49,11 +49,11 @@ public class CommunicationNetworkSubscriptionManager {
      * Returns the subscription manager.
      *
      * @param entity the entity
-     * @return AbstractPacketCategorySubscriptionManager
+     * @return PacketCategorySubscriptionManager
      */
-    public AbstractPacketCategorySubscriptionManager getSubscriptionsManager(
+    public PacketCategorySubscriptionManager getSubscriptionsManager(
             final EligibleCommunicationEntity entity) {
-        AbstractPacketCategorySubscriptionManager subscriptionManager;
+        PacketCategorySubscriptionManager subscriptionManager;
 
         try {
             this.lock.readLock().lock();

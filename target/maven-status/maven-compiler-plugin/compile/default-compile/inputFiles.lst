@@ -100,7 +100,6 @@
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/server_packet/content/InterServerCommSyncDTO.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/client_handling/data_management/logic/ClientStatePublisher.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/persistent_data/client_data/PendingType.java
-/home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/data/AbstractPacketCategorySubscriptionManager.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/service/inter_server/InterServerSocketConnectionEstablisher.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/data/access/HandlerAccessManager.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/client_handling/strategy/PacketHandlingStrategy.java
@@ -163,6 +162,7 @@
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/service/ServiceData.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/persistent_data/manipulation_utility/RelationManipulator.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/persistent_data/client_data/ContactListDAO.java
+/home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/data/PacketCategorySubscriptionManager.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/client_handling/packet_processing/content_processor_provisioning/CategoryBasedProcessorFactoryProvider.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/service/RemotePacketBuffer.java
 /home/fredward/Software Development/Programming/VSY_ChatServer/complete-project/server/src/main/java/de/vsy/server/persistent_data/PersistentDataFileCreator.java

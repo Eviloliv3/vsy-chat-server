@@ -108,7 +108,7 @@
                                 <Multi-Release>true</Multi-Release>
                             </manifestEntries>
                             <manifest>
-                                <mainClass>de.vsy.server.server.ChatServer</mainClass>
+                                <mainClass>de.vsy.server.ChatServer</mainClass>
                             </manifest>
                         </archive>
                 </configuration>

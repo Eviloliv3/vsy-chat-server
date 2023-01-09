@@ -15,9 +15,9 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
 
     private final CommunicatorPersistenceDAO clientRegistry;
     private final LiveClientStateDAO persistentClientStates;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+    private final PacketCategorySubscriptionManager clientSubscriptionManager;
     private final SocketConnectionDataManager serverConnectionDataManager;
-    private final AbstractPacketCategorySubscriptionManager serverSubscriptionManager;
+    private final PacketCategorySubscriptionManager serverSubscriptionManager;
     private final ServicePacketBufferManager serviceBuffers;
     private final ServerSynchronizationManager serverSynchronizationManager;
 
@@ -64,12 +64,12 @@ public class ServiceDataAccessManager implements ClientStatusRegistrationService
     }
 
     @Override
-    public AbstractPacketCategorySubscriptionManager getClientSubscriptionManager() {
+    public PacketCategorySubscriptionManager getClientSubscriptionManager() {
         return this.clientSubscriptionManager;
     }
 
     @Override
-    public AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager() {
+    public PacketCategorySubscriptionManager getServiceSubscriptionManager() {
         return this.serverSubscriptionManager;
     }
 

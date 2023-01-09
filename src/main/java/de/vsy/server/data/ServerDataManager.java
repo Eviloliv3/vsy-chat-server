@@ -13,8 +13,8 @@ public class ServerDataManager {
 
     private final ServerSynchronizationManager serverSynchronization;
     private final SocketConnectionDataManager serverNodeManager;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
-    private final AbstractPacketCategorySubscriptionManager serviceSubscriptionManager;
+    private final PacketCategorySubscriptionManager clientSubscriptionManager;
+    private final PacketCategorySubscriptionManager serviceSubscriptionManager;
     private final ServicePacketBufferManager servicePacketBufferManager;
 
     /**
@@ -36,11 +36,11 @@ public class ServerDataManager {
         return this.servicePacketBufferManager;
     }
 
-    public AbstractPacketCategorySubscriptionManager getClientCategorySubscriptionManager() {
+    public PacketCategorySubscriptionManager getClientCategorySubscriptionManager() {
         return this.clientSubscriptionManager;
     }
 
-    public AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager() {
+    public PacketCategorySubscriptionManager getServiceSubscriptionManager() {
         return this.serviceSubscriptionManager;
     }
 

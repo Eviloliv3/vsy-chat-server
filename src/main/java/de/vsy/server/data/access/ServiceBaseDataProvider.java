@@ -1,6 +1,6 @@
 package de.vsy.server.data.access;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.ServerSynchronizationManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 
@@ -11,14 +11,14 @@ public interface ServiceBaseDataProvider {
      *
      * @return the client subscription manager
      */
-    AbstractPacketCategorySubscriptionManager getClientSubscriptionManager();
+    PacketCategorySubscriptionManager getClientSubscriptionManager();
 
     /**
      * Returns the server subscription manager.
      *
      * @return the server subscription manager
      */
-    AbstractPacketCategorySubscriptionManager getServiceSubscriptionManager();
+    PacketCategorySubscriptionManager getServiceSubscriptionManager();
 
     /**
      * Returns the local server connection data

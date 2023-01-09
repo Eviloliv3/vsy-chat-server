@@ -4,7 +4,7 @@ import de.vsy.server.client_handling.data_management.ExtraClientSubscriptionProv
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.ClientStateTranslator;
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
@@ -21,7 +21,7 @@ public class ClientSubscriptionHandler implements ClientStateListener {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static LiveClientStateDAO persistentClientStates;
-    private static AbstractPacketCategorySubscriptionManager subscriptionHandler;
+    private static PacketCategorySubscriptionManager subscriptionHandler;
     private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
     private final ClientDataProvider localClientDataProvider;
     private final ThreadPacketBufferManager clientBuffer;

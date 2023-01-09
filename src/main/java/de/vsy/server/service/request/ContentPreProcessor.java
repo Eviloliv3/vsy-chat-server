@@ -1,6 +1,6 @@
 package de.vsy.server.service.request;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.shared_module.packet_management.OutputBuffer;
@@ -14,7 +14,7 @@ public class ContentPreProcessor implements PublishablePacketCreator {
     private final ExtendedClientStatusPreProcessor extendedStatusProcessor;
 
     public ContentPreProcessor(final LocalServerConnectionData localServerData,
-                               AbstractPacketCategorySubscriptionManager clientSubscriptions,
+                               PacketCategorySubscriptionManager clientSubscriptions,
                                OutputBuffer assignmentBuffer) {
         extendedStatusProcessor = new ExtendedClientStatusPreProcessor(clientSubscriptions,
                 assignmentBuffer);

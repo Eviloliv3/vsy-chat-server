@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class ServiceSubscriptionManager extends AbstractPacketCategorySubscriptionManager {
+public class ServiceSubscriptionManager extends PacketCategorySubscriptionManager {
 
     private static final ThreadLocalRandom RANDOM_NUMBER_GENERATOR;
 

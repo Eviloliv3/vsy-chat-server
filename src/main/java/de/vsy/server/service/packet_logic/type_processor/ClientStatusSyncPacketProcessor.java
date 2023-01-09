@@ -5,7 +5,7 @@ package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
 import de.vsy.server.client_management.ClientStateTranslator;
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
@@ -42,7 +42,7 @@ public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
     private final SocketConnectionDataManager serverConnectionDataManager;
     private final LocalServerConnectionData serverNode;
     private final ServicePacketBufferManager serviceBufferManager;
-    private final AbstractPacketCategorySubscriptionManager clientSubscriptionManager;
+    private final PacketCategorySubscriptionManager clientSubscriptionManager;
     private final ResultingPacketContentHandler resultingPackets;
     private final LiveClientStateDAO persistentClientStates;
 

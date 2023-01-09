@@ -3,7 +3,7 @@
  */
 package de.vsy.server.data.access;
 
-import de.vsy.server.data.AbstractPacketCategorySubscriptionManager;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.ServerDataManager;
 import de.vsy.server.data.ServerPersistentDataManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
@@ -17,7 +17,7 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 public class HandlerAccessManager {
 
     private static LiveClientStateDAO clientStatePersistenceManager;
-    private static AbstractPacketCategorySubscriptionManager clientSubscriptionHandler;
+    private static PacketCategorySubscriptionManager clientSubscriptionHandler;
     private static ClientTransactionDAO clientTransactionManager;
     private static CommunicatorDataManipulator communicatorDataManipulator;
     private static LocalServerConnectionData serverNodeData;
@@ -49,7 +49,7 @@ public class HandlerAccessManager {
         return communicatorDataManipulator;
     }
 
-    public static AbstractPacketCategorySubscriptionManager getClientSubscriptionManager() {
+    public static PacketCategorySubscriptionManager getClientSubscriptionManager() {
         return clientSubscriptionHandler;
     }
 
