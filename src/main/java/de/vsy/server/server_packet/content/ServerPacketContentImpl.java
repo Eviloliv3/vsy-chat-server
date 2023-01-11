@@ -94,15 +94,6 @@ public abstract class ServerPacketContentImpl implements PacketContent, ServerSt
     }
 
     /**
-     * Returns the reading connection thread.
-     *
-     * @return the reading connection thread
-     */
-    public int getReadByConnectionThread() {
-        return this.readByConnectionThread;
-    }
-
-    /**
      * Sets the reading connection thread.
      *
      * @param readingConnectionThread the new reading connection thread

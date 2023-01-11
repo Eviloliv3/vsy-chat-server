@@ -9,8 +9,6 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Set;
 
@@ -19,7 +17,6 @@ import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.SER
 
 public class LoggedOutClientHandlingStrategy implements PacketHandlingStrategy {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private static final Set<Class<? extends PacketContent>> retainableContentTypes;
 
     static {
@@ -41,13 +38,8 @@ public class LoggedOutClientHandlingStrategy implements PacketHandlingStrategy {
         for (var currentPacket : remainingPackets) {
             var packetContent = currentPacket.getPacketContent();
 
-            if (retainableContentTypes.contains(packetContent)) {
-                try {
-                    retainPacket(currentPacket);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    LOGGER.warn("Interrupted while trying to retain Packet.");
-                }
+            if (retainableContentTypes.contains(packetContent.getClass())) {
+                retainPacket(currentPacket);
             } else {
                 sendOfflineResponse(currentPacket);
             }
@@ -60,7 +52,7 @@ public class LoggedOutClientHandlingStrategy implements PacketHandlingStrategy {
         this.bufferManager.getPacketBuffer(SERVER_BOUND).appendPacket(errorPacket);
     }
 
-    private void retainPacket(final Packet retainablePacket) throws InterruptedException {
+    private void retainPacket(final Packet retainablePacket) {
         PendingPacketDAO p = new PendingPacketDAO();
         p.createFileAccess(retainablePacket.getPacketProperties().getRecipient().getEntityId());
         p.appendPendingPacket(PendingType.PROCESSOR_BOUND, retainablePacket);

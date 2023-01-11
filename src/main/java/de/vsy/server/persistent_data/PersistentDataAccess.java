@@ -9,6 +9,4 @@ public interface PersistentDataAccess {
      * Removes the file access.
      */
     void removeFileAccess();
-
-    void removeFiles();
 }

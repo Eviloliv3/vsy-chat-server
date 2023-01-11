@@ -13,7 +13,6 @@ import de.vsy.server.service.ServiceBase;
 import de.vsy.server.service.ServiceData;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.ClientStatusPacketProcessorFactory;
-import de.vsy.server.service.packet_logic.PacketResponseMap;
 import de.vsy.server.service.packet_logic.processor.ServicePacketProcessor;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.packet_management.PacketDispatcher;
@@ -56,8 +55,7 @@ public class ClientStatusSynchronizationService extends ServiceBase {
      */
     public ClientStatusSynchronizationService(
             final ClientStatusRegistrationServiceDataProvider serviceDataModel) {
-        super(SERVICE_SPECIFICATIONS, serviceDataModel.getServicePacketBufferManager(),
-                serviceDataModel.getLocalServerConnectionData());
+        super(SERVICE_SPECIFICATIONS, serviceDataModel.getLocalServerConnectionData());
         this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
         this.packetCreator = new ServerStatusSyncPacketCreator();
@@ -111,27 +109,5 @@ public class ClientStatusSynchronizationService extends ServiceBase {
     @Override
     public void breakDown() {
         this.serviceBuffers.deregisterBuffer(getServiceType(), getServiceId(), this.incomingBuffer);
-    }
-
-    /**
-     * Dispatch response PacketResponseMap.
-     *
-     * @param responseMap PacketResponseMap
-     */
-    private void dispatchResponsePacketMap(final PacketResponseMap responseMap) {
-        Packet toDispatch;
-
-        if (responseMap != null) {
-            toDispatch = responseMap.getClientBoundPacket();
-
-            if (toDispatch != null) {
-                this.dispatcher.dispatchPacket(toDispatch);
-            }
-            toDispatch = responseMap.getServerBoundPacket();
-
-            if (toDispatch != null) {
-                this.dispatcher.dispatchPacket(toDispatch);
-            }
-        }
     }
 }

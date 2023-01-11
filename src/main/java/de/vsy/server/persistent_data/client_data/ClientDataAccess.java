@@ -12,7 +12,7 @@ public interface ClientDataAccess extends PersistentDataAccess {
      *
      * @param clientId the client's id
      * @throws IllegalArgumentException if the specified argument is not valid for file/directory creation.
-     * @throws IllegalStateException if any condition arises that makes the file access creation impossible.
+     * @throws IllegalStateException    if any condition arises that makes the file access creation impossible.
      */
     void createFileAccess(int clientId) throws IllegalArgumentException, IllegalStateException;
 }

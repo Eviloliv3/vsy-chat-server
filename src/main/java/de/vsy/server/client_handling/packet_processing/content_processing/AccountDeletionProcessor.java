@@ -9,12 +9,10 @@ import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
-import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionResponseDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
-import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
@@ -47,7 +45,6 @@ public class AccountDeletionProcessor implements ContentProcessor<AccountDeletio
     @Override
     public void processContent(AccountDeletionRequestDTO toProcess) {
         final boolean accountDeleted;
-        final CommunicatorDTO clientData = clientDataProvider.getCommunicatorData();
         final int clientId = clientDataProvider.getClientId();
 
         if (clientRegistry.deleteAccount(clientId)) {

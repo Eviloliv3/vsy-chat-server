@@ -128,7 +128,7 @@ public class TestStatusChange extends ServerTestBase {
         packet = clientOne.readPacket();
         LOGGER.info("Expecting ContactStatusChangeDTO. Read: {}", packet);
         verifyPacketContent(packet, ContactStatusChangeDTO.class);
-        Assertions.assertEquals(((ContactStatusChangeDTO)packet.getPacketContent()).getContactData(), clientTwo.getCommunicatorData());
+        Assertions.assertEquals(((ContactStatusChangeDTO) packet.getPacketContent()).getContactData(), clientTwo.getCommunicatorData());
         LOGGER.info(
                 "Test: change messenger status for two clients that are contacts -> success -- terminated");
     }

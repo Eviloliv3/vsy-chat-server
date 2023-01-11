@@ -2,11 +2,9 @@ package de.vsy.server.server_packet.packet_validation;
 
 import de.vsy.server.server_packet.content.*;
 import de.vsy.server.server_packet.packet_properties.packet_type.ServerErrorType;
-import de.vsy.server.server_packet.packet_properties.packet_type.ServerStatusType;
 import de.vsy.shared_module.packet_validation.SemanticPacketValidator;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
-import de.vsy.shared_transmission.packet.property.packet_type.AuthenticationType;
 import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
 
 import java.util.EnumMap;

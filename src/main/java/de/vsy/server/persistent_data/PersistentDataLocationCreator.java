@@ -42,7 +42,7 @@ public class PersistentDataLocationCreator {
      * @param pathExtension the path extension
      * @return the string[]
      * @throws IllegalStateException if attempts at opening or creating directories
-     * cause SecurityException
+     *                               cause SecurityException
      */
     public static String[] createDirectoryPaths(DataOwnershipDescriptor owner,
                                                 final String pathExtension)
@@ -77,7 +77,7 @@ public class PersistentDataLocationCreator {
      * @return true, if successful
      */
     private static boolean createDirectoryPaths(final String[] dataPaths)
-            throws IllegalStateException{
+            throws IllegalStateException {
         boolean directoriesCreated = false;
 
         for (var i = (dataPaths.length - 1); i >= 0; i--) {
@@ -137,8 +137,7 @@ public class PersistentDataLocationCreator {
     }
 
     public static String createDirectoryPath(DataOwnershipDescriptor owner,
-                                             final String pathExtension)
-            throws InterruptedException {
+                                             final String pathExtension) {
         String standardDataPath = createStandardDirectoryPath(owner, pathExtension);
         createDirectoryPath(standardDataPath);
         return standardDataPath;

@@ -3,7 +3,6 @@ package de.vsy.server.client_handling.data_management;
 import de.vsy.server.client_handling.data_management.logic.ClientSubscriptionHandler;
 import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
-import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 
 public class LocalClientStateObserverManager {
 

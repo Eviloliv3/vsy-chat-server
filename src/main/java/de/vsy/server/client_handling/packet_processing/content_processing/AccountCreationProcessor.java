@@ -66,6 +66,7 @@ public class AccountCreationProcessor implements ContentProcessor<AccountCreatio
                         "An error occurred while writing your local login state. Please contact the ChatServer support team.";
             }
         } else {
+            LOGGER.error("Account not created for input: {}.", toProcess);
             causeMessage = "No account was created. There is an existing account with the provided login data.";
         }
         if (causeMessage != null) {

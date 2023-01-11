@@ -4,10 +4,8 @@ import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.client_handling.packet_processing.content_processor_provisioning.CategoryBasedProcessorFactoryProvider;
 import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_module.packet_processing.processor_provision.ContentBasedPacketProcessorProvider;
-import de.vsy.shared_module.packet_processing.processor_provision.ContentBasedProcessorFactory;
 import de.vsy.shared_module.packet_processing.processor_provision.PacketProcessorProvider;
 import de.vsy.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdentifier;
 
 import java.util.Optional;
@@ -23,12 +21,6 @@ public class PacketProcessorManager {
         this.contentHandlerProvider = new PacketProcessorProvider();
         this.threadDataAccess = threadDataAccess;
         this.handlerProvider = handlerProvider;
-    }
-
-    public void registerCategoryProcessingProvider(PacketCategory category,
-                                                   ContentBasedProcessorFactory processingProvider) {
-        this.contentHandlerProvider.registerTypeProcessingProvider(category,
-                new ContentBasedPacketProcessorProvider(processingProvider));
     }
 
     public Optional<PacketProcessor> getProcessor(ContentIdentifier identifier,

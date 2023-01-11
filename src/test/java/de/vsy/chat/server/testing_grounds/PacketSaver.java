@@ -1,16 +1,11 @@
 package de.vsy.chat.server.testing_grounds;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.SynchronousFileManipulator;
 import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.server.persistent_data.client_data.ClientDAO;
-import de.vsy.server.persistent_data.client_data.ClientDataAccess;
 import de.vsy.shared_transmission.packet.Packet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
-import static java.lang.String.valueOf;
 
 public class PacketSaver extends ClientDAO {
 

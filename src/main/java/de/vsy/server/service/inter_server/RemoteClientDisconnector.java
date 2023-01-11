@@ -15,7 +15,6 @@ import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.Map;
 import java.util.Set;
@@ -58,13 +57,7 @@ public class RemoteClientDisconnector {
     }
 
     private void disconnectClient(int clientId, ClientState currentState) {
-        try {
-            publishState(clientId, currentState);
-        } catch (InterruptedException ie) {
-            LogManager.getLogger()
-                    .error("No contact list access could be acquired for {}. Client state was not published.",
-                            clientId);
-        }
+        publishState(clientId, currentState);
         unsubscribeClient(clientId);
         this.clientStateProvider.removeClientState(clientId);
     }
@@ -75,8 +68,7 @@ public class RemoteClientDisconnector {
         pendingPacketAccess.setPendingPackets(PROCESSOR_BOUND, pendingPacketMap);
     }
 
-    private void publishState(final int clientId, final ClientState currentState)
-            throws InterruptedException {
+    private void publishState(final int clientId, final ClientState currentState) {
         Set<Integer> contactIdList;
         final var contactListProvider = new ContactListDAO();
 

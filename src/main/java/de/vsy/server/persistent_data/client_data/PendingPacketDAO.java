@@ -4,23 +4,19 @@
 package de.vsy.server.persistent_data.client_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.SynchronousFileManipulator;
 import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.Packet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
-import static java.lang.String.valueOf;
 
 /**
  * Grants writing accessLimiter to the file containing a client's pending Packet.
  */
-public class PendingPacketDAO extends ClientDAO implements PendingPacketPersistence {
+public class PendingPacketDAO extends ClientDAO {
 
     public PendingPacketDAO() {
         super(DataFileDescriptor.PENDING_PACKETS, getDataFormat());
@@ -39,7 +35,6 @@ public class PendingPacketDAO extends ClientDAO implements PendingPacketPersiste
         return factory.constructMapType(EnumMap.class, mapKey, linkedPendingMap);
     }
 
-    @Override
     public boolean persistPacket(final PendingType classification, final Packet toPersist) {
         return appendPendingPacket(classification, toPersist);
     }
@@ -169,7 +164,6 @@ public class PendingPacketDAO extends ClientDAO implements PendingPacketPersiste
         return allPendingPackets;
     }
 
-    @Override
     public void removePacket(final PendingType classification, final Packet toRemove) {
         removePendingPacket(classification, toRemove);
     }

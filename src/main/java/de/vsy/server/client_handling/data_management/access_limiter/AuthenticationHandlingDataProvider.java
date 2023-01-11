@@ -7,7 +7,6 @@ package de.vsy.server.client_handling.data_management.access_limiter;
 
 import de.vsy.server.client_handling.data_management.LocalClientStateObserverManager;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
-import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 
 /**
  * Provides authentication PacketCategory handlers with dataManagement accessLimiter.
@@ -22,6 +21,4 @@ public interface AuthenticationHandlingDataProvider extends BaseHandlingDataProv
     AuthenticationStateControl getGlobalAuthenticationStateControl();
 
     LocalClientStateObserverManager getLocalClientStateDependentLogicProvider();
-
-    StateDependentPacketRetriever getStateDependentPacketRetriever();
 }

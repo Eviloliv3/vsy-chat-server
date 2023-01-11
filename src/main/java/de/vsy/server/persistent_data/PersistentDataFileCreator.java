@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import static java.util.Arrays.asList;
-
 /**
  * Simple tool for creating preset file types. Assuming the passed directories have already been
  * created.
@@ -51,14 +49,14 @@ public class PersistentDataFileCreator {
     /**
      * Creates the or get file.
      *
-     * @param directoryName  the directory name
-     * @param filename       the filename
-     * @param LOGGER         the LOGGER
+     * @param directoryName the directory name
+     * @param filename      the filename
+     * @param LOGGER        the LOGGER
      * @return Path if file could be created or file path already existed.
      * @throws IllegalStateException if file location could not be accessed or created.
      */
     public static Path createAndGetFilePath(final String directoryName, final String filename,
-                                            final Logger LOGGER) throws IllegalStateException{
+                                            final Logger LOGGER) throws IllegalStateException {
         Path fileReference = null;
         final var directory = new File(directoryName);
 

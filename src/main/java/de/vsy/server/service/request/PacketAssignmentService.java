@@ -53,8 +53,7 @@ public class PacketAssignmentService extends ServiceBase {
      * @param serviceDataModel the service dataManagement model
      */
     public PacketAssignmentService(final PacketAssignmentServiceDataProvider serviceDataModel) {
-        super(SERVICE_SPECIFICATIONS, serviceDataModel.getServicePacketBufferManager(),
-                serviceDataModel.getLocalServerConnectionData());
+        super(SERVICE_SPECIFICATIONS, serviceDataModel.getLocalServerConnectionData());
         this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
         setupPacketNetworkManager(serviceDataModel.getServiceSubscriptionManager(),
                 serviceDataModel.getClientSubscriptionManager());
@@ -85,8 +84,7 @@ public class PacketAssignmentService extends ServiceBase {
         this.validator = new SimplePacketChecker(identificationValidation);
 
         this.requestBuffer = this.serviceBuffers.registerBuffer(super.getServiceType(), serviceId);
-        this.preProcessor = new ContentPreProcessor(super.serverConnectionData,
-                this.packetNetworkManager.getSubscriptionsManager(CLIENT), this.requestBuffer);
+        this.preProcessor = new ContentPreProcessor(this.packetNetworkManager.getSubscriptionsManager(CLIENT), this.requestBuffer);
         this.pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
         super.setReadyState();
     }

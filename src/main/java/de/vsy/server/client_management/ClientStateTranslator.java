@@ -32,12 +32,15 @@ public class ClientStateTranslator {
     }
 
     /**
-     * Translate state.
+     * Prepares a Set of ClientStates that a given ClientSate depends on considering
+     * their associated subscriptions. Then calls createTopicThreadMap(..) using the
+     * dependent ClientState Set to create a Map of topics and threads per topic to
+     * (not) be subscribed to for a  given ClientState and removal flag.
      *
-     * @param clientState    the client state
-     * @param onlineStatus   the online status
-     * @param communicatorId the communicator id
-     * @return true if (un-)subscribed
+     * @param clientState    the ClientState as evaluation base
+     * @param onlineStatus   the (un-)subscription flag
+     * @param communicatorId the id to be used as basic thread
+     * @return Map of topic - threads
      */
     public static Map<PacketCategory, Set<Integer>> prepareClientSubscriptionMap(
             final ClientState clientState,
@@ -53,6 +56,14 @@ public class ClientStateTranslator {
         return requestedMapping != null ? requestedMapping : emptyMap();
     }
 
+    /**
+     * Creates a Map of topics and threads per topic to (not) be subscribed to for a
+     * given ClientState and removal flag.
+     *
+     * @param clientStateSet Set of
+     * @param communicatorId the id to be used as basic thread
+     * @return Map of topic - threads
+     */
     private static Map<PacketCategory, Set<Integer>> createTopicThreadMap(final int communicatorId,
                                                                           Set<ClientState> clientStateSet) {
         final var topicThreadMap = new EnumMap<PacketCategory, Set<Integer>>(PacketCategory.class);

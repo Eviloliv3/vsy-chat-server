@@ -1,7 +1,6 @@
 package de.vsy.server.service.inter_server;
 
 import de.vsy.server.data.ConnectionSpecifications;
-import de.vsy.server.data.ServerSynchronizationManager;
 import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
@@ -26,10 +25,8 @@ public class InterServerSocketConnectionEstablisher {
     private final SocketConnectionDataManager serverConnectionDataManager;
     private ServerSocket localMasterSocket;
 
-    public InterServerSocketConnectionEstablisher(
-            final ServerSynchronizationManager serverSynchronization,
-            final SocketConnectionDataManager serverConnectionDataManager,
-            final ServiceControl serviceControl) {
+    public InterServerSocketConnectionEstablisher(final SocketConnectionDataManager serverConnectionDataManager,
+                                                  final ServiceControl serviceControl) {
         this.serverConnectionDataManager = serverConnectionDataManager;
         this.serviceControl = serviceControl;
         this.establishingThread = newSingleThreadExecutor();

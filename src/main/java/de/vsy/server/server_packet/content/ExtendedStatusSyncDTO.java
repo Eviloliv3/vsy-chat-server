@@ -12,11 +12,11 @@ import static java.util.Set.copyOf;
  * Contains state that shall be transferred to other connected servers, as well as clients
  */
 @JsonDeserialize(builder = ExtendedStatusSyncBuilder.class)
-public class ExtendedStatusSyncDTO extends BaseStatusSyncDTO implements ClientContactSync {
+public class ExtendedStatusSyncDTO extends BaseStatusSyncDTO {
 
     @Serial
     private static final long serialVersionUID = -2447318735172645953L;
-    private Set<Integer> contactIdSet;
+    private final Set<Integer> contactIdSet;
 
     /**
      * Instantiates a new extended status sync dataManagement.
@@ -28,14 +28,8 @@ public class ExtendedStatusSyncDTO extends BaseStatusSyncDTO implements ClientCo
         this.contactIdSet = builder.getContactIdSet();
     }
 
-    @Override
     public Set<Integer> getContactIdSet() {
         return copyOf(this.contactIdSet);
-    }
-
-    @Override
-    public void setRemainingContactIds(final Set<Integer> remainingContacts) {
-        this.contactIdSet = copyOf(remainingContacts);
     }
 
     @Override

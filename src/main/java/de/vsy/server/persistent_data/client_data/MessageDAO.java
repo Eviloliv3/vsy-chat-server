@@ -4,11 +4,8 @@
 package de.vsy.server.persistent_data.client_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.SynchronousFileManipulator;
 import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
-import static java.lang.String.valueOf;
 
 /**
  * Grants writing accessLimiter to the file containing a client's message histories.

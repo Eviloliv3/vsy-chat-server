@@ -9,7 +9,6 @@ import de.vsy.server.client_handling.strategy.LoggedOutClientHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PacketHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PendingClientPacketHandling;
 import de.vsy.server.client_handling.strategy.RegularPacketHandlingStrategy;
-import de.vsy.server.client_management.ClientState;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import de.vsy.shared_module.packet_transmission.cache.UnconfirmedPacketTransmissionCache;
@@ -71,11 +70,11 @@ public class ClientConnectionHandler implements Runnable {
                 clientHandling = new PendingClientPacketHandling(this.threadDataManager,
                         this.connectionControl);
                 clientHandling.administerStrategy();
-            } else if(stateManager.checkClientState(NOT_AUTHENTICATED)){
+            } else if (stateManager.checkClientState(NOT_AUTHENTICATED)) {
                 LOGGER.info("Client logged out, remaining Packets will be processed.");
                 clientHandling = new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
                 clientHandling.administerStrategy();
-            }else{
+            } else {
                 LOGGER.info("Client account deleted, no data will be rescued.");
             }
         } else {

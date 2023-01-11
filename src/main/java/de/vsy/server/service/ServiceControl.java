@@ -87,7 +87,6 @@ public class ServiceControl implements InterServerCommunicationServiceCreator {
 
     public void startInterServerConnector() {
         this.interServerConnectionEstablisher = new InterServerSocketConnectionEstablisher(
-                this.serviceDataModel.getServerSynchronizationManager(),
                 this.serviceDataModel.getServerConnectionDataManager(), this);
         interServerConnectionEstablisher.establishConnections();
     }
@@ -157,33 +156,5 @@ public class ServiceControl implements InterServerCommunicationServiceCreator {
             }
         }
         LOGGER.info("Services terminated.");
-    }
-
-    /**
-     * Stop service.
-     *
-     * @param serviceType the service type
-     * @param threadName  the thread name
-     * @return true, if successful
-     */
-    public boolean stopService(final Service.TYPE serviceType, final String threadName) {
-        Set<Thread> serviceThreads;
-
-        if (serviceType == null || threadName == null) {
-            return false;
-        }
-        serviceThreads = this.registeredServices.get(serviceType);
-
-        if (serviceThreads != null) {
-
-            for (final Thread service : serviceThreads) {
-
-                if (service.getName().equals(threadName)) {
-                    service.interrupt();
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

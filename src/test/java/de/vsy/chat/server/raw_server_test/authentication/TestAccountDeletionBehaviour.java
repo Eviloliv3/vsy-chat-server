@@ -3,16 +3,11 @@ package de.vsy.chat.server.raw_server_test.authentication;
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.ServerTestBase;
 import de.vsy.chat.server.server_test_helpers.ClientConnection;
-import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
-import de.vsy.shared_transmission.dto.authentication.PersonalData;
-import de.vsy.shared_transmission.dto.builder.AccountCreationDTOBuilder;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
-import de.vsy.shared_transmission.packet.content.authentication.AccountCreationRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountDeletionResponseDTO;
-import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.packet.content.status.ClientStatusChangeDTO;
 import de.vsy.shared_transmission.packet.content.status.MessengerSetupDTO;
@@ -88,7 +83,7 @@ public class TestAccountDeletionBehaviour extends ServerTestBase {
         LOGGER.info("Test: deletion -> success -- terminated");
     }
 
-    private void loginClient(final ClientConnection connection, final AuthenticationDTO credentials){
+    private void loginClient(final ClientConnection connection, final AuthenticationDTO credentials) {
         connection.setClientData(credentials, null);
         Assertions.assertTrue(connection.tryClientLogin(), "Login failed for: " + credentials);
     }

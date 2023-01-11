@@ -15,15 +15,6 @@ public class PermittedPackets extends PermittedCategoryProvider {
     /**
      * Instantiates a new permitted Packet.
      *
-     * @param categories the categories
-     */
-    public PermittedPackets(final List<PacketCategory> categories) {
-        this(categories, null);
-    }
-
-    /**
-     * Instantiates a new permitted Packet.
-     *
      * @param categories      the categories
      * @param otherCategories the other categories
      */

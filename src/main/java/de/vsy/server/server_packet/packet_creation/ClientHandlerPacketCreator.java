@@ -6,8 +6,6 @@ import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
-import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
-import de.vsy.shared_utility.standard_value.StandardIdProvider;
 
 import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
@@ -78,7 +76,7 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         final var senderIsClient = senderId == this.clientDataProvider.getClientId();
         final var senderIsUnspecifiedClient = senderId == STANDARD_CLIENT_ID;
 
-        if(senderTypeIsClient){
+        if (senderTypeIsClient) {
             return noLocalClient || senderIsClient || senderIsUnspecifiedClient;
         }
         return false;

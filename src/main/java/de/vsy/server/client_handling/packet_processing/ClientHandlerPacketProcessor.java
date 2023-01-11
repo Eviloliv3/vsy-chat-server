@@ -12,12 +12,8 @@ import de.vsy.shared_module.packet_processing.ProcessingCondition;
 import de.vsy.shared_module.packet_validation.content_validation.PacketContentValidator;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ClientHandlerPacketProcessor<T extends PacketContent> implements PacketProcessor {
-
-    private static final Logger LOGGER = LogManager.getLogger();
     protected final ProcessingCondition processingCondition;
     protected final PacketContentValidator<T> contentValidator;
     protected final ContentProcessor<T> contentProcessor;

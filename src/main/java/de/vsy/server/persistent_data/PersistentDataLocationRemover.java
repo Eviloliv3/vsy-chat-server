@@ -8,33 +8,35 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class PersistentDataLocationRemover {
-    private PersistentDataLocationRemover(){}
-    public static void deleteDirectories(final DataOwnershipDescriptor owner, final String pathExtension, Logger logger){
+    private PersistentDataLocationRemover() {
+    }
+
+    public static void deleteDirectories(final DataOwnershipDescriptor owner, final String pathExtension, Logger logger) {
         final var directories = PersistentDataLocationCreator.createDirectoryPaths(owner, pathExtension);
 
-        if(directories != null){
+        if (directories != null) {
             final var directoryCount = directories.length;
             Path[] directoryPaths = new Path[directoryCount];
 
-            for(int directoryIndex = 0; directoryIndex <  directoryCount; directoryIndex++){
+            for (int directoryIndex = 0; directoryIndex < directoryCount; directoryIndex++) {
                 directoryPaths[directoryIndex] = Path.of(directories[directoryIndex]);
             }
             deleteDirectories(directoryPaths, logger);
-        }else{
+        } else {
             logger.error("No eligible directory paths could be created.");
         }
     }
 
-    public static void deleteDirectories(Path[] filePaths, Logger logger){
-        for(final var path : filePaths){
+    public static void deleteDirectories(Path[] filePaths, Logger logger) {
+        for (final var path : filePaths) {
             final var file = path.toFile();
 
             try {
-                if(file.isDirectory())
+                if (file.isDirectory())
                     deleteDirectoryContent(file);
                 file.delete();
                 Files.deleteIfExists(path);
-            }catch(SecurityException se){
+            } catch (SecurityException se) {
                 logger.warn("Deletion not allowed for file/directory: {}", path);
             } catch (IOException e) {
                 logger.warn("Deletion failed for: {}", path);
@@ -42,15 +44,15 @@ public class PersistentDataLocationRemover {
         }
     }
 
-    private static void deleteDirectoryContent(File directory) throws SecurityException{
+    private static void deleteDirectoryContent(File directory) throws SecurityException {
         File[] files = directory.listFiles();
 
-        if(files == null){
+        if (files == null) {
             return;
         }
 
-        for(final var file : files){
-            if(file.isDirectory())
+        for (final var file : files) {
+            if (file.isDirectory())
                 deleteDirectoryContent(file);
             file.delete();
         }

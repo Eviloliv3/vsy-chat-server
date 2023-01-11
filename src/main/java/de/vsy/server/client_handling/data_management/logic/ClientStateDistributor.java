@@ -114,7 +114,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
         final var currentStates = this.localClientStateManager.getCurrentState();
         final var descendingStates = currentStates.descendingIterator();
 
-        while(descendingStates.hasNext()){
+        while (descendingStates.hasNext()) {
             appendStateSynchronizationPacket(descendingStates.next(), false);
         }
     }

@@ -4,7 +4,6 @@ import de.vsy.shared_module.packet_management.BasicClientPacketDispatcher;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
-import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
 
 import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.SERVER;

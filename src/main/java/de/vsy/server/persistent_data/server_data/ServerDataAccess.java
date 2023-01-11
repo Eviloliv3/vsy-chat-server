@@ -9,6 +9,7 @@ public interface ServerDataAccess extends PersistentDataAccess {
 
     /**
      * Creates file access. Data is then accessible.
+     *
      * @throws IllegalStateException if any condition arises that makes the file access creation impossible.
      */
     void createFileAccess() throws IllegalStateException;

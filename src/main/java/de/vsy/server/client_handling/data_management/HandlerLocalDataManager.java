@@ -14,7 +14,6 @@ import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
 import de.vsy.server.client_handling.data_management.logic.ClientStateDistributor;
 import de.vsy.server.client_handling.data_management.logic.ClientStatePublisher;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
-import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.server_packet.packet_creation.ClientHandlerPacketCreator;
@@ -116,9 +115,8 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
         return this.stateDependingAccess;
     }
 
-    @Override
-    public StateDependentPacketRetriever getStateDependentPacketRetriever(){
-    return new StateDependentPacketRetriever(this.stateDependingAccess.getClientPersistentAccess(), this.threadBuffers, this.getLocalClientStateDependentLogicProvider().getPermittedPacketCategoryCheck());
+    public StateDependentPacketRetriever getStateDependentPacketRetriever() {
+        return new StateDependentPacketRetriever(this.stateDependingAccess.getClientPersistentAccess(), this.threadBuffers, this.getLocalClientStateDependentLogicProvider().getPermittedPacketCategoryCheck());
     }
 
     public PacketTransmissionCache getPacketTransmissionCache() {

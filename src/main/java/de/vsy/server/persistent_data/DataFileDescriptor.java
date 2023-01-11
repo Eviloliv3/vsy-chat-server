@@ -3,7 +3,7 @@ package de.vsy.server.persistent_data;
 /**
  * The Enum DataFileDescriptor.
  */
-public enum DataFileDescriptor implements RequirementProvider {
+public enum DataFileDescriptor {
     /* The active clients */
     ACTIVE_CLIENTS(false, "activeClientsUTF_8.json"),
     CLIENT_TRANSACTION(false, "clientTransactionsUTF_8.json"),
@@ -21,14 +21,13 @@ public enum DataFileDescriptor implements RequirementProvider {
      * Instantiates a new dataManagement file descriptor.
      *
      * @param extensionRequired the extensionFlag
-     * @param dataFilename the filename
+     * @param dataFilename      the filename
      */
     DataFileDescriptor(final boolean extensionRequired, final String dataFilename) {
         this.extensionRequired = extensionRequired;
         this.dataFilename = dataFilename;
     }
 
-    @Override
     public boolean pathExtensionRequired() {
         return this.extensionRequired;
     }

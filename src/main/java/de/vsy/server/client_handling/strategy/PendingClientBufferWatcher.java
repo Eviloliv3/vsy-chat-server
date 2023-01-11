@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.HANDLER_BOUND;
 import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.SERVER_BOUND;
-import static java.util.Arrays.asList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**

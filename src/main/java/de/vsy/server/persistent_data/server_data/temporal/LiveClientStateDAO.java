@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.CurrentClientState;
 import de.vsy.server.data.SocketConnectionDataManager;
-import de.vsy.server.persistent_data.SynchronousFileManipulator;
 import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.server.persistent_data.server_data.ServerDAO;
-import de.vsy.server.persistent_data.server_data.ServerDataAccess;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.EnumMap;
 import java.util.HashMap;

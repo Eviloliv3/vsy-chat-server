@@ -19,10 +19,6 @@ public class RemoteFollowerServerConnectionData implements ServerConnectionDataP
         return new RemoteFollowerServerConnectionData(remoteServerId, masterSocket);
     }
 
-    public ServerSocket getConnectionSocket() {
-        return this.masterSocket;
-    }
-
     @Override
     public String getHostname() {
         return this.masterSocket.getInetAddress().getHostName();

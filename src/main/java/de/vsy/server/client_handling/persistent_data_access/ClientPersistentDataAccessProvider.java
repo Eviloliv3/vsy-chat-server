@@ -14,9 +14,7 @@ import java.util.List;
 /**
  * The Class ClientPersistentDataAccessProvider.
  */
-public class ClientPersistentDataAccessProvider implements ChatHandlingPersistentAccess,
-        ClientStateListener,
-        RelationHandlingPersistenceAccess, UpdateHandlingPersistentAccess {
+public class ClientPersistentDataAccessProvider implements ClientStateListener {
 
     private final ClientDataProvider localClientData;
     private final ContactListDAO contactDataProvider;
@@ -57,14 +55,8 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
         if (changedState.equals(ClientState.AUTHENTICATED)) {
 
             if (added) {
-                try {
-                    initiateClientDataAccess(this.localClientData.getClientId());
-                    this.dataAccessible = true;
-                } catch (InterruptedException ie) {
-                    this.dataAccessible = false;
-                    cutClientDataAccess();
-                    throw new IllegalStateException(ie);
-                }
+                initiateClientDataAccess(this.localClientData.getClientId());
+                this.dataAccessible = true;
             } else {
                 cutClientDataAccess();
             }
@@ -76,7 +68,7 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
      *
      * @param clientId the client id
      */
-    public void initiateClientDataAccess(final int clientId) throws InterruptedException {
+    public void initiateClientDataAccess(final int clientId) {
         for (final var persistenceDAO : persistenceDAOList) {
             persistenceDAO.createFileAccess(clientId);
         }
@@ -93,12 +85,10 @@ public class ClientPersistentDataAccessProvider implements ChatHandlingPersisten
         this.dataAccessible = false;
     }
 
-    @Override
     public ContactListDAO getContactListDAO() {
         return this.contactDataProvider;
     }
 
-    @Override
     public MessageDAO getMessageDAO() {
         return this.messageDataProvider;
     }

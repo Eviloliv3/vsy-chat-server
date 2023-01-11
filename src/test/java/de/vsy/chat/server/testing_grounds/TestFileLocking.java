@@ -6,35 +6,31 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.FileLockInterruptionException;
 import java.nio.channels.OverlappingFileLockException;
-import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TestFileLocking
-{
+public class TestFileLocking {
     Logger LOGGER = LogManager.getLogger();
     Map<Path, FileLock> locks = new HashMap<>();
+
     @Test
     void testReentrantFileLocking() throws IOException, InterruptedException {
         ExecutorService ex = Executors.newFixedThreadPool(2);
         final var file = System.getProperty("user.home") + File.separator + "testFile.lock";
         final var path = Path.of(file);
-        if(!path.toFile().isFile()){
+        if (!path.toFile().isFile()) {
             path.toFile().createNewFile();
         }
         var lock1 = getLock(path, true, StandardOpenOption.READ);
@@ -42,7 +38,7 @@ public class TestFileLocking
         CountDownLatch l = new CountDownLatch(1);
         ex.execute(() -> {
             var buffer = ByteBuffer.allocate(1024);
-            while(l.getCount() > 0) {
+            while (l.getCount() > 0) {
                 try {
                     lock1.channel().read(buffer);
                     LOGGER.error("1 Read successfully.");
@@ -62,14 +58,15 @@ public class TestFileLocking
                 buffer.clear();
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }finally {
+            } finally {
                 l.countDown();
             }
         });
     }
-    private FileLock getLock(final Path path, boolean sharedAccess, OpenOption... s){
+
+    private FileLock getLock(final Path path, boolean sharedAccess, OpenOption... s) {
         return locks.computeIfAbsent(path, key -> {
-            while(!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted()) {
                 try {
                     final var channel = FileChannel.open(key, s);
                     return channel.lock(0L, Long.MAX_VALUE, sharedAccess);

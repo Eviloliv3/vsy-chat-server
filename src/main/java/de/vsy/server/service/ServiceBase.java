@@ -34,10 +34,8 @@ public abstract class ServiceBase implements Service {
      * Instantiates a new service base.
      *
      * @param serviceSpecifications the service specifications
-     * @param serviceBuffers        the service buffers
      */
     protected ServiceBase(final ServiceData serviceSpecifications,
-                          final ServicePacketBufferManager serviceBuffers,
                           final LocalServerConnectionData serverConnectionData) {
 
         this.serviceSpecifications = serviceSpecifications;

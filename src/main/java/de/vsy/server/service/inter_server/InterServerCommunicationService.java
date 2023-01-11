@@ -76,8 +76,7 @@ public class InterServerCommunicationService extends ServiceBase {
      */
     public InterServerCommunicationService(
             final ServerCommunicationServiceDataProvider serviceDataAccess) {
-        super(SERVICE_SPECIFICATIONS, serviceDataAccess.getServicePacketBufferManager(),
-                serviceDataAccess.getLocalServerConnectionData());
+        super(SERVICE_SPECIFICATIONS, serviceDataAccess.getLocalServerConnectionData());
         this.serverConnectionDataManager = serviceDataAccess.getServerConnectionDataManager();
         this.serviceDataAccess = serviceDataAccess;
         this.threadBuffers = new ThreadPacketBufferManager();
@@ -315,7 +314,6 @@ public class InterServerCommunicationService extends ServiceBase {
      * @return true, if successful
      */
     private boolean relaisConnectedServerFailure() {
-        Packet failureNotification;
         final var failureContent = new ServerFailureContentBuilder()
                 .withFailedServerId(this.remoteConnectionData.getServerId()).build();
         /*

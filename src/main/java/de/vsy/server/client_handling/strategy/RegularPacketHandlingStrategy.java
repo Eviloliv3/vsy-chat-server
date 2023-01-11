@@ -43,6 +43,7 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
     private final PacketTransmissionCache packetsToDispatch;
     private final MultiplePacketDispatcher dispatcher;
     private final ThreadPacketBufferManager threadLocalBuffers;
+    private final StateDependentPacketRetriever packetRetriever;
     private PacketProcessor processor;
 
     /**
@@ -63,6 +64,7 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
         this.dispatcher = new ClientPacketDispatcher(threadDataAccess.getLocalClientDataProvider(),
                 this.threadLocalBuffers.getPacketBuffer(OUTSIDE_BOUND),
                 this.threadLocalBuffers.getPacketBuffer(SERVER_BOUND));
+        this.packetRetriever = threadDataAccess.getStateDependentPacketRetriever();
         setupProcessor(threadDataAccess);
     }
 
@@ -125,6 +127,9 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
 
                 stateChanged = this.clientStateAccess.clientStateHasChanged();
             }
+        }
+        if (this.clientStateAccess.clientStateHasRisen()) {
+            this.packetRetriever.getPendingPackets();
         }
     }
 }

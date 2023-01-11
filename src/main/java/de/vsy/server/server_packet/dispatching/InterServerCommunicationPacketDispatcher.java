@@ -8,16 +8,12 @@ import de.vsy.shared_module.packet_management.MultiplePacketDispatcher;
 import de.vsy.shared_module.packet_management.OutputBuffer;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Deque;
 import java.util.Map;
 
 public class InterServerCommunicationPacketDispatcher implements MultiplePacketDispatcher {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final RemoteServerConnectionData remoteServerData;
     private final ServicePacketBufferManager serviceBuffers;
     private final Map<ServiceData.ServiceResponseDirection, Service.TYPE> responseDirections;
@@ -82,21 +78,5 @@ public class InterServerCommunicationPacketDispatcher implements MultiplePacketD
      */
     protected void sendOutboundPacket(final Packet output) {
         outputBuffer.appendPacket(output);
-    }
-
-    private EligibleCommunicationEntity getRecipientEntity(Packet output) {
-        EligibleCommunicationEntity recipientEntity;
-        if (output != null) {
-            final var recipient = output.getPacketProperties().getRecipient();
-
-            if (recipient != null) {
-                recipientEntity = recipient.getEntity();
-            } else {
-                throw new IllegalArgumentException("No recipient specified.");
-            }
-        } else {
-            throw new IllegalArgumentException("No Packet specified.");
-        }
-        return recipientEntity;
     }
 }

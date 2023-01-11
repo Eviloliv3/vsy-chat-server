@@ -1,11 +1,8 @@
 package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.SynchronousFileManipulator;
 import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.Packet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;

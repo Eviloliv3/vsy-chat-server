@@ -13,7 +13,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.channels.*;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.FileLockInterruptionException;
+import java.nio.channels.OverlappingFileLockException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
@@ -27,7 +30,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
-import static de.vsy.server.persistent_data.DataOwnershipDescriptor.CLIENT;
 import static java.util.Arrays.asList;
 
 /**
@@ -58,7 +60,7 @@ public class SynchronousFileManipulator implements PersistentDataAccessProvider 
     /**
      * Instantiates a new specialized reader base.
      *
-     * @param dataFormat     the dataManagement format
+     * @param dataFormat the dataManagement format
      */
     public SynchronousFileManipulator(final JavaType dataFormat) {
         this.dataFormat = dataFormat;
@@ -87,29 +89,29 @@ public class SynchronousFileManipulator implements PersistentDataAccessProvider 
         }
         final var localLockAcquired = acquireLocalLock(sharedAccess);
 
-        if(localLockAcquired){
+        if (localLockAcquired) {
             final boolean globalLockAcquired;
 
-            if(sharedAccess){
+            if (sharedAccess) {
                 this.accessLock.lock();
 
-                try{
+                try {
                     globalLockAcquired = acquireGlobalLocks(true);
-                }finally {
+                } finally {
                     this.accessLock.unlock();
                 }
-            }else{
+            } else {
                 globalLockAcquired = acquireGlobalLocks(false);
             }
 
-            if(!globalLockAcquired) {
+            if (!globalLockAcquired) {
                 LOGGER.error("Global locks not acquired. All locks will be released.");
                 releaseAccess(sharedAccess);
                 return false;
             }
             addThread(Thread.currentThread());
             return true;
-        }else{
+        } else {
             LOGGER.error("Interruption prevented local lock acquisition.");
         }
         return false;
@@ -122,38 +124,38 @@ public class SynchronousFileManipulator implements PersistentDataAccessProvider 
         OpenOption fileMode = sharedAccess ? StandardOpenOption.READ : StandardOpenOption.WRITE;
         int validFileCounter = this.filePaths.length;
 
-            for (final var workingFilePath : this.filePaths) {
-                if(this.globalLocks.containsKey(workingFilePath)){
-                    continue;
-                }
-                FileLock workingFileLock = null;
-                final var workingFileChannel = getFileChannel(workingFilePath, fileMode);
+        for (final var workingFilePath : this.filePaths) {
+            if (this.globalLocks.containsKey(workingFilePath)) {
+                continue;
+            }
+            FileLock workingFileLock = null;
+            final var workingFileChannel = getFileChannel(workingFilePath, fileMode);
 
-                if (workingFileChannel != null) {
-                    workingFileLock = getFileLock(workingFileChannel, sharedAccess);
-                } else {
-                    validFileCounter--;
+            if (workingFileChannel != null) {
+                workingFileLock = getFileLock(workingFileChannel, sharedAccess);
+            } else {
+                validFileCounter--;
 
-                    if (validFileCounter == 0) {
-                        LOGGER.error("No existing working files found. Interrupt flag set.");
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
-                }
-
-                if (workingFileLock != null) {
-                    this.globalLocks.put(workingFilePath, workingFileLock);
+                if (validFileCounter == 0) {
+                    LOGGER.error("No existing working files found. Interrupt flag set.");
+                    Thread.currentThread().interrupt();
+                    break;
                 }
             }
+
+            if (workingFileLock != null) {
+                this.globalLocks.put(workingFilePath, workingFileLock);
+            }
+        }
         return this.globalLocks.size() == validFileCounter;
     }
 
-    private FileChannel getFileChannel(Path filePath, OpenOption... options){
+    private FileChannel getFileChannel(Path filePath, OpenOption... options) {
         FileChannel openedChannel;
 
-        try{
+        try {
             openedChannel = FileChannel.open(filePath, options);
-        }catch(FileNotFoundException fnfe){
+        } catch (FileNotFoundException fnfe) {
             LOGGER.error("File not found for path: {}", filePath);
             openedChannel = null;
         } catch (IOException ioe) {
@@ -163,35 +165,35 @@ public class SynchronousFileManipulator implements PersistentDataAccessProvider 
         return openedChannel;
     }
 
-private FileLock getFileLock(final FileChannel channel, final boolean sharedAccess){
+    private FileLock getFileLock(final FileChannel channel, final boolean sharedAccess) {
         FileLock workingFileLock = null;
 
-    while(workingFileLock == null && !(Thread.currentThread().isInterrupted())) {
-        try {
-            workingFileLock = channel.lock(0, Long.MAX_VALUE, sharedAccess);
-        } catch (OverlappingFileLockException ex) {
-            LOGGER.trace("File still locked externally. Will be attempted again {}: {}",
-                    ex.getClass().getSimpleName(), ex.getMessage());
-        } catch (FileLockInterruptionException fie) {
-            Thread.currentThread().interrupt();
-            LOGGER.error("Interrupted during global lock acquisition.");
-            return null;
-        } catch (IOException ioe) {
-            LOGGER.error("No FileLock for channel: {}\n{}", channel, Arrays.asList(ioe.getStackTrace()));
-            return null;
+        while (workingFileLock == null && !(Thread.currentThread().isInterrupted())) {
+            try {
+                workingFileLock = channel.lock(0, Long.MAX_VALUE, sharedAccess);
+            } catch (OverlappingFileLockException ex) {
+                LOGGER.trace("File still locked externally. Will be attempted again {}: {}",
+                        ex.getClass().getSimpleName(), ex.getMessage());
+            } catch (FileLockInterruptionException fie) {
+                Thread.currentThread().interrupt();
+                LOGGER.error("Interrupted during global lock acquisition.");
+                return null;
+            } catch (IOException ioe) {
+                LOGGER.error("No FileLock for channel: {}\n{}", channel, Arrays.asList(ioe.getStackTrace()));
+                return null;
+            }
+            Thread.yield();
         }
-        Thread.yield();
+        return workingFileLock;
     }
-    return workingFileLock;
-}
 
     private boolean acquireLocalLock(final boolean sharedAccess) {
         var accessAcquisitionState = false;
         final Supplier<Boolean> lockingMethod;
 
-        if(sharedAccess){
+        if (sharedAccess) {
             lockingMethod = this.localLock.readLock()::tryLock;
-        }else{
+        } else {
             lockingMethod = this.localLock.writeLock()::tryLock;
         }
 
@@ -200,7 +202,7 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
 
             try {
                 accessAcquisitionState = lockingMethod.get();
-            }finally {
+            } finally {
                 this.accessLock.unlock();
             }
             Thread.yield();
@@ -211,48 +213,49 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
     private void checkThreadAccess() {
         this.accessLock.lock();
 
-        try{
+        try {
             if (!(this.threadsWithValidLock.contains(Thread.currentThread()))) {
                 throw new IllegalStateException(NO_FILE_ACCESS_ACQUIRED);
             }
-        }finally{
+        } finally {
             this.accessLock.unlock();
         }
     }
 
     /**
      * Release accessLimiter.
+     *
      * @throws IllegalStateException if thread did not previously acquire access to
-     * files using acquireAccess(...)
+     *                               files using acquireAccess(...)
      */
     public void releaseAccess(boolean sharedAccess) {
         checkThreadAccess();
 
-        if(sharedAccess){
+        if (sharedAccess) {
             this.accessLock.lock();
 
-            try{
-                if(this.localLock.getReadLockCount() == 1 && !(this.localLock.isWriteLocked())){
+            try {
+                if (this.localLock.getReadLockCount() == 1 && !(this.localLock.isWriteLocked())) {
                     releaseGlobalAccess();
                 }
                 this.localLock.readLock().unlock();
                 removeThread(Thread.currentThread());
-            }finally {
+            } finally {
                 this.accessLock.unlock();
             }
-        } else if(this.localLock.isWriteLockedByCurrentThread()) {
-            if(this.localLock.getWriteHoldCount() == 1) {
+        } else if (this.localLock.isWriteLockedByCurrentThread()) {
+            if (this.localLock.getWriteHoldCount() == 1) {
                 releaseGlobalAccess();
             }
             this.localLock.writeLock().unlock();
             removeThread(Thread.currentThread());
-        }else{
+        } else {
             LOGGER.warn("Attempted to illegally remove exclusive file access.");
         }
     }
 
     private void releaseGlobalAccess() {
-        for(final var filePath : this.filePaths){
+        for (final var filePath : this.filePaths) {
             final var lock = this.globalLocks.get(filePath);
 
             try {
@@ -264,23 +267,23 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
         }
     }
 
-    private void  addThread(final Thread threadWithLock){
+    private void addThread(final Thread threadWithLock) {
         this.accessLock.lock();
 
         try {
-            this.threadsWithValidLock.add(Thread.currentThread());
-        }finally {
+            this.threadsWithValidLock.add(threadWithLock);
+        } finally {
             this.accessLock.unlock();
         }
     }
 
     public void deleteFiles() {
-        if(this.filePaths == null){
+        if (this.filePaths == null) {
             this.accessLock.lock();
             try {
                 removeFileReferences();
                 PersistentDataLocationRemover.deleteDirectories(filePaths, LOGGER);
-            }finally {
+            } finally {
                 this.accessLock.unlock();
             }
 
@@ -291,13 +294,13 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
         this.accessLock.lock();
 
         try {
-            var threadRemoved = this.threadsWithValidLock.remove(Thread.currentThread());
+            var threadRemoved = this.threadsWithValidLock.remove(threadWithoutLock);
 
-            if(this.threadsWithValidLock.isEmpty()){
+            if (this.threadsWithValidLock.isEmpty()) {
                 this.referenceRemovalCondition.signal();
             }
             return threadRemoved;
-        }finally {
+        } finally {
             this.accessLock.unlock();
         }
     }
@@ -308,7 +311,7 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
      * @throws IllegalStateException if no any of the specified file paths is null.
      */
     public void setFilePaths(Path[] filePaths) throws IllegalStateException {
-        if(filePaths == null){
+        if (filePaths == null) {
             throw new IllegalArgumentException("File paths specified.");
         }
 
@@ -326,7 +329,7 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
      *
      * @return object
      * @throws IllegalStateException if thread did not previously acquire access to
-     * files using acquireAccess(...)
+     *                               files using acquireAccess(...)
      */
     public Object readData() {
         checkThreadAccess();
@@ -369,8 +372,8 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
     public boolean removeFileReferences() {
         this.accessLock.lock();
 
-        try{
-            if(!(this.threadsWithValidLock.isEmpty())){
+        try {
+            if (!(this.threadsWithValidLock.isEmpty())) {
                 try {
                     this.referenceRemovalCondition.await();
                 } catch (InterruptedException e) {
@@ -380,7 +383,7 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
             }
             this.filePaths = null;
             return true;
-        }finally {
+        } finally {
             this.accessLock.unlock();
         }
     }
@@ -391,7 +394,7 @@ private FileLock getFileLock(final FileChannel channel, final boolean sharedAcce
      * @param toWrite the to write
      * @return true, if successful
      * @throws IllegalStateException if thread did not previously acquire access to
-     * files using acquireAccess(...)
+     *                               files using acquireAccess(...)
      */
     public boolean writeData(final Object toWrite) {
         checkThreadAccess();

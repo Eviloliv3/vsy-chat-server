@@ -15,8 +15,6 @@ import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 import de.vsy.shared_transmission.packet.content.status.ClientStatusChangeDTO;
 import de.vsy.shared_transmission.packet.content.status.MessengerSetupDTO;
 import de.vsy.shared_transmission.packet.content.status.MessengerTearDownDTO;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
@@ -24,7 +22,6 @@ import static de.vsy.server.client_management.ClientState.ACTIVE_MESSENGER;
 
 public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatusChangeDTO> {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final ClientStateControl clientStateManager;
     private final CommunicationEntityDataProvider contactMapper;
     private final ContactListDAO contactProvider;
