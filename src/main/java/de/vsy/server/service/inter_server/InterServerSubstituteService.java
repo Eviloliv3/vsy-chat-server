@@ -185,16 +185,9 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
 
         for (final var currentClientId : pendingClientIds) {
             this.clientStateProvider.changeClientPendingState(currentClientId, true);
-            try {
-                final var pendingPacketAccessor = new PendingPacketDAO();
-                pendingPacketAccessor.createFileAccess(currentClientId);
-                this.clientPersistenceAccessManagers.put(currentClientId, pendingPacketAccessor);
-            } catch (InterruptedException ie) {
-                LOGGER.error(
-                        "Interrupted while creating access to clients pending packets: {}. Client state will be removed.",
-                        currentClientId);
-                this.clientStateProvider.removeClientState(currentClientId);
-            }
+            final var pendingPacketAccessor = new PendingPacketDAO();
+            pendingPacketAccessor.createFileAccess(currentClientId);
+            this.clientPersistenceAccessManagers.put(currentClientId, pendingPacketAccessor);
         }
     }
 

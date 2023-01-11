@@ -8,9 +8,11 @@ import de.vsy.server.persistent_data.PersistentDataAccess;
 public interface ClientDataAccess extends PersistentDataAccess {
 
     /**
-     * Creates the file accessLimiter.
+     * Creates file access using specified argument. Data is then accessible.
      *
-     * @param clientId int
+     * @param clientId the client's id
+     * @throws IllegalArgumentException if the specified argument is not valid for file/directory creation.
+     * @throws IllegalStateException if any condition arises that makes the file access creation impossible.
      */
-    void createFileAccess(int clientId) throws InterruptedException;
+    void createFileAccess(int clientId) throws IllegalArgumentException, IllegalStateException;
 }

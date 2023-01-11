@@ -62,12 +62,7 @@ public class ServerPersistentDataManager {
     public void initiatePersistentAccess() throws IllegalStateException, IllegalArgumentException {
 
         for (final var currentProvider : this.accessController) {
-            try {
-                currentProvider.createFileAccess();
-            } catch (InterruptedException ie) {
-                removePersistentAccess();
-                throw new IllegalStateException(ie);
-            }
+            currentProvider.createFileAccess();
         }
     }
 

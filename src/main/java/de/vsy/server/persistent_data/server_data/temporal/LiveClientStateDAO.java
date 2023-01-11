@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.CurrentClientState;
 import de.vsy.server.data.SocketConnectionDataManager;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
+import de.vsy.server.persistent_data.server_data.ServerDAO;
 import de.vsy.server.persistent_data.server_data.ServerDataAccess;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import org.apache.logging.log4j.LogManager;
@@ -22,15 +23,13 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_S
 /**
  * Allows persistent CRUD operations on client states.
  */
-public class LiveClientStateDAO implements ServerDataAccess {
+public class LiveClientStateDAO extends ServerDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     private final SocketConnectionDataManager serverConnections;
-    private final PersistenceDAO dataProvider;
 
     public LiveClientStateDAO(final SocketConnectionDataManager serverConnections) {
+        super(DataFileDescriptor.ACTIVE_CLIENTS, getDataFormat());
         this.serverConnections = serverConnections;
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.ACTIVE_CLIENTS, getDataFormat());
     }
 
     /**
@@ -48,12 +47,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
                 PacketCategory.class);
         final CurrentClientState currentState;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return extraSubscriptions;
         }
         currentState = getClientState(clientId);
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         if (currentState != null) {
             extraSubscriptions.putAll(currentState.getExtraSubscriptions());
@@ -71,12 +70,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState currentClientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return new CurrentClientState(STANDARD_SERVER_ID);
         }
         clientStateMap = getAllActiveClientStates();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
         currentClientState = clientStateMap.get(clientId);
 
         if (currentClientState == null) {
@@ -95,12 +94,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> readMap = new HashMap<>();
         Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return readMap;
         }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+        fromFile = super.dataProvider.readData();
+        super.dataProvider.releaseAccess(true);
 
         if (fromFile instanceof HashMap) {
 
@@ -128,7 +127,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -141,9 +140,9 @@ public class LiveClientStateDAO implements ServerDataAccess {
         clientState.setCurrentState(newState);
         clientState.changeServerPort(serverPort);
         clientStateMap.put(clientId, clientState);
-        stateChanged = this.dataProvider.writeData(clientStateMap);
+        stateChanged = super.dataProvider.writeData(clientStateMap);
 
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         if (stateChanged) {
             LOGGER.info("{}: {}", clientId, newState);
@@ -156,7 +155,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var subscriptionAdded = false;
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -166,13 +165,13 @@ public class LiveClientStateDAO implements ServerDataAccess {
         if (clientState != null) {
             clientState.updateExtraSubscription(topic, threadId, true);
             clientStateMap.put(clientId, clientState);
-            subscriptionAdded = this.dataProvider.writeData(clientStateMap);
+            subscriptionAdded = super.dataProvider.writeData(clientStateMap);
         } else {
             LOGGER.info("{} - state is not managed: extra subscription not added.",
                     clientId);
         }
 
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         return subscriptionAdded;
     }
@@ -182,7 +181,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var subscriptionAdded = false;
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -192,12 +191,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         if (clientState != null) {
             clientState.updateExtraSubscription(topic, threadId, false);
             clientStateMap.put(clientId, clientState);
-            subscriptionAdded = this.dataProvider.writeData(clientStateMap);
+            subscriptionAdded = super.dataProvider.writeData(clientStateMap);
         } else {
             LOGGER.info("{} - state is not managed: extra subscription not removed.", clientId);
         }
 
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         return subscriptionAdded;
     }
@@ -213,7 +212,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
         var pendingStateChanged = false;
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -223,12 +222,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         if (clientState != null) {
             clientState.setPendingState(pendingState);
             clientStateMap.put(clientId, clientState);
-            pendingStateChanged = this.dataProvider.writeData(clientStateMap);
+            pendingStateChanged = super.dataProvider.writeData(clientStateMap);
         } else {
             LOGGER.info("{} - state is not managed: PendingState has not been changed.",
                     clientId);
         }
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
         return pendingStateChanged;
     }
 
@@ -244,7 +243,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -258,7 +257,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
             if (reconnectStateSet) {
                 LOGGER.trace("Reconnection state set to {}.", newState);
                 clientStateMap.put(clientId, clientState);
-                reconnectStateSet = this.dataProvider.writeData(clientStateMap);
+                reconnectStateSet = super.dataProvider.writeData(clientStateMap);
             } else {
                 final var clientNotReconnecting = !(clientState.getPendingState() || clientState.getReconnectState());
 
@@ -270,7 +269,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
                         clientState.setReconnectState(true);
                         clientState.setPendingState(false);
                         clientStateMap.put(clientId, clientState);
-                        reconnectStateSet = this.dataProvider.writeData(clientStateMap);
+                        reconnectStateSet = super.dataProvider.writeData(clientStateMap);
                     } else {
                         LOGGER.warn("Pending state could not be set, while trying to set reconnect "
                                 + "state to {}", newState);
@@ -282,7 +281,7 @@ public class LiveClientStateDAO implements ServerDataAccess {
         } else {
             LOGGER.trace("No client state specified.");
         }
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
         return reconnectStateSet;
     }
 
@@ -307,11 +306,6 @@ public class LiveClientStateDAO implements ServerDataAccess {
         return false;
     }
 
-    @Override
-    public void createFileAccess() throws InterruptedException {
-        this.dataProvider.createFileReferences();
-    }
-
     /**
      * Returns the client pending state.
      *
@@ -323,12 +317,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return false;
         }
         clientStateMap = getAllActiveClientStates();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
         clientState = clientStateMap.get(clientId);
 
         if (clientState != null) {
@@ -348,12 +342,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         CurrentClientState clientState;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return false;
         }
         clientStateMap = getAllActiveClientStates();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
         clientState = clientStateMap.get(clientId);
 
         if (clientState != null) {
@@ -372,12 +366,12 @@ public class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> allClientStates;
         Map<Integer, CurrentClientState> remoteClientStates = new HashMap<>();
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return remoteClientStates;
         }
         allClientStates = getAllActiveClientStates();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         for (final Map.Entry<Integer, CurrentClientState> client : allClientStates.entrySet()) {
             final var clientState = client.getValue();
@@ -398,13 +392,13 @@ public class LiveClientStateDAO implements ServerDataAccess {
         var clientStatesRemoved = false;
         Map<Integer, CurrentClientState> clientStateMap;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
         clientStateMap = new HashMap<>();
-        clientStatesRemoved = this.dataProvider.writeData(clientStateMap);
-        this.dataProvider.releaseAccess(true);
+        clientStatesRemoved = super.dataProvider.writeData(clientStateMap);
+        super.dataProvider.releaseAccess(false);
 
         if (clientStatesRemoved) {
             LOGGER.info("Client states will be removed.");
@@ -422,14 +416,14 @@ public class LiveClientStateDAO implements ServerDataAccess {
         Map<Integer, CurrentClientState> clientStateMap;
         var clientStateRemoved = false;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
         clientStateMap = getAllActiveClientStates();
         clientStateRemoved =
-                (clientStateMap.remove(clientId) != null) && this.dataProvider.writeData(clientStateMap);
-        this.dataProvider.releaseAccess(true);
+                (clientStateMap.remove(clientId) != null) && super.dataProvider.writeData(clientStateMap);
+        super.dataProvider.releaseAccess(false);
 
         if (clientStateRemoved) {
             LOGGER.info("Client removed: {} ", clientId);
@@ -437,8 +431,4 @@ public class LiveClientStateDAO implements ServerDataAccess {
         return clientStateRemoved;
     }
 
-    @Override
-    public void removeFileAccess() {
-        this.dataProvider.removeFileReferences();
-    }
 }

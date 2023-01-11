@@ -4,6 +4,7 @@ import de.vsy.server.client_handling.data_management.access_limiter.Authenticati
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;
+import de.vsy.server.persistent_data.PersistentDataLocationRemover;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
@@ -22,6 +23,7 @@ import java.util.EnumMap;
 import java.util.Set;
 
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
+import static de.vsy.server.persistent_data.DataOwnershipDescriptor.CLIENT;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 
@@ -44,7 +46,6 @@ public class AccountDeletionProcessor implements ContentProcessor<AccountDeletio
 
     @Override
     public void processContent(AccountDeletionRequestDTO toProcess) {
-        //TODO Ablauf pruefen
         final boolean accountDeleted;
         final CommunicatorDTO clientData = clientDataProvider.getCommunicatorData();
         final int clientId = clientDataProvider.getClientId();
@@ -57,6 +58,7 @@ public class AccountDeletionProcessor implements ContentProcessor<AccountDeletio
                 this.clientStateManager.appendSynchronizationRemovalPacketPerState();
                 ThreadContext.put(LOG_FILE_CONTEXT_KEY, Thread.currentThread().getName());
                 clientStateManager.deregisterClient();
+                PersistentDataLocationRemover.deleteDirectories(CLIENT, String.valueOf(clientId), LOGGER);
             } else {
                 LOGGER.warn("Client could not be logged out globally.");
             }

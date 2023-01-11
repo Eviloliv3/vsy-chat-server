@@ -128,9 +128,9 @@ public class CommunicatorDataManipulator {
 
     public CommunicatorData getCommunicatorData(final int communicatorId) {
         CommunicatorData foundCommunicatorData;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             foundCommunicatorData = this.communicatorDataPersist.getCommunicatorData(communicatorId);
         } finally {
             this.lock.readLock().unlock();
@@ -148,9 +148,9 @@ public class CommunicatorDataManipulator {
         CommunicatorData foundCommunicatorData = null;
 
         if (communicatorData != null) {
+            this.lock.readLock().lock();
 
             try {
-                this.lock.readLock().lock();
                 foundCommunicatorData = this.communicatorDataPersist
                         .getCommunicatorData(communicatorData.getCommunicatorId());
 
@@ -174,9 +174,9 @@ public class CommunicatorDataManipulator {
      */
     public CommunicatorData getCommunicatorData(final String username, final String password) {
         CommunicatorData communicatorData = null;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
 
             if (username != null && password != null) {
                 final var clientId = this.clientAuthPersist.getClientId(username, password);

@@ -63,10 +63,9 @@ public abstract class PacketCategorySubscriptionManager {
         boolean subSuccessful;
         Map<Integer, CategoryIdSubscriber> topicSubscriptions;
         CategoryIdSubscriber subscriber;
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
-
             topicSubscriptions = getTopicSubscriptions(topic);
             subscriber = topicSubscriptions.getOrDefault(topicId, new CategoryIdSubscriber());
             subSuccessful = subscriber.addSubscription(subscriptionBuffer);
@@ -93,9 +92,9 @@ public abstract class PacketCategorySubscriptionManager {
      * @return the subscriptions for topic
      */
     protected Map<Integer, CategoryIdSubscriber> getTopicSubscriptions(final PacketCategory topic) {
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             return requireNonNullElseGet(this.subscriptions.get(topic), HashMap::new);
         } finally {
             this.lock.readLock().unlock();
@@ -115,10 +114,9 @@ public abstract class PacketCategorySubscriptionManager {
         boolean unsubSuccessful;
         Map<Integer, CategoryIdSubscriber> topicSubscriptions;
         CategoryIdSubscriber subscriptionBuffers;
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
-
             topicSubscriptions = getTopicSubscriptions(topic);
             subscriptionBuffers = topicSubscriptions.get(threadId);
 
@@ -153,9 +151,9 @@ public abstract class PacketCategorySubscriptionManager {
     public Set<Integer> checkThreadIds(final PacketCategory topic, final Set<Integer> idsToCheck) {
         final Set<Integer> foundIds = new HashSet<>(idsToCheck);
         Set<Integer> subscriberIds;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             subscriberIds = getThreads(topic);
             foundIds.removeIf(contactId -> !subscriberIds.contains(contactId));
             return foundIds;
@@ -173,9 +171,9 @@ public abstract class PacketCategorySubscriptionManager {
     public Set<Integer> getThreads(final PacketCategory topic) {
         Map<Integer, CategoryIdSubscriber> topicSubscriptions;
         final Set<Integer> registeredIds = new HashSet<>();
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             topicSubscriptions = getTopicSubscriptions(topic);
             registeredIds.addAll(topicSubscriptions.keySet());
         } finally {

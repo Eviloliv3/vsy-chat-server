@@ -55,8 +55,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
     public boolean addServerConnection(final SocketConnectionState state,
                                        final RemoteServerConnectionData connection) {
+        this.lock.writeLock().lock();
+
         try {
-            this.lock.writeLock().lock();
             var connectionQueue = this.remoteServerConnections.get(state);
             Set<SocketConnectionState> otherStates = new HashSet<>(
                     asList(SocketConnectionState.values()));
@@ -83,9 +84,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
     public boolean removeServerConnection(final RemoteServerConnectionData connection) {
         var connectionRemoved = false;
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
 
             for (var stateSets : this.remoteServerConnections.entrySet()) {
                 connectionRemoved = stateSets.getValue().remove(connection);
@@ -101,8 +102,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     }
 
     public boolean uninitiatedConnectionsRemaining() {
+        this.lock.readLock().lock();
+
         try {
-            this.lock.readLock().lock();
             return !this.remoteServerConnections.get(SocketConnectionState.UNINITIATED).isEmpty();
         } finally {
             this.lock.readLock().unlock();
@@ -110,8 +112,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     }
 
     public RemoteServerConnectionData getNextSocketConnectionToInitiate() {
+        this.lock.writeLock().lock();
+
         try {
-            this.lock.writeLock().lock();
             var nextConnection = this.remoteServerConnections.get(SocketConnectionState.UNINITIATED)
                     .peek();
 
@@ -125,8 +128,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
     }
 
     public Collection<RemoteServerConnectionData> getServerConnections(SocketConnectionState state) {
+        this.lock.readLock().lock();
+
         try {
-            this.lock.readLock().lock();
             return copyOf(this.remoteServerConnections.get(state));
         } finally {
             this.lock.readLock().unlock();
@@ -151,9 +155,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
     public RemoteServerConnectionData getDistinctNodeData(final SocketConnectionState state,
                                                           final Set<Integer> serverIdSet) {
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             for (var currentNodeData : this.remoteServerConnections.get(state)) {
 
                 if (!serverIdSet.contains(currentNodeData.getServerId())) {
@@ -200,8 +204,9 @@ public class SocketConnectionDataManager implements SocketInitiationCheck {
 
     @Override
     public void waitForUninitiatedConnections() throws InterruptedException {
+        this.lock.writeLock().lock();
+
         try {
-            this.lock.writeLock().lock();
             while (!this.remoteServerConnections.get(SocketConnectionState.UNINITIATED).isEmpty() &&
                     !Thread.currentThread().isInterrupted()) {
                 this.noUninitiated.await();

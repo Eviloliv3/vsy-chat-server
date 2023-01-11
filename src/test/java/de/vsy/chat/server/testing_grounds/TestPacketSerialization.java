@@ -2,15 +2,19 @@ package de.vsy.chat.server.testing_grounds;
 
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
+import de.vsy.shared_module.packet_creation.ContentIdentificationProviderImpl;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.packet.PacketBuilder;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.packet.property.PacketPropertiesImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 
@@ -22,9 +26,9 @@ class TestPacketSerialization {
     @BeforeEach
     public void createFileAccess() throws InterruptedException {
         this.pendingPacketAccessor = new PendingPacketDAO();
-        pendingPacketAccessor.createFileAccess(15000);
+        pendingPacketAccessor.createFileAccess(16000);
         this.saver = new PacketSaver();
-        saver.createFileAccess(15000);
+        saver.createFileAccess(16000);
     }
 
     @AfterEach
@@ -35,6 +39,8 @@ class TestPacketSerialization {
 
     @Test
     public void saveRelationRequest() {
+        PacketCompiler.addOriginatorEntityProvider(() -> getClientEntity(16000));
+        PacketCompiler.addContentIdentificationProvider(new ContentIdentificationProviderImpl());
         var contactRelationChangeDTO = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                 15001, 15000,
                 CommunicatorDTO.valueOf(15001, "Test Name"), true);

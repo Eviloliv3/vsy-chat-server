@@ -21,6 +21,8 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
+import static de.vsy.server.client_management.ClientState.NOT_AUTHENTICATED;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
 
 /**
@@ -64,15 +66,17 @@ public class ClientConnectionHandler implements Runnable {
             this.connectionControl.closeConnection();
             LOGGER.info("Client connection terminated.");
 
-            if (stateManager.checkClientState(ClientState.AUTHENTICATED) && !Thread.interrupted()) {
+            if (stateManager.checkClientState(AUTHENTICATED) && !Thread.interrupted()) {
                 LOGGER.info("Client not logged out, therefore client will be handled as pending.");
                 clientHandling = new PendingClientPacketHandling(this.threadDataManager,
                         this.connectionControl);
                 clientHandling.administerStrategy();
-            } else {
-                LOGGER.error("Client logged out, remaining Packets will be processed.");
+            } else if(stateManager.checkClientState(NOT_AUTHENTICATED)){
+                LOGGER.info("Client logged out, remaining Packets will be processed.");
                 clientHandling = new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
                 clientHandling.administerStrategy();
+            }else{
+                LOGGER.info("Client account deleted, no data will be rescued.");
             }
         } else {
             LOGGER.info("Client connection failed.");

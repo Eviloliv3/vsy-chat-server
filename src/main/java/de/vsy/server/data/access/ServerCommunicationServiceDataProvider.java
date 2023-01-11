@@ -14,9 +14,9 @@ import de.vsy.server.service.ServicePacketBufferManager;
 public interface ServerCommunicationServiceDataProvider extends ServiceBaseDataProvider {
 
     /**
-     * Returns the client state PersistenceDAO provider.
+     * Returns the client state SynchronousFileManipulator provider.
      *
-     * @return the client state PersistenceDAO provider
+     * @return the client state SynchronousFileManipulator provider
      */
     LiveClientStateDAO getLiveClientStateDAO();
 

@@ -57,9 +57,9 @@ public class ServicePacketBufferManager {
                                     final PacketBuffer packetBuffer) {
         var bufferDeregistered = false;
         Map<Integer, PacketBuffer> bufferMap;
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
             bufferMap = this.registeredBuffers.get(serviceType);
 
             if (bufferMap != null) {
@@ -84,9 +84,9 @@ public class ServicePacketBufferManager {
     public PacketBuffer getRandomBuffer(final Service.TYPE serviceType) {
         PacketBuffer buffer = null;
         List<PacketBuffer> bufferList;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             bufferList = getAllBuffersFor(serviceType);
 
             if (bufferList != null && !bufferList.isEmpty()) {
@@ -107,9 +107,9 @@ public class ServicePacketBufferManager {
     public List<PacketBuffer> getAllBuffersFor(final Service.TYPE serviceType) {
         Map<Integer, PacketBuffer> bufferMap;
         final List<PacketBuffer> foundBuffers = new ArrayList<>();
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
 
             if (serviceType != null && this.registeredBuffers != null) {
                 bufferMap = this.registeredBuffers.get(serviceType);
@@ -134,9 +134,9 @@ public class ServicePacketBufferManager {
     public PacketBuffer getSpecificBuffer(final Service.TYPE serviceType, final int bufferLabel) {
         PacketBuffer buffer = null;
         Map<Integer, PacketBuffer> bufferMap;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             bufferMap = this.registeredBuffers.get(serviceType);
 
             if (bufferMap != null) {
@@ -171,9 +171,9 @@ public class ServicePacketBufferManager {
         PacketBuffer bufferRegistered = null;
 
         if (serviceType != null && packetBuffer != null) {
+            this.lock.writeLock().lock();
 
             try {
-                this.lock.writeLock().lock();
                 var serviceBufferMap = this.registeredBuffers.computeIfAbsent(serviceType,
                         service -> new HashMap<>());
                 final var previousValue = serviceBufferMap.putIfAbsent(bufferLabel, packetBuffer);

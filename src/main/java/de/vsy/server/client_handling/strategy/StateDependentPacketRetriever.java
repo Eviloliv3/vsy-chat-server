@@ -1,6 +1,7 @@
 package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
+import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.persistent_data.client_data.PendingType;
@@ -15,12 +16,13 @@ import java.util.LinkedHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class StateDependentPacketRetriever implements ClientStateListener {
+public class StateDependentPacketRetriever {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final ClientPersistentDataAccessProvider persistentDataAccess;
     private final ThreadPacketBufferManager packetBuffers;
     private final EnumMap<PendingType, Supplier<Consumer<Packet>>> strategyEnumMap;
+    private final PermittedPacketCategoryCheck categoryCheck;
 
     {
         strategyEnumMap = new EnumMap<>(PendingType.class);
@@ -29,39 +31,40 @@ public class StateDependentPacketRetriever implements ClientStateListener {
     }
 
     public StateDependentPacketRetriever(final ClientPersistentDataAccessProvider persistentData,
-                                         final ThreadPacketBufferManager packetBuffers) {
+                                         final ThreadPacketBufferManager packetBuffers, final PermittedPacketCategoryCheck categoryCheck) {
         this.persistentDataAccess = persistentData;
         this.packetBuffers = packetBuffers;
+        this.categoryCheck = categoryCheck;
     }
 
-    @Override
-    public void evaluateNewState(ClientState changedState, boolean added) {
+    public void getPacketsFor(final ClientState changedState) {
 
-        if (added) {
             final var pendingPacketProvider = this.persistentDataAccess.getPendingPacketDAO();
             final var allPendingPackets = pendingPacketProvider.readAllPendingPackets();
             final var remainingPackets = new LinkedHashMap<String, Packet>();
 
             for (final var currentPendingPacketMap : allPendingPackets.entrySet()) {
-                final var currentClassification = currentPendingPacketMap.getKey();
-                final var pendingMap = currentPendingPacketMap.getValue();
-                var foundStrategy = strategyEnumMap.computeIfPresent(currentClassification,
-                        (classification, strategySupplier) -> {
-                            final var strategy = strategySupplier.get();
-                            pendingMap.values().forEach(strategy);
-                            return strategySupplier;
-                        });
+                final var currentPendingType = currentPendingPacketMap.getKey();
+                final var sortedPendingPackets = currentPendingPacketMap.getValue();
+                final var foundStrategy = strategyEnumMap.get(currentPendingType);
 
                 if (foundStrategy != null) {
-                    LOGGER.trace("Existing packets were prepended for PendingType: {}",
-                            currentClassification);
-                } else {
-                    LOGGER.warn("No strategy found for PendingType: {}", currentClassification);
-                }
+                    final var strategy = foundStrategy.get();
 
-                pendingPacketProvider.setPendingPackets(currentClassification, remainingPackets);
+                    for(final var pendingPacket : sortedPendingPackets.values()){
+                        if(this.categoryCheck.checkPacketCategory(pendingPacket.getPacketProperties().getPacketIdentificationProvider().getPacketCategory())){
+                            strategy.accept(pendingPacket);
+                        }else{
+                            remainingPackets.put(pendingPacket.getPacketHash(), pendingPacket);
+                        }
+                    }
+                    LOGGER.trace("Existing packets were prepended for PendingType: {}",
+                            currentPendingType);
+                } else {
+                    LOGGER.warn("No strategy found for PendingType: {}", currentPendingType);
+                }
+                pendingPacketProvider.setPendingPackets(currentPendingType, remainingPackets);
             }
-        }
     }
 
     private Consumer<Packet> getClientBoundStrategy() {

@@ -4,8 +4,8 @@
 package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,17 +15,13 @@ import java.util.Set;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 
-public class CommunicatorPersistenceDAO implements ServerDataAccess {
-
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO dataProvider;
+public class CommunicatorPersistenceDAO extends ServerDAO {
 
     /**
      * Instantiates a new communicator dataManagement accessLimiter provider.
      */
     public CommunicatorPersistenceDAO() {
-
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.COMMUNICATORS, getDataFormat());
+        super(DataFileDescriptor.COMMUNICATORS, getDataFormat());
     }
 
     /**
@@ -47,19 +43,19 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         Set<CommunicatorData> communicatorList;
         var communicatorAdded = false;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
         communicatorList = readRegisteredCommunicators();
 
         if (communicatorList.add(commData)) {
-            communicatorAdded = this.dataProvider.writeData(communicatorList);
+            communicatorAdded = super.dataProvider.writeData(communicatorList);
         } else {
             LOGGER.error(
                     "CommunicatorData was not written. Collides with existing communicator display name.");
         }
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         if (communicatorAdded) {
             LOGGER.info("Communicator added.");
@@ -77,12 +73,12 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         Object fromFile;
         Set<CommunicatorData> readList = new HashSet<>();
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return readList;
         }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+        fromFile = super.dataProvider.readData();
+        super.dataProvider.releaseAccess(true);
 
         if (fromFile instanceof HashSet) {
 
@@ -97,12 +93,6 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         return readList;
     }
 
-    @Override
-    public void createFileAccess()
-            throws IllegalStateException, IllegalArgumentException, InterruptedException {
-        this.dataProvider.createFileReferences();
-    }
-
     /**
      * Removes the communicator.
      *
@@ -113,14 +103,14 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         var communicatorRemoved = false;
         CommunicatorData communicatorToRemove;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
         communicatorToRemove = getCommunicatorData(communicatorId);
         communicatorRemoved = removeCommunicator(communicatorToRemove);
 
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         return communicatorRemoved;
     }
@@ -135,12 +125,12 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         CommunicatorData foundCommunicator = null;
         Set<CommunicatorData> communicatorList;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return null;
         }
         communicatorList = readRegisteredCommunicators();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         for (final CommunicatorData CommunicatorData : communicatorList) {
 
@@ -162,25 +152,20 @@ public class CommunicatorPersistenceDAO implements ServerDataAccess {
         var communicatorRemoved = false;
         Set<CommunicatorData> communicatorList;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
         communicatorList = readRegisteredCommunicators();
         communicatorRemoved = (communicatorList.remove(clientAuthData)
-                && this.dataProvider.writeData(communicatorList));
+                && super.dataProvider.writeData(communicatorList));
 
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         if (communicatorRemoved) {
             LOGGER.info("Communicator removed.");
         }
 
         return communicatorRemoved;
-    }
-
-    @Override
-    public void removeFileAccess() throws IllegalStateException, IllegalArgumentException {
-        this.dataProvider.removeFileReferences();
     }
 }

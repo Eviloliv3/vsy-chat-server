@@ -35,9 +35,9 @@ public class ClientStateSubscriptions {
     public Set<Integer> getClientSubscriptions(final ClientState state, final int clientId) {
         final Set<Integer> subscribedClients = new HashSet<>();
         Map<ClientState, Set<Integer>> subsPerState;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             subsPerState = this.clientSubscriptions.get(clientId);
 
             if (subsPerState != null) {
@@ -65,9 +65,9 @@ public class ClientStateSubscriptions {
         var subSuccessful = false;
         Map<ClientState, Set<Integer>> subsPerState;
         Set<Integer> subscribedClients;
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
             subsPerState = this.clientSubscriptions.get(contactId);
 
             if (subsPerState == null) {
@@ -101,9 +101,9 @@ public class ClientStateSubscriptions {
     public boolean unsubscribe(final ClientState state, final int clientId, final int contactId) {
         var unsubSuccessful = false;
         Map<ClientState, Set<Integer>> subsPerState;
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
             subsPerState = this.clientSubscriptions.get(contactId);
 
             if (subsPerState != null) {

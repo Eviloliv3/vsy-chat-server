@@ -62,14 +62,7 @@ public class LoggedOutClientHandlingStrategy implements PacketHandlingStrategy {
 
     private void retainPacket(final Packet retainablePacket) throws InterruptedException {
         PendingPacketDAO p = new PendingPacketDAO();
-        try {
-            p.createFileAccess(retainablePacket.getPacketProperties().getRecipient().getEntityId());
-            p.appendPendingPacket(PendingType.PROCESSOR_BOUND, retainablePacket);
-        } catch (InterruptedException ie) {
-            LOGGER.error("Interrupted while creating PendingPacketDAO file access. Will try resuming "
-                    + "to save Packets, until none are left. Next interrupt will stop process.");
-            p.createFileAccess(retainablePacket.getPacketProperties().getRecipient().getEntityId());
-            p.appendPendingPacket(PendingType.PROCESSOR_BOUND, retainablePacket);
-        }
+        p.createFileAccess(retainablePacket.getPacketProperties().getRecipient().getEntityId());
+        p.appendPendingPacket(PendingType.PROCESSOR_BOUND, retainablePacket);
     }
 }

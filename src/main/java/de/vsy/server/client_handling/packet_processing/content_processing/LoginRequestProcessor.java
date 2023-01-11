@@ -52,7 +52,7 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
             if (this.clientStateManager.registerClient(clientData)) {
                 globalState = this.clientStateManager.getPersistentClientState();
 
-                if (globalState.equals(ClientState.OFFLINE)) {
+                if (globalState.equals(ClientState.NOT_AUTHENTICATED)) {
 
                     if (this.clientStateManager.changePersistentClientState(AUTHENTICATED,
                             true)) {

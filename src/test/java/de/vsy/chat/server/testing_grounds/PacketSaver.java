@@ -1,8 +1,9 @@
 package de.vsy.chat.server.testing_grounds;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
+import de.vsy.server.persistent_data.client_data.ClientDAO;
 import de.vsy.server.persistent_data.client_data.ClientDataAccess;
 import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
@@ -11,14 +12,10 @@ import org.apache.logging.log4j.Logger;
 import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 import static java.lang.String.valueOf;
 
-public class PacketSaver implements ClientDataAccess {
-
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO persistance;
+public class PacketSaver extends ClientDAO {
 
     public PacketSaver() {
-
-        persistance = new PersistenceDAO(DataFileDescriptor.PENDING_PACKETS, getType());
+        super(DataFileDescriptor.PENDING_PACKETS, getType());
     }
 
     public static JavaType getType() {
@@ -27,29 +24,19 @@ public class PacketSaver implements ClientDataAccess {
 
     public void savePacket(Packet toWrite) {
         try {
-            persistance.acquireAccess(true);
-            persistance.writeData(toWrite);
+            super.dataProvider.acquireAccess(false);
+            super.dataProvider.writeData(toWrite);
         } finally {
-            persistance.releaseAccess(true);
+            super.dataProvider.releaseAccess(false);
         }
     }
 
     public Packet readPacket() {
         try {
-            persistance.acquireAccess(false);
-            return (Packet) persistance.readData();
+            super.dataProvider.acquireAccess(true);
+            return (Packet) super.dataProvider.readData();
         } finally {
-            persistance.releaseAccess(false);
+            super.dataProvider.releaseAccess(true);
         }
-    }
-
-    @Override
-    public void removeFileAccess() {
-        persistance.removeFileReferences();
-    }
-
-    @Override
-    public void createFileAccess(int clientId) throws InterruptedException {
-        persistance.createFileReferences(valueOf(clientId));
     }
 }

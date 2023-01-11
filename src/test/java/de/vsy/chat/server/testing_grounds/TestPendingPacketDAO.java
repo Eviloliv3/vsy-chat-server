@@ -1,5 +1,6 @@
 package de.vsy.chat.server.testing_grounds;
 
+import de.vsy.server.persistent_data.DataOwnershipDescriptor;
 import de.vsy.server.persistent_data.PersistentDataFileCreator;
 import de.vsy.server.persistent_data.PersistentDataLocationCreator;
 import org.apache.logging.log4j.LogManager;
@@ -99,13 +100,13 @@ public class TestPendingPacketDAO {
                 final String path;
                 try {
                     path = PersistentDataLocationCreator
-                            .createDirectoryPath(PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER,
+                            .createDirectoryPath(DataOwnershipDescriptor.SERVER,
                                     "test");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
                 final var file = PersistentDataFileCreator.createAndGetFilePath(path, "fileLock.lock",
-                        LogManager.getLogger());
+                            LogManager.getLogger());
                 RandomAccessFile fileChannel = null;
                 try {
                     fileChannel = new RandomAccessFile(file.toFile(), "r");

@@ -5,6 +5,7 @@ package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
+import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;
@@ -33,6 +34,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
     private final AuthenticationStateControl clientStateManager;
     private final CommunicatorDataManipulator commPersistManager;
     private final ResultingPacketContentHandler contentHandler;
+    private final StateDependentPacketRetriever pendingPacketRetriever;
 
     /**
      * Instantiates a new reconnect PacketHandler.
@@ -40,10 +42,10 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
     public ReconnectRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
-
         this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
         this.commPersistManager = HandlerAccessManager.getCommunicatorDataManipulator();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+        this.pendingPacketRetriever = threadDataAccess.getStateDependentPacketRetriever();
     }
 
     @Override
@@ -54,7 +56,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
         if (clientData != null) {
             final var persistedClientState = this.clientStateManager.reconnectClient(clientData);
 
-            if (!(persistedClientState.equals(ClientState.OFFLINE))) {
+            if (!(persistedClientState.equals(ClientState.NOT_AUTHENTICATED))) {
 
                 if (this.clientStateManager.changePersistentReconnectionState(true)) {
                     LOGGER.info("Reconnection flag set successfully.");
@@ -72,6 +74,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
                             this.clientStateManager.changePersistentReconnectionState(false);
                             LOGGER.info("Pending state removed.");
                             this.contentHandler.addResponse(new ReconnectResponseDTO(true));
+                            this.pendingPacketRetriever.getPacketsFor(persistedClientState);
                         } else {
                             this.clientStateManager.deregisterClient();
                             causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
@@ -134,4 +137,5 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
         }
         return pendingFlagRemoved;
     }
+
 }

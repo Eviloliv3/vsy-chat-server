@@ -4,6 +4,9 @@ import de.vsy.server.client_management.ClientState;
 
 import java.util.*;
 
+import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
+import static de.vsy.server.client_management.ClientState.NOT_AUTHENTICATED;
+
 public class ClientStateManager implements LocalClientStateProvider {
 
     private final Set<ClientStateListener> stateListeners;
@@ -13,6 +16,7 @@ public class ClientStateManager implements LocalClientStateProvider {
     public ClientStateManager() {
         this.stateListeners = new LinkedHashSet<>();
         this.currentState = new ArrayDeque<>(1);
+        this.currentState.add(NOT_AUTHENTICATED);
         this.stateChanged = false;
     }
 
@@ -55,12 +59,18 @@ public class ClientStateManager implements LocalClientStateProvider {
 
     private boolean changeCurrentState(final ClientState toChange, boolean toAdd) {
         if (toAdd) {
-            if (!currentState.contains(toChange)) {
+            if(toChange.equals(AUTHENTICATED)){
+                this.currentState.remove(NOT_AUTHENTICATED);
+            }
+            if (!(this.currentState.contains(toChange))) {
                 return currentState.add(toChange);
             } else {
                 return false;
             }
         } else {
+            if(toChange.equals(AUTHENTICATED)){
+                this.currentState.add(NOT_AUTHENTICATED);
+            }
             return this.currentState.remove(toChange);
         }
     }

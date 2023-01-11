@@ -11,7 +11,6 @@ public class LocalClientStateObserverManager {
     private final ClientPersistentDataAccessProvider clientPersistentAccess;
     private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
     private final ClientSubscriptionHandler clientSubscriptionHandler;
-    private final StateDependentPacketRetriever pendingPacketRetriever;
 
     public LocalClientStateObserverManager(final HandlerLocalDataManager handlerDataAccess) {
         this.permittedPackets = new PermittedPacketCategoryCheck();
@@ -21,8 +20,6 @@ public class LocalClientStateObserverManager {
                 this.clientPersistentAccess.getContactListDAO());
         this.clientSubscriptionHandler = new ClientSubscriptionHandler(extraSubscriptionProvider,
                 handlerDataAccess.getLocalClientDataProvider(),
-                handlerDataAccess.getHandlerBufferManager());
-        this.pendingPacketRetriever = new StateDependentPacketRetriever(this.clientPersistentAccess,
                 handlerDataAccess.getHandlerBufferManager());
         addStateListeners(handlerDataAccess);
     }

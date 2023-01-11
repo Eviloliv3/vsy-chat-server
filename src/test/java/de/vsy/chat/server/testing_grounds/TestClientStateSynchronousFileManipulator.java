@@ -17,7 +17,7 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_S
 /**
  *
  */
-class TestClientStatePersistenceDAO {
+class TestClientStateSynchronousFileManipulator {
 
     final LiveClientStateDAO statePersist = new LiveClientStateDAO(new SocketConnectionDataManager(
             LocalServerConnectionData.valueOf(-1, null)));

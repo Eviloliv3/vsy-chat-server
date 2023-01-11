@@ -7,9 +7,6 @@ import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 import de.vsy.server.persistent_data.data_bean.CommunicatorData;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 
-import java.util.ArrayList;
-import java.util.Deque;
-
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
 
 public class ClientStateDistributor implements AuthenticationStateControl {
@@ -46,7 +43,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
         final var currentState = persistentClientStates.getClientState(clientData.getCommunicatorId());
         final var clientState = currentState.getCurrentState();
 
-        if (!(clientState.equals(ClientState.OFFLINE))) {
+        if (!(clientState.equals(ClientState.NOT_AUTHENTICATED))) {
             this.localClientDataManager.setCommunicatorData(clientData);
             changeClientState(clientState, true);
         }

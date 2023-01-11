@@ -4,8 +4,8 @@
 package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.server.persistent_data.data_bean.AuthenticationData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,17 +20,13 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_C
  * Grants writing accessLimiter to a file containing all registered clients' account
  * dataManagement.
  */
-public class ClientAuthPersistenceDAO implements ServerDataAccess {
-
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO dataProvider;
+public class ClientAuthPersistenceDAO extends ServerDAO {
 
     /**
      * Instantiates a new account modifier.
      */
     public ClientAuthPersistenceDAO() {
-
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.REGISTERED_CLIENTS, getDataFormat());
+        super(DataFileDescriptor.REGISTERED_CLIENTS, getDataFormat());
     }
 
     /**
@@ -52,12 +48,12 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         var idFound = false;
         Set<AuthenticationData> regClients;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return false;
         }
         regClients = readRegisteredClients();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         for (final AuthenticationData authData : regClients) {
 
@@ -79,12 +75,12 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         Object fromFile;
         Set<AuthenticationData> readList = null;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return new HashSet<>();
         }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+        fromFile = super.dataProvider.readData();
+        super.dataProvider.releaseAccess(true);
 
         if (fromFile instanceof HashSet) {
 
@@ -103,11 +99,6 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         return readList;
     }
 
-    @Override
-    public void createFileAccess() throws InterruptedException {
-        this.dataProvider.createFileReferences();
-    }
-
     /**
      * Returns the client id.
      *
@@ -120,12 +111,12 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         Set<AuthenticationData> readList;
         var clientAuth = AuthenticationData.valueOf(username, password, STANDARD_CLIENT_ID);
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return clientId;
         }
         readList = readRegisteredClients();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         for (final AuthenticationData authData : readList) {
 
@@ -147,20 +138,15 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         var accountRemoved = false;
         Set<AuthenticationData> regClients;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
         regClients = readRegisteredClients();
-        accountRemoved = regClients.removeIf(credentials -> credentials.getClientId() == clientId) && this.dataProvider.writeData(regClients);
-        this.dataProvider.releaseAccess(true);
+        accountRemoved = regClients.removeIf(credentials -> credentials.getClientId() == clientId) && super.dataProvider.writeData(regClients);
+        super.dataProvider.releaseAccess(false);
 
         return accountRemoved;
-    }
-
-    @Override
-    public void removeFileAccess() {
-        this.dataProvider.removeFileReferences();
     }
 
     /**
@@ -175,7 +161,7 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
         Set<AuthenticationData> regClients;
 
         if (toAdd != null) {
-            if (!this.dataProvider.acquireAccess(true)) {
+            if (!super.dataProvider.acquireAccess(false)) {
                 LOGGER.error("No exclusive write access.");
                 return false;
             }
@@ -189,12 +175,12 @@ public class ClientAuthPersistenceDAO implements ServerDataAccess {
                 }
             }
 
-            if (!alreadyRegistered && regClients.add(toAdd) && this.dataProvider.writeData(regClients)) {
+            if (!alreadyRegistered && regClients.add(toAdd) && super.dataProvider.writeData(regClients)) {
                 accountRegistered = true;
                 LOGGER.info("Account created.");
             }
 
-            this.dataProvider.releaseAccess(true);
+            super.dataProvider.releaseAccess(false);
         }
 
         return accountRegistered;

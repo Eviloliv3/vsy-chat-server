@@ -104,12 +104,8 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
      */
     private void processIncomingPackets() {
         var reInterrupt = false;
-        try {
-            this.pendingPacketAccessor.createFileAccess(this.localClientData.getClientId());
-        } catch (InterruptedException ie) {
-            throw new IllegalStateException(
-                    "File access failed.\n" + ie.getMessage() + "\n" + asList(ie.getStackTrace()));
-        }
+
+        this.pendingPacketAccessor.createFileAccess(this.localClientData.getClientId());
 
         while (this.terminationLatch.getCount() == TERMINATION_LATCH_COUNT) {
             try {

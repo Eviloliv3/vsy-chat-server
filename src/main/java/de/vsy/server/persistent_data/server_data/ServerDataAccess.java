@@ -8,12 +8,8 @@ import de.vsy.server.persistent_data.PersistentDataAccess;
 public interface ServerDataAccess extends PersistentDataAccess {
 
     /**
-     * Creates the file accessLimiter.
-     *
-     * @throws IllegalStateException    the illegal state exception
-     * @throws IllegalArgumentException the illegal argument exception
-     * @throws InterruptedException     the interrupted exception
+     * Creates file access. Data is then accessible.
+     * @throws IllegalStateException if any condition arises that makes the file access creation impossible.
      */
-    void createFileAccess()
-            throws IllegalStateException, IllegalArgumentException, InterruptedException;
+    void createFileAccess() throws IllegalStateException;
 }

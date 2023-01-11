@@ -41,10 +41,12 @@ public class PersistentDataLocationCreator {
      *
      * @param pathExtension the path extension
      * @return the string[]
+     * @throws IllegalStateException if attempts at opening or creating directories
+     * cause SecurityException
      */
     public static String[] createDirectoryPaths(DataOwnershipDescriptor owner,
                                                 final String pathExtension)
-            throws InterruptedException {
+            throws IllegalStateException {
         String[] clientDataPaths = new String[2];
         clientDataPaths[0] = createStandardDirectoryPath(owner, pathExtension);
         clientDataPaths[1] = createBackUpDirectoryPath(owner, pathExtension);
@@ -75,7 +77,7 @@ public class PersistentDataLocationCreator {
      * @return true, if successful
      */
     private static boolean createDirectoryPaths(final String[] dataPaths)
-            throws InterruptedException {
+            throws IllegalStateException{
         boolean directoriesCreated = false;
 
         for (var i = (dataPaths.length - 1); i >= 0; i--) {
@@ -109,7 +111,7 @@ public class PersistentDataLocationCreator {
         return BASE_LOCATION + pathname.toString();
     }
 
-    private static boolean createDirectoryPath(final String dataPath) throws InterruptedException {
+    private static boolean createDirectoryPath(final String dataPath) throws IllegalStateException {
         boolean directoryCreated = false;
         final var directoryPath = new File(dataPath);
         try {
@@ -127,9 +129,9 @@ public class PersistentDataLocationCreator {
             }
         } catch (final SecurityException se) {
             final var errorMessage =
-                    "Directory creation was deemed illegal and failed: " + directoryPath + "\n"
+                    "Directory creation illegal: " + directoryPath + "\n"
                             + se.getMessage();
-            throw new InterruptedException(errorMessage);
+            throw new IllegalStateException(errorMessage);
         }
         return directoryCreated;
     }
@@ -147,9 +149,5 @@ public class PersistentDataLocationCreator {
      */
     public enum DataPathDescriptor {
         BACKUP, CLIENT_PATH, SERVER_PATH
-    }
-
-    public enum DataOwnershipDescriptor {
-        CLIENT, SERVER
     }
 }

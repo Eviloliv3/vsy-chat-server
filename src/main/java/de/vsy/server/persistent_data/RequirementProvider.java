@@ -10,5 +10,5 @@ public interface RequirementProvider {
      *
      * @return true, if is id required
      */
-    boolean isIdRequired();
+    boolean pathExtensionRequired();
 }

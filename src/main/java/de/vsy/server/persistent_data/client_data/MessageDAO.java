@@ -4,8 +4,8 @@
 package de.vsy.server.persistent_data.client_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,21 +21,18 @@ import static java.lang.String.valueOf;
 /**
  * Grants writing accessLimiter to the file containing a client's message histories.
  */
-public class MessageDAO implements ClientDataAccess {
+public class MessageDAO extends ClientDAO {
 
     /**
      * Maximum amount of Messages that will be saved.
      */
     private static final int MAX_HISTORY_LENGTH = 50;
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO dataProvider;
 
     /**
      * Instantiates a new message writer.
      */
     public MessageDAO() {
-
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.MESSAGE_HISTORY, getDataFormat());
+        super(DataFileDescriptor.MESSAGE_HISTORY, getDataFormat());
     }
 
     /**
@@ -51,11 +48,6 @@ public class MessageDAO implements ClientDataAccess {
         return factory.constructMapType(HashMap.class, mapKeyType, msgListType);
     }
 
-    @Override
-    public void createFileAccess(final int clientId) throws InterruptedException {
-        this.dataProvider.createFileReferences(valueOf(clientId));
-    }
-
     /**
      * Read client messages.
      *
@@ -66,12 +58,12 @@ public class MessageDAO implements ClientDataAccess {
         Map<Integer, List<TextMessageDTO>> readMap;
         List<TextMessageDTO> readMessages;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return new ArrayList<>();
         }
         readMap = readAllClientMessages();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
         readMessages = readMap.get(clientId);
 
         if (readMessages == null) {
@@ -90,12 +82,12 @@ public class MessageDAO implements ClientDataAccess {
         var readMap = new HashMap<Integer, List<TextMessageDTO>>();
         Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return readMap;
         }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+        fromFile = super.dataProvider.readData();
+        super.dataProvider.releaseAccess(true);
 
         if (fromFile instanceof HashMap) {
 
@@ -113,19 +105,14 @@ public class MessageDAO implements ClientDataAccess {
     public void removeMessages(final int contactId) {
         Map<Integer, List<TextMessageDTO>> oldMessages;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return;
         }
         oldMessages = this.readAllClientMessages();
         oldMessages.remove(contactId);
-        this.dataProvider.writeData(oldMessages);
-        this.dataProvider.releaseAccess(true);
-    }
-
-    @Override
-    public void removeFileAccess() {
-        this.dataProvider.removeFileReferences();
+        super.dataProvider.writeData(oldMessages);
+        super.dataProvider.releaseAccess(false);
     }
 
     /**
@@ -141,7 +128,7 @@ public class MessageDAO implements ClientDataAccess {
         List<TextMessageDTO> msgHistory;
 
         if (contactId > 0 && msg != null) {
-            if (!this.dataProvider.acquireAccess(true)) {
+            if (!super.dataProvider.acquireAccess(false)) {
                 LOGGER.error("No exclusive write access.");
                 return false;
             }
@@ -153,9 +140,9 @@ public class MessageDAO implements ClientDataAccess {
                 msgHistory.remove(0);
             }
             oldMessages.put(contactId, msgHistory);
-            messageSaved = this.dataProvider.writeData(oldMessages);
+            messageSaved = super.dataProvider.writeData(oldMessages);
 
-            this.dataProvider.releaseAccess(true);
+            super.dataProvider.releaseAccess(false);
         }
         return messageSaved;
     }

@@ -35,10 +35,9 @@ public class CommunicationNetworkSubscriptionManager {
      */
     public boolean addCommunicationNetwork(final EligibleCommunicationEntity entity,
                                            final PacketCategorySubscriptionManager subscriptionManager) {
+        this.lock.writeLock().lock();
 
         try {
-            this.lock.writeLock().lock();
-
             return this.communicationNetworks.putIfAbsent(entity, subscriptionManager) == null;
         } finally {
             this.lock.writeLock().unlock();
@@ -54,9 +53,9 @@ public class CommunicationNetworkSubscriptionManager {
     public PacketCategorySubscriptionManager getSubscriptionsManager(
             final EligibleCommunicationEntity entity) {
         PacketCategorySubscriptionManager subscriptionManager;
+        this.lock.readLock().lock();
 
         try {
-            this.lock.readLock().lock();
             subscriptionManager = this.communicationNetworks.get(entity);
         } finally {
             this.lock.readLock().unlock();

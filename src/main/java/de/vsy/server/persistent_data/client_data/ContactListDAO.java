@@ -4,8 +4,8 @@
 package de.vsy.server.persistent_data.client_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,22 +18,17 @@ import static java.lang.String.valueOf;
 /**
  * Grants accessLimiter to the file containing a client's contactSet.
  */
-public class ContactListDAO implements ClientDataAccess {
-
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO dataProvider;
+public class ContactListDAO extends ClientDAO {
 
     /**
      * Instantiates a new contactSet modifier.
      */
     public ContactListDAO() {
-
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.CONTACT_LIST, getDataFormat());
+        super(DataFileDescriptor.CONTACT_LIST, getDataFormat());
     }
 
     /**
      * Returns the dataManagement format.
-     *
      * @return the dataManagement format
      */
     public static JavaType getDataFormat() {
@@ -55,7 +50,7 @@ public class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -68,9 +63,9 @@ public class ContactListDAO implements ClientDataAccess {
 
         if (contactSet.add(clientId)) {
             contactMap.put(contactType, contactSet);
-            contactAdded = this.dataProvider.writeData(contactMap);
+            contactAdded = super.dataProvider.writeData(contactMap);
         }
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         if (contactAdded) {
             LOGGER.info("Contact added.");
@@ -90,12 +85,12 @@ public class ContactListDAO implements ClientDataAccess {
         var readMap = new EnumMap<EligibleContactEntity, Set<Integer>>(EligibleContactEntity.class);
         Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return readMap;
         }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+        fromFile = super.dataProvider.readData();
+        super.dataProvider.releaseAccess(true);
 
         if (fromFile instanceof EnumMap) {
 
@@ -114,12 +109,12 @@ public class ContactListDAO implements ClientDataAccess {
         final boolean isContact;
         final Set<Integer> contacts;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return false;
         }
         contacts = this.readContacts(contactType);
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
         isContact = contacts.contains(contactId);
         return isContact;
     }
@@ -134,12 +129,12 @@ public class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> readMap;
         Set<Integer> readContacts;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return new HashSet<>();
         }
         readMap = readContactMap();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
         readContacts = readMap.get(contactType);
 
         if (readContacts == null) {
@@ -159,12 +154,12 @@ public class ContactListDAO implements ClientDataAccess {
         var acquaintanceState = false;
         Set<Integer> contactSet;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return false;
         }
         contactSet = readContacts(contactType);
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         if (contactSet != null) {
             acquaintanceState = contactSet.contains(contactId);
@@ -184,12 +179,12 @@ public class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return false;
         }
         contactMap = readContactMap();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         for (final EligibleContactEntity contactType : EligibleContactEntity.values()) {
             contactSet = contactMap.getOrDefault(contactType, Collections.emptySet());
@@ -201,11 +196,6 @@ public class ContactListDAO implements ClientDataAccess {
         }
 
         return acquaintanceState;
-    }
-
-    @Override
-    public void createFileAccess(final int clientId) throws InterruptedException {
-        this.dataProvider.createFileReferences(valueOf(clientId));
     }
 
     /**
@@ -220,7 +210,7 @@ public class ContactListDAO implements ClientDataAccess {
         Map<EligibleContactEntity, Set<Integer>> contactMap;
         Set<Integer> contactSet;
 
-        if (!this.dataProvider.acquireAccess(true)) {
+        if (!super.dataProvider.acquireAccess(false)) {
             LOGGER.error("No exclusive write access.");
             return false;
         }
@@ -230,10 +220,10 @@ public class ContactListDAO implements ClientDataAccess {
         if (contactSet != null) {
             contactRemoved = contactSet.remove(clientId);
             contactMap.put(contactType, contactSet);
-            contactRemoved &= this.dataProvider.writeData(contactMap);
+            contactRemoved &= super.dataProvider.writeData(contactMap);
         }
 
-        this.dataProvider.releaseAccess(true);
+        super.dataProvider.releaseAccess(false);
 
         if (contactRemoved) {
             LOGGER.info("Contact removed.");
@@ -241,10 +231,5 @@ public class ContactListDAO implements ClientDataAccess {
             LOGGER.info("Contact not removed.");
         }
         return contactRemoved;
-    }
-
-    @Override
-    public void removeFileAccess() {
-        this.dataProvider.removeFileReferences();
     }
 }

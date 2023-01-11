@@ -1,8 +1,8 @@
 package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;
-import de.vsy.server.persistent_data.PersistenceDAO;
-import de.vsy.server.persistent_data.PersistentDataFileCreator.DataFileDescriptor;
+import de.vsy.server.persistent_data.SynchronousFileManipulator;
+import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,16 +16,14 @@ import static com.fasterxml.jackson.databind.type.TypeFactory.defaultInstance;
 /**
  * The Class ClientTransactionDAO.
  */
-public class ClientTransactionDAO implements ServerDataAccess {
+public class ClientTransactionDAO extends ServerDAO {
 
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final PersistenceDAO dataProvider;
 
     /**
      * Instantiates a new client transaction DAO.*
      */
     public ClientTransactionDAO() {
-        this.dataProvider = new PersistenceDAO(DataFileDescriptor.CLIENT_TRANSACTION, getDataFormat());
+        super(DataFileDescriptor.CLIENT_TRANSACTION, getDataFormat());
     }
 
     /**
@@ -49,7 +47,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
         if (transactionHash != null) {
             Map<String, Boolean> allTransactions;
 
-            if (!this.dataProvider.acquireAccess(true)) {
+            if (!super.dataProvider.acquireAccess(false)) {
                 LOGGER.error("No exclusive write access.");
                 return false;
             }
@@ -57,10 +55,10 @@ public class ClientTransactionDAO implements ServerDataAccess {
             transactionAdded = allTransactions.putIfAbsent(transactionHash, false) == null;
 
             if (transactionAdded) {
-                this.dataProvider.writeData(allTransactions);
+                super.dataProvider.writeData(allTransactions);
             }
 
-            this.dataProvider.releaseAccess(true);
+            super.dataProvider.releaseAccess(false);
         }
         return transactionAdded;
     }
@@ -75,12 +73,12 @@ public class ClientTransactionDAO implements ServerDataAccess {
         Map<String, Boolean> allTransactions = new HashMap<>();
         Object fromFile;
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return allTransactions;
         }
-        fromFile = this.dataProvider.readData();
-        this.dataProvider.releaseAccess(false);
+        fromFile = super.dataProvider.readData();
+        super.dataProvider.releaseAccess(true);
 
         try {
             allTransactions = (Map<String, Boolean>) fromFile;
@@ -104,7 +102,7 @@ public class ClientTransactionDAO implements ServerDataAccess {
         if (transactionHash != null) {
             Map<String, Boolean> allTransactions;
 
-            if (!this.dataProvider.acquireAccess(true)) {
+            if (!super.dataProvider.acquireAccess(false)) {
                 LOGGER.error("No exclusive write access.");
                 return false;
             }
@@ -112,17 +110,12 @@ public class ClientTransactionDAO implements ServerDataAccess {
 
             if (allTransactions.containsKey(transactionHash)) {
                 allTransactions.put(transactionHash, true);
-                transactionComplete = this.dataProvider.writeData(allTransactions);
+                transactionComplete = super.dataProvider.writeData(allTransactions);
             }
 
-            this.dataProvider.releaseAccess(true);
+            super.dataProvider.releaseAccess(false);
         }
         return transactionComplete;
-    }
-
-    @Override
-    public void createFileAccess() throws InterruptedException {
-        this.dataProvider.createFileReferences();
     }
 
     /**
@@ -134,12 +127,12 @@ public class ClientTransactionDAO implements ServerDataAccess {
 
         final Map<String, Boolean> incompleteTransactions = new HashMap<>();
 
-        if (!this.dataProvider.acquireAccess(false)) {
+        if (!super.dataProvider.acquireAccess(true)) {
             LOGGER.error("No shared read access.");
             return incompleteTransactions;
         }
         final var allTransactions = readTransactions();
-        this.dataProvider.releaseAccess(false);
+        super.dataProvider.releaseAccess(true);
 
         for (final var transaction : allTransactions.entrySet()) {
             final var completionState = transaction.getValue();
@@ -165,21 +158,16 @@ public class ClientTransactionDAO implements ServerDataAccess {
 
         if (hashToCheck != null) {
 
-            if (!this.dataProvider.acquireAccess(false)) {
+            if (!super.dataProvider.acquireAccess(true)) {
                 LOGGER.error("No shared read access.");
                 return false;
             }
             readTransactions = readTransactions();
-            this.dataProvider.releaseAccess(false);
+            super.dataProvider.releaseAccess(true);
             transactionComplete = Objects.equals(true, readTransactions.get(hashToCheck));
 
         }
 
         return transactionComplete;
-    }
-
-    @Override
-    public void removeFileAccess() {
-        this.dataProvider.removeFileReferences();
     }
 }
