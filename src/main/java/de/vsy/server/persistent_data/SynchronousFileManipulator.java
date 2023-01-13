@@ -36,7 +36,7 @@ import static java.util.Arrays.asList;
  * Deserializes JSON-Strings using preset JavaTypes with the Jackson library ObjectMapper. Works on
  * a set of fileChannels (main and backup version of the same file).
  */
-public class SynchronousFileManipulator implements PersistentDataAccessProvider {
+public class SynchronousFileManipulator {
 
     private static final String NO_DATA_FILE_PATHS_SET;
     private static final String NO_FILE_ACCESS_ACQUIRED;

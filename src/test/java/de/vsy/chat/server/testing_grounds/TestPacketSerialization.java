@@ -24,9 +24,9 @@ class TestPacketSerialization {
     @BeforeEach
     public void createFileAccess() throws InterruptedException {
         this.pendingPacketAccessor = new PendingPacketDAO();
-        pendingPacketAccessor.createFileAccess(16000);
+        pendingPacketAccessor.createAccess(String.valueOf(16000));
         this.saver = new PacketSaver();
-        saver.createFileAccess(16000);
+        saver.createAccess(String.valueOf(16000));
     }
 
     @AfterEach

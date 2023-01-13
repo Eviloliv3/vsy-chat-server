@@ -1,7 +1,7 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.CommunicationEntityDataProvider;
-import de.vsy.server.client_handling.data_management.access_limiter.StatusHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.StatusHandlingDataProvider;
 import de.vsy.server.client_handling.data_management.logic.ClientStateControl;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
@@ -36,10 +36,10 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
     public ClientStatusChangeProcessor(final StatusHandlingDataProvider threadDataAccess) {
         this.clientStateManager = threadDataAccess.getClientStateControl();
         this.contactMapper = threadDataAccess.getContactToActiveClientMapper();
-        this.contactProvider = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.contactProvider = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess()
                 .getContactListDAO();
-        this.messageReader = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.messageReader = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess()
                 .getMessageDAO();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
@@ -51,7 +51,7 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
         String causeMessage = null;
         final var changeTo = validatedContent.getOnlineStatus();
 
-        if (this.clientStateManager.changeClientState(ACTIVE_MESSENGER, changeTo)) {
+        if (this.clientStateManager.changeLocalClientState(ACTIVE_MESSENGER, changeTo)) {
 
             if (this.clientStateManager.changePersistentClientState(ACTIVE_MESSENGER,
                     changeTo)) {
@@ -66,7 +66,7 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
                 }
                 this.contentHandler.addResponse(responseContent);
             } else {
-                this.clientStateManager.changeClientState(ACTIVE_MESSENGER, false);
+                this.clientStateManager.changeLocalClientState(ACTIVE_MESSENGER, false);
                 causeMessage = "An error occurred while writing your global Messenger state. Please "
                         + "contact the ChatServer support team.";
             }

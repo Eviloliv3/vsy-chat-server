@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.RelationHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.RelationHandlingDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -27,9 +27,9 @@ public class RelationResponseProcessor implements ContentProcessor<ContactRelati
     public RelationResponseProcessor(final RelationHandlingDataProvider threadDataAccess) {
         this.threadDataAccess = threadDataAccess;
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
-        this.contactListAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.contactListAccess = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess().getContactListDAO();
-        this.messageHistoryAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.messageHistoryAccess = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess().getMessageDAO();
     }
 

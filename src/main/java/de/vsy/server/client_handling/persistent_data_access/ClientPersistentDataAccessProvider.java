@@ -2,8 +2,8 @@ package de.vsy.server.client_handling.persistent_data_access;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;
 import de.vsy.server.client_management.ClientState;
-import de.vsy.server.persistent_data.client_data.ClientDataAccess;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
+import de.vsy.server.persistent_data.client_data.ExtendedPathAccess;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.shared_module.packet_management.ClientDataProvider;
@@ -20,7 +20,7 @@ public class ClientPersistentDataAccessProvider implements ClientStateListener {
     private final ContactListDAO contactDataProvider;
     private final MessageDAO messageDataProvider;
     private final PendingPacketDAO pendingPacketAccessor;
-    private final List<ClientDataAccess> persistenceDAOList;
+    private final List<ExtendedPathAccess> persistenceDAOList;
     private boolean dataAccessible;
 
     /**
@@ -70,7 +70,7 @@ public class ClientPersistentDataAccessProvider implements ClientStateListener {
      */
     public void initiateClientDataAccess(final int clientId) {
         for (final var persistenceDAO : persistenceDAOList) {
-            persistenceDAO.createFileAccess(clientId);
+            persistenceDAO.createAccess(String.valueOf(clientId));
         }
     }
 
@@ -79,7 +79,7 @@ public class ClientPersistentDataAccessProvider implements ClientStateListener {
      */
     public void cutClientDataAccess() {
 
-        for (final ClientDataAccess DAO : persistenceDAOList) {
+        for (final ExtendedPathAccess DAO : persistenceDAOList) {
             DAO.removeFileAccess();
         }
         this.dataAccessible = false;

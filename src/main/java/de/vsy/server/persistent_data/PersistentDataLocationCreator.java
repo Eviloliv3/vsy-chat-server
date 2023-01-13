@@ -44,12 +44,12 @@ public class PersistentDataLocationCreator {
      * @throws IllegalStateException if attempts at opening or creating directories
      *                               cause SecurityException
      */
-    public static String[] createDirectoryPaths(DataOwnershipDescriptor owner,
+    public static String[] createDirectoryPaths(DataPathType pathType,
                                                 final String pathExtension)
             throws IllegalStateException {
         String[] clientDataPaths = new String[2];
-        clientDataPaths[0] = createStandardDirectoryPath(owner, pathExtension);
-        clientDataPaths[1] = createBackUpDirectoryPath(owner, pathExtension);
+        clientDataPaths[0] = createStandardDirectoryPath(pathType, pathExtension);
+        clientDataPaths[1] = createBackUpDirectoryPath(pathType, pathExtension);
 
         if (createDirectoryPaths(clientDataPaths)) {
             return clientDataPaths;
@@ -58,15 +58,15 @@ public class PersistentDataLocationCreator {
         }
     }
 
-    private static String createStandardDirectoryPath(DataOwnershipDescriptor owner,
+    private static String createStandardDirectoryPath(DataPathType pathType,
                                                       final String pathExtension) {
-        final var directory = createBasePath(owner, pathExtension, false);
+        final var directory = createBasePath(pathType, pathExtension, false);
         return finalizeDirectoryPath(directory);
     }
 
-    private static String createBackUpDirectoryPath(DataOwnershipDescriptor owner,
+    private static String createBackUpDirectoryPath(DataPathType pathType,
                                                     final String pathExtension) {
-        final var backUpDirectoryPath = createBasePath(owner, pathExtension, true);
+        final var backUpDirectoryPath = createBasePath(pathType, pathExtension, true);
         return finalizeDirectoryPath(backUpDirectoryPath);
     }
 
@@ -86,7 +86,7 @@ public class PersistentDataLocationCreator {
         return directoriesCreated;
     }
 
-    private static StringBuilder createBasePath(final DataOwnershipDescriptor owner,
+    private static StringBuilder createBasePath(final DataPathType pathType,
                                                 final String pathExtension,
                                                 final boolean isBackUpPath) {
         StringBuilder directory = new StringBuilder();
@@ -95,7 +95,7 @@ public class PersistentDataLocationCreator {
             directory.append(DATA_LOCATION_PREFIXES.get(BACKUP)).append(separator);
         }
 
-        if (owner.equals(DataOwnershipDescriptor.SERVER)) {
+        if (pathType.equals(DataPathType.SIMPLE)) {
             directory.append(DATA_LOCATION_PREFIXES.get(SERVER_PATH));
         } else {
             directory.append(DATA_LOCATION_PREFIXES.get(CLIENT_PATH));
@@ -136,9 +136,9 @@ public class PersistentDataLocationCreator {
         return directoryCreated;
     }
 
-    public static String createDirectoryPath(DataOwnershipDescriptor owner,
+    public static String createDirectoryPath(DataPathType pathType,
                                              final String pathExtension) {
-        String standardDataPath = createStandardDirectoryPath(owner, pathExtension);
+        String standardDataPath = createStandardDirectoryPath(pathType, pathExtension);
         createDirectoryPath(standardDataPath);
         return standardDataPath;
     }

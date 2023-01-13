@@ -12,11 +12,12 @@ import de.vsy.shared_transmission.packet.property.packet_identifier.ContentIdent
 public interface PacketPropertiesProvider {
 
     /**
-     * Creates the de.vsy.shared_transmission.packet.property.
+     * Creates PacketProperties depending on the Content Identifier and the
+     * specified id.
      *
-     * @param identifier the identifier
-     * @param contactId  the contact id
-     * @return the PacketProperties
+     * @param identifier the ContentIdentifier
+     * @param contactId  the recipient id
+     * @return the correspondingly created PacketProperties
      */
     PacketProperties createPacketProperties(ContentIdentifier identifier, int contactId);
 }

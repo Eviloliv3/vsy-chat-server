@@ -3,7 +3,7 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
@@ -39,8 +39,8 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
      *
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
-    public ReconnectRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
-        this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
+    public ReconnectRequestProcessor(final AuthenticationHandlerDataProvider threadDataAccess) {
+        this.clientStateManager = threadDataAccess.getAuthenticationStateControl();
         this.commPersistManager = HandlerAccessManager.getCommunicatorDataManipulator();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
     }

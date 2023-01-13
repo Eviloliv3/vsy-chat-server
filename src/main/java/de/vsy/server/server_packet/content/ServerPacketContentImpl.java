@@ -17,7 +17,7 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * Server internal extension of PacketContent, allows for the single synchronization of servers.
  */
-public abstract class ServerPacketContentImpl implements PacketContent, ServerStatusSync {
+public abstract class ServerPacketContentImpl implements PacketContent, ServerPacketContent {
 
     @Serial
     private static final long serialVersionUID = -8048355680528188537L;
@@ -79,12 +79,12 @@ public abstract class ServerPacketContentImpl implements PacketContent, ServerSt
     }
 
     @Override
-    public boolean checkServerSyncCount(final int checkCount) {
+    public boolean checkServerSynchronizationCounter(final int checkCount) {
         return this.synchronizedServers.size() == checkCount;
     }
 
     @Override
-    public boolean checkServerSyncState(final int serverId) {
+    public boolean checkServerSynchronizationState(final int serverId) {
         return this.synchronizedServers.contains(serverId);
     }
 

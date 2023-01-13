@@ -15,7 +15,7 @@ class TestContactListPersistence {
 
     @BeforeEach
     public void initContactListAccess() throws InterruptedException {
-        contactlist.createFileAccess(15000);
+        contactlist.createAccess(String.valueOf(15000));
     }
 
     @AfterEach

@@ -11,8 +11,8 @@ public class PersistentDataLocationRemover {
     private PersistentDataLocationRemover() {
     }
 
-    public static void deleteDirectories(final DataOwnershipDescriptor owner, final String pathExtension, Logger logger) {
-        final var directories = PersistentDataLocationCreator.createDirectoryPaths(owner, pathExtension);
+    public static void deleteDirectories(final DataPathType pathType, final String pathExtension, Logger logger) {
+        final var directories = PersistentDataLocationCreator.createDirectoryPaths(pathType, pathExtension);
 
         if (directories != null) {
             final var directoryCount = directories.length;

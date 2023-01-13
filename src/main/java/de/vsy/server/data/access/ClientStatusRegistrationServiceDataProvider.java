@@ -7,20 +7,13 @@ import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.service.ServicePacketBufferManager;
 
+/**
+ * Provides appropriate server data access for ClientState synchronization services.
+ */
 public interface ClientStatusRegistrationServiceDataProvider extends ServiceBaseDataProvider {
 
-    /**
-     * Returns the server connection dataManagement.
-     *
-     * @return the server connection dataManagement
-     */
     SocketConnectionDataManager getServerConnectionDataManager();
 
-    /**
-     * Returns the service PacketBuffer manager.
-     *
-     * @return the service PacketBuffer manager
-     */
     ServicePacketBufferManager getServicePacketBufferManager();
 
     LiveClientStateDAO getLiveClientStateDAO();

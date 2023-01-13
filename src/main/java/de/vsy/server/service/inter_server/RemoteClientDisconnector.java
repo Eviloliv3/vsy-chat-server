@@ -72,7 +72,7 @@ public class RemoteClientDisconnector {
         Set<Integer> contactIdList;
         final var contactListProvider = new ContactListDAO();
 
-        contactListProvider.createFileAccess(clientId);
+        contactListProvider.createAccess(String.valueOf(clientId));
         contactIdList = contactListProvider.readContacts(EligibleContactEntity.CLIENT);
 
         if (!contactIdList.isEmpty()) {

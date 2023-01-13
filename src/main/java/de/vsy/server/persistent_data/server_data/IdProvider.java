@@ -5,7 +5,7 @@ package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;
 import de.vsy.server.persistent_data.DataFileDescriptor;
-import de.vsy.server.persistent_data.DataOwnershipDescriptor;
+import de.vsy.server.persistent_data.DataPathType;
 import de.vsy.server.persistent_data.PersistentDataLocationCreator;
 import de.vsy.server.persistent_data.server_data.temporal.IdProviderPool;
 import de.vsy.server.persistent_data.server_data.temporal.IdType;
@@ -109,7 +109,7 @@ public class IdProvider extends ServerDAO {
 
     private int getMaxClientId() {
         int maxClientId = -1;
-        var clientDataPath = PersistentDataLocationCreator.createDirectoryPath(DataOwnershipDescriptor.CLIENT, String.valueOf(0));
+        var clientDataPath = PersistentDataLocationCreator.createDirectoryPath(DataPathType.EXTENDED, String.valueOf(0));
         final var lastBackSlashIndex = clientDataPath.lastIndexOf("/");
         clientDataPath = clientDataPath.substring(0, lastBackSlashIndex);
         final var clientDataFile = Path.of(clientDataPath).toFile();

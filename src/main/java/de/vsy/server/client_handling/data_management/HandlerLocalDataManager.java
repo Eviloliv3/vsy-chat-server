@@ -5,7 +5,6 @@
  */
 package de.vsy.server.client_handling.data_management;
 
-import de.vsy.server.client_handling.data_management.access_limiter.*;
 import de.vsy.server.client_handling.data_management.bean.ClientDataManager;
 import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
 import de.vsy.server.client_handling.data_management.bean.LocalClientStateProvider;
@@ -25,9 +24,9 @@ import de.vsy.shared_module.packet_management.*;
  * ClientConnectionHandler
  */
 @SuppressWarnings("used to share multiple mutable objects throughout ClientConnectionHandler ")
-public final class HandlerLocalDataManager implements AuthenticationHandlingDataProvider,
+public final class HandlerLocalDataManager implements AuthenticationHandlerDataProvider,
         StatusHandlingDataProvider,
-        ErrorHandlingDataProvider, RelationHandlingDataProvider, ChatHandlingDataProvider {
+        NotificationHandlingDataProvider, RelationHandlingDataProvider, ChatHandlingDataProvider {
 
     private final PacketTransmissionCache cachedPackets;
     private final ClientDataManager clientDataManager;
@@ -74,7 +73,7 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
     }
 
     @Override
-    public AuthenticationStateControl getGlobalAuthenticationStateControl() {
+    public AuthenticationStateControl getAuthenticationStateControl() {
         return this.stateRecorder;
     }
 
@@ -111,12 +110,12 @@ public final class HandlerLocalDataManager implements AuthenticationHandlingData
     }
 
     @Override
-    public LocalClientStateObserverManager getLocalClientStateDependentLogicProvider() {
+    public LocalClientStateObserverManager getLocalClientStateObserverManager() {
         return this.stateDependingAccess;
     }
 
     public StateDependentPacketRetriever getStateDependentPacketRetriever() {
-        return new StateDependentPacketRetriever(this.stateDependingAccess.getClientPersistentAccess(), this.threadBuffers, this.getLocalClientStateDependentLogicProvider().getPermittedPacketCategoryCheck());
+        return new StateDependentPacketRetriever(this.stateDependingAccess.getClientPersistentAccess(), this.threadBuffers, this.getLocalClientStateObserverManager().getPermittedPacketCategoryCheck());
     }
 
     public PacketTransmissionCache getPacketTransmissionCache() {

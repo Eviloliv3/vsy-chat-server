@@ -25,7 +25,7 @@ public class ServerPersistentDataManager {
     public final CommunicatorPersistenceDAO communicationEntityAccessManager;
     public final IdProvider idProvider;
     public final ClientTransactionDAO transactionAccessManager;
-    private final List<ServerDataAccess> accessController;
+    private final List<SimplePathAccess> accessController;
 
     /**
      * Instantiates a new server persistent dataManagement manager.
@@ -71,7 +71,7 @@ public class ServerPersistentDataManager {
      */
     public void removePersistentAccess() {
 
-        for (final ServerDataAccess currentProvider : this.accessController) {
+        for (final SimplePathAccess currentProvider : this.accessController) {
             if (currentProvider != null) {
                 currentProvider.removeFileAccess();
             }

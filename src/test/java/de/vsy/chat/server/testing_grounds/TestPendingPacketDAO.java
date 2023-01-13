@@ -1,6 +1,6 @@
 package de.vsy.chat.server.testing_grounds;
 
-import de.vsy.server.persistent_data.DataOwnershipDescriptor;
+import de.vsy.server.persistent_data.DataPathType;
 import de.vsy.server.persistent_data.PersistentDataFileCreator;
 import de.vsy.server.persistent_data.PersistentDataLocationCreator;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +80,7 @@ public class TestPendingPacketDAO {
      *
      * @Test void testMultipleThreadChannelAccess() throws InterruptedException {
      * final var path = PersistentDataLocationCreator.createDirectoryPath(
-     * PersistentDataLocationCreator.DataOwnershipDescriptor.SERVER, "test"); final
+     * PersistentDataLocationCreator.DataPathType.SERVER, "test"); final
      * var file = PersistentDataFileCreator.createAndGetFilePath(path,
      * "fileLock.lock", LogManager.getLogger()); try(var raf = new
      * RandomAccessFile(file.toFile(), "r")){ Runnable test = () -> { try { var
@@ -99,7 +99,7 @@ public class TestPendingPacketDAO {
             public void run() {
                 final String path;
                 path = PersistentDataLocationCreator
-                        .createDirectoryPath(DataOwnershipDescriptor.SERVER,
+                        .createDirectoryPath(DataPathType.SIMPLE,
                                 "test");
                 final var file = PersistentDataFileCreator.createAndGetFilePath(path, "fileLock.lock",
                         LogManager.getLogger());

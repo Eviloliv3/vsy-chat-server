@@ -4,33 +4,26 @@ import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.ServerSynchronizationManager;
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;
 
+/**
+ * Provides appropriate server data access for all services.
+ */
 public interface ServiceBaseDataProvider {
 
     /**
-     * Returns the client subscription manager.
+     * CLIENT side of publish-subscribe network.
      *
-     * @return the client subscription manager
+     * @return PacketCategorySubscriptionManager used for client subscriptions.
      */
     PacketCategorySubscriptionManager getClientSubscriptionManager();
 
     /**
-     * Returns the server subscription manager.
+     * SERVER side of publish-subscribe network.
      *
-     * @return the server subscription manager
+     * @return PacketCategorySubscriptionManager used for service subscriptions.
      */
     PacketCategorySubscriptionManager getServiceSubscriptionManager();
 
-    /**
-     * Returns the local server connection data
-     *
-     * @return the local server connection data
-     */
     LocalServerConnectionData getLocalServerConnectionData();
 
-    /**
-     * Gets an object providing synchronization methods.
-     *
-     * @return the server synchronization manager
-     */
     ServerSynchronizationManager getServerSynchronizationManager();
 }

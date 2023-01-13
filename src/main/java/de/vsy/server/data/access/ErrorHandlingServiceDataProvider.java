@@ -3,14 +3,9 @@ package de.vsy.server.data.access;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
- * The Interface ErrorHandlingServiceDataProvider.
+ * Provides appropriate server data access for Notification synchronization services.
  */
 public interface ErrorHandlingServiceDataProvider extends ServiceBaseDataProvider {
 
-    /**
-     * Returns the service PacketBuffer manager.
-     *
-     * @return the service PacketBuffer manager
-     */
     ServicePacketBufferManager getServicePacketBufferManager();
 }

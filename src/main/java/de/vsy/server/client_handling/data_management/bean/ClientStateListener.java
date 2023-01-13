@@ -5,9 +5,7 @@ package de.vsy.server.client_handling.data_management.bean;
 
 import de.vsy.server.client_management.ClientState;
 
-/**
- * Listener interface for clientState events.
- */
+@FunctionalInterface
 public interface ClientStateListener {
 
     /**

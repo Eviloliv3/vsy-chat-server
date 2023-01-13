@@ -37,7 +37,7 @@ public class PendingClientPacketHandling implements PacketHandlingStrategy {
         LOGGER.info("PendingClientHandler initiation started.");
         saveClientBoundPackets();
 
-        if (this.handlerDataManager.getGlobalAuthenticationStateControl().changePersistentPendingState(true)) {
+        if (this.handlerDataManager.getAuthenticationStateControl().changePersistentPendingState(true)) {
             HandlerAccessManager.getPendingClientWatcherManager().addPendingClient(this.handlerDataManager);
         } else {
             LOGGER.error("Global pending state could not be set for: {}",
@@ -47,7 +47,7 @@ public class PendingClientPacketHandling implements PacketHandlingStrategy {
 
     private void saveClientBoundPackets() {
         var reinterrupt = false;
-        final var pendingPacketAccessor = this.handlerDataManager.getLocalClientStateDependentLogicProvider()
+        final var pendingPacketAccessor = this.handlerDataManager.getLocalClientStateObserverManager()
                 .getClientPersistentAccess().getPendingPacketDAO();
 
         if (pendingPacketAccessor != null) {

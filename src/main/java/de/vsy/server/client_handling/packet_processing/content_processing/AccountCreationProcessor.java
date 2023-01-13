@@ -3,7 +3,7 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;
@@ -31,9 +31,9 @@ public class AccountCreationProcessor implements ContentProcessor<AccountCreatio
      *
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
-    public AccountCreationProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
+    public AccountCreationProcessor(final AuthenticationHandlerDataProvider threadDataAccess) {
 
-        this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
+        this.clientStateManager = threadDataAccess.getAuthenticationStateControl();
         this.clientRegistry = HandlerAccessManager.getCommunicatorDataManipulator();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
     }

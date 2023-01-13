@@ -71,12 +71,12 @@ public abstract class PacketCategorySubscriptionManager {
             subSuccessful = subscriber.addSubscription(subscriptionBuffer);
 
             if (subSuccessful) {
-                LOGGER.trace("Subscription to topic/thread {}{} successful", topic,
+                LOGGER.trace("Subscription to {}/{} successful.", topic,
                         topicId);
                 topicSubscriptions.put(topicId, subscriber);
                 this.subscriptions.put(topic, topicSubscriptions);
             } else {
-                LOGGER.warn("Subscription failed. Client already subscribed to topic/thread {}/{}", topic,
+                LOGGER.warn("Subscription skipped. Client already subscribed to {}/{}.", topic,
                         topicId);
             }
         } finally {
@@ -134,11 +134,11 @@ public abstract class PacketCategorySubscriptionManager {
                 unsubSuccessful = false;
             }
             if (unsubSuccessful) {
-                LOGGER.trace("Subscription cancellation of topic/thread successful: {}/{}", topic,
+                LOGGER.trace("Successfully cancelled subscription to: {}/{}", topic,
                         threadId);
             } else {
                 LOGGER.warn(
-                        "Subscription cancellation failed. Client was not subscribed to topic/thread: {}/{}",
+                        "Subscription cancellation failed. Client was not subscribed to : {}/{}",
                         topic,
                         threadId);
             }

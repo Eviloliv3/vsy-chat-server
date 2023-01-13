@@ -3,7 +3,7 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
@@ -28,8 +28,8 @@ public class LogoutRequestProcessor implements ContentProcessor<LogoutRequestDTO
      *
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
-    public LogoutRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
-        this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
+    public LogoutRequestProcessor(final AuthenticationHandlerDataProvider threadDataAccess) {
+        this.clientStateManager = threadDataAccess.getAuthenticationStateControl();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
     }
 

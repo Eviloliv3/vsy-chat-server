@@ -10,9 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static de.vsy.server.persistent_data.DataOwnershipDescriptor.SERVER;
+import static de.vsy.server.persistent_data.DataPathType.SIMPLE;
 
-public abstract class ServerDAO implements ServerDataAccess {
+public abstract class ServerDAO implements SimplePathAccess {
 
     protected static final Logger LOGGER = LogManager.getLogger();
     protected final SynchronousFileManipulator dataProvider;
@@ -31,7 +31,7 @@ public abstract class ServerDAO implements ServerDataAccess {
 
     @Override
     public void createFileAccess() throws IllegalStateException {
-        var directories = PersistentDataLocationCreator.createDirectoryPaths(SERVER, null);
+        var directories = PersistentDataLocationCreator.createDirectoryPaths(SIMPLE, null);
 
         if (directories == null) {
             throw new IllegalStateException("Error occurred during directory creation.");

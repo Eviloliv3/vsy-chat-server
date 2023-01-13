@@ -35,7 +35,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     @Override
     public boolean registerClient(CommunicatorData clientData) {
         this.localClientDataManager.setCommunicatorData(clientData);
-        return changeClientState(AUTHENTICATED, true);
+        return changeLocalClientState(AUTHENTICATED, true);
     }
 
     @Override
@@ -45,14 +45,14 @@ public class ClientStateDistributor implements AuthenticationStateControl {
 
         if (!(clientState.equals(ClientState.NOT_AUTHENTICATED))) {
             this.localClientDataManager.setCommunicatorData(clientData);
-            changeClientState(clientState, true);
+            changeLocalClientState(clientState, true);
         }
         return clientState;
     }
 
     @Override
     public void deregisterClient() {
-        this.changeClientState(AUTHENTICATED, false);
+        this.changeLocalClientState(AUTHENTICATED, false);
         this.localClientDataManager.setCommunicatorData(null);
     }
 
@@ -81,13 +81,13 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     }
 
     @Override
-    public ClientState getPersistentClientState() {
+    public ClientState getGlobalClientState() {
         final var clientId = this.localClientDataManager.getClientId();
         return persistentClientStates.getClientState(clientId).getCurrentState();
     }
 
     @Override
-    public boolean changeClientState(final ClientState clientState, final boolean changeTo) {
+    public boolean changeLocalClientState(final ClientState clientState, final boolean changeTo) {
         return this.localClientStateManager.changeClientState(clientState, changeTo);
     }
 

@@ -54,7 +54,7 @@ public class LoggedOutClientHandlingStrategy implements PacketHandlingStrategy {
 
     private void retainPacket(final Packet retainablePacket) {
         PendingPacketDAO p = new PendingPacketDAO();
-        p.createFileAccess(retainablePacket.getPacketProperties().getRecipient().getEntityId());
+        p.createAccess(String.valueOf(retainablePacket.getPacketProperties().getRecipient().getEntityId()));
         p.appendPendingPacket(PendingType.PROCESSOR_BOUND, retainablePacket);
     }
 }

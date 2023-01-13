@@ -186,16 +186,11 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         for (final var currentClientId : pendingClientIds) {
             this.clientStateProvider.changeClientPendingState(currentClientId, true);
             final var pendingPacketAccessor = new PendingPacketDAO();
-            pendingPacketAccessor.createFileAccess(currentClientId);
+            pendingPacketAccessor.createAccess(String.valueOf(currentClientId));
             this.clientPersistenceAccessManagers.put(currentClientId, pendingPacketAccessor);
         }
     }
 
-    /**
-     * Process reconnection.
-     *
-     * @param clientId the client id
-     */
     @Override
     public void processReconnection(int clientId) {
 

@@ -2,7 +2,7 @@ package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.data.access.ErrorHandlingServiceDataProvider;
 import de.vsy.server.server_packet.content.ServerFailureDTO;
-import de.vsy.server.service.packet_logic.ServicePacketProcessor;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * The Class ServerErrorPacketProcessor.
  */
-public class ServerErrorPacketProcessor implements ServicePacketProcessor {
+public class ServerErrorPacketProcessor implements PacketProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger();
 

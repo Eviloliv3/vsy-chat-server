@@ -3,15 +3,16 @@
  */
 package de.vsy.server.service.packet_logic;
 
+import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
 
 public interface ServicePacketProcessorFactory {
 
     /**
-     * Returns the PacketHandler.
+     * Returns a PacketProcessor capable of processing Packets of the specified type.
      *
-     * @param type the type
-     * @return the PacketHandler
+     * @param type the PacketType
+     * @return the PacketProcessor, null if none was found
      */
-    ServicePacketProcessor getPacketProcessor(PacketType type);
+    PacketProcessor getPacketProcessor(PacketType type);
 }

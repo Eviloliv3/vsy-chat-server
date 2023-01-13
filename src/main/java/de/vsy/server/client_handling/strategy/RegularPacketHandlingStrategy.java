@@ -72,7 +72,7 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
         final var processorLink = new ClientPacketProcessorLink(
                 new PacketProcessorManager(threadDataAccess, new StandardProcessorFactoryProvider()));
         final var contextCheckLink = new PacketContextCheckLink(processorLink,
-                threadDataAccess.getLocalClientStateDependentLogicProvider()
+                threadDataAccess.getLocalClientStateObserverManager()
                         .getPermittedPacketCategoryCheck());
         this.processor = new PacketSyntaxCheckLink(contextCheckLink,
                 new SimplePacketChecker(setupValidator()));

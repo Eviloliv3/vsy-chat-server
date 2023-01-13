@@ -9,22 +9,12 @@ import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
 import de.vsy.server.service.ServicePacketBufferManager;
 
 /**
- * Ensures all dataManagement accessLimiter needed by InterServerCommunicationServices is provided.
+ * Provides appropriate server data access for inter server communication services.
  */
 public interface ServerCommunicationServiceDataProvider extends ServiceBaseDataProvider {
 
-    /**
-     * Returns the client state SynchronousFileManipulator provider.
-     *
-     * @return the client state SynchronousFileManipulator provider
-     */
     LiveClientStateDAO getLiveClientStateDAO();
 
-    /**
-     * Returns the server connection dataManagement.
-     *
-     * @return the server connection dataManagement
-     */
     SocketConnectionDataManager getServerConnectionDataManager();
 
     ServicePacketBufferManager getServicePacketBufferManager();

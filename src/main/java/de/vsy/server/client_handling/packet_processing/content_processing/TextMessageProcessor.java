@@ -3,7 +3,7 @@
  */
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.ChatHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.ChatHandlingDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
@@ -29,9 +29,9 @@ public class TextMessageProcessor implements ContentProcessor<TextMessageDTO> {
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
     public TextMessageProcessor(final ChatHandlingDataProvider threadDataAccess) {
-        this.contactListAccess = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.contactListAccess = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess().getContactListDAO();
-        this.messageWriter = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.messageWriter = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess()
                 .getMessageDAO();
         this.localClientData = threadDataAccess.getLocalClientDataProvider();

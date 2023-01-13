@@ -68,9 +68,6 @@ public class ClientStatusSynchronizationService extends ServiceBase {
                 SERVICE_SPECIFICATIONS.getResponseDirections());
     }
 
-    /**
-     * Finish setup.
-     */
     @Override
     public void finishSetup() {
         final var serviceId = super.getServiceId();
@@ -81,9 +78,6 @@ public class ClientStatusSynchronizationService extends ServiceBase {
         super.setReadyState();
     }
 
-    /**
-     * Work.
-     */
     @Override
     public void work() {
         Packet input;
@@ -103,9 +97,6 @@ public class ClientStatusSynchronizationService extends ServiceBase {
         }
     }
 
-    /**
-     * Break down.
-     */
     @Override
     public void breakDown() {
         this.serviceBuffers.deregisterBuffer(getServiceType(), getServiceId(), this.incomingBuffer);

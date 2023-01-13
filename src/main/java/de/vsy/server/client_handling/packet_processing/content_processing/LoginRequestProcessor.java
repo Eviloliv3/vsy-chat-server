@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.AuthenticationHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
@@ -31,9 +31,9 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
      *
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
-    public LoginRequestProcessor(final AuthenticationHandlingDataProvider threadDataAccess) {
+    public LoginRequestProcessor(final AuthenticationHandlerDataProvider threadDataAccess) {
 
-        this.clientStateManager = threadDataAccess.getGlobalAuthenticationStateControl();
+        this.clientStateManager = threadDataAccess.getAuthenticationStateControl();
         this.commPersistManager = HandlerAccessManager.getCommunicatorDataManipulator();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
     }
@@ -50,7 +50,7 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
         if (clientData != null) {
 
             if (this.clientStateManager.registerClient(clientData)) {
-                globalState = this.clientStateManager.getPersistentClientState();
+                globalState = this.clientStateManager.getGlobalClientState();
 
                 if (globalState.equals(ClientState.NOT_AUTHENTICATED)) {
 

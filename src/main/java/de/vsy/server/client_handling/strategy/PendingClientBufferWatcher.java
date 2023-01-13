@@ -51,13 +51,13 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
      */
     public PendingClientBufferWatcher(final HandlerLocalDataManager threadDataAccess, final PendingClientRegistry pendingRegistry) {
         super();
-        this.pendingPacketAccessor = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.pendingPacketAccessor = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess().getPendingPacketDAO();
         this.localClientData = threadDataAccess.getLocalClientDataProvider();
         this.clientBuffer = threadDataAccess.getHandlerBufferManager()
                 .getPacketBuffer(HANDLER_BOUND);
         this.assignmentBuffer = threadDataAccess.getHandlerBufferManager().getPacketBuffer(SERVER_BOUND);
-        this.clientStateControl = threadDataAccess.getGlobalAuthenticationStateControl();
+        this.clientStateControl = threadDataAccess.getAuthenticationStateControl();
         this.packetCache = threadDataAccess.getPacketTransmissionCache();
         this.pendingRegistry = pendingRegistry;
         this.terminationLatch = new CountDownLatch(TERMINATION_LATCH_COUNT);
@@ -104,7 +104,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
     private void processIncomingPackets() {
         var reInterrupt = false;
 
-        this.pendingPacketAccessor.createFileAccess(this.localClientData.getClientId());
+        this.pendingPacketAccessor.createAccess(String.valueOf(this.localClientData.getClientId()));
 
         while (this.terminationLatch.getCount() == TERMINATION_LATCH_COUNT) {
             try {

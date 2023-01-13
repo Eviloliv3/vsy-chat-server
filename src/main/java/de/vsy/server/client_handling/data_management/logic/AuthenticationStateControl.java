@@ -14,10 +14,17 @@ public interface AuthenticationStateControl extends ClientStateControl {
      */
     boolean registerClient(CommunicatorData clientData);
 
+    /**
+     * Gets persistent ClientState for CommunicatorData and reinstates
+     * ClientConnectionHandler to that state, if it is not OFFLINE.
+     *
+     * @param clientData the client data to check
+     * @return the persistent ClientState
+     */
     ClientState reconnectClient(CommunicatorData clientData);
 
     /**
-     * Removes all client specific data and states.
+     * Resets ClientConnectionHandler to pre-AUTHENTICATED state.
      */
     void deregisterClient();
 

@@ -1,6 +1,6 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
-import de.vsy.server.client_handling.data_management.access_limiter.StatusHandlingDataProvider;
+import de.vsy.server.client_handling.data_management.StatusHandlingDataProvider;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.MessageDAO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
@@ -27,10 +27,10 @@ public class ContactStatusChangeProcessor implements ContentProcessor<ContactSta
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
     public ContactStatusChangeProcessor(final StatusHandlingDataProvider threadDataAccess) {
-        this.contactProvider = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.contactProvider = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess()
                 .getContactListDAO();
-        this.messageReader = threadDataAccess.getLocalClientStateDependentLogicProvider()
+        this.messageReader = threadDataAccess.getLocalClientStateObserverManager()
                 .getClientPersistentAccess()
                 .getMessageDAO();
         contentHandler = threadDataAccess.getResultingPacketContentHandler();

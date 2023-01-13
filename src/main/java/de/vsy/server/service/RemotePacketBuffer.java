@@ -27,7 +27,7 @@ public class RemotePacketBuffer extends PacketBuffer {
 
         if (content instanceof final ServerPacketContentImpl serverContent) {
 
-            if (!serverContent.checkServerSyncState(this.remoteConnection.getServerId())) {
+            if (!serverContent.checkServerSynchronizationState(this.remoteConnection.getServerId())) {
                 synchronizeLocalServerId(serverContent);
                 super.appendPacket(input);
             } else {
@@ -50,7 +50,7 @@ public class RemotePacketBuffer extends PacketBuffer {
 
         if (content instanceof final ServerPacketContentImpl serverContent) {
 
-            if (!serverContent.checkServerSyncState(this.remoteConnection.getServerId())) {
+            if (!serverContent.checkServerSynchronizationState(this.remoteConnection.getServerId())) {
                 synchronizeLocalServerId(serverContent);
                 super.prependPacket(input);
             } else {

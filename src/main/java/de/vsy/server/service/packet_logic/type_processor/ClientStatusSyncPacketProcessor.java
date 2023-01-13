@@ -17,8 +17,8 @@ import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
-import de.vsy.server.service.packet_logic.ServicePacketProcessor;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +36,7 @@ import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_C
 /**
  * Handles status synchronization Packet sent by other servers.
  */
-public class ClientStatusSyncPacketProcessor implements ServicePacketProcessor {
+public class ClientStatusSyncPacketProcessor implements PacketProcessor {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final SocketConnectionDataManager serverConnectionDataManager;

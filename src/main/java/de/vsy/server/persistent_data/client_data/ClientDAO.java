@@ -5,15 +5,15 @@ import de.vsy.server.persistent_data.DataFileDescriptor;
 import de.vsy.server.persistent_data.PersistentDataFileCreator;
 import de.vsy.server.persistent_data.PersistentDataLocationCreator;
 import de.vsy.server.persistent_data.SynchronousFileManipulator;
-import de.vsy.shared_module.data_element_validation.IdCheck;
+import de.vsy.shared_module.data_element_validation.StringCheck;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-import static de.vsy.server.persistent_data.DataOwnershipDescriptor.CLIENT;
+import static de.vsy.server.persistent_data.DataPathType.EXTENDED;
 
-public abstract class ClientDAO implements ClientDataAccess {
+public abstract class ClientDAO implements ExtendedPathAccess {
     protected static final Logger LOGGER = LogManager.getLogger();
     protected final SynchronousFileManipulator dataProvider;
     private final DataFileDescriptor fileDescriptor;
@@ -29,13 +29,13 @@ public abstract class ClientDAO implements ClientDataAccess {
     }
 
     @Override
-    public void createFileAccess(int clientId) throws IllegalStateException, IllegalArgumentException {
-        var checkResult = IdCheck.checkData(clientId);
+    public void createAccess(String pathExtension) throws IllegalStateException, IllegalArgumentException {
+        var checkResult = StringCheck.checkString(pathExtension);
 
         if (checkResult.isPresent()) {
             throw new IllegalArgumentException(checkResult.get());
         }
-        var directories = PersistentDataLocationCreator.createDirectoryPaths(CLIENT, String.valueOf(clientId));
+        var directories = PersistentDataLocationCreator.createDirectoryPaths(EXTENDED, pathExtension);
 
         if (directories == null) {
             throw new IllegalStateException("Error occurred during directory creation.");

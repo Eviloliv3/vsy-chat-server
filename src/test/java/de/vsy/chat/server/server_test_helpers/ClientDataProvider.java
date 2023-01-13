@@ -5,15 +5,12 @@ package de.vsy.chat.server.server_test_helpers;
 
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
 
-/**
- * Interface for simple client dataManagement accessLimiter throughout the application.
- */
 public interface ClientDataProvider {
 
     /**
-     * Returns the client dataManagement.
+     * Returns the local client's CommunicatorDTO.
      *
-     * @return the client dataManagement
+     * @return the client CommunicatorDTO
      */
     CommunicatorDTO getCommunicatorData();
 }

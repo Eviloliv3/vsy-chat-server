@@ -1,12 +1,10 @@
 package de.vsy.server.client_handling.strategy;
 
-/**
- * The Interface PacketHandlingStrategy.
- */
+@FunctionalInterface
 public interface PacketHandlingStrategy {
 
     /**
-     * Administer strategy.
+     * Command.
      */
     void administerStrategy();
 }

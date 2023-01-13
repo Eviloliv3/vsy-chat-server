@@ -109,9 +109,6 @@ public class ChatServer implements ClientServer {
         clientConnectionEstablisher.acceptClientConnections();
     }
 
-    /**
-     * Shutdown server
-     */
     @Override
     public void shutdownServer() {
         LOGGER.info("Server shutdown initiated. Interruption status: {}",

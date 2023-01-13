@@ -8,18 +8,16 @@ public class LocalClientStateObserverManager {
 
     private final PermittedPacketCategoryCheck permittedPackets;
     private final ClientPersistentDataAccessProvider clientPersistentAccess;
-    private final ExtraClientSubscriptionProvider extraSubscriptionProvider;
     private final ClientSubscriptionHandler clientSubscriptionHandler;
 
     public LocalClientStateObserverManager(final HandlerLocalDataManager handlerDataAccess) {
         this.permittedPackets = new PermittedPacketCategoryCheck();
         this.clientPersistentAccess = new ClientPersistentDataAccessProvider(
                 handlerDataAccess.getLocalClientDataProvider());
-        this.extraSubscriptionProvider = new ExtraClientSubscriptionProvider(
-                this.clientPersistentAccess.getContactListDAO());
-        this.clientSubscriptionHandler = new ClientSubscriptionHandler(extraSubscriptionProvider,
+        this.clientSubscriptionHandler = new ClientSubscriptionHandler(
                 handlerDataAccess.getLocalClientDataProvider(),
-                handlerDataAccess.getHandlerBufferManager());
+                handlerDataAccess.getHandlerBufferManager(),
+                this.clientPersistentAccess.getContactListDAO());
         addStateListeners(handlerDataAccess);
     }
 
@@ -37,10 +35,6 @@ public class LocalClientStateObserverManager {
 
     public ClientPersistentDataAccessProvider getClientPersistentAccess() {
         return clientPersistentAccess;
-    }
-
-    public ExtraClientSubscriptionProvider getExtraClientSubscriptionProvider() {
-        return this.extraSubscriptionProvider;
     }
 
     public ClientSubscriptionHandler getClientSubscriptionHandler() {

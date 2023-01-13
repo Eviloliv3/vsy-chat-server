@@ -3,6 +3,7 @@ package de.vsy.server.service.packet_logic;
 import de.vsy.server.data.access.ErrorHandlingServiceDataProvider;
 import de.vsy.server.server_packet.packet_properties.packet_type.ServerErrorType;
 import de.vsy.server.service.packet_logic.type_processor.ServerErrorPacketProcessor;
+import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_transmission.packet.property.packet_type.PacketType;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class ErrorPacketProcessorFactory implements ServicePacketProcessorFactory {
 
     private final ErrorHandlingServiceDataProvider serviceDataModel;
-    private Map<PacketType, ServicePacketProcessor> registeredTypeHandlers;
+    private Map<PacketType, PacketProcessor> registeredTypeHandlers;
 
     /**
      * Instantiates a new error PacketHandler factory.
@@ -33,7 +34,7 @@ public class ErrorPacketProcessorFactory implements ServicePacketProcessorFactor
     }
 
     @Override
-    public ServicePacketProcessor getPacketProcessor(final PacketType type) {
+    public PacketProcessor getPacketProcessor(final PacketType type) {
         return this.registeredTypeHandlers.get(type);
     }
 }

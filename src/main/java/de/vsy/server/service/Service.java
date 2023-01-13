@@ -4,12 +4,16 @@
 package de.vsy.server.service;
 
 /**
- * Used to identify Services fulfilling a specific portion of request Packet.
+ * Extends Runnable interface enabling users to identify different service types
+ * and waiting certain conditions.
  */
 public interface Service extends Runnable {
 
     /**
-     * Waits for service readiness.
+     * Waits for the service to reach a certain point of readiness.
+     *
+     * @throws InterruptedException if the current thread is interrupted while
+     *                              waiting for the service to hit a certain point.
      */
     void waitForServiceReadiness() throws InterruptedException;
 
