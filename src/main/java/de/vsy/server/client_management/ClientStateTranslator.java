@@ -46,11 +46,11 @@ public class ClientStateTranslator {
             final ClientState clientState,
             final boolean onlineStatus, final int communicatorId) {
         Map<PacketCategory, Set<Integer>> requestedMapping = null;
-        final var dependingStateProvider = ClientStateTopicProvider.stateTopicAssignment.get(
+        final var dependingStateProvider = DependentClientStateProvider.getDependentStateProvider(
                 clientState);
 
         if (dependingStateProvider != null) {
-            final var dependingStates = dependingStateProvider.getDependencies(onlineStatus);
+            final var dependingStates = dependingStateProvider.getDependentStatesForSubscription(onlineStatus);
             requestedMapping = createTopicThreadMap(communicatorId, dependingStates);
         }
         return requestedMapping != null ? requestedMapping : emptyMap();
