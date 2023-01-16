@@ -45,7 +45,7 @@ public class DependentClientStateProvider {
     }
 
     public static DependentClientStateProvider getDependentStateProvider(final ClientState state){
-        return DependentClientStateProvider.getDependentStateProvider(state);
+        return DependentClientStateProvider.stateTopicAssignment.get(state).get();
     }
 
     public Set<ClientState> getDependentStatesForSubscription(final boolean isSubscription) {
