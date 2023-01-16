@@ -14,6 +14,11 @@ import java.util.LinkedHashMap;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static de.vsy.server.persistent_data.client_data.PendingType.CLIENT_BOUND;
+import static de.vsy.server.persistent_data.client_data.PendingType.PROCESSOR_BOUND;
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.HANDLER_BOUND;
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.OUTSIDE_BOUND;
+
 public class StateDependentPacketRetriever {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -24,8 +29,8 @@ public class StateDependentPacketRetriever {
 
     {
         strategyEnumMap = new EnumMap<>(PendingType.class);
-        strategyEnumMap.put(PendingType.CLIENT_BOUND, this::getClientBoundStrategy);
-        strategyEnumMap.put(PendingType.PROCESSOR_BOUND, this::getProcessingPacketStrategy);
+        strategyEnumMap.put(CLIENT_BOUND, this::getClientBoundStrategy);
+        strategyEnumMap.put(PROCESSOR_BOUND, this::getProcessingPacketStrategy);
     }
 
     public StateDependentPacketRetriever(final ClientPersistentDataAccessProvider persistentData,
@@ -43,13 +48,13 @@ public class StateDependentPacketRetriever {
 
         for (final var currentPendingPacketMap : allPendingPackets.entrySet()) {
             final var currentPendingType = currentPendingPacketMap.getKey();
-            final var sortedPendingPackets = currentPendingPacketMap.getValue();
+            final var pendingPackets = currentPendingPacketMap.getValue();
             final var foundStrategy = strategyEnumMap.get(currentPendingType);
 
             if (foundStrategy != null) {
                 final var strategy = foundStrategy.get();
 
-                for (final var pendingPacket : sortedPendingPackets.values()) {
+                for (final var pendingPacket : pendingPackets.values()) {
                     if (this.categoryCheck.checkPacketCategory(pendingPacket.getPacketProperties().getPacketIdentificationProvider().getPacketCategory())) {
                         strategy.accept(pendingPacket);
                     } else {
@@ -66,14 +71,12 @@ public class StateDependentPacketRetriever {
     }
 
     private Consumer<Packet> getClientBoundStrategy() {
-        final var clientBuffer = this.packetBuffers.getPacketBuffer(
-                ThreadPacketBufferLabel.OUTSIDE_BOUND);
-        return clientBuffer::appendPacket;
+        final var clientBuffer = this.packetBuffers.getPacketBuffer(OUTSIDE_BOUND);
+        return clientBuffer::prependPacket;
     }
 
     private Consumer<Packet> getProcessingPacketStrategy() {
-        final var clientBuffer = this.packetBuffers.getPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
+        final var clientBuffer = this.packetBuffers.getPacketBuffer(HANDLER_BOUND);
         return clientBuffer::prependPacket;
     }
 }

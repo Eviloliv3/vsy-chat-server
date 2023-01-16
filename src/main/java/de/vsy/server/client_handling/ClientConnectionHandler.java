@@ -56,16 +56,19 @@ public class ClientConnectionHandler implements Runnable {
         stateManager = this.threadDataManager.getClientStateManager();
 
         if (this.connectionControl.initiateConnectionThreads()) {
+            boolean threadInterrupted = false;
             clientHandling = new RegularPacketHandlingStrategy(this.threadDataManager,
                     this.connectionControl);
 
-            while (this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
+            while (this.connectionControl.connectionIsLive() && !(threadInterrupted)) {
                 clientHandling.administerStrategy();
+                threadInterrupted = Thread.interrupted();
+
             }
             this.connectionControl.closeConnection();
             LOGGER.info("Client connection terminated.");
 
-            if (stateManager.checkClientState(AUTHENTICATED) && !Thread.interrupted()) {
+            if (stateManager.checkClientState(AUTHENTICATED) && !(threadInterrupted)) {
                 LOGGER.info("Client not logged out, therefore client will be handled as pending.");
                 clientHandling = new PendingClientPacketHandling(this.threadDataManager,
                         this.connectionControl);

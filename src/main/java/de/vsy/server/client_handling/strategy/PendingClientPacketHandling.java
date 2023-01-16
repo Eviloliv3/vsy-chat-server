@@ -12,6 +12,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Queue;
 
+import static de.vsy.server.persistent_data.client_data.PendingType.CLIENT_BOUND;
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.OUTSIDE_BOUND;
+
 /**
  * The Class PendingClientPacketHandling.
  */
@@ -46,36 +49,18 @@ public class PendingClientPacketHandling implements PacketHandlingStrategy {
     }
 
     private void saveClientBoundPackets() {
-        var reinterrupt = false;
         final var pendingPacketAccessor = this.handlerDataManager.getLocalClientStateObserverManager()
                 .getClientPersistentAccess().getPendingPacketDAO();
 
         if (pendingPacketAccessor != null) {
             final var handlerBuffer = this.handlerDataManager.getHandlerBufferManager()
-                    .getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND);
-            UnconfirmedPacketTransmissionCache cache = this.connectionControl.getPacketCache();
-            final Queue<Packet> notReceivedPackets = cache.removeRemainingPackets();
-
-            while (!notReceivedPackets.isEmpty()) {
-                pendingPacketAccessor.appendPendingPacket(PendingType.CLIENT_BOUND,
-                        notReceivedPackets.poll());
-            }
-
-            while (handlerBuffer.containsPackets()) {
-                try {
-                    final var currentPacket = handlerBuffer.getPacket();
-                    pendingPacketAccessor.appendPendingPacket(PendingType.CLIENT_BOUND, currentPacket);
-                } catch (InterruptedException e) {
-                    reinterrupt = true;
-                    LOGGER.error("PacketBuffer has to be emptied be emptied. Interrupt suspended.");
-                }
-            }
-
-            if (reinterrupt) {
-                Thread.currentThread().interrupt();
-            }
+                    .getPacketBuffer(OUTSIDE_BOUND);
+            final UnconfirmedPacketTransmissionCache cache = this.connectionControl.getPacketCache();
+            final Queue<Packet> pendingPackets = cache.removeRemainingPackets();
+            pendingPackets.addAll(handlerBuffer.freezeBuffer());
+            pendingPackets.forEach((currentPacket) -> pendingPacketAccessor.appendPendingPacket(CLIENT_BOUND, currentPacket));
         } else {
-            LOGGER.error("Kein");
+            LOGGER.error("Cannot save {} Packets. No PendingPacketDAO.", OUTSIDE_BOUND);
         }
     }
 }

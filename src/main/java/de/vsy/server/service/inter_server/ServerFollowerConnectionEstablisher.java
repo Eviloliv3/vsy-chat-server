@@ -32,7 +32,7 @@ public class ServerFollowerConnectionEstablisher extends ThreadContextRunnable {
         final var watchedSocket = this.serverConnectionManager.getServerReceptionConnectionData()
                 .getConnectionSocket();
 
-        while (!Thread.interrupted() && !watchedSocket.isClosed()) {
+        while (!(Thread.interrupted()) && !watchedSocket.isClosed()) {
             final var followerSocket = acceptFollowerConnection(watchedSocket);
 
             if (followerSocket != null && !followerSocket.isClosed()) {

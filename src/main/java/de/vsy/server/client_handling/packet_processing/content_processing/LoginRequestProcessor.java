@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
+import static de.vsy.server.client_management.ClientState.NOT_AUTHENTICATED;
 
 /**
  * PacketProcessor for login type Packet.
@@ -52,7 +53,7 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
             if (this.clientStateManager.registerClient(clientData)) {
                 globalState = this.clientStateManager.getGlobalClientState();
 
-                if (globalState.equals(ClientState.NOT_AUTHENTICATED)) {
+                if (globalState.equals(NOT_AUTHENTICATED)) {
 
                     if (this.clientStateManager.changePersistentClientState(AUTHENTICATED,
                             true)) {

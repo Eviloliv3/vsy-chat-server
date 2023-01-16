@@ -1,5 +1,6 @@
 package de.vsy.server.server_packet.content;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 
@@ -8,6 +9,7 @@ import java.io.Serial;
 /**
  * The Class SimpleInternalContentWrapper.
  */
+@JsonDeserialize(builder = SimpleInternalContentBuilder.class)
 public class SimpleInternalContentWrapper extends ServerPacketContentImpl {
 
     @Serial
