@@ -99,7 +99,7 @@ public class PacketAssignmentService extends ServiceBase {
                 processPacket(request);
             }
         } catch (InterruptedException ie) {
-            ServiceBase.LOGGER.error("Interrupted while waiting for next packet.");
+            ServiceBase.LOGGER.error("Interrupted while waiting for next Packet.");
             Thread.currentThread().interrupt();
         }
     }

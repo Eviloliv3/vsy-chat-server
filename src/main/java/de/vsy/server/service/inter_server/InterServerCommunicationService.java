@@ -166,8 +166,7 @@ public class InterServerCommunicationService extends ServiceBase {
             try {
                 synchronizationPacket = inputBuffer.getPacket();
             } catch (InterruptedException ie) {
-                LOGGER.error("Interrupted while waiting for next packet.\n{}",
-                        asList(ie.getStackTrace()));
+                LOGGER.error("Interrupted while waiting for next Packet.");
                 Thread.currentThread().interrupt();
                 synchronizationPacket = null;
             }
@@ -239,8 +238,7 @@ public class InterServerCommunicationService extends ServiceBase {
                     processPacket(input);
                 }
             } catch (InterruptedException ie) {
-                LOGGER.error("Interrupted while waiting for next packet.\n{}",
-                        asList(ie.getStackTrace()));
+                LOGGER.error("Interrupted while waiting for next Packet.");
                 reinterrupt = true;
             }
         }
