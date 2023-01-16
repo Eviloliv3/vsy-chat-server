@@ -80,7 +80,7 @@ public class ClientStateManager implements LocalClientStateProvider {
                 return false;
             }
         } else {
-            if (toChange.equals(AUTHENTICATED)) {
+            if (toChange.equals(AUTHENTICATED) && !(this.currentState.contains(NOT_AUTHENTICATED))) {
                 this.currentState.add(NOT_AUTHENTICATED);
             }
             return this.currentState.remove(toChange);

@@ -4,6 +4,7 @@
 package de.vsy.server.client_management;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -18,8 +19,8 @@ import static java.util.Set.of;
 public class DependentClientStateProvider {
 
     public static final EnumMap<ClientState, Supplier<DependentClientStateProvider>> stateTopicAssignment;
-    private final Set<ClientState> subscriptionDependencies;
-    private final Set<ClientState> unsubscriptionDependencies;
+    private final List<ClientState> subscriptionDependencies;
+    private final List<ClientState> unsubscriptionDependencies;
 
     static {
         stateTopicAssignment = new EnumMap<>(ClientState.class);
@@ -27,28 +28,28 @@ public class DependentClientStateProvider {
         stateTopicAssignment.put(ClientState.AUTHENTICATED, DependentClientStateProvider::getAuthenticationStateDependentStateProvider);
     }
 
-    private DependentClientStateProvider(final Set<ClientState> subscriptionDependencies,
-                                         final Set<ClientState> unsubscriptionDependencies) {
+    private DependentClientStateProvider(final List<ClientState> subscriptionDependencies,
+                                         final List<ClientState> unsubscriptionDependencies) {
         this.subscriptionDependencies = subscriptionDependencies;
         this.unsubscriptionDependencies = unsubscriptionDependencies;
     }
 
     private static DependentClientStateProvider getMessengerDependentStateProvider(){
         return new DependentClientStateProvider(
-                of(ClientState.AUTHENTICATED, ClientState.ACTIVE_MESSENGER),
-                Set.of(ClientState.ACTIVE_MESSENGER));
+                List.of(ClientState.AUTHENTICATED, ClientState.ACTIVE_MESSENGER),
+                List.of(ClientState.ACTIVE_MESSENGER));
     }
 
     private static DependentClientStateProvider getAuthenticationStateDependentStateProvider(){
-        return new DependentClientStateProvider(Set.of(ClientState.AUTHENTICATED),
-                of(ClientState.ACTIVE_MESSENGER, ClientState.AUTHENTICATED));
+        return new DependentClientStateProvider(List.of(ClientState.AUTHENTICATED),
+                List.of(ClientState.ACTIVE_MESSENGER, ClientState.AUTHENTICATED));
     }
 
     public static DependentClientStateProvider getDependentStateProvider(final ClientState state){
         return DependentClientStateProvider.stateTopicAssignment.get(state).get();
     }
 
-    public Set<ClientState> getDependentStatesForSubscription(final boolean isSubscription) {
+    public List<ClientState> getDependentStatesForSubscription(final boolean isSubscription) {
 
         if (isSubscription) {
             return this.subscriptionDependencies;

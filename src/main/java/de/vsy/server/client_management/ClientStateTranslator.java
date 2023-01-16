@@ -2,10 +2,7 @@ package de.vsy.server.client_management;
 
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.*;
 import static java.util.Collections.emptyMap;
@@ -65,7 +62,7 @@ public class ClientStateTranslator {
      * @return Map of topic - threads
      */
     private static Map<PacketCategory, Set<Integer>> createTopicThreadMap(final int communicatorId,
-                                                                          Set<ClientState> clientStateSet) {
+                                                                          List<ClientState> clientStateSet) {
         final var topicThreadMap = new EnumMap<PacketCategory, Set<Integer>>(PacketCategory.class);
 
         for (final var currentState : clientStateSet) {
