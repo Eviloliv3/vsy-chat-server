@@ -69,6 +69,7 @@ public class ClientConnectionHandler implements Runnable {
             LOGGER.info("Client connection terminated.");
 
             if (stateManager.checkClientState(AUTHENTICATED) && !(threadInterrupted)) {
+                //TODO hier werden Klienten behandelt, wenn Logout erfolgte?
                 LOGGER.info("Client not logged out, therefore client will be handled as pending.");
                 clientHandling = new PendingClientPacketHandling(this.threadDataManager,
                         this.connectionControl);

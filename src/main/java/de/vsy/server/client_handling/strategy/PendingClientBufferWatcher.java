@@ -102,27 +102,20 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
      * Save incoming Packet.
      */
     private void processIncomingPackets() {
-        var reInterrupt = false;
-
         this.pendingPacketAccessor.createAccess(String.valueOf(this.localClientData.getClientId()));
 
         while (this.terminationLatch.getCount() == TERMINATION_LATCH_COUNT) {
             try {
-                Packet currentPacket = clientBuffer.getPacket();
+                Packet currentPacket = clientBuffer.getPacket(250);
                 if (currentPacket != null) {
                     this.pendingPacketAccessor.appendPendingPacket(PendingType.PROCESSOR_BOUND,
                             currentPacket);
                 }
             } catch (InterruptedException ie) {
-                reInterrupt = true;
-                LOGGER.warn("Watcher will continue working, because all packets have to be saved "
-                        + "persistently. Thread will end after specified time.");
+                LOGGER.warn("Interrupted while waiting for a Packet. Packets may not be saved.");
             }
         }
-
-        if (reInterrupt) {
-            Thread.currentThread().interrupt();
-        }
+        this.pendingPacketAccessor.removeFileAccess();
     }
 
     private void evaluateReconnectionState(TimeBasedValueFetcher<Boolean> reconnectFlagFetcher) {

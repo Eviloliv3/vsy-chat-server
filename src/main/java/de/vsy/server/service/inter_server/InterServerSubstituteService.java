@@ -38,6 +38,7 @@ import static java.lang.Thread.interrupted;
 public class InterServerSubstituteService extends ThreadContextRunnable implements
         ClientReconnectionHandler {
 
+    private static final long PENDING_END = 25000L;
     private static final AtomicInteger SERVICE_COUNT = new AtomicInteger(1);
     private static final Logger LOGGER = LogManager.getLogger();
     private final int serviceId;
@@ -118,7 +119,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
             this.reconnectionStateWatcher.schedule(
                     new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 500,
                     1000);
-            stopTime = Instant.now().plusMillis(25000);
+            stopTime = Instant.now().plusMillis(PENDING_END);
             this.shutdownCondition = () -> !(Instant.now().isAfter(stopTime));
             substituteSetup = true;
         } else {
@@ -135,7 +136,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         Packet input = null;
 
         try {
-            input = this.interServerBuffer.getPacket();
+            input = this.interServerBuffer.getPacket(250);
 
             if (input != null) {
                 processor.processPacket(input);
