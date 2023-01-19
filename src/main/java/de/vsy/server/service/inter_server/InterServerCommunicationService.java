@@ -164,7 +164,7 @@ public class InterServerCommunicationService extends ServiceBase {
         while (interruptionConditionNotMet()) {
 
             try {
-                synchronizationPacket = inputBuffer.getPacket();
+                synchronizationPacket = inputBuffer.getPacket(250);
             } catch (InterruptedException ie) {
                 LOGGER.error("Interrupted while waiting for next Packet.");
                 Thread.currentThread().interrupt();
@@ -232,7 +232,7 @@ public class InterServerCommunicationService extends ServiceBase {
         while (interrupt.conditionNotMet()) {
 
             try {
-                final var input = inputBuffer.getPacket();
+                final var input = inputBuffer.getPacket(250);
 
                 if (input != null) {
                     processPacket(input);
