@@ -77,6 +77,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
         processIncomingPackets();
         shutdownFlagFetcher(reconnectFlagCheck);
         evaluateReconnectionState(reconnectFlagFetcher);
+        this.pendingPacketAccessor.removeFileAccess();
         this.pendingRegistry.removePendingClient(localClientData.getClientId());
         this.clientStateControl.deregisterClient();
         LOGGER.info("{}-PendingClientBufferWatcher ended.", this.localClientData.getClientId());
@@ -115,7 +116,6 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
                 LOGGER.warn("Interrupted while waiting for a Packet. Packets may not be saved.");
             }
         }
-        this.pendingPacketAccessor.removeFileAccess();
     }
 
     private void evaluateReconnectionState(TimeBasedValueFetcher<Boolean> reconnectFlagFetcher) {
