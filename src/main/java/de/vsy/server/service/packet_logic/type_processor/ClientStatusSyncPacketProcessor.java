@@ -129,7 +129,9 @@ public class ClientStatusSyncPacketProcessor implements PacketProcessor {
                 clientId);
         final var persistedClientState = this.persistentClientStates.getClientState(clientId);
 
-        subscriptions.putAll(persistedClientState.getExtraSubscriptions());
+        if(persistedClientState != null) {
+            subscriptions.putAll(persistedClientState.getExtraSubscriptions());
+        }
         return subscriptions;
     }
 }

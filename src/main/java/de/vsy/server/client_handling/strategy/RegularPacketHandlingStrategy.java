@@ -7,6 +7,7 @@ import de.vsy.server.client_handling.packet_processing.processor.ClientPacketPro
 import de.vsy.server.client_handling.packet_processing.processor.PacketContextCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
+import de.vsy.server.client_management.ClientState;
 import de.vsy.server.server_packet.dispatching.ClientPacketDispatcher;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
@@ -129,6 +130,9 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
             }
         }
         if (stateChanged && this.clientStateAccess.clientStateHasRisen()) {
+            for(var state : ClientState.values()){
+                LOGGER.error("{} : {}", state, this.clientStateAccess.checkClientState(state));
+            }
             this.packetRetriever.getPendingPackets();
         }
     }

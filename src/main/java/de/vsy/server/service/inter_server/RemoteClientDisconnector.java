@@ -51,10 +51,13 @@ public class RemoteClientDisconnector {
         for (final var currentClient : clientPersistenceAccessManagers.entrySet()) {
             final var clientId = currentClient.getKey();
             final var currentClientState = this.clientStateProvider.getClientState(clientId);
-            final var currentPendingAccess = currentClient.getValue();
-            disconnectClient(clientId, currentClientState.getCurrentState());
-            removeVolatilePackets(currentPendingAccess);
-            currentPendingAccess.removeFileAccess();
+
+            if(currentClientState != null) {
+                final var currentPendingAccess = currentClient.getValue();
+                disconnectClient(clientId, currentClientState.getCurrentState());
+                removeVolatilePackets(currentPendingAccess);
+                currentPendingAccess.removeFileAccess();
+            }
         }
     }
 

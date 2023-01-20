@@ -73,10 +73,6 @@ public class LiveClientStateDAO extends ServerDAO {
         clientStateMap = getAllActiveClientStates();
         super.dataProvider.releaseAccess(true);
         currentClientState = clientStateMap.get(clientId);
-
-        if (currentClientState == null) {
-            currentClientState = new CurrentClientState(STANDARD_SERVER_ID);
-        }
         return currentClientState;
     }
 

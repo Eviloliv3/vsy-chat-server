@@ -41,16 +41,16 @@ public class ClientStateDistributor implements AuthenticationStateControl {
 
     @Override
     public ClientState reconnectClient(CommunicatorData clientData) {
-        final var currentState = persistentClientStates.getClientState(clientData.getCommunicatorId());
-        final var clientState = currentState.getCurrentState();
+        final var currentState = this.persistentClientStates.getClientState(clientData.getCommunicatorId());
 
-        if (clientState != null) {
+        if(currentState != null){
+            final var clientState = currentState.getCurrentState();
             this.localClientDataManager.setCommunicatorData(clientData);
             var dependentStateProvider = DependentClientStateProvider.getDependentStateProvider(clientState) ;
             final var dependentStates = dependentStateProvider.getDependentStatesForSubscription(true);
             dependentStates.forEach(state -> changeLocalClientState(state,true));
         }
-        return clientState;
+        return null;
     }
 
     @Override
@@ -62,13 +62,13 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     @Override
     public boolean changePersistentPendingState(boolean isPending) {
         final var clientId = this.localClientDataManager.getClientId();
-        return persistentClientStates.changeClientPendingState(clientId, isPending);
+        return this.persistentClientStates.changeClientPendingState(clientId, isPending);
     }
 
     @Override
     public boolean getPersistentPendingState() {
         final var clientId = this.localClientDataManager.getClientId();
-        return persistentClientStates.getClientPendingState(clientId);
+        return this.persistentClientStates.getClientPendingState(clientId);
     }
 
     @Override
