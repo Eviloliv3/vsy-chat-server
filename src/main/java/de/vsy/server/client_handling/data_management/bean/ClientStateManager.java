@@ -2,20 +2,17 @@ package de.vsy.server.client_handling.data_management.bean;
 
 import de.vsy.server.client_management.ClientState;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class ClientStateManager implements LocalClientStateProvider {
 
-    private final Set<ClientStateListener> stateListeners;
+    private final List<ClientStateListener> stateListeners;
     private final Deque<ClientState> currentState;
     private int clientStateCounter;
     private boolean stateChanged;
 
     public ClientStateManager() {
-        this.stateListeners = new LinkedHashSet<>();
+        this.stateListeners = new ArrayList<>(3);
         this.currentState = new ArrayDeque<>(2);
         this.clientStateCounter = 0;
         this.stateChanged = false;

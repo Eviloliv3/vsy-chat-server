@@ -46,9 +46,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
         if (currentState != null) {
             final var clientState = currentState.getCurrentState();
             this.localClientDataManager.setCommunicatorData(clientData);
-            var dependentStateProvider = DependentClientStateProvider.getDependentStateProvider(clientState);
-            final var dependentStates = dependentStateProvider.getDependentStatesForSubscription(true);
-            dependentStates.forEach(state -> changeLocalClientState(state, true));
+            changeLocalClientState(clientState, true);
             return clientState;
         }
         return null;
@@ -88,6 +86,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     public ClientState getGlobalClientState() {
         final var clientId = this.localClientDataManager.getClientId();
         final var currentState = persistentClientStates.getClientState(clientId);
+
         if (currentState != null) {
             return currentState.getCurrentState();
         }
