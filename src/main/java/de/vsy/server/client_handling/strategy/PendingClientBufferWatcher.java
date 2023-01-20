@@ -136,21 +136,8 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
     private void removeVolatilePendingPackets() {
         for (final var pendingDirection : PendingType.values()) {
             var allPackets = this.pendingPacketAccessor.readPendingPackets(pendingDirection);
-            var nonVolatilePackets = removePackets(allPackets);
-            this.pendingPacketAccessor.setPendingPackets(pendingDirection, nonVolatilePackets);
+            allPackets.values().removeIf(VolatilePacketIdentifier::checkPacketVolatility);
+            this.pendingPacketAccessor.setPendingPackets(pendingDirection, allPackets);
         }
-    }
-
-    private Map<String, Packet> removePackets(Map<String, Packet> allPackets) {
-        Map<String, Packet> nonVolatilePackets = new HashMap<>();
-
-        for (var currentPacketSet : allPackets.entrySet()) {
-            final var currentPacket = currentPacketSet.getValue();
-
-            if (!VolatilePacketIdentifier.checkPacketVolatility(currentPacket)) {
-                nonVolatilePackets.put(currentPacketSet.getKey(), currentPacket);
-            }
-        }
-        return nonVolatilePackets;
     }
 }
