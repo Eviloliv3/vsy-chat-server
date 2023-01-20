@@ -86,7 +86,11 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     @Override
     public ClientState getGlobalClientState() {
         final var clientId = this.localClientDataManager.getClientId();
-        return persistentClientStates.getClientState(clientId).getCurrentState();
+        final var currentState = persistentClientStates.getClientState(clientId);
+                if(currentState != null){
+                    return currentState.getCurrentState();
+                }
+                return null;
     }
 
     @Override
