@@ -49,6 +49,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
             var dependentStateProvider = DependentClientStateProvider.getDependentStateProvider(clientState) ;
             final var dependentStates = dependentStateProvider.getDependentStatesForSubscription(true);
             dependentStates.forEach(state -> changeLocalClientState(state,true));
+            return clientState;
         }
         return null;
     }

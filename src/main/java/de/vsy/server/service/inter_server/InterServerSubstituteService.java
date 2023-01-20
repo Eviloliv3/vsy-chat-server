@@ -38,7 +38,7 @@ import static java.lang.Thread.interrupted;
 public class InterServerSubstituteService extends ThreadContextRunnable implements
         ClientReconnectionHandler {
 
-    private static final long PENDING_END = 25000L;
+    private static final long PENDING_END = 250000L;
     private static final AtomicInteger SERVICE_COUNT = new AtomicInteger(1);
     private static final Logger LOGGER = LogManager.getLogger();
     private final int serviceId;
