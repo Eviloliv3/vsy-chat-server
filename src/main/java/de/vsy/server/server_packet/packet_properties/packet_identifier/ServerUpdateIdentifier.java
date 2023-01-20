@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.server_packet.packet_properties.packet_identifier;
 
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;

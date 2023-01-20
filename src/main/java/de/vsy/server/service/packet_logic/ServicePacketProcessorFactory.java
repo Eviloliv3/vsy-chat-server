@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.packet_logic;
 
 import de.vsy.shared_module.packet_processing.PacketProcessor;

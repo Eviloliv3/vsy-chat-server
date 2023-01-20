@@ -51,29 +51,25 @@ public class ClientStatusChangeProcessor implements ContentProcessor<ClientStatu
         String causeMessage = null;
         final var changeTo = validatedContent.getOnlineStatus();
 
-        if (this.clientStateManager.changeLocalClientState(ACTIVE_MESSENGER, changeTo)) {
+        this.clientStateManager.changeLocalClientState(ACTIVE_MESSENGER, changeTo);
 
-            if (this.clientStateManager.changePersistentClientState(ACTIVE_MESSENGER,
-                    changeTo)) {
-                final PacketContent responseContent;
+        if (this.clientStateManager.changePersistentClientState(ACTIVE_MESSENGER, changeTo)) {
+            final PacketContent responseContent;
 
-                if (changeTo) {
-                    this.clientStateManager.appendStateSynchronizationPacket(ACTIVE_MESSENGER, true);
-                    responseContent = prepareMessengerSetupDTO();
-                } else {
-                    this.clientStateManager.appendStateSynchronizationPacket(ACTIVE_MESSENGER, false);
-                    responseContent = new MessengerTearDownDTO(true);
-                }
-                this.contentHandler.addResponse(responseContent);
+            if (changeTo) {
+                this.clientStateManager.appendStateSynchronizationPacket(ACTIVE_MESSENGER, true);
+                responseContent = prepareMessengerSetupDTO();
             } else {
-                this.clientStateManager.changeLocalClientState(ACTIVE_MESSENGER, false);
-                causeMessage = "An error occurred while writing your global Messenger state. Please "
-                        + "contact the ChatServer support team.";
+                this.clientStateManager.appendStateSynchronizationPacket(ACTIVE_MESSENGER, false);
+                responseContent = new MessengerTearDownDTO(true);
             }
+            this.contentHandler.addResponse(responseContent);
         } else {
-            causeMessage =
-                    "Messenger state change unnecessary.";
+            this.clientStateManager.changeLocalClientState(ACTIVE_MESSENGER, false);
+            causeMessage = "An error occurred while writing your global Messenger state. Please "
+                    + "contact the ChatServer support team.";
         }
+
         if (causeMessage != null) {
             throw new PacketProcessingException(causeMessage);
         }

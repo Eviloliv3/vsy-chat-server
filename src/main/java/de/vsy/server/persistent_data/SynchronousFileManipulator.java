@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.persistent_data;
 
 import com.fasterxml.jackson.core.JsonParseException;

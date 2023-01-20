@@ -7,8 +7,6 @@ import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
-
 public class ClientStateManager implements LocalClientStateProvider {
 
     private final Set<ClientStateListener> stateListeners;

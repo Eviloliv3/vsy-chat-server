@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.client_handling.packet_processing.request_filter;
 
 import de.vsy.server.client_handling.data_management.bean.ClientStateListener;

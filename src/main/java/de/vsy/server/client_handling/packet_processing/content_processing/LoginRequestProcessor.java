@@ -48,33 +48,27 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
                 authenticationData.getPassword());
 
         if (clientData != null) {
+            this.clientStateManager.registerClient(clientData);
+            globalState = this.clientStateManager.getGlobalClientState();
 
-            if (this.clientStateManager.registerClient(clientData)) {
-                globalState = this.clientStateManager.getGlobalClientState();
+            if (globalState == null) {
 
-                if (globalState == null) {
-
-                    if (this.clientStateManager.changePersistentClientState(AUTHENTICATED,
-                            true)) {
-                        final var communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
-                        this.clientStateManager.appendStateSynchronizationPacket(AUTHENTICATED, true);
-                        this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
-                    } else {
-                        this.clientStateManager.deregisterClient();
-                        causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
-                    }
+                if (this.clientStateManager.changePersistentClientState(AUTHENTICATED, true)) {
+                    final var communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
+                    this.clientStateManager.appendStateSynchronizationPacket(AUTHENTICATED, true);
+                    this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
                 } else {
                     this.clientStateManager.deregisterClient();
-                    causeMessage = "You already are connected from another device.";
+                    causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
                 }
             } else {
                 this.clientStateManager.deregisterClient();
-                causeMessage =
-                        "An error occurred while writing your local login state. Please contact the ChatServer support team.";
+                causeMessage = "You already are connected from another device.";
             }
         } else {
             causeMessage = "No account data found for your credentials.";
         }
+
         if (causeMessage != null) {
             throw new PacketProcessingException(causeMessage);
         }

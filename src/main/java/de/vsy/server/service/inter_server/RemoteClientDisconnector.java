@@ -4,8 +4,6 @@ import de.vsy.server.client_handling.strategy.VolatilePacketIdentifier;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.client_management.ClientStateTranslator;
 import de.vsy.server.data.PacketCategorySubscriptionManager;
-import de.vsy.server.data.ServerDataManager;
-import de.vsy.server.data.access.HandlerAccessManager;
 import de.vsy.server.persistent_data.client_data.ContactListDAO;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
@@ -52,7 +50,7 @@ public class RemoteClientDisconnector {
             final var clientId = currentClient.getKey();
             final var currentClientState = this.clientStateProvider.getClientState(clientId);
 
-            if(currentClientState != null) {
+            if (currentClientState != null) {
                 final var currentPendingAccess = currentClient.getValue();
                 disconnectClient(clientId, currentClientState.getCurrentState());
                 removeVolatilePackets(currentPendingAccess);

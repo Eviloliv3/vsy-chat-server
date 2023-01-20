@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.server_packet.dispatching;
 
 import de.vsy.server.service.Service;

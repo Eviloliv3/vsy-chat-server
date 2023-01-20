@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.packet_logic;
 
 import de.vsy.server.data.access.ClientStatusRegistrationServiceDataProvider;

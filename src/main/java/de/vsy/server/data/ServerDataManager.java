@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.data;
 
 import de.vsy.server.data.socketConnection.LocalServerConnectionData;

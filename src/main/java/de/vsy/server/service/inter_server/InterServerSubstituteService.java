@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.inter_server;
 
 import de.vsy.server.data.access.ServerCommunicationServiceDataProvider;

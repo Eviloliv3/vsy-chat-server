@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.persistent_data.data_bean;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

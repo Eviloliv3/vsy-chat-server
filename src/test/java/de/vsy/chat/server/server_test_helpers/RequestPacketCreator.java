@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.chat.server.server_test_helpers;
 
 import de.vsy.shared_module.packet_management.OutputBuffer;

@@ -2,7 +2,6 @@ package de.vsy.chat.server.testing_grounds;
 
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.server.server_packet.content.builder.SimpleInternalContentBuilder;
 import de.vsy.shared_module.packet_creation.ContentIdentificationProviderImpl;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
@@ -57,13 +56,14 @@ class TestPacketSerialization {
         var contactRelationChangeDTO = new ContactRelationRequestDTO(EligibleContactEntity.CLIENT,
                 15001, 15000,
                 CommunicatorDTO.valueOf(15001, "Test Name"), true);
-        PacketContent content  = new SimpleInternalContentBuilder().withContent(contactRelationChangeDTO).build();
+        PacketContent content = new SimpleInternalContentBuilder().withContent(contactRelationChangeDTO).build();
         var request = PacketCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
                 content);
         saver.savePacket(request);
         Assertions.assertTrue(
                 pendingPacketAccessor.appendPendingPacket(PendingType.PROCESSOR_BOUND, request));
     }
+
     @Test
     public void saveRelationRequest() {
         PacketCompiler.addOriginatorEntityProvider(() -> getClientEntity(16000));

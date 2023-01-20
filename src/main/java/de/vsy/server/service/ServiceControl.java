@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service;
 
 import de.vsy.server.data.ServerDataManager;

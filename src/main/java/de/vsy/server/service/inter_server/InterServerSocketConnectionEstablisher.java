@@ -45,13 +45,13 @@ public class InterServerSocketConnectionEstablisher {
         var masterSocketPort = ConnectionSpecifications.getInterServerPort();
 
         do {
-            masterSocketPort++;
             try {
                 this.localMasterSocket = new ServerSocket(masterSocketPort);
             } catch (IOException e) {
                 LOGGER.error("InterServerSocket could not be created on Port {}.",
                         masterSocketPort);
             }
+            masterSocketPort++;
         } while (this.localMasterSocket == null);
         serverReceptionConnection = LocalServerConnectionData.valueOf(masterSocketPort,
                 this.localMasterSocket);
@@ -64,24 +64,23 @@ public class InterServerSocketConnectionEstablisher {
         final var interServerPort = ConnectionSpecifications.getInterServerPort();
         final var hostname = ConnectionSpecifications.getHostname();
         final var localMasterPort = this.localMasterSocket.getLocalPort();
+        final var maxRunningServers = ConnectionSpecifications.getServerPorts().size();
 
-        for (int test = 1, maxRunningServers = ConnectionSpecifications.getServerPorts()
-                .size(); test <= maxRunningServers; test++) {
+        for (int test = 0; test < maxRunningServers; test++) {
             final var testPort = interServerPort + test;
 
-            if (testPort != localMasterPort) {
+            if (testPort == localMasterPort) {
+                LOGGER.trace("Port {} will be ignored, as it is local ServerSocket port.", testPort);
+                continue;
+            }
 
-                try {
-                    final var remoteServer = new Socket(hostname, testPort);
-                    this.serverConnectionDataManager.addServerConnection(UNINITIATED,
-                            RemoteServerConnectionData
-                                    .valueOf(remoteServer.getLocalPort(), false, remoteServer));
-                    LOGGER.info("Remote connection established: {}:{}.", hostname, testPort);
-                } catch (IOException e) {
-                    LOGGER.warn(
-                            "Remote connection to {}:{} failed",
-                            hostname, testPort);
-                }
+            try {
+                final var remoteServer = new Socket(hostname, testPort);
+                this.serverConnectionDataManager.addServerConnection(UNINITIATED,
+                        RemoteServerConnectionData.valueOf(remoteServer.getLocalPort(), false, remoteServer));
+                LOGGER.info("Remote connection established: {}:{}.", hostname, testPort);
+            } catch (IOException e) {
+                LOGGER.warn("Remote connection to {}:{} failed", hostname, testPort);
             }
         }
         LOGGER.info("Finished establishing connections with preexisting chat servers.");

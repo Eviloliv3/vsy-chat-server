@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service;
 
 /**

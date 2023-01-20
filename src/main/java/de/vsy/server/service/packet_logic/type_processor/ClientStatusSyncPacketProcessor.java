@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;
@@ -129,7 +127,7 @@ public class ClientStatusSyncPacketProcessor implements PacketProcessor {
                 clientId);
         final var persistedClientState = this.persistentClientStates.getClientState(clientId);
 
-        if(persistedClientState != null) {
+        if (persistedClientState != null) {
             subscriptions.putAll(persistedClientState.getExtraSubscriptions());
         }
         return subscriptions;

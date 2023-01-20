@@ -53,11 +53,11 @@ public class IdProviderPool {
         return availableIds.remove();
     }
 
-    public Map<IdType, Queue<Integer>> getIdPool(){
+    public Map<IdType, Queue<Integer>> getIdPool() {
         return this.idPool;
     }
 
-    public Map<IdType, Integer> getIdCounterMap(){
+    public Map<IdType, Integer> getIdCounterMap() {
         return this.idCounterMap;
     }
 }

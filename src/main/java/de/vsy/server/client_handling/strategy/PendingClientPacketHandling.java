@@ -2,8 +2,6 @@ package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
 import de.vsy.server.data.access.HandlerAccessManager;
-import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_transmission.ConnectionThreadControl;
 import de.vsy.shared_module.packet_transmission.cache.UnconfirmedPacketTransmissionCache;
 import de.vsy.shared_transmission.packet.Packet;

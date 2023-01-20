@@ -3,7 +3,6 @@ package de.vsy.server.client_handling.strategy;
 import de.vsy.server.client_handling.packet_processing.request_filter.PermittedPacketCategoryCheck;
 import de.vsy.server.client_handling.persistent_data_access.ClientPersistentDataAccessProvider;
 import de.vsy.server.persistent_data.client_data.PendingType;
-import de.vsy.shared_module.packet_management.ThreadPacketBufferLabel;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;

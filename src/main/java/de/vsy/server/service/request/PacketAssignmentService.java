@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.request;
 
 import de.vsy.server.data.PacketCategorySubscriptionManager;

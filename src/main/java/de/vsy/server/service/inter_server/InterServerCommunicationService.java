@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.inter_server;
 
 import de.vsy.server.data.SocketConnectionDataManager;
@@ -39,7 +37,6 @@ import java.io.IOException;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static java.util.Arrays.asList;
 
 /**
  * Service handling communication between ChatServers. Initiates server synchronization on new

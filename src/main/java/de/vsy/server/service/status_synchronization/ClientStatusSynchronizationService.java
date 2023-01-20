@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.service.status_synchronization;
 
 import de.vsy.server.data.PacketCategorySubscriptionManager;

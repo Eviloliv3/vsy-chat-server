@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.server_packet.content;
 
 /**

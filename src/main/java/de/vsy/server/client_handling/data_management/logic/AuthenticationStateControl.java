@@ -12,7 +12,7 @@ public interface AuthenticationStateControl extends ClientStateControl {
      *
      * @param clientData CommunicatorData
      */
-    boolean registerClient(CommunicatorData clientData);
+    void registerClient(CommunicatorData clientData);
 
     /**
      * Gets persistent ClientState for CommunicatorData and reinstates

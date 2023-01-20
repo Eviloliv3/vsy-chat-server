@@ -130,7 +130,7 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
             }
         }
         if (stateChanged && this.clientStateAccess.clientStateHasRisen()) {
-            for(var state : ClientState.values()){
+            for (var state : ClientState.values()) {
                 LOGGER.error("{} : {}", state, this.clientStateAccess.checkClientState(state));
             }
             this.packetRetriever.getPendingPackets();

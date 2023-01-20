@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.persistent_data.server_data;
 
 import com.fasterxml.jackson.databind.JavaType;

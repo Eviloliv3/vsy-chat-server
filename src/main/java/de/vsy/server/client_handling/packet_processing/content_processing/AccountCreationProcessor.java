@@ -1,6 +1,4 @@
-/*
- *
- */
+
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
@@ -49,21 +47,15 @@ public class AccountCreationProcessor implements ContentProcessor<AccountCreatio
                         .getLastName()));
 
         if (clientData != null) {
+            this.clientStateManager.registerClient(clientData);
 
-            if (this.clientStateManager.registerClient(clientData)) {
-
-                if (this.clientStateManager.changePersistentClientState(AUTHENTICATED, true)) {
-                    final CommunicatorDTO communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
-                    this.clientStateManager.appendStateSynchronizationPacket(AUTHENTICATED, true);
-                    this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
-                } else {
-                    this.clientStateManager.deregisterClient();
-                    causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
-                }
+            if (this.clientStateManager.changePersistentClientState(AUTHENTICATED, true)) {
+                final CommunicatorDTO communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
+                this.clientStateManager.appendStateSynchronizationPacket(AUTHENTICATED, true);
+                this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
             } else {
                 this.clientStateManager.deregisterClient();
-                causeMessage =
-                        "An error occurred while writing your local login state. Please contact the ChatServer support team.";
+                causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";
             }
         } else {
             LOGGER.error("Account not created for input: {}.", toProcess);

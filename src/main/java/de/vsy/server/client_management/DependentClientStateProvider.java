@@ -1,14 +1,9 @@
-/*
- *
- */
+
 package de.vsy.server.client_management;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
-
-import static java.util.Set.of;
 
 /**
  * Server internal representation of ClientStates and the respectively expected Sender
@@ -19,8 +14,6 @@ import static java.util.Set.of;
 public class DependentClientStateProvider {
 
     public static final EnumMap<ClientState, Supplier<DependentClientStateProvider>> stateTopicAssignment;
-    private final List<ClientState> subscriptionDependencies;
-    private final List<ClientState> unsubscriptionDependencies;
 
     static {
         stateTopicAssignment = new EnumMap<>(ClientState.class);
@@ -28,24 +21,27 @@ public class DependentClientStateProvider {
         stateTopicAssignment.put(ClientState.AUTHENTICATED, DependentClientStateProvider::getAuthenticationStateDependentStateProvider);
     }
 
+    private final List<ClientState> subscriptionDependencies;
+    private final List<ClientState> unsubscriptionDependencies;
+
     private DependentClientStateProvider(final List<ClientState> subscriptionDependencies,
                                          final List<ClientState> unsubscriptionDependencies) {
         this.subscriptionDependencies = subscriptionDependencies;
         this.unsubscriptionDependencies = unsubscriptionDependencies;
     }
 
-    private static DependentClientStateProvider getMessengerDependentStateProvider(){
+    private static DependentClientStateProvider getMessengerDependentStateProvider() {
         return new DependentClientStateProvider(
                 List.of(ClientState.AUTHENTICATED, ClientState.ACTIVE_MESSENGER),
                 List.of(ClientState.ACTIVE_MESSENGER));
     }
 
-    private static DependentClientStateProvider getAuthenticationStateDependentStateProvider(){
+    private static DependentClientStateProvider getAuthenticationStateDependentStateProvider() {
         return new DependentClientStateProvider(List.of(ClientState.AUTHENTICATED),
                 List.of(ClientState.ACTIVE_MESSENGER, ClientState.AUTHENTICATED));
     }
 
-    public static DependentClientStateProvider getDependentStateProvider(final ClientState state){
+    public static DependentClientStateProvider getDependentStateProvider(final ClientState state) {
         return DependentClientStateProvider.stateTopicAssignment.get(state).get();
     }
 

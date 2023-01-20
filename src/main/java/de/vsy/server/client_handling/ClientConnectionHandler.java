@@ -1,10 +1,7 @@
-/*
- *
- */
+
 package de.vsy.server.client_handling;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;
-import de.vsy.server.client_handling.data_management.bean.ClientStateManager;
 import de.vsy.server.client_handling.strategy.LoggedOutClientHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PacketHandlingStrategy;
 import de.vsy.server.client_handling.strategy.PendingClientPacketHandling;
@@ -65,7 +62,7 @@ public class ClientConnectionHandler implements Runnable {
             LOGGER.info("Client connection terminated.");
             clientHandling = getPacketHandlingStrategy(threadInterrupted);
 
-            if(clientHandling != null) {
+            if (clientHandling != null) {
                 clientHandling.administerStrategy();
             }
         } else {

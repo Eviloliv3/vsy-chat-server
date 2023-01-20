@@ -17,10 +17,8 @@ public interface ClientStateControl {
      *
      * @param clientState the ClientState to change
      * @param changeTo    flag indicating, if ClientState is new or if it should be removed.
-     * @return true, if ClientState was successfully processed by all
-     * components, false otherwise.
      */
-    boolean changeLocalClientState(final ClientState clientState, final boolean changeTo);
+    void changeLocalClientState(final ClientState clientState, final boolean changeTo);
 
     /**
      * Changes the persistent/global ClientState for the currently connected client.
