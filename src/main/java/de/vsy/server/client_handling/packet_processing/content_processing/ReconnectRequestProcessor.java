@@ -53,7 +53,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
         if (clientData != null) {
             final var persistedClientState = this.clientStateManager.reconnectClient(clientData);
 
-            if (!(persistedClientState.equals(ClientState.NOT_AUTHENTICATED))) {
+            if (persistedClientState != null) {
 
                 if (this.clientStateManager.changePersistentReconnectionState(true)) {
                     LOGGER.info("Reconnection flag set successfully.");

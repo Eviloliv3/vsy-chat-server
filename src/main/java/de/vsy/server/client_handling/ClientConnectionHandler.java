@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static de.vsy.server.client_management.ClientState.AUTHENTICATED;
-import static de.vsy.server.client_management.ClientState.NOT_AUTHENTICATED;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
 
 /**
@@ -49,11 +48,9 @@ public class ClientConnectionHandler implements Runnable {
 
     @Override
     public void run() {
-        ClientStateManager stateManager;
         PacketHandlingStrategy clientHandling;
 
         finishThreadSetup();
-        stateManager = this.threadDataManager.getClientStateManager();
 
         if (this.connectionControl.initiateConnectionThreads()) {
             boolean threadInterrupted = false;
@@ -63,28 +60,36 @@ public class ClientConnectionHandler implements Runnable {
             while (this.connectionControl.connectionIsLive() && !(threadInterrupted)) {
                 clientHandling.administerStrategy();
                 threadInterrupted = Thread.interrupted();
-
             }
             this.connectionControl.closeConnection();
             LOGGER.info("Client connection terminated.");
+            clientHandling = getPacketHandlingStrategy(threadInterrupted);
 
-            if (stateManager.checkClientState(AUTHENTICATED) && !(threadInterrupted)) {
-                //TODO hier werden Klienten behandelt, wenn Logout erfolgte?
-                LOGGER.info("Client not logged out, therefore client will be handled as pending.");
-                clientHandling = new PendingClientPacketHandling(this.threadDataManager,
-                        this.connectionControl);
+            if(clientHandling != null) {
                 clientHandling.administerStrategy();
-            } else if (stateManager.checkClientState(NOT_AUTHENTICATED)) {
-                LOGGER.info("Client logged out, remaining Packets will be processed.");
-                clientHandling = new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
-                clientHandling.administerStrategy();
-            } else {
-                LOGGER.info("Client account deleted, no data will be rescued.");
             }
         } else {
             LOGGER.info("Client connection failed.");
         }
         finishThreadTermination();
+    }
+
+    private PacketHandlingStrategy getPacketHandlingStrategy(final boolean threadWasInterrupted) {
+        var stateManager = this.threadDataManager.getClientStateManager();
+        final var stillAuthenticated = stateManager.checkClientState(AUTHENTICATED);
+
+        if (stillAuthenticated && !(threadWasInterrupted)) {
+            //TODO hier werden Klienten behandelt, wenn Logout erfolgte?
+            LOGGER.info("Client not logged out, therefore client will be handled as pending.");
+            return new PendingClientPacketHandling(this.threadDataManager,
+                    this.connectionControl);
+        } else if (!(stillAuthenticated)) {
+            LOGGER.info("Client logged out, remaining Packets will be processed.");
+            return new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
+        } else {
+            LOGGER.info("Client account deleted, no data will be rescued.");
+        }
+        return null;
     }
 
     /**

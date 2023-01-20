@@ -128,7 +128,7 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
                 stateChanged = this.clientStateAccess.clientStateHasChanged();
             }
         }
-        if (this.clientStateAccess.clientStateHasRisen()) {
+        if (stateChanged && this.clientStateAccess.clientStateHasRisen()) {
             this.packetRetriever.getPendingPackets();
         }
     }

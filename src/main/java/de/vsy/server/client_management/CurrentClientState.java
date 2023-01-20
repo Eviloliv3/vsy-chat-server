@@ -28,7 +28,7 @@ public class CurrentClientState {
      * @param serverId the server port
      */
     public CurrentClientState(final int serverId) {
-        this(ClientState.NOT_AUTHENTICATED, false, false, serverId, new EnumMap<>(PacketCategory.class));
+        this(null, false, false, serverId, new EnumMap<>(PacketCategory.class));
     }
 
     /**

@@ -44,7 +44,7 @@ public class ClientStateDistributor implements AuthenticationStateControl {
         final var currentState = persistentClientStates.getClientState(clientData.getCommunicatorId());
         final var clientState = currentState.getCurrentState();
 
-        if (!(clientState.equals(ClientState.NOT_AUTHENTICATED))) {
+        if (clientState != null) {
             this.localClientDataManager.setCommunicatorData(clientData);
             var dependentStateProvider = DependentClientStateProvider.getDependentStateProvider(clientState) ;
             final var dependentStates = dependentStateProvider.getDependentStatesForSubscription(true);
