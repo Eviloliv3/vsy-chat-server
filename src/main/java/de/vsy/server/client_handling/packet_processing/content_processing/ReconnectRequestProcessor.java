@@ -111,13 +111,13 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
         pendingFlagFetcher = new TimeBasedValueFetcher<>(this.clientStateManager::getPersistentPendingState,
                 false,
                 terminationTime, latch);
-        pendingFlagCheck.scheduleWithFixedDelay(pendingFlagFetcher, 50, 30, TimeUnit.MILLISECONDS);
+        pendingFlagCheck.scheduleWithFixedDelay(pendingFlagFetcher, 50, 50, TimeUnit.MILLISECONDS);
 
         try {
             final boolean pendingFlagCheckDown;
             latch.await();
             pendingFlagCheck.shutdownNow();
-            pendingFlagCheckDown = pendingFlagCheck.awaitTermination(5, SECONDS);
+            pendingFlagCheckDown = pendingFlagCheck.awaitTermination(1, SECONDS);
             if (pendingFlagCheckDown) {
                 LOGGER.trace("PendingFlagCheck shutdown successfully.");
             } else {

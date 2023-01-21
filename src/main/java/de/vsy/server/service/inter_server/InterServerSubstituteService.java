@@ -50,6 +50,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     private PacketProcessor processor;
     private ProcessingInterruptProvider shutdownCondition;
     private PacketBuffer requestBuffer;
+    private volatile boolean allClientsReconnected;
 
     /**
      * Instantiates a new server failed client watcher.
@@ -74,6 +75,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
                 this.serviceBuffers,
                 serviceDataAccess.getCommunicatorDataAccessor(), this.clientStateProvider,
                 serviceDataAccess.getClientSubscriptionManager());
+        this.allClientsReconnected = false;
     }
 
     @Override
@@ -114,11 +116,10 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
                             this.requestBuffer),
                     new SimplePacketChecker(
                             ServerPermittedCategoryContentAssociationProvider.createRegularServerPacketContentValidator()));
-            this.reconnectionStateWatcher.schedule(
-                    new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 500,
-                    1000);
+            this.reconnectionStateWatcher.scheduleAtFixedRate(
+                    new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 50, 50);
             stopTime = Instant.now().plusMillis(PENDING_END);
-            this.shutdownCondition = () -> !(Instant.now().isAfter(stopTime));
+            this.shutdownCondition = () -> !this.allClientsReconnected && !(Instant.now().isAfter(stopTime));
             substituteSetup = true;
         } else {
             LOGGER.info("No remote clients for server {} specified.",
@@ -203,5 +204,11 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
                 reconnectedClientPersistenceAccess.removeFileAccess();
             }
         }
+    }
+
+    public void stopReconnectingClients(){
+        this.reconnectionStateWatcher.cancel();
+        this.reconnectionStateWatcher.purge();
+        this.allClientsReconnected = true;
     }
 }
