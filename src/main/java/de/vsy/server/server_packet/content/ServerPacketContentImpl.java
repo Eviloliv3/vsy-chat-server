@@ -13,7 +13,7 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableSet;
 
 /**
- * Server internal extension of PacketContent, allows for the single synchronization of servers.
+ * Server internal extension of PacketContent, allows the single synchronization of servers.
  */
 public abstract class ServerPacketContentImpl implements PacketContent, ServerPacketContent {
 

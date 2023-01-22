@@ -105,7 +105,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
 
         content = new ReconnectRequestDTO(clientOneCommunicatorData);
         TestResponseSingleClient.checkErrorResponse(clientTwo, getServerEntity(STANDARD_SERVER_ID),
-                content, "You are either connected from another device");
+                content, "Reconnect request failed, please try again.");
         LOGGER.info("Test: reconnection -> failure: still logged on from another device -- terminated");
     }
 

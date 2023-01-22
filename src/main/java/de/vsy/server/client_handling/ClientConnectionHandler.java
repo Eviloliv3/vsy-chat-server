@@ -77,13 +77,13 @@ public class ClientConnectionHandler implements Runnable {
 
         if (stillAuthenticated && !(threadWasInterrupted)) {
             //TODO hier werden Klienten behandelt, wenn Logout erfolgte?
-            LOGGER.info("Client not logged out, therefore client will be handled as pending.");
+            LOGGER.info("Client connection lost, therefore client will be handled as pending.");
             return new PendingClientPacketHandling(this.threadDataManager,
                     this.connectionControl);
-        } else if (!(stillAuthenticated)) {
-            LOGGER.info("Client logged out, remaining Packets will be processed.");
+        } else if (threadWasInterrupted || !(stateManager.isAccountDeleted())) {
+            LOGGER.info("Client logged out: {}. Remaining Packets will be retained, if possible.", !threadWasInterrupted);
             return new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
-        } else if(stateManager.isAccountDeleted()){
+        } else {
             LOGGER.info("Client account deleted, no data will be rescued.");
             stateManager.setAccountDeleted(false);
         }

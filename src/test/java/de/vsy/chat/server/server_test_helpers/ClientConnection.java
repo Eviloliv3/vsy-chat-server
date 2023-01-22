@@ -180,7 +180,7 @@ public class ClientConnection {
                 ThreadPacketBufferLabel.HANDLER_BOUND);
         do {
             try {
-                readPacket = handlerBoundBuffer.getPacket();
+                readPacket = handlerBoundBuffer.getPacket(250);
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
                 LOGGER.info("Beim Holen des naechsten Pakets unterbrochen.");

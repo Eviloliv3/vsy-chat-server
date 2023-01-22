@@ -1,10 +1,13 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
+import de.vsy.server.client_handling.data_management.PendingPacketCleaner;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
+import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;
+import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
@@ -25,6 +28,7 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
     private final AuthenticationStateControl clientStateManager;
     private final CommunicatorDataManipulator commPersistManager;
     private final ResultingPacketContentHandler contentHandler;
+    private final PendingPacketDAO pendingPacketProvider;
 
     /**
      * Instantiates a new login PacketHandler.
@@ -32,10 +36,10 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
      * @param threadDataAccess the thread dataManagement accessLimiter
      */
     public LoginRequestProcessor(final AuthenticationHandlerDataProvider threadDataAccess) {
-
         this.clientStateManager = threadDataAccess.getAuthenticationStateControl();
         this.commPersistManager = HandlerAccessManager.getCommunicatorDataManipulator();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+        this.pendingPacketProvider = threadDataAccess.getPendingPacketDAO();
     }
 
     @Override
@@ -49,14 +53,14 @@ public class LoginRequestProcessor implements ContentProcessor<LoginRequestDTO> 
 
         if (clientData != null) {
             this.clientStateManager.registerClient(clientData);
-            globalState = this.clientStateManager.getGlobalClientState();
 
-            if (globalState == null) {
+            if (!(this.clientStateManager.checkGlobalClientState(AUTHENTICATED))) {
 
                 if (this.clientStateManager.changePersistentClientState(AUTHENTICATED, true)) {
                     final var communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
                     this.clientStateManager.appendStateSynchronizationPacket(AUTHENTICATED, true);
                     this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
+                    PendingPacketCleaner.removeVolatilePackets(this.pendingPacketProvider);
                 } else {
                     this.clientStateManager.deregisterClient();
                     causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";

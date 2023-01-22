@@ -5,11 +5,12 @@ import de.vsy.server.client_management.ClientState;
 public interface ClientStateControl {
 
     /**
-     * Returns the persistent ClientState for the currently authenticated client.
+     * Checks whether the local client is in a specified global state.
      *
-     * @return the ClientState
+     * @param toCheck the ClientState to check
+     * @return true, if global ClientState equals specified ClientState, false otherwise
      */
-    ClientState getGlobalClientState();
+    boolean checkGlobalClientState(final ClientState toCheck);
 
     /**
      * Changes the local ClientState and every client connection related component,

@@ -2,9 +2,11 @@
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
+import de.vsy.server.client_handling.data_management.PendingPacketCleaner;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;
+import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.data_bean.ConvertCommDataToDTO;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
@@ -23,17 +25,13 @@ public class AccountCreationProcessor implements ContentProcessor<AccountCreatio
     private final CommunicatorDataManipulator clientRegistry;
     private final AuthenticationStateControl clientStateManager;
     private final ResultingPacketContentHandler contentHandler;
+    private final PendingPacketDAO pendingPacketProvider;
 
-    /**
-     * Instantiates a new login PacketHandler.
-     *
-     * @param threadDataAccess the thread dataManagement accessLimiter
-     */
     public AccountCreationProcessor(final AuthenticationHandlerDataProvider threadDataAccess) {
-
         this.clientStateManager = threadDataAccess.getAuthenticationStateControl();
         this.clientRegistry = HandlerAccessManager.getCommunicatorDataManipulator();
         this.contentHandler = threadDataAccess.getResultingPacketContentHandler();
+        this.pendingPacketProvider = threadDataAccess.getPendingPacketDAO();
     }
 
     @Override
@@ -53,6 +51,7 @@ public class AccountCreationProcessor implements ContentProcessor<AccountCreatio
                 final CommunicatorDTO communicatorData = ConvertCommDataToDTO.convertFrom(clientData);
                 this.clientStateManager.appendStateSynchronizationPacket(AUTHENTICATED, true);
                 this.contentHandler.addResponse(new LoginResponseDTO(communicatorData));
+                PendingPacketCleaner.removeVolatilePackets(this.pendingPacketProvider);
             } else {
                 this.clientStateManager.deregisterClient();
                 causeMessage = "An error occurred while writing your global login state. Please contact the ChatServer support team.";

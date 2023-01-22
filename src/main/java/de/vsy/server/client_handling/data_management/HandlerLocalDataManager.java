@@ -15,6 +15,7 @@ import de.vsy.server.client_handling.data_management.logic.ClientStatePublisher;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
 import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.server.data.access.HandlerAccessManager;
+import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.server_packet.packet_creation.ClientHandlerPacketCreator;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_management.*;
@@ -112,6 +113,11 @@ public final class HandlerLocalDataManager implements AuthenticationHandlerDataP
     @Override
     public LocalClientStateObserverManager getLocalClientStateObserverManager() {
         return this.stateDependingAccess;
+    }
+
+    @Override
+    public PendingPacketDAO getPendingPacketDAO() {
+        return this.stateDependingAccess.getClientPersistentAccess().getPendingPacketDAO();
     }
 
     public StateDependentPacketRetriever getStateDependentPacketRetriever() {

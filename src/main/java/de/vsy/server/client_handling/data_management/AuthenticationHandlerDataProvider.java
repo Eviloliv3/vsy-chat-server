@@ -6,6 +6,7 @@
 package de.vsy.server.client_handling.data_management;
 
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
+import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 
 /**
  * Provides AUTHENTICATION related Packet handlers with appropriate data access.
@@ -15,4 +16,6 @@ public interface AuthenticationHandlerDataProvider extends BaseHandlingDataProvi
     AuthenticationStateControl getAuthenticationStateControl();
 
     LocalClientStateObserverManager getLocalClientStateObserverManager();
+
+    PendingPacketDAO getPendingPacketDAO();
 }
