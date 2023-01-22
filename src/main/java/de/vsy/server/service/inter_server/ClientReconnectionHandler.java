@@ -10,5 +10,8 @@ public interface ClientReconnectionHandler {
      */
     void processReconnection(final int clientId);
 
+    /**
+     * ClientReconnectionHandler will stop waiting for clients to reconnect.
+     */
     void stopReconnectingClients();
 }

@@ -30,7 +30,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
  */
 public class PendingClientBufferWatcher extends ThreadContextRunnable {
 
-    private static final long PENDING_END = 25000L;
+    private static final long PENDING_END = 250000L;
     private static final int TERMINATION_LATCH_COUNT = 1;
     private static final Logger LOGGER = LogManager.getLogger();
     private final PacketBuffer clientBuffer;

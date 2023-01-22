@@ -24,7 +24,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO> {
 
-    private static final long WAIT_MILLIS_PENDING_WATCHER = 10000L;
+    private static final long WAIT_MILLIS_PENDING_WATCHER = 100000L;
     private static final int TERMINATION_LATCH_COUNT = 1;
     private static final Logger LOGGER = LogManager.getLogger();
     private final AuthenticationStateControl clientStateManager;
