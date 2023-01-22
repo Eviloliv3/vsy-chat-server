@@ -16,6 +16,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.Instant;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -133,9 +135,20 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
 
     private void removeVolatilePendingPackets() {
         for (final var pendingDirection : PendingType.values()) {
+            Map<String, Packet> remainingPackets = new LinkedHashMap<>();
             var allPackets = this.pendingPacketAccessor.readPendingPackets(pendingDirection);
-            allPackets.values().removeIf(VolatilePacketIdentifier::checkPacketVolatility);
-            this.pendingPacketAccessor.setPendingPackets(pendingDirection, allPackets);
+
+            if(!allPackets.isEmpty()){
+
+                for(final var currentPacketEntry : allPackets.entrySet()){
+                    final var currentPacket = currentPacketEntry.getValue();
+
+                    if(!(VolatilePacketIdentifier.checkPacketVolatility(currentPacket))){
+                        remainingPackets.put(currentPacketEntry.getKey(), currentPacket);
+                    }
+                }
+                this.pendingPacketAccessor.setPendingPackets(pendingDirection, allPackets);
+            }
         }
     }
 }

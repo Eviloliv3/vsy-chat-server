@@ -1,5 +1,7 @@
 package de.vsy.server.data;
 
+import de.vsy.server.client_handling.data_management.ResponseRetainer;
+import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.service.RemotePacketBuffer;
 import de.vsy.server.service.request.CategoryIdSubscriber;
 import de.vsy.shared_module.data_element_validation.IdCheck;
@@ -63,7 +65,11 @@ public class ClientSubscriptionManager extends PacketCategorySubscriptionManager
         if (subscriptionBuffers != null) {
             subscriptionBuffers.publish(packetToPublish);
         } else {
-            throw new PacketTransmissionException("Packet could not be delivered. Contact offline.");
+            final var packet = ResponseRetainer.retainIfResponse(packetToPublish);
+
+            if(packet != null) {
+                throw new PacketTransmissionException("Packet could not be delivered. Contact offline.");
+            }
         }
     }
 
