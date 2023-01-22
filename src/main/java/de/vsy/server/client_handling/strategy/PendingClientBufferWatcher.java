@@ -147,7 +147,7 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
                         remainingPackets.put(currentPacketEntry.getKey(), currentPacket);
                     }
                 }
-                this.pendingPacketAccessor.setPendingPackets(pendingDirection, allPackets);
+                this.pendingPacketAccessor.setPendingPackets(pendingDirection, remainingPackets);
             }
         }
     }
