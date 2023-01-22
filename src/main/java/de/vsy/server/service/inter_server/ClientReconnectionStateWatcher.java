@@ -15,11 +15,16 @@ public class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
     private Queue<Integer> pendingClientIds;
 
     public ClientReconnectionStateWatcher(final LiveClientStateDAO clientStateAccess,
-                                          final List<Integer> pendingClientIdList,
+                                          final List<Integer> pendingClientIds,
                                           final ClientReconnectionHandler reconnectionHandler) {
         this.clientStateAccessor = clientStateAccess;
         this.reconnectionHandler = reconnectionHandler;
-        this.pendingClientIds = new LinkedList<>(pendingClientIdList);
+
+        if(pendingClientIds == null || pendingClientIds.isEmpty()){
+            reconnectionHandler.stopReconnectingClients();
+        }else{
+            this.pendingClientIds = new LinkedList<>(pendingClientIds);
+        }
     }
 
     @Override
@@ -35,6 +40,11 @@ public class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
                 stillPendingClientIds.add(currentClientId);
             }
         } while (!(this.pendingClientIds.isEmpty()));
-        this.pendingClientIds = stillPendingClientIds;
+
+        if(stillPendingClientIds.isEmpty()){
+            this.reconnectionHandler.stopReconnectingClients();
+        }else {
+            this.pendingClientIds = stillPendingClientIds;
+        }
     }
 }

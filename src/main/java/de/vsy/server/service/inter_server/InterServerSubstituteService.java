@@ -1,6 +1,7 @@
 
 package de.vsy.server.service.inter_server;
 
+import de.vsy.server.data.access.PendingClientWatcherManager;
 import de.vsy.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
@@ -117,7 +118,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
                     new SimplePacketChecker(
                             ServerPermittedCategoryContentAssociationProvider.createRegularServerPacketContentValidator()));
             this.reconnectionStateWatcher.scheduleAtFixedRate(
-                    new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 50, 50);
+                    new ClientReconnectionStateWatcher(this.clientStateProvider, pendingClientIds, this), 100, 100);
             stopTime = Instant.now().plusMillis(PENDING_END);
             this.shutdownCondition = () -> !this.allClientsReconnected && !(Instant.now().isAfter(stopTime));
             substituteSetup = true;
@@ -199,10 +200,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
             this.clientStateProvider.changeClientPendingState(clientId, false);
             final var reconnectedClientPersistenceAccess = this.clientPersistenceAccessManagers.remove(
                     clientId);
-
-            if (reconnectedClientPersistenceAccess != null) {
-                reconnectedClientPersistenceAccess.removeFileAccess();
-            }
+            reconnectedClientPersistenceAccess.removeFileAccess();
         }
     }
 

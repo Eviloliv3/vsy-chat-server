@@ -9,4 +9,6 @@ public interface ClientReconnectionHandler {
      * @param clientId the client's id
      */
     void processReconnection(final int clientId);
+
+    void stopReconnectingClients();
 }
