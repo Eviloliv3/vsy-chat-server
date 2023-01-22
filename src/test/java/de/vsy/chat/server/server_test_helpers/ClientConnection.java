@@ -16,7 +16,7 @@ import de.vsy.shared_transmission.packet.content.authentication.LoginRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LogoutRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LogoutResponseDTO;
-import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -216,7 +216,7 @@ public class ClientConnection {
                     LOGGER.info("{}-Login failed. Antworttyp " + "statt LoginResponseDTO: {}",
                             this.authenticationData.getUsername(), content.getClass().getSimpleName());
                     if (content instanceof ErrorDTO errorResponse) {
-                        LOGGER.info(errorResponse.getErrorMessage());
+                        LOGGER.info(errorResponse.getInformationString());
                     }
                 }
             } else {

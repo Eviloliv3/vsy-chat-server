@@ -23,7 +23,7 @@ import de.vsy.shared_module.packet_validation.SemanticPacketValidator;
 import de.vsy.shared_module.packet_validation.SimplePacketChecker;
 import de.vsy.shared_module.packet_validation.content_validation.ClientPacketSemanticsValidationCreator;
 import de.vsy.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

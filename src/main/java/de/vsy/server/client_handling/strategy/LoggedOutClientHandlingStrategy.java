@@ -7,7 +7,7 @@ import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
-import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
 
 import java.util.Set;

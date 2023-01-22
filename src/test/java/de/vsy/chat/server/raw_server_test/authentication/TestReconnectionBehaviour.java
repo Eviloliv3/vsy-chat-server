@@ -15,7 +15,7 @@ import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.authentication.ReconnectRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
-import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -84,7 +84,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
                 Assertions.fail("Reconnection attempt failed.");
             }
         } else {
-            Assertions.fail("Response: " + ((ErrorDTO) response.getPacketContent()).getErrorMessage() +
+            Assertions.fail("Response: " + ((ErrorDTO) response.getPacketContent()).getInformationString() +
                     ",  expected value: " + ReconnectResponseDTO.class.getSimpleName());
         }
         LOGGER.info("Test: reconnection -> failure: reconnection attempt underway -- terminated");
@@ -176,7 +176,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
                 Assertions.fail("Reconnection attempt failed.");
             }
         } else {
-            Assertions.fail("Response: " + ((ErrorDTO) response.getPacketContent()).getErrorMessage() +
+            Assertions.fail("Response: " + ((ErrorDTO) response.getPacketContent()).getInformationString() +
                     ",  expected value: " + ReconnectResponseDTO.class.getSimpleName());
         }
         LOGGER.info("Test: reconnection -> success -- terminated");

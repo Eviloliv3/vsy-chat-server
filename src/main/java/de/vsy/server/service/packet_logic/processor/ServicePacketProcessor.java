@@ -5,7 +5,7 @@ import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler
 import de.vsy.server.service.packet_logic.ServicePacketProcessorFactory;
 import de.vsy.shared_module.packet_exception.PacketHandlingException;
 import de.vsy.shared_transmission.packet.Packet;
-import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 
 /**
  * Basic Packet processor using the strategy that is passed through the constructor.

@@ -4,7 +4,7 @@ package de.vsy.server.client_handling.packet_processing.content_processing;
 import de.vsy.server.client_handling.data_management.NotificationHandlingDataProvider;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
-import de.vsy.shared_transmission.packet.content.error.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 
 public class ErrorTransmissionProcessor implements ContentProcessor<ErrorDTO> {
 

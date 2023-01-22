@@ -9,8 +9,8 @@ import de.vsy.shared_module.packet_processing.processor_provision.ContentBasedPr
 import de.vsy.shared_module.packet_validation.content_validation.error.ErrorContentValidator;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 
-import static de.vsy.shared_transmission.packet.content.error.ErrorContent.ErrorDTO;
-import static de.vsy.shared_transmission.packet.content.error.ErrorContent.valueOf;
+import static de.vsy.shared_transmission.packet.content.notification.NotificationContent.ErrorDTO;
+import static de.vsy.shared_transmission.packet.content.notification.NotificationContent.valueOf;
 
 public class ErrorPacketProcessorFactory implements ContentBasedProcessorFactory {
 

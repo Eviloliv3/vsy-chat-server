@@ -30,7 +30,7 @@ public class PendingPacketCleaner {
                     remainingPackets.put(currentPacketEntry.getKey(), currentPacket);
                 }
             }
-            pendingPacketProvider.setPendingPackets(PROCESSOR_BOUND, pendingPackets);
+            pendingPacketProvider.setPendingPackets(PROCESSOR_BOUND, remainingPackets);
         }
     }
 }
