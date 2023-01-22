@@ -83,8 +83,9 @@ public class ClientConnectionHandler implements Runnable {
         } else if (!(stillAuthenticated)) {
             LOGGER.info("Client logged out, remaining Packets will be processed.");
             return new LoggedOutClientHandlingStrategy(this.threadDataManager.getHandlerBufferManager());
-        } else {
+        } else if(stateManager.isAccountDeleted()){
             LOGGER.info("Client account deleted, no data will be rescued.");
+            stateManager.setAccountDeleted(false);
         }
         return null;
     }

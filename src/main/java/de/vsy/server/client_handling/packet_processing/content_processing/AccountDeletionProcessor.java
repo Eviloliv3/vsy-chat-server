@@ -54,7 +54,7 @@ public class AccountDeletionProcessor implements ContentProcessor<AccountDeletio
             if (clientStateManager.changePersistentClientState(AUTHENTICATED, false)) {
                 this.clientStateManager.appendSynchronizationRemovalPacketPerState();
                 ThreadContext.put(LOG_FILE_CONTEXT_KEY, Thread.currentThread().getName());
-                clientStateManager.deregisterClient();
+                clientStateManager.setAccountDeletionState(true);
                 PersistentDataLocationRemover.deleteDirectories(EXTENDED, String.valueOf(clientId), LOGGER);
             } else {
                 LOGGER.warn("Client could not be logged out globally.");

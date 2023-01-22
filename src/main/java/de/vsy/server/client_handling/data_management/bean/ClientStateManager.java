@@ -8,6 +8,7 @@ public class ClientStateManager implements LocalClientStateProvider {
 
     private final List<ClientStateListener> stateListeners;
     private final Deque<ClientState> currentState;
+    private boolean accountDeleted;
     private int clientStateCounter;
     private boolean stateChanged;
 
@@ -48,6 +49,14 @@ public class ClientStateManager implements LocalClientStateProvider {
         boolean stateCountHasRisen = this.clientStateCounter < this.currentState.size();
         this.clientStateCounter = this.currentState.size();
         return stateCountHasRisen;
+    }
+
+    public void setAccountDeleted(final boolean isDeleted){
+        this.accountDeleted = isDeleted;
+    }
+
+    public boolean isAccountDeleted(){
+        return this.accountDeleted;
     }
 
     public boolean changeClientState(final ClientState toChange, boolean toAdd) {

@@ -53,6 +53,12 @@ public class ClientStateDistributor implements AuthenticationStateControl {
     }
 
     @Override
+    public void setAccountDeletionState(boolean isDeleted) {
+        deregisterClient();
+        this.localClientStateManager.setAccountDeleted(isDeleted);
+    }
+
+    @Override
     public void deregisterClient() {
         changeLocalClientState(AUTHENTICATED, false);
         this.localClientDataManager.setCommunicatorData(null);

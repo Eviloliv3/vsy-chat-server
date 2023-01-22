@@ -74,7 +74,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         Thread.sleep(200);
 
         TestResponseSingleClient.checkErrorResponse(clientOne, getServerEntity(STANDARD_SERVER_ID),
-                request, "trying to reconnect from another device right now.");
+                request, "Reconnect request failed, please try again.");
         final var response = clientTwo.readPacket();
 
         if (response.getPacketContent() instanceof final ReconnectResponseDTO reconnectResponse) {

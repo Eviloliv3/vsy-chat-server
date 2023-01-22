@@ -24,7 +24,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequestDTO> {
 
-    private static final long WAIT_MILLIS_PENDING_WATCHER = 100000L;
+    private static final long WAIT_MILLIS_PENDING_WATCHER = 10000L;
     private static final int TERMINATION_LATCH_COUNT = 1;
     private static final Logger LOGGER = LogManager.getLogger();
     private final AuthenticationStateControl clientStateManager;
@@ -81,7 +81,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
                     LOGGER.error("Client state could not be saved. Either of client states could not "
                                     + "be accessed or could not be written. Found client data: {}",
                             clientData);
-                    causeMessage = "You are either connected from another device or you are trying to reconnect from another device right now.";
+                    causeMessage = "Reconnect request failed, please try again.";
                     this.clientStateManager.deregisterClient();
                 }
             } else {
