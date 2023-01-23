@@ -134,5 +134,4 @@ public class TestClientMessage extends ServerTestBase {
         Assertions.assertEquals(message.getMessage(), receivedMessage.getMessage(), responseMessage.getMessage());
         LOGGER.info("Test: send message -> success -- terminated");
     }
-
 }

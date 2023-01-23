@@ -76,7 +76,6 @@ public class ClientConnectionHandler implements Runnable {
         final var stillAuthenticated = stateManager.checkClientState(AUTHENTICATED);
 
         if (stillAuthenticated && !(threadWasInterrupted)) {
-            //TODO hier werden Klienten behandelt, wenn Logout erfolgte?
             LOGGER.info("Client connection lost, therefore client will be handled as pending.");
             return new PendingClientPacketHandling(this.threadDataManager,
                     this.connectionControl);

@@ -2,12 +2,16 @@
 package de.vsy.chat.server.server_test_helpers;
 
 import de.vsy.shared_module.packet_management.OutputBuffer;
+import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.packet.Packet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 
 /**
  * Creation tool for simple Packetcreation and transmission.
@@ -15,7 +19,7 @@ import java.util.Map;
 public class RequestPacketCreator {
 
     private final Map<PacketPropertiesProvider, List<Class<?>>> associations;
-    private final OutputBuffer outputHandle;
+    private final PacketBuffer outputHandle;
 
     /**
      * Instantiates a new request creator.
@@ -23,19 +27,10 @@ public class RequestPacketCreator {
      * @param outputHandle the output handle
      * @param clientData   the client dataManagement
      */
-    public RequestPacketCreator(final OutputBuffer outputHandle, final CommunicatorDTO clientData) {
+    public RequestPacketCreator(final PacketBuffer outputHandle, final CommunicatorDTO clientData) {
         this.outputHandle = outputHandle;
         this.associations = new HashMap<>();
         // setupPropertyAssociations(clientData);
-    }
-
-    /**
-     * Request.
-     *
-     * @param request the request
-     */
-    public void request(final Packet request) {
-        sendRequest(request);
     }
 
     /**
@@ -43,8 +38,23 @@ public class RequestPacketCreator {
      *
      * @param output the output
      */
-    private void sendRequest(final Packet output) {
+    public void sendRequest(final Packet output) {
         outputHandle.appendPacket(output);
+        CountDownLatch latch = new CountDownLatch(1);
+
+        new Timer().scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run() {
+                if(!(outputHandle.containsPackets())){
+                    latch.countDown();
+                }
+            }
+        }, 5, 5);
+        try {
+            latch.await();
+        } catch (InterruptedException ie){
+            Assertions.fail("Interrupted while sending " + output);
+        }
     }
 
 }

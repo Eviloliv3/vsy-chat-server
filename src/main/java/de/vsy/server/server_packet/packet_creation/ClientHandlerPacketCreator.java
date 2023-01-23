@@ -76,22 +76,6 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         final boolean localClientIsRecipient = localClientId == recipientId;
         final var senderIsUnspecifiedClient = recipientId == STANDARD_CLIENT_ID;
 
-
         return noLocalClient || localClientIsRecipient || senderIsUnspecifiedClient;
-        /*
-        final var properties = this.currentRequest.getPacketProperties();
-        final var senderId = properties.getSender().getEntityId();
-
-        final var senderTypeIsClient = properties.getSender().getEntity().equals(CLIENT);
-        final var noLocalClient = this.clientDataProvider.getClientId() == STANDARD_CLIENT_ID;
-        final var senderIsClient = senderId == this.clientDataProvider.getClientId();
-        final var senderIsUnspecifiedClient = senderId == STANDARD_CLIENT_ID;
-
-        if (senderTypeIsClient) {
-            return noLocalClient || senderIsClient || senderIsUnspecifiedClient;
-        }
-        return false;
-
-         */
     }
 }

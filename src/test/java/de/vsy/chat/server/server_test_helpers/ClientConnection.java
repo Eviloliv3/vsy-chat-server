@@ -109,14 +109,14 @@ public class ClientConnection {
     public Packet sendRequest(PacketContent contentToSend, CommunicationEndpoint recipient) {
         final var request = this.packetCompiler.createRequest(recipient, contentToSend);
 
-        this.requester.request(request);
+        this.requester.sendRequest(request);
         return request;
     }
 
     public Packet sendResponse(PacketContent contentToSend, Packet requestPacket) {
         final var response = this.packetCompiler.createResponse(contentToSend, requestPacket);
 
-        this.requester.request(response);
+        this.requester.sendRequest(response);
         return response;
     }
 
@@ -143,7 +143,7 @@ public class ClientConnection {
         var logoutSuccess = false;
 
         if (this.authenticated) {
-            requester.request(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
+            requester.sendRequest(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
                     new LogoutRequestDTO(this.clientData)));
             do {
                 response = readPacket();
@@ -200,7 +200,7 @@ public class ClientConnection {
         var loginSuccess = false;
 
         if (!this.authenticated && this.hasAuthenticationData) {
-            requester.request(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
+            requester.sendRequest(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
                     new LoginRequestDTO(this.authenticationData)));
             response = readPacket();
 

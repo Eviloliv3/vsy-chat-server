@@ -239,7 +239,6 @@ public class LiveClientStateDAO extends ServerDAO {
             LOGGER.error("No exclusive write access.");
             return false;
         }
-        //TODO ReconnectionBehaviour->reconnectionFailReconnectionUnderway first connection to read, reads ReconnectResponse although it should be the second to try while first to try sits in sleep
         clientStateMap = getAllActiveClientStates();
         clientState = clientStateMap.get(clientId);
 
