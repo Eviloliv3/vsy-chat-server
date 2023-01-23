@@ -111,6 +111,8 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
                 if (currentPacket != null) {
                     this.pendingPacketAccessor.appendPendingPacket(PendingType.PROCESSOR_BOUND,
                             currentPacket);
+                    //TODO Hier Antwortpaket versenden, dass ueber mogliche verspaetungen informiert
+                    // SimpleInformationDTO
                 }
             } catch (InterruptedException ie) {
                 LOGGER.warn("Interrupted while waiting for a Packet. Packets may not be saved.");

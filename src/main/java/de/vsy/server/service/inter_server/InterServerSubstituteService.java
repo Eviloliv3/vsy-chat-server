@@ -86,6 +86,8 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
 
             while (this.shutdownCondition.conditionNotMet()) {
                 processPacket();
+                //TODO Hier Antwortpaket versenden, dass ueber mogliche verspaetungen informiert
+                // SimpleInformationDTO
             }
 
             this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);

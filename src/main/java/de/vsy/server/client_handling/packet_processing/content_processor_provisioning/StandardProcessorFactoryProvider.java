@@ -19,7 +19,7 @@ public class StandardProcessorFactoryProvider implements CategoryBasedProcessorF
             case CHAT -> new ChatPacketProcessorFactory(threadDataAccess);
             case STATUS -> new StatusPacketProcessorFactory(threadDataAccess);
             case RELATION -> new RelationPacketProcessorFactory(threadDataAccess);
-            case NOTIFICATION -> new ErrorPacketProcessorFactory(threadDataAccess);
+            case NOTIFICATION -> new NotificationPacketProcessorFactory(threadDataAccess);
         };
     }
 }

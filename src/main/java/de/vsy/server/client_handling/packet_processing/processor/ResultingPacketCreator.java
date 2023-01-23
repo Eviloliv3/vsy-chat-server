@@ -15,7 +15,7 @@ public abstract class ResultingPacketCreator {
     }
 
     /**
-     * Sets the committed packet as the current this.currentRequest.
+     * Sets the committed packet as the current currentRequest.
      *
      * @param currentRequest the this.currentRequest, responses/results will be base on
      */
@@ -28,11 +28,27 @@ public abstract class ResultingPacketCreator {
         return createRequest(processedContent, recipient);
     }
 
+    /**
+     * Creates a Packet directed at a specified recipient.
+     * @param processedContent  the request PacketContent
+     * @param recipient         the custom recipient
+     * @return                  a request Packet
+     */
     public abstract Packet createRequest(PacketContent processedContent,
                                          final CommunicationEndpoint recipient);
 
+    /**
+     * Creates a Packet that is directed at the sender of the original packet.
+     * @param processedContent the response PacketContent
+     * @return a response Packet
+     */
     public abstract Packet createResponse(PacketContent processedContent);
 
+    /**
+     * Creates a SimpleInternalContentWrapper containing the specified PacketContent.
+     * @param processedContent  the PacketContent to wrap
+     * @return SimpleInternalContentWrapper containing the specified PacketContent
+     */
     protected PacketContent wrapContent(PacketContent processedContent) {
         final var newWrapper = new SimpleInternalContentBuilder();
         final var serverId = HandlerAccessManager.getLocalServerConnectionData().getServerId();

@@ -27,8 +27,8 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
             throw new IllegalArgumentException("No recipient specified.");
         }
 
-        final var resultingContent = adjustWrapping(processedContent, true);
-        if (this.currentRequest == null) {
+        final var resultingContent = adjustWrapping(processedContent, recipient);
+        if (super.currentRequest == null) {
             return PacketCompiler.createRequest(recipient, resultingContent);
         } else {
             return PacketCompiler.createFollowUpRequest(recipient, resultingContent, this.currentRequest);
@@ -37,23 +37,26 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
 
     @Override
     public Packet createResponse(PacketContent processedContent) {
-        final var resultingContent = adjustWrapping(processedContent, false);
+        final var recipient = super.currentRequest.getPacketProperties().getSender();
+        final var resultingContent = adjustWrapping(processedContent, recipient);
         return PacketCompiler.createResponse(resultingContent, this.currentRequest);
     }
 
     protected PacketContent adjustWrapping(final PacketContent contentToWrap,
-                                           final boolean isRequest) {
+                                           final CommunicationEndpoint recipient) {
         PacketContent finalContent;
+        boolean toWrap = true;
+        final boolean recipientIsClient = recipient.getEntity().equals(CLIENT);
 
-        final var clientIsSender = checkClientSender();
-        final var toWrap = (!isRequest && !clientIsSender) || (isRequest && clientIsSender);
+        if(recipientIsClient){
+            toWrap = !(localClientIsRecipient(recipient.getEntityId()));
+        }
 
         if (toWrap) {
             finalContent = wrapContent(contentToWrap);
         } else {
             finalContent = contentToWrap;
         }
-
         return finalContent;
     }
 
@@ -67,7 +70,15 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
      *
      * @return true if the connected client is the originator
      */
-    protected boolean checkClientSender() {
+    protected boolean localClientIsRecipient(final int recipientId) {
+        final int localClientId = this.clientDataProvider.getClientId();
+        final boolean noLocalClient = localClientId == STANDARD_CLIENT_ID;
+        final boolean localClientIsRecipient = localClientId == recipientId;
+        final var senderIsUnspecifiedClient = recipientId == STANDARD_CLIENT_ID;
+
+
+        return noLocalClient || localClientIsRecipient || senderIsUnspecifiedClient;
+        /*
         final var properties = this.currentRequest.getPacketProperties();
         final var senderId = properties.getSender().getEntityId();
 
@@ -80,5 +91,7 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
             return noLocalClient || senderIsClient || senderIsUnspecifiedClient;
         }
         return false;
+
+         */
     }
 }

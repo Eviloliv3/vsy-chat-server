@@ -35,7 +35,7 @@ public class ResponseRetainer {
             if(VALID_RESPONSE_TYPES.contains(content.getClass())){
 
                 if(content instanceof final TextMessageDTO message){
-                    if(!message.getReceptionState()){
+                    if(message.getReceptionState()){
                         retainPacket(toCheck);
                         return null;
                     }
