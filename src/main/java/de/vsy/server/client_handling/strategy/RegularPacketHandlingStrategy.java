@@ -123,10 +123,6 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
                 try {
                     this.processor.processPacket(input);
                 } catch (final PacketHandlingException phe) {
-                    if(input.getPacketContent() instanceof SimpleInternalContentWrapper wrapper){
-                        var content = wrapper.getWrappedContent();
-                        input = new PacketBuilder().withContent(content).withProperties(input.getPacketProperties()).withRequestPacket(input.getRequestPacketHash()).build();
-                    }
                     final var errorContent = new ErrorDTO(phe.getMessage(), input);
                     this.contentHandler.setError(errorContent);
                 }

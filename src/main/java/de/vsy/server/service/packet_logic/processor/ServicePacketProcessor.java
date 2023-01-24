@@ -42,26 +42,12 @@ public class ServicePacketProcessor {
             try {
                 ph.processPacket(input);
             } catch (final PacketHandlingException phe) {
-                Packet origin;
-                if(input.getPacketContent() instanceof SimpleInternalContentWrapper wrapper){
-                    var content = wrapper.getWrappedContent();
-                    origin = new PacketBuilder().withContent(content).withProperties(input.getPacketProperties()).withRequestPacket(input.getRequestPacketHash()).build();
-                }else{
-                    origin = input;
-                }
-                final var errorContent = new ErrorDTO(phe.getMessage(), origin);
+                final var errorContent = new ErrorDTO(phe.getMessage(), input);
                 this.contentHandler.setError(errorContent);
             }
         } else {
             final var errorMessage = "No PacketProcessor found for ContentIdentifier: " + identifier;
-            Packet origin;
-            if(input.getPacketContent() instanceof SimpleInternalContentWrapper wrapper){
-                var content = wrapper.getWrappedContent();
-                origin = new PacketBuilder().withContent(content).withProperties(input.getPacketProperties()).withRequestPacket(input.getRequestPacketHash()).build();
-            }else{
-                origin = input;
-            }
-            final var errorContent = new ErrorDTO(errorMessage, origin);
+            final var errorContent = new ErrorDTO(errorMessage, input);
             this.contentHandler.setError(errorContent);
         }
     }

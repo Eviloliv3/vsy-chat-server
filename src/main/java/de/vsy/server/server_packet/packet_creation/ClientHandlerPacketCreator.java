@@ -6,6 +6,7 @@ import de.vsy.shared_module.packet_management.ClientDataProvider;
 import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
+import org.apache.logging.log4j.LogManager;
 
 import static de.vsy.shared_transmission.packet.property.communicator.EligibleCommunicationEntity.CLIENT;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_ID;
@@ -75,6 +76,7 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         final boolean noLocalClient = localClientId == STANDARD_CLIENT_ID;
         final boolean localClientIsRecipient = localClientId == recipientId;
         final var senderIsUnspecifiedClient = recipientId == STANDARD_CLIENT_ID;
+        LogManager.getLogger().error("noLocal: {} | localRec: {} | unspecSender: {} ", noLocalClient, localClientIsRecipient, senderIsUnspecifiedClient);
 
         return noLocalClient || localClientIsRecipient || senderIsUnspecifiedClient;
     }
