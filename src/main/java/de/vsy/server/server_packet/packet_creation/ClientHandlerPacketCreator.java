@@ -50,6 +50,7 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         final boolean recipientIsClient = recipient.getEntity().equals(CLIENT);
 
         if (recipientIsClient) {
+            LogManager.getLogger().error("For: {}", contentToWrap);
             toWrap = !(localClientIsRecipient(recipient.getEntityId()));
         }
 
