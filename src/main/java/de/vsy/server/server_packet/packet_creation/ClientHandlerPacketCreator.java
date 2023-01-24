@@ -50,7 +50,6 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         final boolean recipientIsClient = recipient.getEntity().equals(CLIENT);
 
         if (recipientIsClient) {
-            LogManager.getLogger().error("For: {}", contentToWrap);
             toWrap = !(localClientIsRecipient(recipient.getEntityId()));
         }
 
@@ -77,7 +76,6 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         final boolean noLocalClient = localClientId == STANDARD_CLIENT_ID;
         final boolean localClientIsRecipient = localClientId == recipientId;
         final var senderIsUnspecifiedClient = recipientId == STANDARD_CLIENT_ID;
-        LogManager.getLogger().error("noLocal: {} | localRec: {} | unspecSender: {} ", noLocalClient, localClientIsRecipient, senderIsUnspecifiedClient);
 
         return noLocalClient || localClientIsRecipient || senderIsUnspecifiedClient;
     }
