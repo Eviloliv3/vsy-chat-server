@@ -1,4 +1,3 @@
-
 package de.vsy.server.client_management;
 
 import java.util.EnumMap;

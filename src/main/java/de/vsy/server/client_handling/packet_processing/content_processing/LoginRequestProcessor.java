@@ -3,7 +3,6 @@ package de.vsy.server.client_handling.packet_processing.content_processing;
 import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
 import de.vsy.server.client_handling.data_management.PendingPacketCleaner;
 import de.vsy.server.client_handling.data_management.logic.AuthenticationStateControl;
-import de.vsy.server.client_handling.strategy.StateDependentPacketRetriever;
 import de.vsy.server.client_management.ClientState;
 import de.vsy.server.data.access.CommunicatorDataManipulator;
 import de.vsy.server.data.access.HandlerAccessManager;

@@ -1,4 +1,3 @@
-
 package de.vsy.server.data.access;
 
 import de.vsy.server.data.PacketCategorySubscriptionManager;

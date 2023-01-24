@@ -53,7 +53,7 @@ public class TestReconnectionBehaviour extends ServerTestBase {
     void reconnectionFailReconnectionUnderway() throws InterruptedException, IOException {
         LOGGER.info("Test: reconnection -> failure: reconnection attempt underway");
         ReconnectRequestDTO request;
-        final ClientConnection clientOne, clientTwo;
+        ClientConnection clientOne, clientTwo;
         final CommunicatorDTO clientOneCommunicatorData;
         final AuthenticationDTO clientOneAuthenticationData;
 
@@ -65,7 +65,6 @@ public class TestReconnectionBehaviour extends ServerTestBase {
         clientTwo = super.getUnusedClientConnection();
 
         clientOne.resetConnection();
-
         Thread.sleep(500);
 
         request = new ReconnectRequestDTO(clientOneCommunicatorData);

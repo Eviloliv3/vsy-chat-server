@@ -1,17 +1,19 @@
-
 package de.vsy.server.service.inter_server;
 
-import de.vsy.server.data.access.PendingClientWatcherManager;
+import de.vsy.server.client_handling.data_management.PacketRetainer;
+import de.vsy.server.data.PacketCategorySubscriptionManager;
 import de.vsy.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
+import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
 import de.vsy.server.service.packet_logic.processor.InterServerSubstitutePacketProcessorLink;
 import de.vsy.shared_module.packet_exception.PacketHandlingException;
+import de.vsy.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_module.packet_processing.PacketProcessor;
 import de.vsy.shared_module.packet_processing.PacketSyntaxCheckLink;
@@ -27,6 +29,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static java.lang.Thread.interrupted;
 
@@ -47,6 +50,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     private final PacketBuffer interServerBuffer;
     private final RemoteServerConnectionData remoteServerConnection;
     private final ServicePacketBufferManager serviceBuffers;
+    private final PacketCategorySubscriptionManager clientSubscriptions;
     private final RemoteClientDisconnector clientDisconnector;
     private PacketProcessor processor;
     private ProcessingInterruptProvider shutdownCondition;
@@ -68,6 +72,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         this.serviceId = SERVICE_COUNT.incrementAndGet();
         this.reconnectionStateWatcher = new Timer("ClientReconnectionStateWatcher-" + serviceId);
         this.clientPersistenceAccessManagers = new HashMap<>();
+        this.clientSubscriptions = serviceDataAccess.getClientSubscriptionManager();
         this.remoteServerConnection = remoteServerConnection;
         this.serviceBuffers = serviceDataAccess.getServicePacketBufferManager();
         this.clientStateProvider = serviceDataAccess.getLiveClientStateDAO();
@@ -89,10 +94,13 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
                 //TODO Hier Antwortpaket versenden, dass ueber mogliche verspaetungen informiert
                 // SimpleInformationDTO
             }
-
-            this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
             this.reconnectionStateWatcher.cancel();
-            clearAndRemoveBuffer();
+            this.reconnectionStateWatcher.purge();
+
+            if (!(this.allClientsReconnected)) {
+                this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
+                clearAndRemoveBuffer();
+            }
         }
         LOGGER.info("{} stopped.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
     }
@@ -160,12 +168,36 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
      * Clear and remove buffer.
      */
     private void clearAndRemoveBuffer() {
-        final var reinterrupt = interrupted();
+        var reinterrupt = interrupted();
         this.serviceBuffers.deregisterBuffer(Service.TYPE.SERVER_TRANSFER, serviceId,
                 this.interServerBuffer);
+        final var remainingPackets = this.interServerBuffer.freezeBuffer();
 
-        while (this.interServerBuffer.containsPackets()) {
-            processPacket();
+        for (final var packet : remainingPackets) {
+
+            if (packet.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
+                var clients = this.clientSubscriptions.getThreads(CHAT);
+                clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
+                PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
+            } else {
+                Packet result = PacketRetainer.retainIfResponse(packet);
+
+                if (result != null) {
+                    var pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
+                    var phe = new PacketProcessingException("Packet could not be delivered.");
+                    var errorPacket = pheProcessor.processException(phe, result);
+
+                    if (!(reinterrupt)) {
+                        this.requestBuffer.appendPacket(errorPacket);
+                    } else {
+                        result = PacketRetainer.retainIfResponse(errorPacket);
+
+                        if (result != null) {
+                            LOGGER.error("Packet discarded: {}", result);
+                        }
+                    }
+                }
+            }
         }
 
         if (reinterrupt) {
@@ -176,6 +208,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     private List<Integer> getPendingClientIds() {
         final var remoteClientStateMap = this.clientStateProvider
                 .getClientStatesForServer(this.remoteServerConnection.getServerId());
+        LOGGER.error("Pending clients found for {}: {}", this.remoteServerConnection.getServerId(), List.of(remoteClientStateMap.keySet()));
         return new ArrayList<>(remoteClientStateMap.keySet());
     }
 
@@ -207,7 +240,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     }
 
     @Override
-    public void stopReconnectingClients(){
+    public void stopReconnectingClients() {
         this.reconnectionStateWatcher.cancel();
         this.reconnectionStateWatcher.purge();
         this.allClientsReconnected = true;

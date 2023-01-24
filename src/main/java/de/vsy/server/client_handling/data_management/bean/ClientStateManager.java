@@ -2,7 +2,10 @@ package de.vsy.server.client_handling.data_management.bean;
 
 import de.vsy.server.client_management.ClientState;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
 
 public class ClientStateManager implements LocalClientStateProvider {
 
@@ -51,12 +54,12 @@ public class ClientStateManager implements LocalClientStateProvider {
         return stateCountHasRisen;
     }
 
-    public void setAccountDeleted(final boolean isDeleted){
-        this.accountDeleted = isDeleted;
+    public boolean isAccountDeleted() {
+        return this.accountDeleted;
     }
 
-    public boolean isAccountDeleted(){
-        return this.accountDeleted;
+    public void setAccountDeleted(final boolean isDeleted) {
+        this.accountDeleted = isDeleted;
     }
 
     public boolean changeClientState(final ClientState toChange, boolean toAdd) {

@@ -1,4 +1,3 @@
-
 package de.vsy.server.server_packet.content;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

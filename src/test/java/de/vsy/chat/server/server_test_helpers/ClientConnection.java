@@ -16,14 +16,15 @@ import de.vsy.shared_transmission.packet.content.authentication.LoginRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LogoutRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LogoutResponseDTO;
-import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.IOException;
 import java.net.Socket;
 
+import static de.vsy.chat.server.server_test_helpers.TestPacketVerifier.verifyPacketContent;
 import static de.vsy.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_AUTHENTICATION;
 import static de.vsy.shared_transmission.dto.standard_empty_value.StandardEmptyDataProvider.EMPTY_COMMUNICATOR;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
@@ -83,25 +84,19 @@ public class ClientConnection {
 
     public void setClientData(final AuthenticationDTO clientAuthenticationData,
                               final CommunicatorDTO clientCommunicatorData) {
-        final AuthenticationDTO clientAuthentication;
-        final CommunicatorDTO clientData;
         if (clientCommunicatorData == null || clientAuthenticationData == null) {
-            LOGGER.warn("Keine Klientendaten angegeben. Möglicherweise werden "
-                    + "nachfolgende Testergebnisse verfälscht.");
+            LOGGER.warn("CommunicatorDTO or AuthenticationDTO missing. Wrong test results possible.");
         }
 
-        clientAuthentication =
-                clientAuthenticationData == null ? EMPTY_AUTHENTICATION : clientAuthenticationData;
-        clientData = clientCommunicatorData == null ? EMPTY_COMMUNICATOR : clientCommunicatorData;
-
-        this.clientData = clientData;
-        this.authenticationData = clientAuthentication;
+        this.clientData = clientCommunicatorData == null ? EMPTY_COMMUNICATOR : clientCommunicatorData;
+        this.authenticationData = clientAuthenticationData == null ? EMPTY_AUTHENTICATION : clientAuthenticationData;
+        ;
 
         if (this.clientData.getCommunicatorId() > 0) {
             this.authenticated = true;
         }
 
-        if (!this.authenticationData.getUsername().equals(STANDARD_EMPTY_STRING)) {
+        if (!(this.authenticationData.getUsername().equals(STANDARD_EMPTY_STRING))) {
             this.hasAuthenticationData = true;
         }
     }
@@ -129,13 +124,8 @@ public class ClientConnection {
     }
 
     public void resetConnection() throws IOException {
-
-        if (this.hasAuthenticationData || this.authenticated) {
-            this.connectionControl.closeConnection();
-            prepareNewConnection();
-        } else {
-            LOGGER.info("Verbindung wurde nicht gestartet.");
-        }
+        this.connectionControl.closeConnection();
+        prepareNewConnection();
     }
 
     public boolean tryClientLogout() {
@@ -173,7 +163,7 @@ public class ClientConnection {
     }
 
     public Packet readPacket() {
-        long timeout = System.currentTimeMillis() + 2000L;
+        long timeout = System.currentTimeMillis() + 2000;
         Packet readPacket = null;
 
         PacketBuffer handlerBoundBuffer = this.bufferManager.getPacketBuffer(
@@ -203,30 +193,17 @@ public class ClientConnection {
             requester.sendRequest(packetCompiler.createRequest(getServerEntity(STANDARD_SERVER_ID),
                     new LoginRequestDTO(this.authenticationData)));
             response = readPacket();
-
-            if (response != null) {
-                final var content = response.getPacketContent();
-
-                if (content instanceof final LoginResponseDTO loginResponse) {
-                    this.authenticated = loginSuccess = true;
-                    this.clientData = loginResponse.getClientData();
-
-                    LOGGER.info("{}-Login successful", this.clientData.getDisplayLabel());
-                } else {
-                    LOGGER.info("{}-Login failed. Antworttyp " + "statt LoginResponseDTO: {}",
-                            this.authenticationData.getUsername(), content.getClass().getSimpleName());
-                    if (content instanceof ErrorDTO errorResponse) {
-                        LOGGER.info(errorResponse.getInformationString());
-                    }
-                }
-            } else {
-                LOGGER.info("{}-Login failed. No response " + "erhalten.",
-                        this.authenticationData.getUsername());
-            }
+            verifyPacketContent(response, LoginResponseDTO.class);
+            final var loginResponse = (LoginResponseDTO) response.getPacketContent();
+            this.authenticated = loginSuccess = true;
+            this.clientData = loginResponse.getClientData();
         } else {
-            LOGGER.info("Login nicht möglich. Daten vorhanden: {} | Bereits eingeloggt: {}.",
-                    this.hasAuthenticationData, this.authenticated);
+            Assertions.fail("Login not possible. Credentials: " + this.hasAuthenticationData + " / authenticated: " + this.authenticated);
         }
         return loginSuccess;
+    }
+
+    public int getServerPort() {
+        return this.serverPort;
     }
 }

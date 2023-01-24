@@ -1,4 +1,3 @@
-
 package de.vsy.server.client_handling.packet_processing.content_processing;
 
 import de.vsy.server.client_handling.data_management.AuthenticationHandlerDataProvider;
@@ -57,7 +56,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
 
                     try {
                         //TODO for debugging purposes -> reconnect race
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }

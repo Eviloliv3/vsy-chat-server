@@ -1,4 +1,3 @@
-
 package de.vsy.server.service.packet_logic.type_processor;
 
 import de.vsy.server.client_handling.data_management.logic.SubscriptionHandler;

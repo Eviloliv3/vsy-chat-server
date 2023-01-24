@@ -147,14 +147,13 @@ public class ChatServer implements ClientServer {
                     "Interrupted while waiting for client pending buffer watcher pool to terminate.");
         }
 
-        this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
-        LOGGER.info("All sockets closed.");
-
         if (this.serverDataModel.getServerConnectionDataManager().getServerConnections(
                 INITIATED).isEmpty()) {
             this.serverPersistentDataManager.getClientStateAccessManager().removeAllClientStates();
             LOGGER.info("Last remaining registered server. Persisted client states will be removed.");
         }
+        this.serverDataModel.getServerConnectionDataManager().closeAllConnections();
+        LOGGER.info("All sockets closed.");
         serverPersistentDataManager.removePersistentAccess();
         LOGGER.info("Persistent data access removed.");
         LOGGER.info("Server shutdown completed.");
@@ -245,7 +244,7 @@ public class ChatServer implements ClientServer {
         try (var ignored = new Socket(host, port)) {
             return listening;
         } catch (final UnknownHostException uhe) {
-            final var errorMessage = "Unused combination host/port: " + host + "/" + port;
+            final var errorMessage = "Unknown combination host/port: " + host + "/" + port;
             throw new IllegalArgumentException(errorMessage, uhe);
         } catch (final IOException ioe) {
             LOGGER.info("Combination host/port: {}/{} usable.", host, port);

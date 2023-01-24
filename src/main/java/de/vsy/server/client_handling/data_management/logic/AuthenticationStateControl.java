@@ -61,6 +61,7 @@ public interface AuthenticationStateControl extends ClientStateControl {
     /**
      * Uses deregister() to remove the current client data and sets the account
      * deletion state for the currently authenticated client.
+     *
      * @param isDeleted the new deletion state
      */
     void setAccountDeletionState(boolean isDeleted);

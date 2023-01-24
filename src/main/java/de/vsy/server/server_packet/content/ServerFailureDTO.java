@@ -1,4 +1,3 @@
-
 package de.vsy.server.server_packet.content;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -32,6 +31,6 @@ public class ServerFailureDTO extends ServerPacketContentImpl {
 
     @Override
     public String toString() {
-        return super.toString() + "\"serverFailureData\": {}";
+        return "\"serverFailureDTO\": { " + super.toString() + ", \"failedServer\": " + this.failedServerId + " }";
     }
 }

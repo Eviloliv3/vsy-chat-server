@@ -1,4 +1,3 @@
-
 package de.vsy.server.data;
 
 import java.util.ArrayList;

@@ -1,4 +1,3 @@
-
 package de.vsy.server.service;
 
 import de.vsy.shared_module.packet_management.PacketBuffer;

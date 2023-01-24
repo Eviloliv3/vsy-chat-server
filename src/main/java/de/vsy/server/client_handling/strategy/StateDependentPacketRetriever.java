@@ -71,7 +71,7 @@ public class StateDependentPacketRetriever {
 
     private Consumer<Packet> getClientBoundStrategy() {
         final var clientBuffer = this.packetBuffers.getPacketBuffer(OUTSIDE_BOUND);
-        return clientBuffer::prependPacket;
+        return clientBuffer::appendPacket;
     }
 
     private Consumer<Packet> getProcessingPacketStrategy() {

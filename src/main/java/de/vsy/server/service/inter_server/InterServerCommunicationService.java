@@ -1,10 +1,11 @@
-
 package de.vsy.server.service.inter_server;
 
+import de.vsy.server.client_handling.data_management.PacketRetainer;
 import de.vsy.server.data.SocketConnectionDataManager;
 import de.vsy.server.data.access.ServerCommunicationServiceDataProvider;
 import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
+import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.content.InterServerCommSyncDTO;
 import de.vsy.server.server_packet.content.ServerPacketContentImpl;
 import de.vsy.server.server_packet.content.builder.ServerFailureContentBuilder;
@@ -36,7 +37,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
+import static de.vsy.shared_module.packet_management.ThreadPacketBufferLabel.HANDLER_BOUND;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
+import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 
 /**
  * Service handling communication between ChatServers. Initiates server synchronization on new
@@ -63,7 +66,7 @@ public class InterServerCommunicationService extends ServiceBase {
     private ConnectionThreadControl connectionControl;
     private PacketDispatcher packetDispatcher;
     private RemoteServerConnectionData remoteConnectionData;
-    private ProcessingInterruptProvider localInterruptor;
+    private ProcessingInterruptProvider localInterrupter;
     private PacketCheck validator;
 
     /**
@@ -94,7 +97,7 @@ public class InterServerCommunicationService extends ServiceBase {
         }
         this.validator = new SimplePacketChecker(
                 ServerPermittedCategoryContentAssociationProvider.createRegularServerPacketContentValidator());
-        this.localInterruptor = this::interruptionConditionNotMet;
+        this.localInterrupter = this::interruptionConditionNotMet;
 
         setupThreadPacketBufferManager();
         this.connectionControl = new ConnectionThreadControl(remoteConnectionData.getConnectionSocket(),
@@ -122,11 +125,17 @@ public class InterServerCommunicationService extends ServiceBase {
         synchronizeInterServerCommService();
         makeServiceAvailable();
         waitForServerSynchronization();
-        continuouslyProcessInput(this.localInterruptor);
+        continuouslyProcessInput(this.localInterrupter);
+        handleShutdown();
+    }
 
-        if (!this.connectionControl.connectionIsLive() && !Thread.currentThread().isInterrupted()) {
+    private void handleShutdown() {
+        final var interrupted = Thread.interrupted();
+
+        if (!(this.connectionControl.connectionIsLive()) && !(interrupted)) {
             setupSubstituteService();
         }
+        emptyInputBuffer(interrupted);
     }
 
     @Override
@@ -153,7 +162,7 @@ public class InterServerCommunicationService extends ServiceBase {
     private void synchronizeInterServerCommService() {
         var synchronizationPacket = createInterServerSyncPacket();
         final var inputBuffer = this.threadBuffers.getPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
+                HANDLER_BOUND);
 
         this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND)
                 .appendPacket(synchronizationPacket);
@@ -223,8 +232,7 @@ public class InterServerCommunicationService extends ServiceBase {
     private void continuouslyProcessInput(final ProcessingInterruptProvider interrupt) {
         LOGGER.info("Processing incoming packets.");
         var reinterrupt = false;
-        final var inputBuffer = this.threadBuffers.getPacketBuffer(
-                ThreadPacketBufferLabel.HANDLER_BOUND);
+        final var inputBuffer = this.threadBuffers.getPacketBuffer(HANDLER_BOUND);
 
         while (interrupt.conditionNotMet()) {
 
@@ -247,13 +255,9 @@ public class InterServerCommunicationService extends ServiceBase {
     }
 
     private void setupSubstituteService() {
-        Thread substituteThread;
-
         relaisConnectedServerFailure();
-        emptyInputBuffer();
-        substituteThread = new Thread(new InterServerSubstituteService(this.serviceDataAccess,
-                this.remoteConnectionData,
-                this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND)));
+        Thread substituteThread = new Thread(new InterServerSubstituteService(this.serviceDataAccess,
+                this.remoteConnectionData, this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND)));
         substituteThread.start();
     }
 
@@ -326,11 +330,42 @@ public class InterServerCommunicationService extends ServiceBase {
         return true;
     }
 
-    private void emptyInputBuffer() {
-        final ProcessingInterruptProvider interrupt = () -> this.threadBuffers
-                .getPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND).containsPackets();
+    private void emptyInputBuffer(final boolean interrupted) {
+        if (!(interrupted)) {
+            final ProcessingInterruptProvider interrupt = () -> this.threadBuffers
+                    .getPacketBuffer(HANDLER_BOUND).containsPackets();
+            continuouslyProcessInput(interrupt);
+        } else {
+            final var remainingPackets = this.threadBuffers.getPacketBuffer(HANDLER_BOUND).freezeBuffer();
 
-        continuouslyProcessInput(interrupt);
+            for (final var nextPacket : remainingPackets) {
+                Packet result;
+                final var validationString = this.validator.checkPacket(nextPacket);
+
+                if (validationString.isPresent()) {
+                    final var errorMessage = "Packet could not be delivered. ";
+                    final var processingException = new PacketProcessingException(
+                            errorMessage + validationString.get());
+                    result = this.pheProcessor.processException(processingException, nextPacket);
+                } else {
+                    final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
+                    serverPacketContent.setReadingConnectionThread(super.getServiceId());
+                    result = PacketRetainer.retainIfResponse(nextPacket);
+                }
+
+                if (result.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
+                    var clients = this.serviceDataAccess.getClientSubscriptionManager().getThreads(CHAT);
+                    clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
+                    PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
+                } else if (result != null) {
+                    result = PacketRetainer.retainIfResponse(result);
+
+                    if (result != null) {
+                        LOGGER.error("Packet discarded: {}", result);
+                    }
+                }
+            }
+        }
     }
 
     private void setupThreadPacketBufferManager() {
@@ -339,7 +374,7 @@ public class InterServerCommunicationService extends ServiceBase {
         bufferToRegister = this.serviceDataAccess.getServicePacketBufferManager()
                 .getRandomBuffer(Service.TYPE.REQUEST_ROUTER);
         this.threadBuffers.setPacketBuffer(ThreadPacketBufferLabel.SERVER_BOUND, bufferToRegister);
-        this.threadBuffers.registerPacketBuffer(ThreadPacketBufferLabel.HANDLER_BOUND);
+        this.threadBuffers.registerPacketBuffer(HANDLER_BOUND);
         bufferToRegister = new RemotePacketBuffer(
                 this.serverConnectionDataManager.getLocalServerConnectionData(),
                 this.remoteConnectionData);

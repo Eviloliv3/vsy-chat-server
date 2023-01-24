@@ -1,17 +1,12 @@
-
 package de.vsy.chat.server.server_test_helpers;
 
-import de.vsy.shared_module.packet_management.OutputBuffer;
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
 import de.vsy.shared_transmission.packet.Packet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
 
 /**
  * Creation tool for simple Packetcreation and transmission.
@@ -39,21 +34,25 @@ public class RequestPacketCreator {
      * @param output the output
      */
     public void sendRequest(final Packet output) {
-        outputHandle.appendPacket(output);
         CountDownLatch latch = new CountDownLatch(1);
-
-        new Timer().scheduleAtFixedRate(new TimerTask(){
+        var timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if(!(outputHandle.containsPackets())){
+                if (!(outputHandle.containsPackets())) {
                     latch.countDown();
                 }
             }
         }, 5, 5);
+        outputHandle.appendPacket(output);
+
         try {
             latch.await();
-        } catch (InterruptedException ie){
+        } catch (InterruptedException ie) {
             Assertions.fail("Interrupted while sending " + output);
+        } finally {
+            timer.cancel();
+            timer.purge();
         }
     }
 

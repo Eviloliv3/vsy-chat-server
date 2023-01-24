@@ -30,15 +30,17 @@ public abstract class ResultingPacketCreator {
 
     /**
      * Creates a Packet directed at a specified recipient.
-     * @param processedContent  the request PacketContent
-     * @param recipient         the custom recipient
-     * @return                  a request Packet
+     *
+     * @param processedContent the request PacketContent
+     * @param recipient        the custom recipient
+     * @return a request Packet
      */
     public abstract Packet createRequest(PacketContent processedContent,
                                          final CommunicationEndpoint recipient);
 
     /**
      * Creates a Packet that is directed at the sender of the original packet.
+     *
      * @param processedContent the response PacketContent
      * @return a response Packet
      */
@@ -46,7 +48,8 @@ public abstract class ResultingPacketCreator {
 
     /**
      * Creates a SimpleInternalContentWrapper containing the specified PacketContent.
-     * @param processedContent  the PacketContent to wrap
+     *
+     * @param processedContent the PacketContent to wrap
      * @return SimpleInternalContentWrapper containing the specified PacketContent
      */
     protected PacketContent wrapContent(PacketContent processedContent) {

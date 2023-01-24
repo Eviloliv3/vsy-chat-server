@@ -140,12 +140,12 @@ public class PendingClientBufferWatcher extends ThreadContextRunnable {
             Map<String, Packet> remainingPackets = new LinkedHashMap<>();
             var allPackets = this.pendingPacketAccessor.readPendingPackets(pendingDirection);
 
-            if(!allPackets.isEmpty()){
+            if (!allPackets.isEmpty()) {
 
-                for(final var currentPacketEntry : allPackets.entrySet()){
+                for (final var currentPacketEntry : allPackets.entrySet()) {
                     final var currentPacket = currentPacketEntry.getValue();
 
-                    if(!(VolatilePacketIdentifier.checkPacketVolatility(currentPacket))){
+                    if (!(VolatilePacketIdentifier.checkPacketVolatility(currentPacket))) {
                         remainingPackets.put(currentPacketEntry.getKey(), currentPacket);
                     }
                 }

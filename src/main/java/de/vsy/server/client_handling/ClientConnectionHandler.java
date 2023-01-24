@@ -1,4 +1,3 @@
-
 package de.vsy.server.client_handling;
 
 import de.vsy.server.client_handling.data_management.HandlerLocalDataManager;

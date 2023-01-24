@@ -1,4 +1,3 @@
-
 package de.vsy.server.service.packet_logic.processor;
 
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;

@@ -50,7 +50,6 @@ public class TestLogoutBehaviour extends ServerTestBase {
         clientOne.setClientData(TestClientDataProvider.FRANK_1_AUTH, null);
         Assertions.assertTrue(clientOne.tryClientLogin(), "Login failed.");
         Assertions.assertTrue(clientOne.tryClientLogout(), "Logout failed.");
-        clientOne.resetConnection();
         LOGGER.info("Test: logout -> success -- terminated");
     }
 }

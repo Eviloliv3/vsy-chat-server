@@ -5,13 +5,18 @@ import de.vsy.shared_module.exception_processing.PacketHandlingExceptionProcesso
 import de.vsy.shared_module.packet_exception.handler.BasicAnswerabilityCheck;
 
 public class ServerPacketHandlingExceptionCreator extends PacketHandlingExceptionCreator {
+    private static PacketHandlingExceptionProcessor SINGLE_PROCESSOR;
+
+    static {
+        SINGLE_PROCESSOR = new PacketHandlingExceptionProcessor(BasicAnswerabilityCheck::checkPacketAnswerable,
+                new ServiceResponseCreator());
+    }
 
     private ServerPacketHandlingExceptionCreator() {
         super();
     }
 
     public static PacketHandlingExceptionProcessor getServiceExceptionProcessor() {
-        return new PacketHandlingExceptionProcessor(BasicAnswerabilityCheck::checkPacketAnswerable,
-                new ServiceResponseCreator());
+        return SINGLE_PROCESSOR;
     }
 }

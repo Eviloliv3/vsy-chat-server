@@ -28,4 +28,5 @@ public class ServerFailureContentBuilder extends
     public int getFailedServerId() {
         return this.failedServerId;
     }
+
 }

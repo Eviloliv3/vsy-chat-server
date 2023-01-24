@@ -20,9 +20,9 @@ public class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
         this.clientStateAccessor = clientStateAccess;
         this.reconnectionHandler = reconnectionHandler;
 
-        if(pendingClientIds == null || pendingClientIds.isEmpty()){
+        if (pendingClientIds == null || pendingClientIds.isEmpty()) {
             reconnectionHandler.stopReconnectingClients();
-        }else{
+        } else {
             this.pendingClientIds = new LinkedList<>(pendingClientIds);
         }
     }
@@ -41,9 +41,9 @@ public class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
             }
         } while (!(this.pendingClientIds.isEmpty()));
 
-        if(stillPendingClientIds.isEmpty()){
+        if (stillPendingClientIds.isEmpty()) {
             this.reconnectionHandler.stopReconnectingClients();
-        }else {
+        } else {
             this.pendingClientIds = stillPendingClientIds;
         }
     }

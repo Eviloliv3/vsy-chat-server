@@ -48,7 +48,7 @@ public class ClientHandlerPacketCreator extends ResultingPacketCreator {
         boolean toWrap = true;
         final boolean recipientIsClient = recipient.getEntity().equals(CLIENT);
 
-        if(recipientIsClient){
+        if (recipientIsClient) {
             toWrap = !(localClientIsRecipient(recipient.getEntityId()));
         }
 
