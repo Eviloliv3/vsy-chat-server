@@ -7,6 +7,7 @@ import de.vsy.server.client_handling.packet_processing.processor.ClientPacketPro
 import de.vsy.server.client_handling.packet_processing.processor.PacketContextCheckLink;
 import de.vsy.server.client_handling.packet_processing.processor.PacketProcessorManager;
 import de.vsy.server.client_handling.packet_processing.processor.ResultingPacketCreator;
+import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.server.server_packet.dispatching.ClientPacketDispatcher;
 import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler;
 import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
@@ -22,6 +23,8 @@ import de.vsy.shared_module.packet_validation.SemanticPacketValidator;
 import de.vsy.shared_module.packet_validation.SimplePacketChecker;
 import de.vsy.shared_module.packet_validation.content_validation.ClientPacketSemanticsValidationCreator;
 import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.PacketBuilder;
+import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -120,6 +123,10 @@ public class RegularPacketHandlingStrategy implements PacketHandlingStrategy {
                 try {
                     this.processor.processPacket(input);
                 } catch (final PacketHandlingException phe) {
+                    if(input.getPacketContent() instanceof SimpleInternalContentWrapper wrapper){
+                        var content = wrapper.getWrappedContent();
+                        input = new PacketBuilder().withContent(content).withProperties(input.getPacketProperties()).withRequestPacket(input.getRequestPacketHash()).build();
+                    }
                     final var errorContent = new ErrorDTO(phe.getMessage(), input);
                     this.contentHandler.setError(errorContent);
                 }

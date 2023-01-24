@@ -2,9 +2,11 @@ package de.vsy.server.client_handling.strategy;
 
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.client_data.PendingType;
+import de.vsy.server.server_packet.content.SimpleInternalContentWrapper;
 import de.vsy.shared_module.packet_creation.PacketCompiler;
 import de.vsy.shared_module.packet_management.ThreadPacketBufferManager;
 import de.vsy.shared_transmission.packet.Packet;
+import de.vsy.shared_transmission.packet.PacketBuilder;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
