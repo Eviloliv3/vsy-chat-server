@@ -339,30 +339,35 @@ public class InterServerCommunicationService extends ServiceBase {
             final var remainingPackets = this.threadBuffers.getPacketBuffer(HANDLER_BOUND).freezeBuffer();
 
             for (final var nextPacket : remainingPackets) {
-                Packet result;
+                Packet result = null;
+                String errorMessage = "Packet could not be delivered. ";
+                PacketProcessingException processingException = null;
                 final var validationString = this.validator.checkPacket(nextPacket);
 
-                if (validationString.isPresent()) {
-                    final var errorMessage = "Packet could not be delivered. ";
-                    final var processingException = new PacketProcessingException(
-                            errorMessage + validationString.get());
-                    result = this.pheProcessor.processException(processingException, nextPacket);
-                } else {
-                    final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
-                    serverPacketContent.setReadingConnectionThread(super.getServiceId());
-                    result = PacketRetainer.retainIfResponse(nextPacket);
+                if (validationString.isEmpty()) {
+                    if (nextPacket.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
+                        var clients = this.serviceDataAccess.getClientSubscriptionManager().getThreads(CHAT);
+                        clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
+                        PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
+                    }else {
+                        final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
+                        serverPacketContent.setReadingConnectionThread(super.getServiceId());
+                        result = PacketRetainer.retainIfResponse(nextPacket);
+                    }
                 }
 
-                if (result.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
-                    var clients = this.serviceDataAccess.getClientSubscriptionManager().getThreads(CHAT);
-                    clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
-                    PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
-                } else if (result != null) {
-                    result = PacketRetainer.retainIfResponse(result);
+                if(validationString.isPresent()){
+                    errorMessage = errorMessage + validationString.get();
+                    processingException = new PacketProcessingException(errorMessage);
+                }else if(result != null){
+                    processingException = new PacketProcessingException(errorMessage);
+                }
 
-                    if (result != null) {
-                        LOGGER.error("Packet discarded: {}", result);
-                    }
+                if(processingException != null){
+                    result = this.pheProcessor.processException(processingException, nextPacket);
+                    PacketRetainer.retainIfResponse(result);
+                }else{
+                    LOGGER.error("Packet discarded: {}", nextPacket);
                 }
             }
         }
