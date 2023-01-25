@@ -1,4 +1,4 @@
-package de.vsy.chat.server.single_server_test.combined;
+package de.vsy.chat.server.two_server_test.combined;
 
 import de.vsy.chat.server.raw_server_test.AuthenticationHelper;
 import de.vsy.chat.server.raw_server_test.StatusChangeHelper;
