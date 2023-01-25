@@ -255,12 +255,14 @@ public class SynchronousFileManipulator {
         for (final var filePath : this.filePaths) {
             final var lock = this.globalLocks.get(filePath);
 
-            try {
-                lock.release();
-            } catch (IOException e) {
-                LOGGER.error("Could not release FileLock for path: {}", filePath);
+            if(lock != null) {
+                try {
+                    lock.release();
+                } catch (IOException e) {
+                    LOGGER.error("Could not release FileLock for path: {}", filePath);
+                }
+                this.globalLocks.remove(filePath);
             }
-            this.globalLocks.remove(filePath);
         }
     }
 
