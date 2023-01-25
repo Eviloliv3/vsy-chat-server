@@ -346,7 +346,6 @@ public class SynchronousFileManipulator {
             Thread.currentThread().interrupt();
             LOGGER.info("File could not found: {}\n{}", lastChangedFile, asList(ex.getStackTrace()));
         } catch (final IOException ex) {
-            Thread.currentThread().interrupt();
             LOGGER.info("Reading from file failed: {}\n{}", lastChangedFile,
                     asList(ex.getStackTrace()));
         }
@@ -407,10 +406,8 @@ public class SynchronousFileManipulator {
                 try {
                     Files.writeString(currentPath, jsonString);
                 } catch (final IOException e) {
-                    Thread.currentThread().interrupt();
-                    LOGGER.info("Could not write to {}." + "\n{}", currentPath,
+                    LOGGER.error("Could not write to {}." + "\n{}", currentPath,
                             asList(e.getStackTrace()));
-                    return !dataWritten;
                 }
             }
             return dataWritten;
