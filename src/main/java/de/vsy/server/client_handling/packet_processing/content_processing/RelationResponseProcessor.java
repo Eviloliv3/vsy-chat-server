@@ -46,13 +46,11 @@ public class RelationResponseProcessor implements ContentProcessor<ContactRelati
         if (isFriendshipRequest && extractedContent.getDecision()) {
             RelationManipulator.addContact(requestData.getContactType(), contactId,
                     this.contactListAccess);
-            this.appendStatusMessage(contactId, true);
         } else {
             if (iAmOriginator && !isFriendshipRequest) {
                 RelationManipulator.removeContact(requestData.getContactType(), contactId,
                         this.contactListAccess,
                         this.messageHistoryAccess);
-                this.appendStatusMessage(contactId, false);
             }
         }
         this.contentHandler.addRequest(extractedContent);
@@ -98,21 +96,6 @@ public class RelationResponseProcessor implements ContentProcessor<ContactRelati
         final var clientId = this.threadDataAccess.getLocalClientDataProvider().getClientId();
         final var originatorId = responseData.getRequestData().getOriginatorId();
         return clientId == originatorId;
-    }
-
-    private void appendStatusMessage(final int contactId, boolean contactAdded) {
-        final boolean contactToAdd;
-        final PacketContent contactStatusContent;
-        final var contactData = threadDataAccess.getContactToActiveClientMapper()
-                .getContactData(contactId);
-        final var contactDTO = ConvertCommDataToDTO.convertFrom(contactData);
-
-        contactToAdd = !checkContactOnline(contactId) && contactAdded;
-        contactStatusContent = new ContactStatusChangeDTO(EligibleContactEntity.CLIENT, contactToAdd,
-                contactDTO,
-                Collections.emptyList());
-
-        this.contentHandler.addResponse(contactStatusContent);
     }
 
     private boolean checkContactOnline(final int contactId) {
