@@ -76,8 +76,8 @@ public class InterServerSocketConnectionEstablisher {
 
             try {
                 final var remoteServer = new Socket(hostname, testPort);
-                this.serverConnectionDataManager.addServerConnection(UNINITIATED,
-                        RemoteServerConnectionData.valueOf(remoteServer.getLocalPort(), false, remoteServer));
+                final var remoteServerConnection = RemoteServerConnectionData.valueOf(remoteServer.getLocalPort(), false, remoteServer);
+                this.serverConnectionDataManager.addServerConnection(UNINITIATED, remoteServerConnection);
                 LOGGER.info("Remote connection established: {}:{}.", hostname, testPort);
             } catch (IOException e) {
                 LOGGER.warn("Remote connection to {}:{} failed", hostname, testPort);

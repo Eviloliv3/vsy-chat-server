@@ -150,9 +150,8 @@ public class InterServerCommunicationService extends ServiceBase {
             }
         }
         this.serverConnectionDataManager.removeServerConnection(this.remoteConnectionData);
-
         this.serviceDataAccess.getServicePacketBufferManager()
-                .deregisterBuffer(getServiceType(), getServiceId(),
+                .deregisterBuffer(getServiceType(), remoteConnectionData.getServerId(),
                         this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
     }
 

@@ -42,16 +42,19 @@ public class ServerFailureRelated {
     List<ClientConnection> connections;
 
     public ServerFailureRelated(){
-        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, "test");
-        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "serverFailureRelated");
+
     }
 
+    @BeforeEach
 void initConnectionList(){
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, "test");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "serverFailureRelated");
     connections = new LinkedList<>();
 }
 
 @AfterEach
 void clearConnections() throws InterruptedException {
+        System.out.println("Removing all connections.");
         for(final var connection : connections){
             AuthenticationHelper.logoutClient(connection);
         }
@@ -117,7 +120,6 @@ void clearConnections() throws InterruptedException {
         final var responseMessage = (TextMessageDTO) responsePacket.getPacketContent();
         Assertions.assertEquals(message.getMessage(), receivedMessage.getMessage(), responseMessage.getMessage());
         LOGGER.info("Test: send message -> success -- terminated");
-        clearConnections();
     }
     
     @Test
