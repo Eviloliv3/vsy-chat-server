@@ -7,7 +7,6 @@ import de.vsy.server.data.socketConnection.RemoteServerConnectionData;
 import de.vsy.server.exception_processing.ServerPacketHandlingExceptionCreator;
 import de.vsy.server.persistent_data.client_data.PendingPacketDAO;
 import de.vsy.server.persistent_data.server_data.temporal.LiveClientStateDAO;
-import de.vsy.server.server_packet.content.ExtendedStatusSyncDTO;
 import de.vsy.server.server_packet.packet_validation.ServerPermittedCategoryContentAssociationProvider;
 import de.vsy.server.service.Service;
 import de.vsy.server.service.ServicePacketBufferManager;
@@ -29,7 +28,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static de.vsy.shared_transmission.packet.property.packet_category.PacketCategory.CHAT;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 import static java.lang.Thread.interrupted;
 
@@ -96,12 +94,14 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
             }
             this.reconnectionStateWatcher.cancel();
             this.reconnectionStateWatcher.purge();
-
-            if (!(this.allClientsReconnected)) {
-                this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
-                clearAndRemoveBuffer();
-            }
         }
+
+        if (!(this.allClientsReconnected)) {
+            this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
+            clearBuffer();
+        }
+        this.serviceBuffers.deregisterBuffer(Service.TYPE.SERVER_TRANSFER, remoteServerConnection.getServerId(),
+                this.interServerBuffer);
         LOGGER.info("{} stopped.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
     }
 
@@ -119,8 +119,6 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         if (!(pendingClientIds.isEmpty())) {
             preparePendingClients(pendingClientIds);
 
-            this.serviceBuffers.registerBuffer(Service.TYPE.SERVER_TRANSFER, serviceId,
-                    this.interServerBuffer);
             this.requestBuffer = this.serviceBuffers.getRandomBuffer(Service.TYPE.REQUEST_ROUTER);
             this.processor = new PacketSyntaxCheckLink(
                     new InterServerSubstitutePacketProcessorLink(this.clientPersistenceAccessManagers,
@@ -167,10 +165,8 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
     /**
      * Clear and remove buffer.
      */
-    private void clearAndRemoveBuffer() {
+    private void clearBuffer() {
         var reinterrupt = interrupted();
-        this.serviceBuffers.deregisterBuffer(Service.TYPE.SERVER_TRANSFER, serviceId,
-                this.interServerBuffer);
         final var remainingPackets = this.interServerBuffer.freezeBuffer();
 
         for (final var packet : remainingPackets) {

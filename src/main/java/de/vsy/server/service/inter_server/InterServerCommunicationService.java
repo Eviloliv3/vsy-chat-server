@@ -134,6 +134,10 @@ public class InterServerCommunicationService extends ServiceBase {
 
         if (!(this.connectionControl.connectionIsLive()) && !(interrupted)) {
             setupSubstituteService();
+        }else{
+            this.serviceDataAccess.getServicePacketBufferManager()
+                    .deregisterBuffer(getServiceType(), remoteConnectionData.getServerId(),
+                            this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
         }
         emptyInputBuffer(interrupted);
     }
@@ -150,9 +154,6 @@ public class InterServerCommunicationService extends ServiceBase {
             }
         }
         this.serverConnectionDataManager.removeServerConnection(this.remoteConnectionData);
-        this.serviceDataAccess.getServicePacketBufferManager()
-                .deregisterBuffer(getServiceType(), remoteConnectionData.getServerId(),
-                        this.threadBuffers.getPacketBuffer(ThreadPacketBufferLabel.OUTSIDE_BOUND));
     }
 
     /**
