@@ -2,6 +2,7 @@
 *.class
 
 # Log files
+/logs
 *.log
 
 # Package Files
@@ -9,3 +10,7 @@
 *.zip
 *.tar.gz
 .attach_pid*
+
+# Extra Files
+*.png
+*.uxf
