@@ -94,14 +94,17 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
             }
             this.reconnectionStateWatcher.cancel();
             this.reconnectionStateWatcher.purge();
-        }
 
-        if (!(this.allClientsReconnected)) {
-            this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
-            clearBuffer();
+            if (!(this.allClientsReconnected)) {
+                this.serviceBuffers.deregisterBuffer(Service.TYPE.SERVER_TRANSFER, remoteServerConnection.getServerId(),
+                        this.interServerBuffer);
+                this.clientDisconnector.disconnectRemainingClients(this.clientPersistenceAccessManagers);
+                clearBuffer();
+            }
+        }else{
+            this.serviceBuffers.deregisterBuffer(Service.TYPE.SERVER_TRANSFER, remoteServerConnection.getServerId(),
+                    this.interServerBuffer);
         }
-        this.serviceBuffers.deregisterBuffer(Service.TYPE.SERVER_TRANSFER, remoteServerConnection.getServerId(),
-                this.interServerBuffer);
         LOGGER.info("{} stopped.", ThreadContext.get(LOG_FILE_CONTEXT_KEY));
     }
 
