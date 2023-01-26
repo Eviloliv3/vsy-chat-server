@@ -3,11 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-package de.vsy.chat.server.two_server_test.relation;
+package de.vsy.chat.server.two_server_test.chat;
 
 import de.vsy.chat.server.raw_server_test.ServerPortProvider;
 import de.vsy.chat.server.raw_server_test.TestClientDataProvider;
-import de.vsy.chat.server.raw_server_test.relation.TestClientRelationChanges;
+import de.vsy.chat.server.raw_server_test.chat.TestClientMessage;
 import org.apache.logging.log4j.ThreadContext;
 
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
@@ -15,10 +15,10 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_
 /**
  *
  */
-public class ClientRelationChange extends TestClientRelationChanges {
+public class ClientMessageBehaviour extends TestClientMessage {
 
-    public ClientRelationChange() {
-        super(ServerPortProvider.DUAL_SERVER_PORT_PROVIDER, TestClientDataProvider.RELA_CLIENT_LIST);
-        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerRelation");
+    public ClientMessageBehaviour() {
+        super(ServerPortProvider.DUAL_SERVER_PORT_PROVIDER, TestClientDataProvider.CHAT_CLIENT_LIST);
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerMessage");
     }
 }

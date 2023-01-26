@@ -52,8 +52,8 @@ public class TestChatRelated extends ServerTestBase {
         clientTwo = getUnusedClientConnection();
         AuthenticationHelper.loginSpecificClient(clientTwo, MARKUS_1_AUTH);
 
-        StatusChangeHelper.changeStatus(clientOne, true);
-        StatusChangeHelper.changeStatus(clientTwo, true);
+        StatusChangeHelper.changeMessengerStatus(clientOne, true);
+        StatusChangeHelper.changeMessengerStatus(clientTwo, true);
         Packet contactStatus = clientOne.readPacket();
         verifyPacketContent(contactStatus, ContactStatusChangeDTO.class);
 

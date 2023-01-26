@@ -5,10 +5,7 @@ import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,22 +77,10 @@ public class ServerTestBase {
     protected void resetConnections() {
 
         for (var currentConnection : this.clientConnectionList) {
-            logoutClient(currentConnection);
+            AuthenticationHelper.logoutClient(currentConnection);
         }
         this.activeClientAuthenticationData.clear();
         this.clientConnectionList.clear();
-    }
-
-    protected void logoutClient(final ClientConnection toLogout) {
-        final var clientName = toLogout.getCommunicatorData().getDisplayLabel();
-        LOGGER.info("{}-Logoutversuch gestartet.", clientName);
-        final boolean logoutSuccess;
-
-        if (toLogout.tryClientLogout()) {
-            LOGGER.info("{}-Logoutversuch successful.", clientName);
-        }
-        LOGGER.info("{}-Verbindung successful terminated.", clientName);
-        this.activeClientAuthenticationData.remove(toLogout.getAuthenticationData());
     }
 
     /**
@@ -114,7 +99,7 @@ public class ServerTestBase {
         if (clientAuthenticationData != null) {
             connection = loginNextClient(clientAuthenticationData);
         } else {
-            LOGGER.error("Login failed. No valid data found.");
+            Assertions.fail("Login failed. No valid data found.");
         }
         return connection;
     }
@@ -130,22 +115,19 @@ public class ServerTestBase {
     }
 
     protected ClientConnection loginNextClient(AuthenticationDTO clientAuthenticationData) {
-        if (clientAuthenticationData == null) {
-            throw new IllegalArgumentException("Keine Authentifizierungsdaten " + "erstellt.");
-        }
-        LOGGER.info("Login attempt started.");
-        final var clientConnection = this.getUnusedClientConnection();
+        LOGGER.info("Login attempt initiated.");
+        var clientConnection = this.getUnusedClientConnection();
 
-        if (clientConnection != null) {
-            clientConnection.setClientData(clientAuthenticationData, null);
-            if (clientConnection.tryClientLogin()) {
-                this.activeClientAuthenticationData.add(clientAuthenticationData);
-            } else {
-                LOGGER.error("Login failed.");
-            }
-        } else {
-            LOGGER.error("Login failed. No usable connection.");
+        if (clientConnection == null) {
+            Assertions.fail("Login failed. No usable connection -> " + clientAuthenticationData);
         }
+        clientConnection = AuthenticationHelper.loginSpecificClient(clientConnection, clientAuthenticationData);
+
+        if (clientConnection == null) {
+            Assertions.fail("Login failed for: " + clientAuthenticationData);
+        }
+        this.activeClientAuthenticationData.add(clientAuthenticationData);
+        LOGGER.info("Login attempt successful.");
         return clientConnection;
     }
 

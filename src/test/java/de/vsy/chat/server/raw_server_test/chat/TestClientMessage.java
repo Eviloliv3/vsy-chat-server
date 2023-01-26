@@ -36,7 +36,7 @@ public class TestClientMessage extends ServerTestBase {
         super.addConnectionNextServer();
         clientTwo = super.loginNextClient();
 
-        StatusChangeHelper.changeStatus(clientOne, true);
+        StatusChangeHelper.changeMessengerStatus(clientOne, true);
 
         final var inactiveClientId = clientTwo.getCommunicatorData().getCommunicatorId();
 
@@ -64,8 +64,8 @@ public class TestClientMessage extends ServerTestBase {
         Assertions.assertNotNull(clientOne);
         Assertions.assertNotNull(clientTwo);
 
-        StatusChangeHelper.changeStatus(clientOne, true);
-        StatusChangeHelper.changeStatus(clientTwo, true);
+        StatusChangeHelper.changeMessengerStatus(clientOne, true);
+        StatusChangeHelper.changeMessengerStatus(clientTwo, true);
 
         noContactId = clientTwo.getCommunicatorData().getCommunicatorId();
 
@@ -90,8 +90,8 @@ public class TestClientMessage extends ServerTestBase {
         clientTwo = super.getUnusedClientConnection();
         AuthenticationHelper.loginSpecificClient(clientTwo, MARKUS_1_AUTH);
 
-        StatusChangeHelper.changeStatus(clientOne, true);
-        StatusChangeHelper.changeStatus(clientTwo, true);
+        StatusChangeHelper.changeMessengerStatus(clientOne, true);
+        StatusChangeHelper.changeMessengerStatus(clientTwo, true);
         Packet contactStatus = clientOne.readPacket();
 
         contactId = clientTwo.getCommunicatorData().getCommunicatorId();

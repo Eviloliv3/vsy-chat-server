@@ -174,27 +174,20 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         final var remainingPackets = this.interServerBuffer.freezeBuffer();
 
         for (final var packet : remainingPackets) {
+            Packet result = PacketRetainer.retainIfResponse(packet);
 
-            if (packet.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
-                var clients = this.clientSubscriptions.getThreads(CHAT);
-                clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
-                PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
-            } else {
-                Packet result = PacketRetainer.retainIfResponse(packet);
+            if (result != null) {
+                var pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
+                var phe = new PacketProcessingException("Packet could not be delivered.");
+                var errorPacket = pheProcessor.processException(phe, result);
 
-                if (result != null) {
-                    var pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
-                    var phe = new PacketProcessingException("Packet could not be delivered.");
-                    var errorPacket = pheProcessor.processException(phe, result);
+                if (!(reinterrupt)) {
+                    this.requestBuffer.appendPacket(errorPacket);
+                } else {
+                    result = PacketRetainer.retainIfResponse(errorPacket);
 
-                    if (!(reinterrupt)) {
-                        this.requestBuffer.appendPacket(errorPacket);
-                    } else {
-                        result = PacketRetainer.retainIfResponse(errorPacket);
-
-                        if (result != null) {
-                            LOGGER.error("Packet discarded: {}", result);
-                        }
+                    if (result != null) {
+                        LOGGER.error("Packet discarded: {}", result);
                     }
                 }
             }

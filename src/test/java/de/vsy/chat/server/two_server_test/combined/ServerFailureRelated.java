@@ -11,27 +11,57 @@ import de.vsy.shared_transmission.packet.content.authentication.ReconnectRequest
 import de.vsy.shared_transmission.packet.content.authentication.ReconnectResponseDTO;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_transmission.packet.content.relation.EligibleContactEntity;
+import de.vsy.shared_transmission.packet.content.status.ClientService;
+import de.vsy.shared_transmission.packet.content.status.ClientStatusChangeDTO;
 import de.vsy.shared_transmission.packet.content.status.ContactStatusChangeDTO;
+import de.vsy.shared_transmission.packet.content.status.MessengerSetupDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.apache.logging.log4j.ThreadContext;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.FRANK_1_AUTH;
 import static de.vsy.chat.server.raw_server_test.TestClientDataProvider.MARKUS_1_AUTH;
 import static de.vsy.chat.server.server_test_helpers.TestPacketVerifier.verifyPacketContent;
+import static de.vsy.chat.server.server_test_helpers.TestResponseSingleClient.checkResponse;
+import static de.vsy.shared_transmission.packet.content.status.ClientService.MESSENGER;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
 
-public class ServerFailureChatRelated {
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class ServerFailureRelated {
     Logger LOGGER = LogManager.getLogger();
+    List<ClientConnection> connections;
+
+    public ServerFailureRelated(){
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "serverFailureRelated");
+    }
+
+void initConnectionList(String logContext){
+    ThreadContext.put(LOG_FILE_CONTEXT_KEY, "logContext");
+    connections = new LinkedList<>();
+}
+
+@AfterEach
+void clearConnections() throws InterruptedException {
+        for(final var connection : connections){
+            AuthenticationHelper.logoutClient(connection);
+        }
+        connections.clear();
+        ThreadContext.clearAll();
+        Thread.sleep(500);
+}
 
     @Test
-    void testMessageAfterServerFailureSuccess() throws IOException, InterruptedException {
+    void testMessage() throws IOException, InterruptedException {
+        initConnectionList("serverFailureTextMessageAfterReconnect");
         LOGGER.info("Test: send message -> success");
         PacketContent content;
         Packet receivedPacket, responsePacket;
@@ -39,20 +69,19 @@ public class ServerFailureChatRelated {
         CommunicatorDTO disconnectedClientCommunicatorData;
         AuthenticationDTO disconnectedClientCredentials;
         final int contactId;
-        Thread.sleep(1000);
 
-        clientOne = new ClientConnection(7371);
+        clientOne = createConnection(7371);
         AuthenticationHelper.loginSpecificClient(clientOne, FRANK_1_AUTH);
-        clientTwo = new ClientConnection(7370);
+        clientTwo = createConnection(7370);
         AuthenticationHelper.loginSpecificClient(clientTwo, MARKUS_1_AUTH);
 
-        StatusChangeHelper.changeStatus(clientOne, true);
-        StatusChangeHelper.changeStatus(clientTwo, true);
+        StatusChangeHelper.changeMessengerStatus(clientOne, true);
+        StatusChangeHelper.changeMessengerStatus(clientTwo, true);
 
         Packet contactStatus = clientOne.readPacket();
         verifyPacketContent(contactStatus, ContactStatusChangeDTO.class);
 
-        LOGGER.error("Kill 7370 Server now.");
+        LOGGER.error("Kill 7370 server now.");
         Thread.sleep(3000);
 
         if (7370 == clientOne.getServerPort()) {
@@ -65,13 +94,12 @@ public class ServerFailureChatRelated {
         disconnectedClientCommunicatorData = disconnectedClient.getCommunicatorData();
         disconnectedClientCredentials = disconnectedClient.getAuthenticationData();
         contactId = disconnectedClientCommunicatorData.getCommunicatorId();
-        Thread.sleep(500);
 
         final var message = new TextMessageDTO(aliveConnection.getCommunicatorData().getCommunicatorId(),
                 EligibleContactEntity.CLIENT, contactId, "test message");
         aliveConnection.sendRequest(message, getClientEntity(contactId));
 
-        disconnectedClient = new ClientConnection(7371);
+        disconnectedClient = createConnection(7371);
         content = new ReconnectRequestDTO(disconnectedClientCommunicatorData);
         disconnectedClient.sendRequest(content, getServerEntity(STANDARD_SERVER_ID));
         var response = disconnectedClient.readPacket();
@@ -87,5 +115,43 @@ public class ServerFailureChatRelated {
         final var responseMessage = (TextMessageDTO) responsePacket.getPacketContent();
         Assertions.assertEquals(message.getMessage(), receivedMessage.getMessage(), responseMessage.getMessage());
         LOGGER.info("Test: send message -> success -- terminated");
+        clearConnections();
+    }
+    
+    @Test
+    void testContactStatusChange() throws InterruptedException, IOException {
+        //TODO -> ContactMitteilung pruefen
+        initConnectionList("serverFailureClientStatusAfterReconnect");
+        LOGGER.info("Test: messenger setup after reconnect -> success");
+        PacketContent content;
+        Packet packet;
+        ClientConnection clientOne, clientOneReconnection;
+        CommunicatorDTO clientOneCommunicatorDTO;
+        AuthenticationDTO clientOneClientCredentials;
+
+        clientOne = createConnection(7370);
+        clientOneReconnection = createConnection(7371);
+        AuthenticationHelper.loginSpecificClient(clientOne, FRANK_1_AUTH);
+        clientOneClientCredentials = clientOne.getAuthenticationData();
+        clientOneCommunicatorDTO = clientOne.getCommunicatorData();
+
+        content = new ClientStatusChangeDTO(MESSENGER, true, clientOneCommunicatorDTO);
+        clientOne.sendRequest(content, getServerEntity(STANDARD_SERVER_ID));
+        clientOne.resetConnection();
+        System.out.println("Kill 7370 server now.");
+        Thread.sleep(3000);
+
+        content = new ReconnectRequestDTO(clientOneCommunicatorDTO);
+        clientOneReconnection.setClientData(clientOneClientCredentials, clientOneCommunicatorDTO);
+        checkResponse(clientOneReconnection, getServerEntity(STANDARD_SERVER_ID), content, ReconnectResponseDTO.class);
+        packet = clientOneReconnection.readPacket();
+        verifyPacketContent(packet, MessengerSetupDTO.class);
+        LOGGER.info("Test: messenger setup after reconnect -> success -- terminated");
+    }
+
+    ClientConnection createConnection(int serverPort) throws IOException {
+        var newConnection = new ClientConnection(serverPort);
+        this.connections.add(newConnection);
+        return newConnection;
     }
 }

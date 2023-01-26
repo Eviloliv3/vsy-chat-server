@@ -159,23 +159,16 @@ public class PacketAssignmentService extends ServiceBase {
             if (validationString.isPresent()) {
                 throw new RuntimeException(validationString.get());
             }
+            Packet result = PacketRetainer.retainIfResponse(packet);
 
-            if (packet.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
-                var clients = this.packetNetworkManager.getSubscriptionsManager(CLIENT).getThreads(CHAT);
-                clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
-                PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
-            } else {
-                Packet result = PacketRetainer.retainIfResponse(packet);
+            if (result != null) {
+                var pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
+                var phe = new PacketProcessingException("Packet could not be delivered.");
+                var errorPacket = pheProcessor.processException(phe, result);
+                result = PacketRetainer.retainIfResponse(errorPacket);
 
                 if (result != null) {
-                    var pheProcessor = ServerPacketHandlingExceptionCreator.getServiceExceptionProcessor();
-                    var phe = new PacketProcessingException("Packet could not be delivered.");
-                    var errorPacket = pheProcessor.processException(phe, result);
-                    result = PacketRetainer.retainIfResponse(errorPacket);
-
-                    if (result != null) {
-                        LOGGER.error("Packet discarded: {}", result);
-                    }
+                    LOGGER.error("Packet discarded: {}", result);
                 }
             }
         }

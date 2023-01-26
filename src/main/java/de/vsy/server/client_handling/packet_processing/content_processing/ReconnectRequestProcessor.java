@@ -66,6 +66,7 @@ public class ReconnectRequestProcessor implements ContentProcessor<ReconnectRequ
                         if (this.clientStateManager.changePersistentClientState(persistedClientState, true)) {
                             this.clientStateManager.changePersistentReconnectionState(false);
                             LOGGER.info("Pending state removed.");
+                            this.clientStateManager.appendStateSynchronizationPacket(persistedClientState, true);
                             this.contentHandler.addResponse(new ReconnectResponseDTO(true));
                         } else {
                             this.clientStateManager.deregisterClient();

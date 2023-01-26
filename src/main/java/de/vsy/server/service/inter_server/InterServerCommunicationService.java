@@ -268,7 +268,6 @@ public class InterServerCommunicationService extends ServiceBase {
      */
     private Packet createInterServerSyncPacket() {
         final var recipient = getServerEntity(this.remoteConnectionData.getServerId());
-
         final PacketContent synchronizedContent = new InterServerCommSyncDTO(
                 this.serverConnectionDataManager.getLocalServerConnectionData().getServerId());
 
@@ -337,37 +336,33 @@ public class InterServerCommunicationService extends ServiceBase {
             continuouslyProcessInput(interrupt);
         } else {
             final var remainingPackets = this.threadBuffers.getPacketBuffer(HANDLER_BOUND).freezeBuffer();
+            String errorMessage = "Packet could not be delivered. ";
 
             for (final var nextPacket : remainingPackets) {
                 Packet result = null;
-                String errorMessage = "Packet could not be delivered. ";
                 PacketProcessingException processingException = null;
                 final var validationString = this.validator.checkPacket(nextPacket);
 
                 if (validationString.isEmpty()) {
-                    if (nextPacket.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
-                        var clients = this.serviceDataAccess.getClientSubscriptionManager().getThreads(CHAT);
-                        clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
-                        PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
-                    }else {
-                        final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
-                        serverPacketContent.setReadingConnectionThread(super.getServiceId());
-                        result = PacketRetainer.retainIfResponse(nextPacket);
-                    }
-                }
+                    final var serverPacketContent = (ServerPacketContentImpl) nextPacket.getPacketContent();
+                    serverPacketContent.setReadingConnectionThread(super.getServiceId());
+                    result = PacketRetainer.retainIfResponse(nextPacket);
 
-                if(validationString.isPresent()){
-                    errorMessage = errorMessage + validationString.get();
-                    processingException = new PacketProcessingException(errorMessage);
-                }else if(result != null){
-                    processingException = new PacketProcessingException(errorMessage);
+                    if(result != null){
+                        processingException = new PacketProcessingException(errorMessage);
+                    }
+                }else{
+                    var exceptionMessage = errorMessage + validationString.get();
+                    processingException = new PacketProcessingException(exceptionMessage);
                 }
 
                 if(processingException != null){
                     result = this.pheProcessor.processException(processingException, nextPacket);
-                    PacketRetainer.retainIfResponse(result);
-                }else{
-                    LOGGER.error("Packet discarded: {}", nextPacket);
+                    result = PacketRetainer.retainIfResponse(result);
+
+                    if(result != null){
+                        LOGGER.error("Packet discarded: {}", result);
+                    }
                 }
             }
         }

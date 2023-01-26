@@ -132,5 +132,4 @@ public class TestStatusChange extends ServerTestBase {
         LOGGER.info(
                 "Test: change messenger status for two clients that are contacts -> success -- terminated");
     }
-
 }

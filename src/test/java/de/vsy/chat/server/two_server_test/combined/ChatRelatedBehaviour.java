@@ -10,6 +10,6 @@ import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_
 public class ChatRelatedBehaviour extends TestChatRelated {
     public ChatRelatedBehaviour() {
         super(ServerPortProvider.DUAL_SERVER_PORT_PROVIDER, TestClientDataProvider.CHAT_CLIENT_LIST);
-        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "singleServerChatRelated");
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "dualServerChatRelated");
     }
 }

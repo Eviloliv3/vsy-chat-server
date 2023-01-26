@@ -42,7 +42,6 @@ public class ClientStatusSynchronizationService extends ServiceBase {
 
     private final ServicePacketProcessor processor;
     private final PacketCategorySubscriptionManager serverBoundNetwork;
-    private final PacketCategorySubscriptionManager clientBoundNetwork;
     private final ServicePacketBufferManager serviceBuffers;
     private final PacketTransmissionCache packetsToSend;
     private final ServerStatusSyncPacketCreator packetCreator;
@@ -58,7 +57,6 @@ public class ClientStatusSynchronizationService extends ServiceBase {
             final ClientStatusRegistrationServiceDataProvider serviceDataModel) {
         super(SERVICE_SPECIFICATIONS, serviceDataModel.getLocalServerConnectionData());
         this.serviceBuffers = serviceDataModel.getServicePacketBufferManager();
-        this.clientBoundNetwork = serviceDataModel.getClientSubscriptionManager();
         this.serverBoundNetwork = serviceDataModel.getServiceSubscriptionManager();
         this.packetCreator = new ServerStatusSyncPacketCreator();
         this.packetsToSend = new PacketTransmissionCache();
@@ -104,21 +102,5 @@ public class ClientStatusSynchronizationService extends ServiceBase {
         final var serviceId = super.getServiceId();
         this.serverBoundNetwork.unsubscribe(STATUS, serviceId, incomingBuffer);
         this.serviceBuffers.deregisterBuffer(getServiceType(), serviceId, this.incomingBuffer);
-        retainPackets();
-    }
-
-    private void retainPackets() {
-        final var remainingPackets = this.incomingBuffer.freezeBuffer();
-
-        for (final var packet : remainingPackets) {
-
-            if (packet.getPacketContent() instanceof ExtendedStatusSyncDTO extendedStatusSyncDTO) {
-                var clients = this.clientBoundNetwork.getThreads(CHAT);
-                clients.removeIf((client) -> !(extendedStatusSyncDTO.getContactIdSet().contains(client)));
-                PacketRetainer.retainExtendedStatus(extendedStatusSyncDTO, clients);
-            } else {
-                LOGGER.error("Packet discarded: {}", packet);
-            }
-        }
     }
 }

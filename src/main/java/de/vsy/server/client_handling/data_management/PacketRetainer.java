@@ -8,6 +8,7 @@ import de.vsy.shared_transmission.packet.Packet;
 import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
+import de.vsy.shared_transmission.packet.content.notification.SimpleInformationDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 
@@ -24,7 +25,7 @@ public class PacketRetainer {
 
     static {
         VALID_RESPONSE_CATEGORIES = List.of(RELATION, CHAT, NOTIFICATION);
-        VALID_RESPONSE_TYPES = List.of(ContactRelationResponseDTO.class, TextMessageDTO.class, ErrorDTO.class);
+        VALID_RESPONSE_TYPES = List.of(ContactRelationResponseDTO.class, TextMessageDTO.class, ErrorDTO.class, SimpleInformationDTO.class);
     }
 
     public static Packet retainIfResponse(final Packet toCheck) {
@@ -61,15 +62,5 @@ public class PacketRetainer {
         final var pendingPacketRetainer = new PendingPacketDAO();
         pendingPacketRetainer.createAccess(String.valueOf(recipientId));
         pendingPacketRetainer.appendPendingPacket(PROCESSOR_BOUND, toRetain);
-    }
-
-    public static void retainExtendedStatus(ExtendedStatusSyncDTO extendedStatusSyncDTO, Set<Integer> clients) {
-        var updatePackets = PacketDemultiplexer.demultiplexPacket(extendedStatusSyncDTO, clients);
-
-        if (!updatePackets.isEmpty()) {
-            for (final Packet updatePacket : updatePackets) {
-                retainPacket(updatePacket);
-            }
-        }
     }
 }

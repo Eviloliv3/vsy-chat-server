@@ -82,6 +82,7 @@ public abstract class PacketCategorySubscriptionManager {
         } finally {
             this.lock.writeLock().unlock();
         }
+
         return subSuccessful;
     }
 
