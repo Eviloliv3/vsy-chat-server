@@ -110,6 +110,7 @@ public class RemoteClientDisconnector {
             if (extraSubscriptionMap.containsKey(topic)) {
                 threads.addAll(extraSubscriptionMap.get(topic));
             }
+
             for (final var currentThread : threads) {
                 this.clientSubscriptionManager.unsubscribe(topic, currentThread, this.remoteServerBuffer);
             }

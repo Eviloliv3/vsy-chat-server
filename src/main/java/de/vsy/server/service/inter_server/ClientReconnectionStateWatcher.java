@@ -44,7 +44,7 @@ public class ClientReconnectionStateWatcher extends ThreadContextTimerTask {
         if (stillPendingClientIds.isEmpty()) {
             this.reconnectionHandler.stopReconnectingClients();
         } else {
-            this.pendingClientIds = stillPendingClientIds;
+            this.pendingClientIds.addAll(stillPendingClientIds);
         }
     }
 }

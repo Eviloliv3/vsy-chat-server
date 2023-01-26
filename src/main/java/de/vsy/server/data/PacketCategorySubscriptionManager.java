@@ -76,8 +76,8 @@ public abstract class PacketCategorySubscriptionManager {
                 topicSubscriptions.put(topicId, subscriber);
                 this.subscriptions.put(topic, topicSubscriptions);
             } else {
-                LOGGER.warn("Subscription skipped. Client already subscribed to {}/{}.", topic,
-                        topicId);
+                LOGGER.warn("Subscription skipped. Client already subscribed to {}/{}/{}.", topic,
+                        topicId, subscriptionBuffer);
             }
         } finally {
             this.lock.writeLock().unlock();
@@ -139,9 +139,9 @@ public abstract class PacketCategorySubscriptionManager {
                         threadId);
             } else {
                 LOGGER.warn(
-                        "Subscription cancellation failed. Client was not subscribed to : {}/{}",
+                        "Subscription cancellation failed. Client was not subscribed to : {}/{}/{}",
                         topic,
-                        threadId);
+                        threadId, subscriptionBuffer);
             }
         } finally {
             this.lock.writeLock().unlock();

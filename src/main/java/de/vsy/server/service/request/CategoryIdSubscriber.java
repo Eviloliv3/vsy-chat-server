@@ -2,6 +2,7 @@ package de.vsy.server.service.request;
 
 import de.vsy.shared_module.packet_management.PacketBuffer;
 import de.vsy.shared_transmission.packet.Packet;
+import org.apache.logging.log4j.LogManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,23 +17,7 @@ public class CategoryIdSubscriber {
     /**
      * Instantiates a new category id subscriber.
      */
-    public CategoryIdSubscriber() {
-        this(new HashSet<>());
-    }
-
-    /**
-     * Instantiates a new category id subscriber.
-     *
-     * @param categoryIdSubscribers the category id subscribers
-     */
-    public CategoryIdSubscriber(final Set<PacketBuffer> categoryIdSubscribers) {
-
-        if (categoryIdSubscribers != null) {
-            this.subscriptionBuffers = categoryIdSubscribers;
-        } else {
-            throw new IllegalArgumentException("No PacketBuffer specified.");
-        }
-    }
+    public CategoryIdSubscriber() {this.subscriptionBuffers = new HashSet<>();}
 
     /**
      * Adds the subscription.
