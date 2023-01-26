@@ -112,7 +112,7 @@ public class InterServerSubstituteService extends ThreadContextRunnable implemen
         boolean substituteSetup = false;
         Instant stopTime;
         List<Integer> pendingClientIds;
-        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "InterServerSubstitute-" + this.serviceId);
+        ThreadContext.put(LOG_FILE_CONTEXT_KEY, "InterServerSubstitute-" + this.serviceId + "-" + Instant.now());
 
         pendingClientIds = getPendingClientIds();
 

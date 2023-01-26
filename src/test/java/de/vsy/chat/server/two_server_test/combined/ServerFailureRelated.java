@@ -33,6 +33,7 @@ import static de.vsy.shared_transmission.packet.property.communicator.Communicat
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_SERVER_ID;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_FILE_CONTEXT_KEY;
+import static de.vsy.shared_utility.standard_value.ThreadContextValues.LOG_ROUTE_CONTEXT_KEY;
 
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -41,11 +42,11 @@ public class ServerFailureRelated {
     List<ClientConnection> connections;
 
     public ServerFailureRelated(){
+        ThreadContext.put(LOG_ROUTE_CONTEXT_KEY, "test");
         ThreadContext.put(LOG_FILE_CONTEXT_KEY, "serverFailureRelated");
     }
 
-void initConnectionList(String logContext){
-    ThreadContext.put(LOG_FILE_CONTEXT_KEY, "logContext");
+void initConnectionList(){
     connections = new LinkedList<>();
 }
 
@@ -61,7 +62,6 @@ void clearConnections() throws InterruptedException {
 
     @Test
     void testMessage() throws IOException, InterruptedException {
-        initConnectionList("serverFailureTextMessageAfterReconnect");
         LOGGER.info("Test: send message -> success");
         PacketContent content;
         Packet receivedPacket, responsePacket;
@@ -107,8 +107,10 @@ void clearConnections() throws InterruptedException {
         disconnectedClient.setClientData(disconnectedClientCredentials, disconnectedClientCommunicatorData);
 
         receivedPacket = disconnectedClient.readPacket();
-        responsePacket = aliveConnection.readPacket();
         verifyPacketContent(receivedPacket, TextMessageDTO.class);
+        responsePacket = aliveConnection.readPacket();
+        verifyPacketContent(responsePacket, ContactStatusChangeDTO.class);
+        responsePacket = aliveConnection.readPacket();
         verifyPacketContent(responsePacket, TextMessageDTO.class);
 
         final var receivedMessage = (TextMessageDTO) receivedPacket.getPacketContent();
@@ -121,7 +123,6 @@ void clearConnections() throws InterruptedException {
     @Test
     void testContactStatusChange() throws InterruptedException, IOException {
         //TODO -> ContactMitteilung pruefen
-        initConnectionList("serverFailureClientStatusAfterReconnect");
         LOGGER.info("Test: messenger setup after reconnect -> success");
         PacketContent content;
         Packet packet;
