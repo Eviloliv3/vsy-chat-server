@@ -9,6 +9,7 @@ import de.vsy.shared_transmission.packet.content.PacketContent;
 import de.vsy.shared_transmission.packet.content.chat.TextMessageDTO;
 import de.vsy.shared_transmission.packet.content.notification.ErrorDTO;
 import de.vsy.shared_transmission.packet.content.notification.SimpleInformationDTO;
+import de.vsy.shared_transmission.packet.content.relation.ContactRelationRequestDTO;
 import de.vsy.shared_transmission.packet.content.relation.ContactRelationResponseDTO;
 import de.vsy.shared_transmission.packet.property.packet_category.PacketCategory;
 
@@ -25,7 +26,7 @@ public class PacketRetainer {
 
     static {
         VALID_RESPONSE_CATEGORIES = List.of(RELATION, CHAT, NOTIFICATION);
-        VALID_RESPONSE_TYPES = List.of(ContactRelationResponseDTO.class, TextMessageDTO.class, ErrorDTO.class, SimpleInformationDTO.class);
+        VALID_RESPONSE_TYPES = List.of(ContactRelationResponseDTO.class, ContactRelationRequestDTO.class, TextMessageDTO.class, ErrorDTO.class, SimpleInformationDTO.class);
     }
 
     public static Packet retainIfResponse(final Packet toCheck) {
@@ -45,6 +46,11 @@ public class PacketRetainer {
 
                 if (content instanceof final TextMessageDTO message) {
                     if (message.getReceptionState()) {
+                        retainPacket(toCheck);
+                        return null;
+                    }
+                }else if(content instanceof final ContactRelationRequestDTO requestDTO){
+                    if(!requestDTO.getDesiredState()){
                         retainPacket(toCheck);
                         return null;
                     }
