@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static de.vsy.server.ChatServer.MAX_CLIENT_CONNECTIONS;
 
 public class PendingClientWatcherManager implements PendingClientRegistry {
 
@@ -22,8 +21,8 @@ public class PendingClientWatcherManager implements PendingClientRegistry {
     private final ExecutorService pendingWatcherPool;
 
     public PendingClientWatcherManager() {
-        this.watchedPendingClients = new HashMap<>(MAX_CLIENT_CONNECTIONS);
-        this.pendingWatcherPool = Executors.newFixedThreadPool(MAX_CLIENT_CONNECTIONS);
+        this.watchedPendingClients = new HashMap<>();
+        this.pendingWatcherPool = Executors.newCachedThreadPool();
     }
 
     @Override

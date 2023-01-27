@@ -33,12 +33,12 @@ import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATE
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
 import static de.vsy.shared_utility.standard_value.ThreadContextValues.*;
 import static java.util.Arrays.asList;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class ChatServer implements ClientServer {
 
-    public static final int MAX_CLIENT_CONNECTIONS = 10;
     private static final Logger LOGGER = LogManager.getLogger();
     private final ExecutorService clientConnectionPool;
     private final Timer serviceMonitor;
@@ -51,7 +51,7 @@ public class ChatServer implements ClientServer {
      * Instantiates a new chat server.
      */
     public ChatServer() {
-        this.clientConnectionPool = newFixedThreadPool(MAX_CLIENT_CONNECTIONS);
+        this.clientConnectionPool = newCachedThreadPool();
         this.serviceMonitor = new Timer("ServiceHealthMonitor");
     }
 
