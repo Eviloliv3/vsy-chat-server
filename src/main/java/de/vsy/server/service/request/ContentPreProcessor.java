@@ -6,7 +6,7 @@ import de.vsy.shared_module.packet_management.OutputBuffer;
 import de.vsy.shared_transmission.packet.Packet;
 import org.apache.logging.log4j.LogManager;
 
-import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_MULTICAST_ID;
 
 public class ContentPreProcessor implements PublishablePacketCreator {
 
@@ -33,6 +33,6 @@ public class ContentPreProcessor implements PublishablePacketCreator {
     }
 
     private boolean isLocalBroadcast(final Packet input) {
-        return input.getPacketProperties().getRecipient().getEntityId() == STANDARD_CLIENT_BROADCAST_ID;
+        return input.getPacketProperties().getRecipient().getEntityId() == STANDARD_CLIENT_MULTICAST_ID;
     }
 }

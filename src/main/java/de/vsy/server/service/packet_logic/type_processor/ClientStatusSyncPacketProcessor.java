@@ -28,7 +28,7 @@ import java.util.Set;
 import static de.vsy.server.data.socketConnection.SocketConnectionState.INITIATED;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getClientEntity;
 import static de.vsy.shared_transmission.packet.property.communicator.CommunicationEndpoint.getServerEntity;
-import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_BROADCAST_ID;
+import static de.vsy.shared_utility.standard_value.StandardIdProvider.STANDARD_CLIENT_MULTICAST_ID;
 
 /**
  * Handles status synchronization Packet sent by other servers.
@@ -72,7 +72,7 @@ public class ClientStatusSyncPacketProcessor implements PacketProcessor {
             }
 
             if (inputData instanceof ExtendedStatusSyncDTO) {
-                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_BROADCAST_ID);
+                final var clientBroadcast = getClientEntity(STANDARD_CLIENT_MULTICAST_ID);
                 resultingPackets.addRequest(inputData, clientBroadcast);
             }
             final var synchronizedServers = new HashSet<>(inputData.getSynchronizedServers());
