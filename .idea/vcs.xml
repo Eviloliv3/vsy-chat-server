@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../shared-module" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../shared-resources" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../shared-transmission" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../shared-utility" vcs="Git" />
   </component>

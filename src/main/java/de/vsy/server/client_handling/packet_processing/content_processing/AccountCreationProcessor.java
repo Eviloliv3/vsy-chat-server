@@ -11,6 +11,7 @@ import de.vsy.server.server_packet.packet_creation.ResultingPacketContentHandler
 import de.vsy.shared_module.packet_exception.PacketProcessingException;
 import de.vsy.shared_module.packet_processing.ContentProcessor;
 import de.vsy.shared_transmission.dto.CommunicatorDTO;
+import de.vsy.shared_transmission.dto.authentication.AuthenticationDTO;
 import de.vsy.shared_transmission.packet.content.authentication.AccountCreationRequestDTO;
 import de.vsy.shared_transmission.packet.content.authentication.LoginResponseDTO;
 import org.apache.logging.log4j.LogManager;
@@ -36,6 +37,7 @@ public class AccountCreationProcessor implements ContentProcessor<AccountCreatio
     @Override
     public void processContent(AccountCreationRequestDTO toProcess) throws PacketProcessingException {
         String causeMessage = null;
+        AuthenticationDTO asd;
         var newAccount = toProcess.getAccountCreationData();
         var clientData = clientRegistry.createNewAccount(
                 newAccount.getAuthenticationData().getUsername(),
