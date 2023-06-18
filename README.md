@@ -1,11 +1,12 @@
 # VSY Project - Chat Server
 
-The project is a chat server exclusively written in java. The server is failsafe, if two instances are started, connection oriented and state saving. All data is stored redundantly.
+The project is a chat server exclusively written in java. The server is failsafe, if two instances are started, connection oriented and state saving. All data is stored redundantly using files in json format.
 Client socket connections are handled on a per-thread basis up to a maximum of 10 connections, allowing authenticated clients to communicate with their contacts via text based messages. 
 Besides the client connection handler threads, the server starts additional service threads:
 * PacketAssignmentService: handles Packet routing using the publish-/subscribe pattern
 * ClientStatusSynchronizationService: handles remotely connected client status changes and relays client status changes that are relevant for other connected clients
 * InterServerCommunicationService: checks packages coming from another chat server
+
 All connection points within the server are represented by a PacketBuffer that essentially is a BlockingDeque, enabling all main Packet processing entities to work asynchronously.
 Parts of the application that are used by both the server and client side are a part of their own modules, e.g. Packet transmission through sockets, transmission related objects.
 # Motivation
