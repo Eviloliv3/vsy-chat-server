@@ -1,0 +1,12 @@
+[submodule "modules/shared-resources"]
+	path = /modules/shared-resources
+	url = git@github.com:Eviloliv3/vsy-chat-server-shared-resources.git
+[submodule "modules/shared-utility"]
+	path = /modules/shared-utility
+	url = git@github.com:Eviloliv3/vsy-chat-server-shared-utility.git
+[submodule "modules/shared-transmission"]
+	path = /modules/shared-transmission
+	url = git@github.com:Eviloliv3/vsy-chat-server-shared-transmission.git
+[submodule "modules/shared-module"]
+	path = /modules/shared-module
+	url = git@github.com:Eviloliv3/vsy-chat-server-shared-module.git
