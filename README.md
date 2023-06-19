@@ -23,8 +23,9 @@ The code style used is the Google's Java Style.
 
 **Built with**
 * [Jackson](https://github.com/FasterXML)
-* [Log4J2](https://logging.apache.org/log4j/2.x/)  
- 
+* [Log4J2](https://logging.apache.org/log4j/2.x/)
+* [JUnit 5](https://junit.org/junit5)
+
 **Built using**
 * [Maven](https://maven.apache.org/)
 ****
